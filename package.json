@@ -1,19 +1,19 @@
 {
   "name": "jbart5",
-  "version": "5.0-ng2-alpha",
+  "version": "5.0.0-ng.alpha.1",
   "description": "jBart - Visual DSL fun on top of angular2",
   "homepage": "https://github.com/artwaresoft/jbart5-ng",
   "bugs": {
     "url": "https://github.com/artwaresoft/jbart5-ng/issues"
   },
   "contributors": [
-    { "name": "Shai Ben-Yehuda", "email": "shaiby@artwaresoft.com" }, { "name": "Yaniv Ben-Yehuda", "email": "yanivby@artwaresoft.com" }, { "name": "Yaron Ben-Yehuda", "email": "yaronby@artwaresoft.com" },
+    { "name": "Shai Ben-Yehuda", "email": "shaiby@artwaresoft.com" }, { "name": "Yaniv Ben-Yehuda", "email": "yanivby@artwaresoft.com" }, { "name": "Yaron Ben-Yehuda", "email": "yaronby@artwaresoft.com" }
   ],
   "scripts": {
     "start": "concurrently \"npm run tsc:w\" \"npm run studio\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "studio": "node jbart-studio.js",
+    "studio": "node jbart-studio.js"
   },
   "dependencies": {
     "@angular2-material/button": "^2.0.0-alpha.1",
@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "concurrently": "^2.0.0",
-    "typescript": "^1.8.9",
+    "typescript": "^1.8.9"
   }
 }
