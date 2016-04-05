@@ -1,0 +1,22 @@
+jbart5 on github
+  npm install
+letmesee room project
+angular like site project
+
+studio
+jb logo
+main toolbar design
+undo
+property editor
+  array editor for the property editor
+  features (accordion)
+  style toolbar
+  use material animation for fields
+
+custom style editor
+indication (with popups?)
+'xtml' inteliscript editor
+  preview probe
+
+bugs
+ make local with icon

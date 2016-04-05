@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+<script type="text/javascript" src="/jbart/js/ng2-ui/load-jbart.js"></script>
+<script type="text/javascript" src="/jbart/bower_components/jquery/dist/jquery.js"></script>
+
+<script src="/jbart/node_modules/angular2/bundles/angular2-polyfills.js"></script>
+<script src="/jbart/node_modules/es6-shim/es6-shim.js"></script>
+<script src="/jbart/node_modules/systemjs/dist/system.js"></script>
+
+<script>
+    System.config({defaultJSExtensions: true});
+</script>
+<script src="/jbart/node_modules/rxjs/bundles/Rx.js"></script>
+<script src="/jbart/node_modules/angular2/bundles/angular2.js"></script>
+
+<script type="text/javascript">jb_loadEditableFile('ui-tests.js')</script>
+<script type="text/javascript">jb_loadEditableFile('rx-tests.js')</script>
+
+<link rel="stylesheet" href="/jbart/node_modules/ng2-material/dist/ng2-material.css">
+<link rel="stylesheet" href="/jbart/node_modules/ng2-material/dist/font.css">
+
+<link rel="stylesheet" href="/jbart/css/ng2-styles.css">
+
+</head>
+
+<body>
+  <jbart compID="ui-tests.show-tests">loading jbart</jbart>
+  <jbartTests style="display:none"></jbartTests>
+
+<script>
+window.jbartTest = true;
+
+System.config({
+  map: {
+    js: '/jbart/dist/js',
+    ui: '/jbart/dist/js/ng2-ui',
+    studio: '/jbart/dist/projects/studio',
+  }
+});
+
+loadJbModules(jb_modules.concat(jb_studio_modules)).then(loadedModules=>{
+    var bootstrap = loadedModules['/jbart/node_modules/angular2/platform/browser'].bootstrap;
+    bootstrap(loadedModules['ui/tests'].jBartTests);
+    bootstrap(loadedModules['ui/jb-ui'].jBartWidget);
+})
+
+
+</script>
+
+</body>
+</html>

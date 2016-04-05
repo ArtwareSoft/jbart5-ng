@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <script type="text/javascript" src="/jbart/bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="/jbart/js/ng-ui/ng-ui-load-all.js"></script>
+    <script type="text/javascript">jb_loadEditableFile('ui-tests.js')</script>
+
+</head>
+
+<body ng-app="ui-tests">
+  <jbart widget="ui-tests.picklist"></jbart>
+
+  <script>
+    angular.module( 'ui-tests', [ 'jb-all-ui' ] ).value('jb-prefix','ui-tests');
+  </script>
+
+</body>
+</html>
