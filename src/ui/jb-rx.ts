@@ -1,6 +1,6 @@
 import {Observable,Subject} from 'rxjs/Rx';
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
 //import {Location} from '/jbart/node_modules/angular2/router';
 export {Observable,Subject} from 'rxjs/Rx';
 

@@ -1,5 +1,5 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
 
 if (window.jbartTest) {
 	// jb.resource('ui-tests','UrlPathEm',{ $: 'rx.urlPath', base: 'ui-tests', zoneId: 'single-test', 

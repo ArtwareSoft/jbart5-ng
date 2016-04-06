@@ -1,6 +1,6 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import {NodeModel,jbTree} from 'ui/tree/tree';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
+import {NodeModel,jbTree} from 'jb-ui/tree/tree';
 import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input} from 'angular2/core';
 import {Observable,Subject} from 'rxjs/Rx';
 

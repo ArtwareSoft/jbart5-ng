@@ -1,6 +1,6 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import * as ui_utils from 'ui/jb-ui-utils';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
+import * as ui_utils from 'jb-ui/jb-ui-utils';
 
 jb.component('customStyle', {
 	typePattern: /.*-style/,

@@ -1,7 +1,7 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import * as jb_rx from 'ui/jb-rx';
-import * as ui_utils from 'ui/jb-ui-utils';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
+import * as jb_rx from 'jb-ui/jb-rx';
+import * as ui_utils from 'jb-ui/jb-ui-utils';
 import {NgClass} from 'angular2/common';
 import {Observable,Subject} from 'rxjs/Rx';
 import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, NgZone} from 'angular2/core';

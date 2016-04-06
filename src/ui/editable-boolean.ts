@@ -1,6 +1,6 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import * as jb_rx from 'ui/jb-rx';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
+import * as jb_rx from 'jb-ui/jb-rx';
 
 jb.type('editable-boolean.style');
 jb.type('editable-boolean.yes-no-settings');

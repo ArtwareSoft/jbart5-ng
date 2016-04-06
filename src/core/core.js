@@ -185,10 +185,10 @@ function jb_expression(expression, context, jstype) {
   expression = expression.replace(/{%(.*?)%}/g, function(match,contents) {
       return jb_tostring(expPart(contents,context,'string'));
   })
-  if (expression.match(/^%[^%]*%$/)) // must be after the {% replacer
+  if (expression.match(/^%[^%;{}\s><"']*%$/)) // must be after the {% replacer
     return expPart(expression.substring(1,expression.length-1),context,jstype);
 
-  expression = expression.replace(/%([^;{}\s]*)%/g, function(match,contents) {
+  expression = expression.replace(/%([^;{}\s><"']*)%/g, function(match,contents) {
       return jb_tostring(expPart(contents,context,'string'));
   })
 

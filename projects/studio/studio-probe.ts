@@ -1,7 +1,7 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
 import * as studio from './studio-model';
-import * as jb_rx from 'ui/jb-rx';
+import * as jb_rx from 'jb-ui/jb-rx';
 
 jb.component('studio.start-probe',{
   type:'data',

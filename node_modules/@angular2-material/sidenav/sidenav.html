@@ -1,0 +1,11 @@
+<div class="md-sidenav-backdrop" (click)="_closeModalSidenav()"
+     [class.md-sidenav-shown]="_isShowingBackdrop()"></div>
+
+<ng-content select="md-sidenav"></ng-content>
+
+<md-content [style.margin-left.px]="_getMarginLeft()"
+            [style.margin-right.px]="_getMarginRight()"
+            [style.left.px]="_getPositionLeft()"
+            [style.right.px]="_getPositionRight()">
+  <ng-content></ng-content>
+</md-content>

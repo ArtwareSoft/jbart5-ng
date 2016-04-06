@@ -1,11 +1,12 @@
-import {jb} from 'js/jb';
+import {jb} from 'jb-core';
 import {enableProdMode, Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, provide, NgZone} from 'angular2/core';
 import {NgForm,FORM_DIRECTIVES,NgClass} from 'angular2/common';
-import {MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS} from '/jbart/node_modules/ng2-material/all';
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
+import {MdButton, MdAnchor} from '/node_modules/@angular2-material/button/button.js';
 
-import * as jb_rx from 'ui/jb-rx';
-import * as jb_dialog from 'ui/dialog';
+import * as jb_rx from 'jb-ui/jb-rx';
+import * as jb_dialog from 'jb-ui/dialog';
+
 enableProdMode();
 jbart.zones = jbart.zones || {}
 
@@ -33,7 +34,7 @@ export function Comp(options,context) {
 		Component({
 			selector: 'div',
 			template: options.template || '',
-			directives: [MATERIAL_DIRECTIVES,FORM_DIRECTIVES, NgClass] 
+			directives: [MdButton, MdAnchor,FORM_DIRECTIVES, NgClass] 
 		}),
 		Reflect.metadata('design:paramtypes', [DynamicComponentLoader, ElementRef])
 	], Cmp);

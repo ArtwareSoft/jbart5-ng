@@ -4,11 +4,11 @@ if (!window.jbPackaged) {
   window.jbart_widgets = {};
 
   [
-    'js/core.js',
-    'js/ng-data-binding.js',
-    'js/utils.js',
-    'js/components.js',
-    'js/functions.js',
+    'src/core/core.js',
+    'src/core/data-binding.js',
+    'src/core/utils.js',
+    'src/core/components.js',
+    'src/core/functions.js',
 
      // code mirror
     "bower_components/codemirror/lib/codemirror.js",
@@ -28,15 +28,17 @@ if (!window.jbPackaged) {
     "bower_components/dragula.js/dist/dragula.js",
     "bower_components/dragula.js/dist/dragula.css",
 
+    "css/font.css", // material fonts
+
     "node_modules/history/umd/History.js"
 
   ].
   forEach(function(file) {
     if (file.substring(file.length-4) == '.css') {
-      document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/jbart/') + file + '" />'); 
+      document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/') + file + '" />'); 
     } else {
       document.write('<script>jbart.currentFileName = "' + file + '";</script>');
-      document.write('<script src="' + (window.jbDevBase || '/jbart/') + file + '"></script>');
+      document.write('<script src="' + (window.jbDevBase || '/') + file + '"></script>');
     }
   });
 }
@@ -47,39 +49,69 @@ function jb_loadEditableFile(file) {
 }
 
 jb_modules = 
-['js/jb','angular2/core','angular2/common', '/jbart/node_modules/angular2/platform/browser',
- '/jbart/node_modules/ng2-material/dist/ng2-material',
-'ui/jb-ui',
-'ui/jb-ui-utils',
-'ui/tests',
-'ui/jb-rx',
-'ui/styles',
-'ui/tree/tree',
-'ui/tree/json-tree',
-'ui/tree/tree-undo',
-'ui/dialog',
-'ui/label',
-'ui/text',
-'ui/editable-text',
-'ui/editable-boolean',
-'ui/picklist',
-'ui/features',
-'ui/group',
-'ui/group-styles',
-'ui/md-layout',
-'ui/button',
-'ui/itemlist',
-'ui/ui-common',
-'ui/image',
-'ui/pulldown-menu',
-'ui/itemlog',
-'ui/tab',
+[
+'angular2/core','angular2/common', 'angular2/platform/browser',
+'jb-core',
+'jb-ui',
+'jb-ui/jb-ui-utils',
+'jb-ui/tests',
+'jb-ui/jb-rx',
+'jb-ui/styles',
+'jb-ui/tree/tree',
+'jb-ui/tree/json-tree',
+'jb-ui/tree/tree-undo',
+'jb-ui/dialog',
+'jb-ui/label',
+'jb-ui/text',
+'jb-ui/editable-text',
+'jb-ui/editable-boolean',
+'jb-ui/picklist',
+'jb-ui/features',
+'jb-ui/group',
+'jb-ui/group-styles',
+'jb-ui/md-layout',
+'jb-ui/button',
+'jb-ui/itemlist',
+'jb-ui/ui-common',
+'jb-ui/image',
+'jb-ui/pulldown-menu',
+'jb-ui/itemlog',
+'jb-ui/tab',
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups','tree','properties','pick','save','probe']
   .map(x=>'studio/studio-' + x)
 
-function loadJbModules(modules) { 
+jb_system_config = {
+      map: {
+        'jb-core': '/dist/src/core',
+        'jb-ui': '/dist/src/ui',
+        projects: '/dist/projects',
+        studio: '/dist/projects/studio',
+      },
+      packages: {  
+        '/dist' : {
+          defaultExtension: 'js',
+        },     
+        'jb-core': {
+          defaultExtension: 'js',
+          main: 'jb.js'
+        },     
+        'jb-ui': {
+          defaultExtension: 'js',
+          main: 'jb-ui.js'
+        },     
+        '/node_modules/@angular2-material': {
+          format: 'cjs',
+          defaultExtension: 'js',
+        },
+      }
+}
+
+
+function jbLoadModules(modules) { 
+  System.config(jb_system_config);
+
   var loaded = 0, loadedModules= {};
   return new Promise(resolve=>
     modules.map(x=>{

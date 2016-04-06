@@ -78,18 +78,6 @@ for(i=0;i<supported_ext.length;i++)
 
 function serveFile(req,res,path) {
   var full_path = http_dir + path;
-  if (path.match(/^dropbox\//))
-    full_path = path.replace(/^dropbox\//,'c:\\dropbox\\public/');
-  if (path.match(/^jbart\//))
-    full_path = path.replace(/^jbart\//,'..\\');
-  if (path.match(/^root/))
-    full_path = path.replace(/^root\//,'..\\..\\');
-  if (path.match(/^fonts/))
-    full_path = path.replace(/^fonts\//,'..\\fonts\\');
-  if (path.match(/^drive\/(.)/)) {
-    var drive = path.match(/^drive\/(.)/)[1];
-    full_path = path.replace(/^drive\/(.)/,drive);
-  }
   var extension = path.split('.').pop();
 
   fs.readFile(_path(full_path), function (err, content) {
@@ -144,9 +132,9 @@ extend(op_post_handlers, {
         if (!project) return endWithFailure(res,'missing project param in url');
         var comp = getURLParam(req,'comp');
         if (!comp) return endWithFailure(res,'missing comp param in url');
-        var projDirs = ['../projects/' + project];
+        var projDirs = ['projects/' + project];
         if (comp.indexOf('studio.') == 0)
-          projDirs.push('../projects/studio');
+          projDirs.push('projects/studio');
 
         var comp_found = false;
         console.log(clientReq.original);
@@ -222,12 +210,9 @@ extend(op_post_handlers, {
 });
 
 extend(base_get_handlers, {   
-  'ng-studio': function(req,res,path) {
-      return file_type_handlers.html(req,res,'../ng-studio/ng-studio.html');
-  },
   'project': function(req,res,path) {
       var project = req.url.split('/')[2];
-      return file_type_handlers.html(req,res,`../projects/${project}/${project}.html`);
+      return file_type_handlers.html(req,res,`projects/${project}/${project}.html`);
   }
 });
 
@@ -286,9 +271,9 @@ extend(op_get_handlers, {
     },
     'projects': function(req,res,path) {
       var out = [];
-      fs.readdirSync('../projects').forEach(function(widgetFile) {
-        if (fs.lstatSync('../projects/'+widgetFile).isDirectory())
-          out = out.concat(fs.readdirSync('../projects/'+widgetFile).filter(function(file) { return file.indexOf('.html') >= 0; }));
+      fs.readdirSync('projects').forEach(function(widgetFile) {
+        if (fs.lstatSync('projects/'+widgetFile).isDirectory())
+          out = out.concat(fs.readdirSync('projects/'+widgetFile).filter(function(file) { return file.indexOf('.html') >= 0; }));
       });
       res.end(out.join(','));
     }

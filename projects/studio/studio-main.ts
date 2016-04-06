@@ -1,5 +1,5 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
 jbart.dialogsParent = function() {
@@ -29,7 +29,7 @@ jb.component('studio.all', {
 			},
 			{ $: 'studio.toolbar' },
 			{ $: 'group', cssClass: 'studio-jbart-logo',
-			  	controls :{$: 'image', url: '/jbart/projects/studio/css/favicon.png' }
+			  	controls :{$: 'image', url: '/projects/studio/css/favicon.png' }
 			},
 			{ $: 'group', cssClass: 'studio-widget-placeholder', 
 				controls :{$: 'studio.renderWidget' , cssClass: 'studio-widget-placeholder'},

@@ -1,47 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-<script type="text/javascript" src="/jbart/js/ng2-ui/load-jbart.js"></script>
-<script type="text/javascript" src="/jbart/bower_components/jquery/dist/jquery.js"></script>
+  <head>
+    <title>jBart Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
 
-<script src="/jbart/node_modules/angular2/bundles/angular2-polyfills.js"></script>
-<script src="/jbart/node_modules/es6-shim/es6-shim.js"></script>
-<script src="/jbart/node_modules/systemjs/dist/system.js"></script>
 
-<script>
-    System.config({defaultJSExtensions: true});
-</script>
-<script src="/jbart/node_modules/rxjs/bundles/Rx.js"></script>
-<script src="/jbart/node_modules/angular2/bundles/angular2.js"></script>
+    <!-- 1. Load libraries -->
+    <!-- IE required polyfills, in this exact order -->
+	<script type="text/javascript" src="/src/loader/load-jbart.js"></script>
+    <script src="/node_modules/es6-shim/es6-shim.min.js"></script>
+    <script src="/node_modules/systemjs/dist/system-polyfills.js"></script>
+    <script src="/node_modules/angular2/es6/dev/src/testing/shims_for_IE.js"></script>   
 
-<link rel="stylesheet" href="/jbart/node_modules/ng2-material/dist/ng2-material.css">
-<link rel="stylesheet" href="/jbart/node_modules/ng2-material/dist/font.css">
+    <script src="/node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="/node_modules/systemjs/dist/system.src.js"></script>
+    <script src="/node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="/node_modules/angular2/bundles/angular2.dev.js"></script>
 
-<link rel="stylesheet" href="/jbart/css/ng2-styles.css">
-<link rel="stylesheet" href="/jbart/projects/studio/css/studio.css">
+  	<link rel="stylesheet" href="/css/font.css">
+	<link rel="stylesheet" href="/projects/studio/css/ng2-styles.css">
+    <link rel="stylesheet" href="/projects/studio/css/studio.css">
 
-</head>
+  </head>
+
 
 <body>
-  <jbart compID="studio.all">loading jbart</jbart>
+  <jbart compID="studio.all">loading studio...</jbart>
 
 <script>
 
-System.config({
-  map: {
-    js: '/jbart/dist/js',
-    ui: '/jbart/dist/js/ng2-ui',
-    studio: '/jbart/dist/projects/studio',
-  }
-});
-
-loadJbModules(jb_modules.concat(jb_studio_modules)).then(loadedModules=>{
-    var bootstrap = loadedModules['/jbart/node_modules/angular2/platform/browser'].bootstrap;
-    bootstrap(loadedModules['ui/jb-ui'].jBartWidget);
+jbLoadModules(jb_modules.concat(jb_studio_modules)).then(loadedModules=>{
+    var bootstrap = loadedModules['angular2/platform/browser'].bootstrap;
+    bootstrap(loadedModules['jb-ui'].jBartWidget);
 })
-
 
 </script>
 

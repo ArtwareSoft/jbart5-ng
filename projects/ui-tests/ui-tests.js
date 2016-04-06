@@ -75,6 +75,14 @@ button :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: 'cc' }
 },
 
+'button.md-icon' :{$: 'ng2-ui-test',  
+  control :{$: 'button', 
+    title: 'ccc',
+    style :{$: 'button.md-icon', icon: 'save' }, 
+  },
+  expectedHtmlResult: { $: 'contains', text: 'cc' }
+},
+
 group :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [ 

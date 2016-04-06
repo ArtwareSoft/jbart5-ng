@@ -1,5 +1,5 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
 jb.component('studio.pick', {
@@ -42,7 +42,7 @@ jb.component('studio.pick', {
 		}
 		function mousemove(e) {
 			_$('#jbs-title,#jbs-rect,.jbs-shadow').css({ zIndex: -1 });
-			$el1 = $(_window.document.elementFromPoint(e.pageX - _$window.scrollLeft(), e.pageY - _$window.scrollTop()));
+			var $el1 = $(_window.document.elementFromPoint(e.pageX - _$window.scrollLeft(), e.pageY - _$window.scrollTop()));
 			if (!$el1[0]) return;
 			var $el = $($el1.get().concat($el1.parents().get())).filter(function(i,e) { return $(e).attr('jb-path') }).first();
 
@@ -55,7 +55,7 @@ jb.component('studio.pick', {
 			_$('.jbs-shadow.left').css({ width: $el.offset().left });
 			_$('.jbs-shadow.right').css({ left: $el.offset().left + $el.outerWidth() });
 			_$('.jbs-shadow.left,.jbs-shadow.right').css({ top: $el.offset().top, height: $el.outerHeight() });
-			$titleText = _$('#jbs-title .text');
+			var $titleText = _$('#jbs-title .text');
 			if ($el.attr('jb-path')) {
 				$titleText.text(studio.model.shortTitle($el.attr('jb-path')));
 			}

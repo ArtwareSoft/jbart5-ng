@@ -1,6 +1,6 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import * as jb_rx from 'ui/jb-rx';
+import {jb} from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
+import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive,Component, DynamicComponentLoader, ElementRef, Input } from 'angular2/core';
 
 jb.component('tab-control',{

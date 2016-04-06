@@ -1,8 +1,8 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import * as jb_rx from 'ui/jb-rx';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
+import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, NgZone, EventEmitter} from 'angular2/core';
-import {bootstrap} from '/jbart/node_modules/angular2/platform/browser';
+//import {bootstrap} from 'angular2/platform/browser';
 
 jb.component('openDialog', {
 	type: 'action',
@@ -17,7 +17,7 @@ jb.component('openDialog', {
 	},
 	impl: function(context,id,modal) {
 		var ctx = modal ? context.setVars({dialogData: {}}) : context;
-		var dialog = { id: ctx.params.id, onOK: ctx.params.onOK, modal: modal };
+		var dialog = { id: ctx.params.id, onOK: ctx.params.onOK, modal: modal, $: $('div') };
 		dialog.comp = jb_ui.ctrl(ctx.setVars({ $dialog: dialog })).jbExtend({
 			beforeInit: function(cmp) {
 				cmp.title = ctx.params.title(ctx);

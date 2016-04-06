@@ -1,5 +1,5 @@
-import {jb} from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 
 jb.component('pulldown.MenuItemSeparator', {
 	type: 'control',
@@ -82,10 +82,8 @@ jb.type('pulldownTopMenuItem.style');
 
 jb.component('pulldownTopMenuItem.default',{
 	type: 'pulldownTopMenuItem.style',
-	impl: function(context) {
-		return {
-			jbTemplate: '<div (mouseEnter)="mouseEnter()" (click)="openPopup()">{{title}}</div>',
-			cssClass: 'pulldown-top-menu-item'
+	impl :{$: 'customStyle',
+			template: '<button class="pulldown-top-menu-item" (mouseEnter)="mouseEnter()" (click)="openPopup()">{{title}}</button>',
 		}
 	}
 })

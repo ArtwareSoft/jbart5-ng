@@ -1,8 +1,8 @@
-import { jb } from 'js/jb';
-import * as jb_ui from 'ui/jb-ui';
-import * as jb_rx from 'ui/jb-rx';
+import { jb } from 'jb-core/jb';;
+import * as jb_ui from 'jb-ui/jb-ui';
+import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, provide, NgZone} from 'angular2/core';
-import {jb_dialogs} from 'ui/dialog';
+import {jb_dialogs} from 'jb-ui/dialog';
 import {Observable,Subject} from 'rxjs/Rx';
 
 var testModules = ['ng-ui-tests']

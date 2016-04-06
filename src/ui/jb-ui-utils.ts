@@ -1,4 +1,4 @@
-import { jb } from 'js/jb';
+import { jb } from 'jb-core/jb';;
 import {Observable,Subject} from 'rxjs/Rx';
 
 export function closestNode (el,cls) {
