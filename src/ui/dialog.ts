@@ -71,7 +71,8 @@ jb.component('dialog.md-dialog-with-close', {
 	params: {
 		closeLabel: { as: 'string', defaultValue: 'Close' },
 	},
-	impl: function(context,closeLabel) {
+	impl: {$: 'dialog.default'},
+	impl2: function(context,closeLabel) {
 		return { 
 			jbTemplate: `<div class="jb-dialog md-dialog md-dialog-absolute md-active"><md-dialog-basic>
 							  <h2 class="md-title">{{title}}</h2>
@@ -94,7 +95,28 @@ jb.component('dialog.md-dialog-ok-cancel', {
 		okLabel: { as: 'string', defaultValue: 'OK' },
 		cancelLabel: { as: 'string', defaultValue: 'Cancel' },
 	},
-	impl: function(context,okLabel,cancelLabel) {
+	impl :{$: 'customStyle',
+		template: `
+				<div class="jb-dialog jb-default-dialog">
+				      <div class="dialog-title">{{title}}</div>
+				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
+				      <div #content></div>
+					  <div>
+							<button md-button="" type="button" (click)="dialogClose({OK:false})">
+							  	<span class="md-button-wrapper">
+								      <span>%$cancelLabel%</span>
+    							</span>
+    						</button>
+							<button class="md-primary" md-button="" (click)="dialogClose({OK:true})" type="button">
+									<span class="md-button-wrapper">
+							      		<span>%$okLabel%</span>
+							    	</span>
+							</button>
+						</div>
+				</div>		
+		`
+	},
+	impl2: function(context,okLabel,cancelLabel) {
 		return { 
 			jbTemplate: `<div class="jb-dialog md-dialog md-dialog-absolute md-active"><md-dialog-basic>
 							  <h2 class="md-title">{{title}}</h2>
@@ -292,8 +314,8 @@ jb.component('dialogFeature.dragTitle', {
 export var jb_dialogs = {
 	dialogs: [],
 	_initDialogs: function() {
-		if ($('.modalOverlay').length == 0)
-			$('body').prepend('<div class="modalOverlay"></div>');
+		if ($('.modal-overlay').length == 0)
+			$('body').prepend('<div class="modal-overlay"></div>');
 		// if ($('body').find('>jb-dialog-parent')[0]) return;
 		// $('<jb-dialog-parent></jb-dialog-parent>').appendTo('body')[0];
 		// bootstrap(jbDialogParent);
@@ -305,7 +327,7 @@ export var jb_dialogs = {
 		dialogs.forEach(d=> jb.trigger(d, 'otherDialogCreated', dialog));
 		dialogs.push(dialog);
 		if (dialog.modal)
-			$('.modalOverlay').css('zIndex',40);
+			$('.modal-overlay').css('zIndex',40);
 		jb_ui.apply(context);
 
 //		jb_dialogs.dlg_ngZone && jb_dialogs.dlg_ngZone.run(()=>{});
@@ -323,7 +345,7 @@ export var jb_dialogs = {
 				}
 //			jb_dialogs.dlg_ngZone.run(()=>{})
 			if (dialog.modal)
-				$('.modalOverlay').css('zIndex',-1);
+				$('.modal-overlay').css('zIndex',-1);
 			jb_ui.apply(context);
 		}
 	},

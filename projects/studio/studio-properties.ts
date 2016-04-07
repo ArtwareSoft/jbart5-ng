@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
 jb.component('studio.openProperties', {
@@ -45,7 +45,7 @@ jb.component('studio.openNewCtrlDialog', {
 			title: 'New Control',
         	style :{$: 'dialog.md-dialog-ok-cancel', 
         		//atts: { style: 'left:20%; top:20%'},
-        		styles: ['{left:20%; top:20%}'],
+        		css: '{left:20%; top:20%}',
         		features :{$: 'dialogFeature.autoFocusOnFirstInput'}
         	},
 			content :{$: 'picklist',

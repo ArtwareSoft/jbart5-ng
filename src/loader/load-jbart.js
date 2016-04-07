@@ -65,6 +65,7 @@ jb_modules =
 'jb-ui/text',
 'jb-ui/editable-text',
 'jb-ui/editable-boolean',
+'jb-ui/editable-number',
 'jb-ui/picklist',
 'jb-ui/features',
 'jb-ui/group',
@@ -77,6 +78,7 @@ jb_modules =
 'jb-ui/pulldown-menu',
 'jb-ui/itemlog',
 'jb-ui/tab',
+'jb-ui/slider',
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups','tree','properties','pick','save','probe']

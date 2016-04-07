@@ -1,5 +1,83 @@
-import { jb } from 'jb-core/jb';;
-import {Observable,Subject} from 'rxjs/Rx';
+import { jb } from 'jb-core';
+
+if (typeof $ != 'undefined' && $.fn)
+    $.fn.findIncludeSelf = function(selector) { return this.find(selector).addBack(selector); }  
+
+export function absLeft(elem, ignoreScroll) {
+	if (elem == null) return 0;
+	var orig = elem,left = 0,curr = elem;
+	// This intentionally excludes body which has a null offsetParent.
+	if (!ignoreScroll) {
+		while (curr && curr.tagName && curr.tagName.toLowerCase() != 'body') {
+			left -= curr.scrollLeft;
+			curr = curr.parentNode; // scroll can not be calculated using offsetParent!
+		}
+	}
+	while (elem) {
+		left += elem.offsetLeft;
+		elem = elem.offsetParent;
+	}
+	return left;
+}
+
+export function absTop(elem, ignoreScroll) {
+	var top = 0,orig = elem,curr = elem;
+	if (typeof ignoreScroll === "undefined") ignoreScroll = false;
+	if (!ignoreScroll) {
+		while (curr && curr.tagName && curr.tagName.toLowerCase() != 'body') {
+			top -= curr.scrollTop;
+			curr = curr.parentNode;
+		}
+	}
+	while (elem) {
+		top += elem.offsetTop;
+		elem = elem.offsetParent;
+	}
+	return top;
+}
+
+export function relTop(elem, parent) {
+	var top = 0,orig = elem,curr = elem;
+	if (typeof ignoreScroll === "undefined") ignoreScroll = false;
+	if (!ignoreScroll) {
+		while (curr && curr.tagName && curr != parent) {
+			top -= curr.scrollTop;
+			curr = curr.parentNode;
+		}
+	}
+	while (elem && elem != parent) {
+		top += elem.offsetTop;
+		elem = elem.offsetParent;
+	}
+	return top;
+}
+
+export function mousePos(e, removeWindowScroll) {
+	var out = {};
+
+	if (e.pageX || e.pageY) {
+		out = {	x: e.pageX,	y: e.pageY };
+	} else if (e.clientX || e.clientY) {
+		var posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+		var posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+		out = {	x: posx, y: posy }
+	}
+	if (removeWindowScroll && out.y) out.y -= (win.pageYOffset || 0);
+	if (removeWindowScroll && out.x) out.x -= (win.pageXOffset || 0);
+
+	return out;
+}
+
+export function stop_prop (e) 
+{
+	if (!e) return;
+
+	if (e.stopPropagation) e.stopPropagation();
+	if(e.preventDefault) e.preventDefault();
+
+	e.cancelBubble = true;
+	return false;
+}
 
 export function closestNode (el,cls) {
 	do {
@@ -146,5 +224,4 @@ export function fixid(id) {
 	return id.replace(/\s+/g, '-');
 }
 
-if (typeof $ != 'undefined' && $.fn)
-    $.fn.findIncludeSelf = function(selector) { return this.find(selector).addBack(selector); }  
+

@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 export var modifyOperationsEm = new jb_rx.Subject();
@@ -50,7 +50,10 @@ function profileFromPath(path) {
 	var id = path.split('~')[0];
 	var comp = jbart_base().comps[id] || jbart.comps[id];
 	comp = comp && comp.impl;
-	if (!comp) debugger;
+	if (!comp) {
+		console.log('can not find path ',path);
+		return;
+	}
 	var innerPath = path.split('~').slice(1).join('~');
 	if (!innerPath)
 		return comp;

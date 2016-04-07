@@ -389,6 +389,23 @@ ngIf :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer'] },
 },
 
+'editable-number' :{$: 'ng2-ui-test',  
+  control :{$: 'group', controls: 
+    [
+      {$: 'editable-number', title: 'age',
+          databind: '%$person/age%',
+          style :{$: 'editable-number.slider'},
+      },
+      {$: 'editable-number', title: 'age',
+          databind: '%$person/age%',
+      },
+      { $: 'label', title: '%$person/age%' }
+    ]
+  },
+  expectedHtmlResult: { $: 'contains', text: ['42'] },
+},
+
+
 'editable-boolean' :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [

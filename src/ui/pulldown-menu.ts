@@ -84,7 +84,6 @@ jb.component('pulldownTopMenuItem.default',{
 	type: 'pulldownTopMenuItem.style',
 	impl :{$: 'customStyle',
 			template: '<button class="pulldown-top-menu-item" (mouseEnter)="mouseEnter()" (click)="openPopup()">{{title}}</button>',
-		}
 	}
 })
 
