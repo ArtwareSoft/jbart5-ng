@@ -44,7 +44,6 @@ jb.component('studio.openNewCtrlDialog', {
 			modal: true,
 			title: 'New Control',
         	style :{$: 'dialog.md-dialog-ok-cancel', 
-        		//atts: { style: 'left:20%; top:20%'},
         		css: '{left:20%; top:20%}',
         		features :{$: 'dialogFeature.autoFocusOnFirstInput'}
         	},
@@ -130,13 +129,23 @@ jb.component('studio.propertyField-Primitive',{
 	}
 })
 
-jb.component('studio.propertyField-Enum',{
+jb.component('studio.propertyField-enum',{
 	type: 'control',
 	params: { path: { as: 'string'} },
 	impl :{$: 'picklist', 
 		title :{$: 'studio.prop-name', path: '%$path%' },
 		databind :{$: 'studio.ref', path: '%$path%' },
 		options :{$: 'studio.enum-options', path: '%$path%' },
+	}
+})
+
+jb.component('studio.propertyField-slider',{
+	type: 'control',
+	params: { path: { as: 'string'} },
+	impl :{$: 'editable-number', 
+		title :{$: 'studio.prop-name', path: '%$path%' },
+		databind :{$: 'studio.ref', path: '%$path%' },
+		style :{$: 'editable-number.slider', width: '120px' },
 	}
 })
 
@@ -400,8 +409,10 @@ jb.component('studio.propertyField',{
 		var paramDef = studio.model.paramDef(path);
 		if (valType == 'function')
 			fieldPT = 'studio.propertyField-Javascript';
+		else if (paramDef.as == 'number')
+			fieldPT = 'studio.propertyField-slider';
 		else if (paramDef.options)
-			fieldPT = 'studio.propertyField-Enum';
+			fieldPT = 'studio.propertyField-enum';
 		else if ( ['data','boolean'].indexOf(paramDef.type || 'data') != -1 && ['number','string','undefined'].indexOf(valType) != -1) {
 			if ( studio.model.compName(path))
 				fieldPT = 'studio.propertyField-JBEditor';
@@ -557,9 +568,6 @@ jb.component('group.studio-watch-path', {
 	function profileChildren() {
 	  	return studio.model.nonControlParams(path).join(' ');
 	}
-	// function profileAsStr() {
-	//   	return jb.prettyPrint(jb.val(studio.profileRefFromPath(path)))
-	// }
   }
 })
 
