@@ -72,6 +72,7 @@ jb_modules =
 'jb-ui/group-styles',
 'jb-ui/md-layout',
 'jb-ui/button',
+'jb-ui/button-md-styles',
 'jb-ui/itemlist',
 'jb-ui/ui-common',
 'jb-ui/image',
@@ -90,6 +91,7 @@ jb_system_config = {
         'jb-ui': '/dist/src/ui',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
+        '@angular2-material': '/node_modules/@angular2-material',
       },
       packages: {  
         '/dist' : {
@@ -103,7 +105,7 @@ jb_system_config = {
           defaultExtension: 'js',
           main: 'jb-ui.js'
         },     
-        '/node_modules/@angular2-material': {
+        '@angular2-material': {
           format: 'cjs',
           defaultExtension: 'js',
         },

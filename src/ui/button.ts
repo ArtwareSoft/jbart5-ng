@@ -1,6 +1,8 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
+jb.type('button.style')
+
 jb.component('button', {
   type: "control",
   params: {
@@ -9,7 +11,7 @@ jb.component('button', {
     action: { type: 'action', essential: true, dynamic: true },
 //   disabled: { type: 'boolean', dynamic: true },
 //   description: { as: 'string' },
-    style: { type: 'button.style', defaultValue: { $: 'button.md' }, dynamic: true },
+    style: { type: 'button.style', defaultValue: { $: 'button.md-flat' }, dynamic: true },
     features: { type: 'feature[]', dynamic: true },
     $click: { type: 'boolean' },
   },
@@ -23,17 +25,6 @@ jb.component('button', {
     })
   }
 })
-
-jb.type('button.style');
-
-
-// jb.component('label.bounded-span', {
-//     type: 'label.style',
-//     impl :{$: 'customStyle', 
-//         template: '<span>{{title}}</span>',
-//         features :{$ 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
-//     }
-// })
 
 jb.component('button.href', {
   type: 'button.style',
@@ -63,79 +54,3 @@ jb.component('button.x', {
   }
 })
 
-jb.component('button.md-icon', {
-  type: 'button.style',
-  params: {
-    icon: { as: 'string' },
-    size: { as: 'number', defaultValue: 20 },
-    aria: { as: 'string' },
-  },
-  impl :{$: 'customStyle', 
-      template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}">
-                <i class="material-icons" style="font-size:%$size%px;">%$icon%</i>
-              </button></span>`,
-      css: 'button {min-width: 2px; height: 30px; padding: 4px}'
-  }
-})
-
-jb.component('button.md-icon-fab', {
-  type: 'button.style',
-  params: {
-    icon: { as: 'string' },
-    size: { as: 'number', defaultValue: '24' },
-    aria: { as: 'string' },
-  },
-  impl :{$: 'customStyle', 
-      template: `<button class="md-fab" aria-label="%$aria%" (click)="" title="{{title}}">
-                <i class="material-icons md-%$size%">%$icon%</i>
-              </button>`
-  }
-})
-
-
-jb.component('button.md',{
-  type: 'button.style',
-  params: {
-    flat: { type: 'boolean' },
-    primary: { type: 'boolean' },
-    warning: { type: 'boolean' },
-    noInk: { type: 'boolean' },
-    cornered: { type: 'boolean' },
-  },
-  impl: function(context,flat,primary,warning,noInk,cornered,cssClass) {
-    var button = context.vars.$model;
-    var noInkAtt = noInk ? 'md-no-ink': '';
-    
-    var atts = [button.icon ? 'icon-button' : '' ,
-    primary ? 'primary ' : '',flat ? '' : 'raised-button', 
-    cornered ? 'cornered' : '', warning ? 'warn' : '',cssClass]
-      .filter(x => x).map(x=>'md-'+x).join(' ');
-
-    return { 
-      jbTemplate: `<button ${atts} (click)="clicked()" ${noInkAtt}>{{title}}</button>` 
-    }
-  }
-})
-
-jb.component('button.md2', {
-  type: 'button.style',
-  params: {
-    flat: { type: 'boolean' },
-    primary: { type: 'boolean' },
-    warning: { type: 'boolean' },
-    noInk: { type: 'boolean' },
-    cornered: { type: 'boolean' },
-  },
-  impl :{$: 'customStyle', 
-      template: '<button (click)="clicked()">{{title}}</button>',
-      atts: {
-        'icon-button:notEmpty': '%$$model/icon%',
-        'primary:boolean': '%$primary%',
-        'raised-button:!boolean': '%$flat%',
-        'corenered:boolean': '%$corenered%',
-        'warn:boolean': '%$warning%',
-        'md-no-ink:boolean': '%$noInk%'
-      },
-  }
-})
-                

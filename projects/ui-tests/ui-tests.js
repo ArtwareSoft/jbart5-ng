@@ -27,7 +27,7 @@ jb_resource('ui-tests','personWithChildren',{
 
 jb_resource('ui-tests','wait5sec', new Promise(res => setTimeout(()=>{res(5)}, 5000)));
 jb_resource('ui-tests','wait2sec', new Promise(res => setTimeout(()=>{res(2)}, 2000)));
-jb_resource('ui-tests','err2sec', new Promise((res,err) => setTimeout(()=>err('simulate error'), 2000)));
+//jb_resource('ui-tests','err2sec', new Promise((res,err) => setTimeout(()=>err('simulate error'), 2000)));
 
 jb_tests('just-a-label', {
 // debug the test fw
@@ -345,10 +345,9 @@ ngIf :{$: 'ng2-ui-test',
   control :{$: 'group',
     controls : [
       {$: 'group',
-            style :{$: 'property-sheet.md' },
             controls: [
-              { $: 'editable-text', title: 'name', databind: '%$person/name%' },
-              { $: 'editable-text', title: 'name', databind: '%$person/name%' },
+              { $: 'editable-text', title: 'name', databind: '%$person/name%', style: {$: 'editable-text.md-input'} },
+              { $: 'editable-text', title: 'name', databind: '%$person/name%', style: {$: 'editable-text.md-input'} },
             ]
       },
       { $: 'label', title: '%$person/name%' }

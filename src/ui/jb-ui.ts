@@ -2,10 +2,15 @@ import {jb} from 'jb-core';
 import {enableProdMode, Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, provide, NgZone} from 'angular2/core';
 import {NgForm,FORM_DIRECTIVES,NgClass} from 'angular2/common';
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
-import {MdButton, MdAnchor} from '/node_modules/@angular2-material/button/button.js';
+//import {MdInput} from '/node_modules/@angular2-material/core/input.js';
+import {MdButton, MdAnchor} from '@angular2-material/button/button.js';
+import {MdInput} from '@angular2-material/input/input.js';
+import {MdCard} from '@angular2-material/card/card.js';
 
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as jb_dialog from 'jb-ui/dialog';
+
+var MATERIAL_DIRECTIVES = [MdButton, MdAnchor,MdInput,MdCard];
 
 enableProdMode();
 jbart.zones = jbart.zones || {}
@@ -18,7 +23,7 @@ export function apply(ctx) {
 
 export function ctrl(context) {
 	var ctx = (ctx || context).setVars({ $model: context.params });
-	var comp = context.params.style(ctx);
+	var comp = defaultStyle(ctx);
 	if (!comp) {
 		console.log('style returned null',ctx)
 		return Comp({},ctx)
@@ -26,6 +31,14 @@ export function ctrl(context) {
 	if (typeof comp == 'object')
 		comp = Comp(comp,ctx);
 	return enrichComp(comp,ctx).jbCtrl(ctx);
+
+	function defaultStyle(ctx) {
+		var profile = context.profile;
+		var defaultVar = (profile.$ || '')+'.default-style-profile';
+		if (!profile.style && context.vars[defaultVar])
+			return ctx.run({$:context.vars[defaultVar]})
+		return context.params.style(ctx);
+	}
 }
 
 export function Comp(options,context) {
@@ -34,7 +47,7 @@ export function Comp(options,context) {
 		Component({
 			selector: 'div',
 			template: options.template || '',
-			directives: [MdButton, MdAnchor,FORM_DIRECTIVES, NgClass] 
+			directives: [MATERIAL_DIRECTIVES,FORM_DIRECTIVES, NgClass] 
 		}),
 		Reflect.metadata('design:paramtypes', [DynamicComponentLoader, ElementRef])
 	], Cmp);

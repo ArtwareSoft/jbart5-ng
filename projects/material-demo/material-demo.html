@@ -2,7 +2,7 @@
 <html>
 
   <head>
-    <title>Angular Material - Getting Started</title>
+    <title>Material2 Demo with jBart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
 
@@ -21,11 +21,11 @@
 
 
 <body>
-  <jbart compID="ng-material.main">loading ...</jbart>
+  <jbart compID="material-demo.main">loading ...</jbart>
 
 <script>
 
-jbLoadModules(jb_modules.concat(['projects/ng-material/ng-material'])).then(loadedModules=>{
+jbLoadModules(jb_modules.concat(['projects/material-demo/material-demo'])).then(loadedModules=>{
     var bootstrap = loadedModules['angular2/platform/browser'].bootstrap;
     bootstrap(loadedModules['jb-ui'].jBartWidget);
 })

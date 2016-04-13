@@ -1,9 +1,37 @@
-jbart5 on github
-  npm install
-letmesee room project
-angular like site project
+npm install
+
+md-button styles
+md-toolbar
+md-left-nav 
+
+dialog-ok-cancel
+	fix button positions
+
+create control (maybe dragable to the tree)
+	controls
+	---------
+	button,label
+
+	fields
+	---------
+	text,number,boolean
+	
+	layout
+	--------
+	vertical,horizontal,flex,responsive
+
+
+	group
+	----------
+	section, propertySheet,tabs,itemlist,
+
+hamburger toolbar menu in the studio-tree
+	delete
+	wrap with group
+	duplicate: ctrl-drag
 
 studio
+======
 jb logo
 main toolbar design
 undo
@@ -11,10 +39,11 @@ property editor
   array editor for the property editor
   features (accordion)
   style toolbar
-  use material animation for fields
+  use material fields
 
 custom style editor
-indication (with popups?)
+indication
+	with emitter api
 'xtml' inteliscript editor
   preview probe
 

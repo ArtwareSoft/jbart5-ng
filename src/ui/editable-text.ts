@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 jb.type('editable-text.style');
@@ -29,6 +29,18 @@ jb.component('editable-text.input',{
 	}
 })
 
+jb.component('editable-text.md-input',{
+  type: 'editable-text.style',
+  impl :{$: 'customStyle', 
+      features :{$: 'editable-text.bindField' },
+      template: `<span><md-input %$field.modelExp% placeholder="{{title}}"></md-input></span>`,
+      methods: {
+      	init: ctx => cmp => {
+      		cmp.title = ctx.vars.$model.title();
+      	}
+      }
+	}
+})
 
 jb.component('editable-text.textarea', {
 	type: 'editableText.style',
@@ -99,7 +111,7 @@ jb.component('editable-text.codemirror', {
 			}
 		}
 	}
-});
+})
 
 
 

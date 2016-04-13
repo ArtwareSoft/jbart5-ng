@@ -1,8 +1,6 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-//import {Location} from '/jbart/node_modules/angular2/router';
-import {Observable,Subject} from 'rxjs/Rx';
 
 jb.component('wait', {
   type: 'feature',
@@ -17,7 +15,7 @@ jb.component('wait', {
         return jb_rx.observableFromCtx(ctx.setData(waitFor))
           .flatMap(x=>originalCtrlsEmFunc(ctx))
           .startWith([loading(ctx)])
-          .catch(e=>{ return Observable.of([error(ctx.setVars({error:e}))])})
+          .catch(e=>{ return jb_rx.Observable.of([error(ctx.setVars({error:e}))])})
       }
   }}
 })
