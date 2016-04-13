@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
 jb.component('studio.openControlTree', {
@@ -7,7 +7,7 @@ jb.component('studio.openControlTree', {
 	impl :{$: 'openDialog',
 		title: 'Control Tree',
 //		styles: ['* {padding:3px}'],
-		style :{$: 'dialog.studioFloating', id: 'studio control tree', width: 250 },
+		style :{$: 'dialog.studioFloating', id: 'studio control tree', width: 600 },
 		content :{$: 'studio.controlTree' }
 	}
 });
@@ -15,7 +15,7 @@ jb.component('studio.openControlTree', {
 jb.component('studio.controlTree',{
 	type: 'control',
 	impl: {
-		$: 'tree', cssClass: 'jb-control-tree studio-control-tree',
+		$: 'tree', cssClass1: 'jb-control-tree studio-control-tree',
 		nodeModel: { $: 'studio.controlTree.nodes' },
 		features: [
 			{ $: 'tree.selection', 

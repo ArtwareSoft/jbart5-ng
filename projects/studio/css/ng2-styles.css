@@ -107,12 +107,12 @@ padding: 10px 10px 10px 27px; color: #6D6E71; min-height: 12px; border-bottom: 1
 .highlight { font-weight: bold; }
 
 /*** tree *******/
-.jb-control-tree { margin: 0; padding: 0; max-height: 260px; overflow: auto;}
+.jb-control-tree { margin: 0; padding: 0; }
 .jb-control-tree:focus { outline: none; }
 .jb-control-tree .treenode-children { margin: 0; padding: 0 0 0 10px; }
 .jb-control-tree ul,li { list-style: none; padding: 1px 0;}
 .jb-control-tree .treenode-line { width:300px; display: flex; box-orient: horizontal; padding-bottom: 3px; }
-.jb-control-tree .treenode-label { display: block; color: #3D443D; font-size: 12px; vertical-align: top; padding: 0; max-width: 240px; 
+.jb-control-tree .treenode-label { display: block; color: #3D443D; font-size: 12px; vertical-align: top; padding: 0; 
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .jb-control-tree .treenode-icon { width: 16px; height1:14px; display: inline-block;  background: url('icons1.png?v=16_02') no-repeat; 
   margin-right: 2px; vertical-align: top; background-position: 0px -16px;} /* fix background position to get other icons */
@@ -178,7 +178,7 @@ border: 1px solid rgb(213, 213, 213);}
 .editable-boolean-expand-collapse.collapsed .line2 { display: block; }
 .editable-boolean-expand-collapse:focus { outline: none; }
 
-.modalOverlay {
+.modal-overlay {
    position: fixed;
    width: 100%;
    height: 100%;
