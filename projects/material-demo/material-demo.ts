@@ -29,7 +29,7 @@ jb.component('material-demo.main', {
       { $: 'editable-text', 
         title: 'Company (disabled)',
         databind: '%company%',
-        features: [ {$: 'disabled', showCondition: false }, {$: 'material-demo.input.full-width'} ], 
+        //features: [ {$: 'disabled', showCondition: false }, {$: 'material-demo.input.full-width'} ], 
       },
       { $: 'group', 
         style :{$: 'layout.horizontal'},

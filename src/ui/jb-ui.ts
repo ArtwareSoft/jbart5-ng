@@ -153,12 +153,12 @@ export function enrichComp(comp,ctrl_ctx) {
 	    } catch(e) { jb.logException(e,'') }
 		// ng-model or ngmodel => ngModel
 		annotations.template = annotations.template.replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
-		comp.jbApplyFeatures(options.features, context);
-		return comp;
-    }
 
-    comp.jbApplyFeatures = function(featureProfiles,context) {
-		(featureProfiles || []).forEach(f => comp.jbExtend(context.run(f), context))
+		(options.features || []).forEach(f => 
+			comp.jbExtend(context.run(f), context));
+		
+		(options.featuresOptions || []).forEach(f => 
+				comp.jbExtend(f, context))
 		return comp;
     }
 

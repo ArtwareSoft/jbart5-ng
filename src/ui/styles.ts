@@ -9,16 +9,15 @@ jb.component('customStyle', {
 		css: { as: 'string'},
 		atts: { as: 'object'},
 		methods: { as: 'object'},
-        features: { ignore: true },
+    	features: { type: 'feature[]', dynamic: true },
 	},
-	impl: function (context,template,isInner,css,atts,methods) {
+	impl: function (context,template,isInner,css,atts,methods,features) {
 		var options = jb.extend(
 			jb.obj(isInner ? 'template' : 'jbTemplate',template), {
 				styles: css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'),
 				atts: atts,
+				featuresOptions: features()
 			},methods)
-		if (context.profile.features)
-			jb.extend(options,{features: jb.toarray(context.profile.features)})
 		return options;
 	}
 })

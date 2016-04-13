@@ -254,7 +254,7 @@ jb.component('dialogFeature.maxZIndexOnClick', {
 
 		function setAsMaxZIndex() {
 			var maxIndex = jb_dialogs.dialogs.reduce(function(max,d) { 
-				return Math.max(max,(parseInt(d.$el.css('z-index')) || 0)+1)
+				return Math.max(max,(d.$el && parseInt(d.$el.css('z-index')) || 0)+1)
 			}, minZIndex || 100)
 
 			dialog.$el.css('z-index',maxIndex);

@@ -7,7 +7,7 @@ jb.component('studio.openControlTree', {
 	impl :{$: 'openDialog',
 		title: 'Control Tree',
 //		styles: ['* {padding:3px}'],
-		style :{$: 'dialog.studioFloating', id: 'studio control tree', width: 600 },
+		style :{$: 'dialog.studioFloating', id: 'studio control tree', width: 300 },
 		content :{$: 'studio.controlTree' }
 	}
 });
@@ -15,7 +15,7 @@ jb.component('studio.openControlTree', {
 jb.component('studio.controlTree',{
 	type: 'control',
 	impl: {
-		$: 'tree', cssClass1: 'jb-control-tree studio-control-tree',
+		$: 'tree', cssClass: 'jb-control-tree studio-control-tree',
 		nodeModel: { $: 'studio.controlTree.nodes' },
 		features: [
 			{ $: 'tree.selection', 
