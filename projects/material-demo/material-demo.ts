@@ -11,22 +11,6 @@ jb.resource('material-demo','person',{
   "postalCode": "94043",
 })
 
-jb.component('material-demo.main1', {
-  type: 'control', 
-  impl2 :{ $: 'editable-text', title: 'First Name', databind: '%$person/firstName%', style :{$: 'editable-text.md-input'} },
-
-  impl :{$:'label', 
-      style: { $: 'customStyle', 
-        template: `
-<span>
-      <md-input class="demo-full-width" placeholder="Company (disabled)" value="Google">
-      </md-input>
-</span>
-        ` 
-      }
-  }
-})
-
       // </md-input>
       //   <div>
       //             <button md-raised-button>raised</button>
