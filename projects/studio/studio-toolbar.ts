@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 
 jb.component('studio.pickAndOpen', {
 	type: 'action',
@@ -80,8 +80,8 @@ jb.component('studio.toolbar', {
         action :{$: 'studio.showProbeData' }
       }, 
       {$: 'button', 
-        title: 'insert control', 
-        style :{$: 'studio_button.toolbarButton', spritePosition: '11,1' }, 
+        title: 'insert control',
+        style :{$: 'button.md-icon', icon: 'add' }, 
         action :{$: 'studio.openNewCtrlDialog' }
       }
     ]

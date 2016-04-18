@@ -21,7 +21,9 @@ jb.component('studio.all', {
 	    features :{$: 'group.watch', data: '%$globals/project%' }, 
 	    controls: [
 			{ $: 'group', cssClass: 'studio-top-menu',  controls: [
-				  { $: 'label', cssClass: 'studio-widget-name',
+				  { $: 'label',
+				  	style :{$: 'label.h1'},
+				  	features :{$: 'css', css: '{margin-top: 5px; margin-left: 8px}' } 
 					title: ['{%$globals/project%}', { $: 'replace', find: '_', replace: ' ' }],
 				  },
 				  { $: 'studio.mainMenu' }
@@ -76,21 +78,6 @@ jb.component('studio.all', {
 // 		]
 // 	}
 // })
-
-jb.component('studio.logo',{
-	params: {
-		zoom: { as: 'number', defaultValue: 20}
-	},
-	impl: (ctx,zoom) =>	jb_ui.Comp( { templte: `<div style="position:relative;width1:600px;padding: 30px 40px 30px 100px;background-color: #327DC8;zoom: ${zoom}%;">
-		<span style="position: absolute;margin-top:20px;margin-left:50px; color: white; font-size: 127px; font-family: Times New Roman, Times, serif">jB</span>
-		<span style="position: absolute;margin-top:32px;margin-left:240px; color: white; font-size: 110px; font-family: Arial, Helvetica, sans-serif" >art</span>
-		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215px" height="228px" viewBox="0 0 215 228" preserveAspectRatio="xMidYMid meet" zoomAndPan="disable" xmlns:svg="http://www.w3.org/2000/svg">
-		<polygon points="106 0 0   38 17  178 106 228" fill="#DE3641" ></polygon>
-		<polygon points="106 0 215 38 198 178 106 228" fill="#B13138" ></polygon>
-		</svg>
-		</div>`
-		},ctx)
-})
 
 jb.component('studio.projectPages',{
 	type: 'data',
