@@ -44,8 +44,10 @@ jb.component('studio.openNewCtrlDialog', {
 			modal: true,
 			title: 'New Control',
         	style :{$: 'dialog.md-dialog-ok-cancel', 
-        		css: '{left:20%; top:20%}',
-        		features :{$: 'dialogFeature.autoFocusOnFirstInput'}
+        		features : [
+        			{ $: 'dialogFeature.autoFocusOnFirstInput'},
+					{ $: 'dialogFeature.nearLauncherLocation' }
+        		]
         	},
 			content :{$: 'picklist',
 				databind: '%$dialogData/comp%',
@@ -75,7 +77,7 @@ jb.component('studio.openSourceDialog', {
 	impl :{$: 'openDialog',
 			modal: true,
 			title: 'Source',
-        	style :{$: 'dialog.md-dialog-ok-cancel', css: '{left:20%; top:20%}'	},
+        	style :{$: 'dialog.md-dialog-ok-cancel' },
 			content :{$: 'text', 
 				text :{$: 'studio.compSource'},
 				style:{$: 'text.codemirror'}

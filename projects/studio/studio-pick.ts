@@ -83,8 +83,9 @@ jb.component('studio.pick', {
 			}
 			finish();
 			$('<div class="jb-noclick-cover" style="z-index:5000;position:absolute;top:0;left:0;right:0;background:transparent;" />').css('height',docHeight()+'px')
-			.mouseup(function() { $(this).remove(); })
-			.appendTo(_window.document.body);
+				.mouseup(() => 
+					$('.jb-noclick-cover').remove())
+				.appendTo(_window.document.body);
 		}
 
 		function keyup(e) {

@@ -22,7 +22,9 @@ jb.component('openDialog', {
 			beforeInit: function(cmp) {
 				cmp.title = ctx.params.title(ctx);
 				cmp.dialog = dialog;
-				cmp.dialog.$el = $(cmp.elementRef.nativeElement).find('>*');
+				cmp.dialog.$el = $(cmp.elementRef.nativeElement);
+				cmp.dialog.$el.css('z-index',100);
+
 				cmp.dialogClose = dialog.close;
 				var content = ctx.params.content(ctx);
 				jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
@@ -44,48 +46,12 @@ jb.component('closeContainingPopup', {
 
 jb.component('dialog.default', {
 	type: 'dialog.style',
-	impl: function(context) {
-		return { jbTemplate: `<div class="jb-dialog jb-default-dialog">
+	impl :{$: 'customStyle',
+		template: `<div class="jb-dialog jb-default-dialog">
 				      <div class="dialog-title">{{title}}</div>
 				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
 				      <div #content></div>
-				    </div>`, 
-		}
-	}
-});
-
-jb.component('dialog.md-dialog', {
-	type: 'dialog.style',
-	impl: function(context) {
-		return { 
-			jbTemplate: `<div class="jb-dialog md-dialog md-dialog-absolute md-active"><md-dialog-basic>
-							  <h2 class="md-title">{{title}}</h2>
-							  <div #content></div>
-							 </md-dialog-basic></div>`,
-		}
-	}
-})
-
-jb.component('dialog.md-dialog-with-close', {
-	type: 'dialog.style',
-	params: {
-		closeLabel: { as: 'string', defaultValue: 'Close' },
-	},
-	impl: {$: 'dialog.default'},
-	impl2: function(context,closeLabel) {
-		return { 
-			jbTemplate: `<div class="jb-dialog md-dialog md-dialog-absolute md-active"><md-dialog-basic>
-							  <h2 class="md-title">{{title}}</h2>
-							  <div #content></div>
-							<md-dialog-actions>
-							<button class="md-primary" md-button="" (click)="dialogClose({OK:true})" type="button">
-									<span class="md-button-wrapper">
-							      		<span>${closeLabel}</span>
-							    	</span>
-							</button>
-							</md-dialog-actions>
-							 </md-dialog-basic></div>`,
-		}
+				    </div>` 
 	}
 })
 
@@ -115,26 +81,6 @@ jb.component('dialog.md-dialog-ok-cancel', {
 						</div>
 				</div>		
 		`
-	},
-	impl2: function(context,okLabel,cancelLabel) {
-		return { 
-			jbTemplate: `<div class="jb-dialog md-dialog md-dialog-absolute md-active"><md-dialog-basic>
-							  <h2 class="md-title">{{title}}</h2>
-							  <div #content></div>
-							<md-dialog-actions>
-							<button md-button="" type="button" (click)="dialogClose({OK:false})">
-							  	<span class="md-button-wrapper">
-								      <span>${cancelLabel}</span>
-    							</span>
-    						</button>
-							<button class="md-primary" md-button="" (click)="dialogClose({OK:true})" type="button">
-									<span class="md-button-wrapper">
-							      		<span>${okLabel}</span>
-							    	</span>
-							</button>
-							</md-dialog-actions>
-							 </md-dialog-basic></div>`,
-		}
 	}
 })
 
@@ -202,7 +148,7 @@ jb.component('dialogFeature.closeWhenClickingOutside', {
 		var dialog = context.vars.$dialog;
 		jb.delay(10).then(() => // close older before
 			window.onmousedown = function(e) {
-				if ($(e.target).closest(dialog.$el.parent())[0]) return;
+				if ($(e.target).closest(dialog.$el[0]).length) return;
 				dialog.close();
 			})
 		jb.bind(dialog, 'close', function() {
@@ -220,9 +166,6 @@ jb.component('dialogFeature.autoFocusOnFirstInput', {
 				jb.delay(1).then(()=>dialog.$el.find('input,textarea,select').first().focus());
 			}
 		}
-		// jb.bind(dialog,'attach',function() {
-		// 	dialog.$el.find('input,textarea').first().focus();
-		// })
 	}
 })
 
@@ -254,7 +197,7 @@ jb.component('dialogFeature.maxZIndexOnClick', {
 
 		function setAsMaxZIndex() {
 			var maxIndex = jb_dialogs.dialogs.reduce(function(max,d) { 
-				return Math.max(max,(d.$el && parseInt(d.$el.css('z-index')) || 0)+1)
+				return Math.max(max,(d.$el && parseInt(d.$el.css('z-index')) || 100)+1)
 			}, minZIndex || 100)
 
 			dialog.$el.css('z-index',maxIndex);
@@ -273,9 +216,8 @@ jb.component('dialogFeature.dragTitle', {
 		      innerhost: { '.dialog-title' : {
 		      	'(mouseup)': 'mouseup.next($event)', 
 		      	'(mousedown)': 'mousedown.next($event)', 
-//		      	'(mousemove)': 'mousemove.next($event)', 
 		       }},
-		       styles: ['.dialog-title { cursor: pointer }'],
+		       css: '.dialog-title { cursor: pointer; user-select: none }',
 		       init: function(cmp) {
 				  if (id && sessionStorage.getItem(id)) {
 						var pos = JSON.parse(sessionStorage.getItem(id));
@@ -285,7 +227,6 @@ jb.component('dialogFeature.dragTitle', {
 
 				  cmp.mouseup   = new EventEmitter();
 				  cmp.mousedown = new EventEmitter();
-//				  cmp.mousemove = new EventEmitter();
 				  var storedPos = new EventEmitter();
 				  var mousedrag = cmp.mousedown.map(event => {
 				        event.preventDefault();
@@ -314,11 +255,6 @@ jb.component('dialogFeature.dragTitle', {
 export var jb_dialogs = {
 	dialogs: [],
 	_initDialogs: function() {
-		if ($('.modal-overlay').length == 0)
-			$('body').prepend('<div class="modal-overlay"></div>');
-		// if ($('body').find('>jb-dialog-parent')[0]) return;
-		// $('<jb-dialog-parent></jb-dialog-parent>').appendTo('body')[0];
-		// bootstrap(jbDialogParent);
 	},
 	addDialog: function(dialog,context) {
 		this._initDialogs();
@@ -327,10 +263,9 @@ export var jb_dialogs = {
 		dialogs.forEach(d=> jb.trigger(d, 'otherDialogCreated', dialog));
 		dialogs.push(dialog);
 		if (dialog.modal)
-			$('.modal-overlay').css('zIndex',40);
-		jb_ui.apply(context);
+			$('body').prepend('<div class="modal-overlay"></div>');
 
-//		jb_dialogs.dlg_ngZone && jb_dialogs.dlg_ngZone.run(()=>{});
+		jb_ui.apply(context);
 
 		dialog.close = function(args) {
 			jb.trigger(dialog, 'close');
@@ -343,9 +278,8 @@ export var jb_dialogs = {
 				} catch (e) {
 					console.log(e);
 				}
-//			jb_dialogs.dlg_ngZone.run(()=>{})
 			if (dialog.modal)
-				$('.modal-overlay').css('zIndex',-1);
+				$('.modal-overlay').first().remove();
 			jb_ui.apply(context);
 		}
 	},
@@ -353,30 +287,3 @@ export var jb_dialogs = {
 		this.dialogs.forEach(d=>d.close());
 	}
 }
-
-// @Component({  // allow features to share the dialog object
-// 	selector: '[jb-dialog-injector]',
-// 	template: '<div #dialog></div>'
-// })
-// class jbDialogInjector {
-// 	@Input() dialog;
-// 	@Input('jb-dialog-injector') injector;
-// 	constructor(public dcl: DynamicComponentLoader, public elementRef: ElementRef) { }
-// 	ngOnInit() {
-// 		this.dcl.loadIntoLocation(this.dialog.cmp, this.elementRef, 'dialog');
-// 	}
-// }
-
-// @Component({
-// 	template: `<div *ngFor="#dialog of dialogs"><div jb-dialog-injector [dialog]="dialog"></div></div>`, // 
-//     selector: 'jb-dialog-parent',
-// 	directives: [jbDialogInjector],
-// })
-// class jbDialogParent {
-// 	constructor(private ngZone: NgZone) { 
-// //		jb_dialogs.dlg_ngZone = ngZone;
-// 	}
-// 	ngOnInit() {
-// 		this.dialogs = jb_dialogs.dialogs;
-// 	}
-// }

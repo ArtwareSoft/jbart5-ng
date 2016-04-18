@@ -53,12 +53,11 @@ jb.component('pulldown.topMenuItem', {
 	impl: function(context) { 
 		var openPopup = function(ctx,cmp) {
 			return ctx.setVars({
-				popupWidth: ctx.vars.$launchingElement.$el.outerWidth() - 2
+				popupWidth: ctx.vars.$launchingElement.$el.outerWidth()
 			}).run({
 				$: 'openDialog', 
-				style: { $: 'pulldownPopup.mainMenuPopup' }, 
-//				cssClass: 'jb-popup',
-				content: { $: 'group', controls: (ctx) => context.params.controls(ctx) }
+				style :{$: 'pulldownPopup.mainMenuPopup' }, 
+				content :{$: 'group', controls: (ctx) => context.params.controls(ctx) }
 			})
 		}
 
@@ -89,11 +88,9 @@ jb.component('pulldownTopMenuItem.default',{
 
 jb.component('pulldownPopup.mainMenuPopup',{
 	type: 'dialog.style',
-	impl: function(context) {
-		return {
-			jbTemplate: '<div><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>', 
-			cssClass: 'jb-dialog pulldown-mainmenu-popup',
-			styles: ['.pulldown-menu-remove-top-border { width: {%$popupWidth%}px }'],
+	impl :{$: 'customStyle',
+			template: '<div class="jb-dialog pulldown-mainmenu-popup"><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>', 
+			css: '.pulldown-menu-remove-top-border { width: %$popupWidth%px }',
 			features: [
 					{ $: 'dialogFeature.uniqueDialog', id: 'pulldown main menu popup', remeberLastLocation: false },
 					{ $: 'dialogFeature.maxZIndexOnClick' },
@@ -101,7 +98,6 @@ jb.component('pulldownPopup.mainMenuPopup',{
 					{ $: 'dialogFeature.cssClassOnLaunchingControl' },
 					{ $: 'dialogFeature.nearLauncherLocation' }
 			]
-		}
 	}
 })
 

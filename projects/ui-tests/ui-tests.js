@@ -340,14 +340,13 @@ ngIf :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer'] },
 },
 
-
 'editable-text-in-md-property-sheet' :{$: 'ng2-ui-test',  
   control :{$: 'group',
     controls : [
       {$: 'group',
             controls: [
-              { $: 'editable-text', title: 'name', databind: '%$person/name%', style: {$: 'editable-text.md-input'} },
-              { $: 'editable-text', title: 'name', databind: '%$person/name%', style: {$: 'editable-text.md-input'} },
+              { $: 'editable-text', title: 'name', databind: '%$person/name%', style :{$: 'editable-text.md-input'} },
+              { $: 'editable-text', title: 'name', databind: '%$person/name%', style :{$: 'editable-text.md-input'} },
             ]
       },
       { $: 'label', title: '%$person/name%' }
@@ -535,7 +534,7 @@ dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},
   control :{$: 'button', title: 'Open Dialog', $click: true,
       action :{$: 'openDialog', 
         modal: true,
-        style :{$: 'dialog.md-dialog-ok-cancel', atts: { style: 'left:20%;top:20%'}},
+        style :{$: 'dialog.md-dialog-ok-cancel' },
         title: 'Hello' , 
         content :{$: 'label', title: 'Hello Dialog' },      
       } 
