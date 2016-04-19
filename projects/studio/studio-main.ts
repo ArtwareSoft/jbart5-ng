@@ -95,8 +95,9 @@ jb.component('studio.renderWidget',{
 					jb_ui.getZone('studio.all').then(zone=> {
 						zone.onStable.subscribe(function(){
 							w.jbart.studioGlobals = ctx.run('{%$globals%}');
-							w.setTimeout(()=>{},1); // refresh preview
-							//w.ngZone.run(()=> {})
+							// refresh preview
+							jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
+							//w.setTimeout(()=>{},1); 
 						});
 					})
 					jb.trigger(jbart, 'preview_loaded');
@@ -190,7 +191,7 @@ jb.component('studio.compName-ref',{
 })
 
 jb.component('studio.insertComp',{
-	params: { 
+	paframs: { 
 		path: { as: 'string' },
 		comp: { as: 'string' },
 	},
@@ -220,7 +221,7 @@ jb.component('studio.projectSource',{
 
 jb.component('studio.compSource',{
 	params: { 
-		comp: { as: 'string', defaultValue: '%$globals/profile_path%' } 
+		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
 	},
 	impl: (context,comp) => 
 		studio.comp_asStr(comp.split('~')[0])

@@ -30,14 +30,6 @@ jb.component('studio.showNgComponent', {
 	}
 })
 
-//   cm_settings: {
-//     extraKeys: {
-//         "Ctrl-Space": "autocomplete",
-//         "Ctrl-Enter": editor => updateJbartScriptFromCM(editor.getValue())
-//     }
-// }
-//			features:  { $onupdate: { $:'studio.markSourceAsDirty' } }
-
 jb.component('studio.currentProfileAsScript', {
 	type: 'data',
 	params: {
@@ -53,8 +45,6 @@ jb.component('studio.currentProfileAsScript', {
 					var newProf = studio.evalProfile(value);
 					if (newProf)
 						studio.model.modify(studio.model.writeValue, path, { value: newProf },context);
-					//studio.writeValue(path,newProf);
-					//newProf && jb.writeValue(ref,newProf);
 				}
 			}
 		}

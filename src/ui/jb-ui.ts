@@ -299,44 +299,6 @@ export function controlsToGroupEmitter(controlsFunc, cmp) {
 	return cmp.ctrlsEmFunc ? ctx => cmp.ctrlsEmFunc(controlsFuncAsObservable,ctx,cmp) : controlsFuncAsObservable;
 }
 
-// export function groupEmitter(controls, context) { return {
-// 	init: function(cmp) {
-//         var orignalCtrlEmFunc = ctx => jb_rx.Observable.concat.apply(jb_rx.Observable.of(),controls(ctx));
-// 		var ctrlsEm = cmp.ctrlsEmFunc ? cmp.ctrlsEmFunc(orignalCtrlEmFunc,context) : orignalCtrlEmFunc(context);
-// 		if (!ctrlsEm.subscribe)
-// 			debugger;
-// 		cmp.innerRefs = [];
-// 		ctrlsEm.map(x=> (x instanceof jb.Ctx) ? x.data : x)
-// 		.subscribe(function(innerCmp) {
-// 			if (innerCmp == 'empty') {
-// 				cmp.innerRefs.forEach(r=>r.then(v=>v.dispose()));
-// 				cmp.innerRefs = [];
-// 			} else if (innerCmp.jbCtrl) {
-// 		        cmp.innerRefs.push(loadIntoLocation(innerCmp, cmp, 'child',context))
-// 		    } else {
-// 		    	console.log('error in groupEmitter. got ',innerCmp)
-// 		    }
-//         })
-// 	}
-// }}
-
-
-// export function oneWayBind(ref,prop,parentName) {
-// 	parentName = parentName || 'parent';
-//     if (ref.$jb_parent) return { // dynamic
-//         databind: function(cmp) {
-//             cmp[parentName] = ref.$jb_parent;
-//         },
-//         modelExp: `{{${parentName}.${ref.$jb_property}}}`
-//     }
-//     return { // static
-//         databind: function(cmp) {
-//             cmp[prop] = jb.val(ref);
-//         },
-//         modelExp: `{{${prop}}}`
-//     }
-// }
-
 export function ngRef(ref,cmp) {
 	if (typeof ref == 'string' && ref.match(/{{.*}}/))
 		return {$jb_parent: cmp, $jb_property: ref.match(/{{(.*)}}/)[1] }
@@ -417,7 +379,7 @@ export class jBartWidget {
 		jbart.widgetLoaded = true; // for studio
 	}
 	ngDoCheck() {
-		if (this.compId == 'studio.all')
+		if (this.compId == 'studio.all' && jbart.redrawStudio) // put the redrawStudio function ob jbart
 			jbart.redrawStudio = () => 
 				this.redrawEm.next(this.compId);
 
