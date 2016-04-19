@@ -421,6 +421,12 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
         result += '}';
       }
   }
+  function quotePropName(p) {
+    if (p.match(/^[$a-zA-Z_][$a-zA-Z0-9_]*$/))
+      return p;
+    else
+      return `"${p}"`
+  }
   function printProp(obj,prop,path) {
     if (obj[prop].$jb_arrayShortcut)
       obj = jb_obj(prop,obj[prop].items);
@@ -430,7 +436,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
     if (prop == '$')
       result += '$: '
     else
-      result += prop + (jb_compName(obj[prop]) ? ' :' : ': ');
+      result += quotePropName(prop) + (jb_compName(obj[prop]) ? ' :' : ': ');
     //depth++;
     printValue(obj[prop],path+'~'+prop);
     //depth--;
@@ -463,7 +469,8 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
     remainedInLine = colWidth - tabSize * depth;
   }
   function flat_obj(obj) {
-    var props = ownPropertyNames(obj).filter(x=>x!='$').map(prop => prop + ': ' + flat_val(obj[prop]));
+    var props = ownPropertyNames(obj).filter(x=>x!='$').map(prop => 
+      quotePropName(prop) + ': ' + flat_val(obj[prop]));
     if (obj.$) {
       props.unshift("$: '" + obj.$+ "'");
       return '{' + props.join(', ') + ' }'
@@ -472,9 +479,9 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
   }
   function flat_property(obj,prop) {
     if (jb_compName(obj[prop]))
-      return prop + ' :' + flat_val(obj[prop]);
+      return quotePropName(prop) + ' :' + flat_val(obj[prop]);
     else
-      return prop + ': ' + flat_val(obj[prop]);
+      return quotePropName(prop) + ': ' + flat_val(obj[prop]);
   }
   function flat_val(val) {
     if (Array.isArray(val)) return flat_array(val);

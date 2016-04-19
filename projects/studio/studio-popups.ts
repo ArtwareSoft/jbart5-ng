@@ -6,7 +6,7 @@ jb.component('studio.editSource', {
 	type: 'action',
 	impl: {
 		$: 'openDialog',
-		title: 'edit source - %$globals/profile_path%',
+		title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
 		style :{$: 'dialog.studioFloating', id: 'edit source', width: 600 },
 		features :{$: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}'},
 		content :{$: 'editable-text', 
@@ -41,7 +41,7 @@ jb.component('studio.showNgComponent', {
 jb.component('studio.currentProfileAsScript', {
 	type: 'data',
 	params: {
-		path: { as: 'string', defaultValue: '%$globals/profile_path%' }
+		path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
 	},
 	impl: function(context,path) {
 		var ref = studio.profileRefFromPath(path);

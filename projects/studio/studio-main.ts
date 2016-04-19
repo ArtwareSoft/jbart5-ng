@@ -61,24 +61,6 @@ jb.component('studio.all', {
 	}
 })
 
-// 	cssClass1: 'studio-top-bar',
-// 	    features :{$databind: '{%$globals/project%}' }, 
-// 	    controls: [
-// 			{ $: 'group', cssClass: 'studio-top-menu',  controls: [
-// 				  { $: 'label', cssClass: 'studio-widget-name',
-// 					title: ['{%$globals/project%}', { $: 'replace', find: '_', replace: ' ' }],
-// 				  },
-// 				  { $: 'studio.mainMenu' }
-// 		      ]
-// 			},
-// 			{ $: 'studio.toolbar' },
-// 			{ $: 'group', cssClass: 'studio-jbart-logo',
-// 			  	controls :{$: 'image', url: '/jbart/projects/studio/css/favicon.png' }
-// 			},
-// 		]
-// 	}
-// })
-
 jb.component('studio.projectPages',{
 	type: 'data',
 	impl: function(context) {
@@ -113,7 +95,7 @@ jb.component('studio.renderWidget',{
 					jb_ui.getZone('studio.all').then(zone=> {
 						zone.onStable.subscribe(function(){
 							w.jbart.studioGlobals = ctx.run('{%$globals%}');
-							w.setTimeout(()=>{},1); // refresh inner jBart
+							w.setTimeout(()=>{},1); // refresh preview
 							//w.ngZone.run(()=> {})
 						});
 					})
@@ -149,10 +131,8 @@ jb.component('studio.waitForPreviewIframe',{
 	}
 })
 
-jb.component('studio.currentProfileRef', {
-	impl :{$: 'studio.ref',
-		path :{$firstSucceeding: ['{%$globals/profile_path%}','{%$globals/page%}'] } 
-	}
+jb.component('studio.currentProfilePath', {
+	impl: { $firstSucceeding: ['{%$globals/profile_path%}', '{%$globals/project%}.{%$globals/page%}'] }
 })
 
 

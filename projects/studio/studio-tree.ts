@@ -20,31 +20,16 @@ jb.component('studio.controlTree',{
 		features: [
 			{ $: 'tree.selection', 
 				autoSelectFirst: true, 
-				databind: '{%$globals/profile_path%}',
+				databind: '%$globals/profile_path%',
 				onSelection :{$: 'studio.highlight-in-preview'},
 				onDoubleClick: [
 					{$: 'studio.openProperties'},
 					{$: 'studio.highlight-in-preview'},
 				],
-    //   				{ $: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
-				// 	{ $: 'studio.openProperties'}
-				// ]
 			},
 			{ $: 'tree.keyboard-selection', onEnter :{$: 'studio.openProperties'} }, 
 			{ $: 'tree.drag-and-drop' },
 			{ $: 'studio.controlTree.refreshPathChanges'},
-		  // { $: 'studio.controlTreeIcon' },
-		  // { $: 'treeSelection',
-		  //   onSelection: [
-			 //    { $: 'writeValue', value: { '$studio.profilePath': '{{.}}'}, to: { $: 'studio.currentProfilePath'} },
-			 //    { $: 'studio.openProperties'},
-			 //    { $: 'studio.highlightProfileInPreview', profile: '{{.}}' }
-		  //   ]
-		  // },
-		  // { $: 'studioControlTree.autoSelect'},
-		  // { $rightClickToAddItems: { $if: { $: 'studio.profileHasParam', profile: '{{}}', param: 'controls' }, then: { $: 'studio.addToControlTreePopup', parentProfile: '{{$controlProfile}}' } } },
-		  // { $deleteNode: { $: 'studio.deleteProfileInControlTree' } },
-		  // { $id: 'studio-control-tree' }
 		]
 	}
 })
@@ -53,7 +38,7 @@ jb.component('studio.controlTree.nodes', {
 	type: 'tree.nodeModel',
 	params: {},
 	impl: function(context) {
-		var currentPath = context.str({ $firstSucceeding: ['{%$globals/profile_path%}', '{%$globals/project%}.{%$globals/page%}'] });
+		var currentPath = context.str({ $: 'studio.currentProfilePath' });
 		var compPath = currentPath.split('~')[0] || '';
 		return new studio.ControlModel(compPath);
 	}

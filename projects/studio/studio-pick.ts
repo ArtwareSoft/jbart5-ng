@@ -140,7 +140,7 @@ jb.component('studio.pick', {
 
 jb.component('studio.highlight-in-preview',{
 	params: {
-		path: { as: 'string', defaultValue: '{%$globals/profile_path%}' }
+		path: { as: 'string' }
 	},
 	impl: (ctx,path) => {
 		var _window = jbart.previewWindow || window;

@@ -94,8 +94,10 @@ function findjBartToLook(path) {
 
 export function evalProfile(prof_str) {
 	try {
-		return eval('x = ' + prof_str)
-	} catch (e) {}
+		return eval(`(${prof_str})`)
+	} catch (e) {
+		jb.logException(e,'eval profile:'+prof_str);
+	}
 }
 
 // The jbart control model return string paths and methods to fix them on change

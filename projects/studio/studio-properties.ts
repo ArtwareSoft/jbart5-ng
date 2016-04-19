@@ -7,8 +7,8 @@ jb.component('studio.openProperties', {
 	impl :{$: 'openDialog',
 		title: [
 			{ $: 'object', 
-				title: { $: 'studio.short-title', path: '%$globals/profile_path%' },
-				comp: { $: 'studio.compName', path: '%$globals/profile_path%' }
+				title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
+				comp: { $: 'studio.compName', path: { $: 'studio.currentProfilePath' } }
 			},
 			'Properties of %comp% %title%'
 		],
@@ -18,7 +18,7 @@ jb.component('studio.openProperties', {
 			controls: [
 				{ $: 'group', title: 'Properties',
 //					cssClass: 'studio-properties-in-dialog',
-					controls :{$: 'studio.properties', path: '%$globals/profile_path%' }
+					controls :{$: 'studio.properties', path: { $: 'studio.currentProfilePath' } }
 				},
 				// { $: 'group', id: 'features',
 				// 	$title: [
@@ -65,7 +65,7 @@ jb.component('studio.openNewCtrlDialog', {
 							]
 						})),
 				{$: 'studio.insertComp', 
-					path: '%$globals/profile_path%',
+					path: { $: 'studio.currentProfilePath' },
 					comp: '%$dialogData/comp%'
 				},
 			]

@@ -21,7 +21,7 @@ jb.component('studio.saveComponents', {
 				headers: { 'Content-Type': 'text/plain' } 
 			}).then(
 				()=>modified[comp] = null,
-				(e)=>jb.logException('error while saving ' + comp,e)
+				(e)=>jb.logException(e,'error while saving ' + comp)
 			)
 		}
 	]}

@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 import * as jb_rx from 'jb-ui/jb-rx';
 
@@ -33,13 +33,13 @@ jb.component('studio.showProbeData', {
           [
             {$: 'itemlog', 
               title: 'input',
-              items :{$: 'studio.start-probe', path: '%$globals/profile_path%' },
+              items :{$: 'studio.start-probe', path :{$: 'studio.currentProfilePath' } },
               controls :{$: 'studio.context-view' },
               features :{$: 'itemlog.selection', databind: '%$selected/ctx%'},
             },
             {$: 'group', 
               features :{$: 'group.watch', data: '%$selected/ctx%'},
-              controls :{$: 'studio.output-view', path: '%$globals/profile_path%', ctx: '%$selected/ctx%' }
+              controls :{$: 'studio.output-view', path :{$: 'studio.currentProfilePath' }, ctx: '%$selected/ctx%' }
             }
           ]
       }

@@ -96,17 +96,14 @@ jb.component('editable-text.codemirror', {
 					editorTextChange.distinctUntilChanged()
 						.debounceTime(debounceTime)
 						.filter(x => x != field.getValue())
-						.subscribe(x=>{ field.writeValue(x); jb_ui.apply(context)})
+						.subscribe(x=>{ 
+							field.writeValue(x); 
+							jb_ui.apply(context)
+						})
 
 					editor.on('change', () => { 
 						editorTextChange.next(editor.getValue())
 					} );
-					// 	console.log('change');
-					// 	var newval = editor.getValue();
-					// 	field.writeValue(newval);
-					// 	console.log(newval);
-					// 	jb_ui.apply(context);
-					// });
 				})
 			}
 		}
