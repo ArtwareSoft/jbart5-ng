@@ -191,7 +191,7 @@ jb.component('studio.compName-ref',{
 })
 
 jb.component('studio.insertComp',{
-	paframs: { 
+	params: { 
 		path: { as: 'string' },
 		comp: { as: 'string' },
 	},

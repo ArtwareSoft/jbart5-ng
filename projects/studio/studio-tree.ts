@@ -21,7 +21,9 @@ jb.component('studio.controlTree',{
 			{ $: 'tree.selection', 
 				autoSelectFirst: true, 
 				databind: '%$globals/profile_path%',
-				onSelection :{$: 'studio.highlight-in-preview'},
+				onSelection :{$: 'studio.highlight-in-preview', 
+					path :{$: 'studio.currentProfilePath' } 
+				},
 				onDoubleClick: [
 					{$: 'studio.openProperties'},
 					{$: 'studio.highlight-in-preview'},

@@ -162,7 +162,7 @@ jb.component('studio.highlight-in-preview',{
 		$(_window.document.body).append($(boxes));	
 
 		$(boxes).css({ opacity: 0.5 }).
-			fadeTo(1200,0,function() {
+			fadeTo(500,0,function() {
 				$(boxes).remove();
 			});
 	}
