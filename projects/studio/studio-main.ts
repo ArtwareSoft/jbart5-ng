@@ -20,7 +20,7 @@ jb.component('studio.all', {
 		$: 'group', cssClass: 'studio-top-bar',
 	    features :{$: 'group.watch', data: '%$globals/project%' }, 
 	    controls: [
-			{ $: 'group', cssClass: 'studio-top-menu',  controls: [
+			{ $: 'group', cssClass: 'studio-top-menu', controls: [
 				  { $: 'label',
 				  	style :{$: 'label.h1'},
 				  	features :{$: 'css', css: '{margin-top: 5px; margin-left: 8px}' } 
@@ -184,7 +184,7 @@ jb.component('studio.compName-ref',{
 				if (typeof value == 'undefined') 
 					return studio.model.compName(path);
 				else
-					studio.model.modify(studio.model.writeValue, path, { value: { $: value } },context)
+					studio.model.modify(studio.model.setComp, path, { comp: value },context)
 			}
 		}	
 	}
@@ -195,7 +195,8 @@ jb.component('studio.insertComp',{
 		path: { as: 'string' },
 		comp: { as: 'string' },
 	},
-	impl: (context,path,comp) => studio.model.modify(studio.model.push, path, {val: { $: comp }} , context)
+	impl: (context,path,comp) => 
+		studio.model.modify(studio.model.insertComp, path, { comp: comp },context)
 })
 
 jb.component('studio.delete',{

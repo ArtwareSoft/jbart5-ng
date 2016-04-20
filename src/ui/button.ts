@@ -13,10 +13,10 @@ jb.component('button', {
 //   description: { as: 'string' },
     style: { type: 'button.style', defaultValue: { $: 'button.md-flat' }, dynamic: true },
     features: { type: 'feature[]', dynamic: true },
-    $click: { type: 'boolean' },
+    $click: { type: 'boolean' }, // used by tests to simulate click
   },
   impl: function(context) {
-    if (context.params.$click) try { context.params.action() } catch (e) { debugger } // for test debug
+    if (context.params.$click) try { context.params.action() } catch (e) { jb.logException(e) } // for test debug
     return jb_ui.ctrl(context).jbExtend({
       beforeInit: function(cmp) {
         cmp.title = context.params.title();

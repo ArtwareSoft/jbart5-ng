@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 jb.type('group.style');
@@ -36,8 +36,10 @@ jb.component('group',{
             cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
             jb.logPerformance('group-change');
             comps.forEach((comp,i)=>{
+              if (!comp)
+                return;
               if (cmp.jbToExtend[i])
-                 comp = comp.jbExtend(cmp.jbToExtend[i]);
+                 comp.jbExtend(cmp.jbToExtend[i]);
               if (!comp.jb_title)
                 debugger;
               cmp.ctrls.push({ title: comp.jb_title ? comp.jb_title() : '' , comp: comp } );

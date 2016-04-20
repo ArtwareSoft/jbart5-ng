@@ -86,10 +86,6 @@ jb.component('editable-text.codemirror', {
 					$(editor.getWrapperElement()).css('box-shadow', 'none'); //.css('height', '200px');
 					field.observable(context)
 						.filter(x => x != editor.getValue())
-						.map(x=>{
-							editor.getValue();
-							return x}
-						 )
 						.subscribe(x=>editor.setValue(x));
 
 					var editorTextChange = new jb_rx.Subject();

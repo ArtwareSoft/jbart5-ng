@@ -145,6 +145,22 @@ jb.component('oneWayBind', {
   } }
 })
 
+jb.component('field.onChange', {
+  type: 'feature',
+  params: {
+    action: { type: 'action', essential: true, dynamic: true },
+  },
+  impl: (context,action) => ({
+    init: cmp => {
+      var field = context.vars.field;
+      field && field.observable(context)
+            .filter(x=>x)
+            .subscribe(x=>
+              action(context.setData(x)));
+    }
+  })
+})
+
 jb.component('css', {
   type: 'feature',
   params: {

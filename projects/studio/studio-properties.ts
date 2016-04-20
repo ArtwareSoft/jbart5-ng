@@ -39,37 +39,55 @@ jb.component('studio.openProperties', {
 })
 
 jb.component('studio.openNewCtrlDialog', {
+  type: 'action', 
+  impl :{$: 'openDialog', 
+    modal: true, 
+    title: 'New Control', 
+    style :{$: 'dialog.md-dialog-ok-cancel', 
+      features: [
+        {$: 'dialogFeature.autoFocusOnFirstInput' }, 
+        {$: 'dialogFeature.nearLauncherLocation' }
+      ]
+    }, 
+    content :{$: 'picklist', 
+      databind: '%$dialogData/comp%', 
+      options :{$: 'studio.tgp-type-options', type: 'control' }, 
+      features :{$: 'field.onChange', 
+        action :{$: 'closeContainingPopup' }
+      }
+    }, 
+    onOK: { $runActions: [
+      {$: 'studio.onNextModifiedPath', 
+      	action :{$: 'studio.openModifiedPath' }
+  	  },
+      {$: 'studio.insertComp', 
+        path :{$: 'studio.currentProfilePath' }, 
+        comp: '%$dialogData/comp%'
+      }
+    ]}
+  }
+})
+
+jb.component('studio.onNextModifiedPath', {
 	type: 'action',
-	impl :{$: 'openDialog',
-			modal: true,
-			title: 'New Control',
-        	style :{$: 'dialog.md-dialog-ok-cancel', 
-        		features : [
-        			{ $: 'dialogFeature.autoFocusOnFirstInput'},
-					{ $: 'dialogFeature.nearLauncherLocation' }
-        		]
-        	},
-			content :{$: 'picklist',
-				databind: '%$dialogData/comp%',
-				options :{$: 'studio.tgp-type-options', type: 'control' },
-			},
-			onOK : [
-				ctx => studio.modifyOperationsEm.take(1)
-						.subscribe(e=>
-							ctx.run({$runActions: [
-								{$: 'writeValue', 
-									to: '%$globals/profile_path%',
-									value: e.args.resultRef 
-								},
-								{$: 'studio.openProperties'}
-							]
-						})),
-				{$: 'studio.insertComp', 
-					path: { $: 'studio.currentProfilePath' },
-					comp: '%$dialogData/comp%'
-				},
-			]
-		}
+	params: {
+		action: { type: 'action', dynamic: true, essential: true }
+	},
+	impl: (ctx,action) =>  
+		studio.modifyOperationsEm.take(1)
+            .subscribe(e =>
+            	action(ctx.setVars({ modifiedPath: e.args.modifiedPath }))
+            )
+})
+
+jb.component('studio.openModifiedPath', {
+	type: 'action',
+	impl :{ $runActions: [
+                { $: 'writeValue',
+                    to: '%$globals/profile_path%', value: '%$modifiedPath%'
+                },
+                { $: 'studio.openProperties' }
+          ]}
 })
 
 jb.component('studio.openSourceDialog', {
@@ -210,7 +228,7 @@ jb.component('studio.propertyField-Style',{
 	impl :{$: 'group',
 		title :{$: 'studio.prop-name', path: '%$path%' },
 		$vars: {
-			'TgpTypeCtrl' : {$: 'object' , expanded: true }
+			'TgpTypeCtrl' :{$: 'object' , expanded: true }
 		},
 		controls: [
 			{ $: 'group',
@@ -232,7 +250,7 @@ jb.component('studio.propertyField-Style',{
 							},
 							{ $: 'button' ,
 								title: 'customize style',
-								style :{$: 'studio_button.toolbarButton', spritePosition: '21,0' },
+								style :{$: 'button.studio-properties-toolbar', icon: 'build' }, 
 								action : [ 
 									{$: 'studio.makeLocal', path: '%$path%' },
 									{$: 'studio.openEditStyle', path: '%$path%' },
@@ -241,13 +259,13 @@ jb.component('studio.propertyField-Style',{
 							},
 							{ $: 'button' ,
 								title: 'edit custom style',
-								style :{$: 'studio_button.toolbarButton', spritePosition: '22,0' },
+								style :{$: 'button.md-icon', icon: 'input' }, 
 								action :{$: 'studio.openEditStyle', path: '%$path%' },
 								features :{$: 'hidden', showCondition :{$: 'studio.isCustomStyle', path: '%$path%' } }
 							},
 							{ $: 'button' ,
 								title: 'share style',
-								style :{$: 'studio_button.toolbarButton', spritePosition: '23,0' },
+								style :{$: 'button.md-icon', icon: 'add' }, 
 								action :{$: 'studio.shareStyle', path: '%$path%' },
 								features :{$: 'hidden', showCondition : false } //{$: 'studio.isCustomStyle', path: '%$path%' } }
 							},
@@ -486,6 +504,21 @@ jb.component('property-sheet.studio-properties', {
         margin-right: 10px;
       },
       .property>*:last-child { margin-right:0 }`
+  }
+})
+
+jb.component('button.studio-properties-toolbar', {
+  type: 'button.style',
+  params: {
+    icon: { as: 'string', default: 'code' },
+  },
+  impl :{$: 'customStyle', 
+      template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}">
+                <i class="material-icons">%$icon%</i>
+              </button></span>`,
+      css: `button {position: absolute; min-width: 2px; margin-top: -12px; padding: 0}
+     	.material-icons { font-size:12px }
+      `
   }
 })
 

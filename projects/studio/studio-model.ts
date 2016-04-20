@@ -181,7 +181,7 @@ export class ControlModel {
 		var arr = this.asArray(path);
 		if (arr) {
 			arr.push(args.val);
-			args.resultRef = [path,this.controlParam(path),arr.length-1].join('~');
+			args.modifiedPath = [path,this.controlParam(path),arr.length-1].join('~');
 			this.fixArray(path);
 		}
 	}
@@ -203,6 +203,35 @@ export class ControlModel {
 		jb.writeValue(profileRefFromPath(path),args.value);
 	}
 
+	setComp(path,args) {
+		var compName = args.comp;
+		var comp = compName && getComp(compName);
+		if (!compName || !comp) return;
+		var result = { $: compName };
+		var existing = profileValFromPath(path);
+		// copy properties from existing & default values
+		if (existing && typeof existing == 'object')
+			jb.entries(comp.params).forEach(p=>{
+				result[p[0]] = existing[p[0]];
+				if (p[1].defaultValue)
+					result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
+			})
+		jb.writeValue(profileRefFromPath(path),result);
+	}
+
+	insertComp(path,args) {
+		var compName = args.comp;
+		var comp = compName && getComp(compName);
+		if (!compName || !comp) return;
+		var result = { $: compName };
+		// copy default values
+		jb.entries(comp.params).forEach(p=>{
+			if (p[1].defaultValue)
+				result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
+		})
+		this.push(path, { val: result });
+	}
+
 	makeLocal(path) {
 		var compName = this.compName(path);
 		var comp = compName && getComp(compName);
@@ -212,7 +241,8 @@ export class ControlModel {
 		// inject param values - only primitives
 		var profile = profileValFromPath(path);
 		jb.entries(comp.params)
-			.forEach(p=>{ res = res.replace(new RegExp(`%$${p[0]}%`,'g') , ''+(profile[p[0]] || p[1].defaultValue || '') ) })
+			.forEach(p=>{ 
+				res = res.replace(new RegExp(`%\\$${p[0]}%`,'g') , ''+(profile[p[0]] || p[1].defaultValue || '') ) })
 
 		jb.writeValue(profileRefFromPath(path),evalProfile(res));
 	}
@@ -243,7 +273,7 @@ export class ControlModel {
 		var parent_prof = profileValFromPath(parentPath(path));
 		if (!parent_prof) return;
 		var params = (getComp(jb.compName(parent_prof)) || {}).params;
-		return jb.entries(params).filter(p=>p[0]==path.split('~').pop()).map(p=>p[1])[0];
+		return jb.entries(params).filter(p=>p[0]==path.split('~').pop()).map(p=>p[1])[0] || {};
 	}
 
 	PTsOfPath(path) {

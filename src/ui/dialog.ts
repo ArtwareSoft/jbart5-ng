@@ -16,9 +16,9 @@ jb.component('openDialog', {
 		features: { type: 'dialogFeature[]', dynamic: true }
 	},
 	impl: function(context,id,modal) {
-		var ctx = modal ? context.setVars({dialogData: {}}) : context;
-		var dialog = { id: ctx.params.id, onOK: ctx.params.onOK, modal: modal, $: $('div') };
-		dialog.comp = jb_ui.ctrl(ctx.setVars({ $dialog: dialog })).jbExtend({
+		var dialog = { id: id, onOK: context.params.onOK, modal: modal, $: $('div') };
+		var ctx = (modal ? context.setVars({dialogData: {}}) : context).setVars({ $dialog: dialog });
+		dialog.comp = jb_ui.ctrl(ctx).jbExtend({
 			beforeInit: function(cmp) {
 				cmp.title = ctx.params.title(ctx);
 				cmp.dialog = dialog;
@@ -39,8 +39,11 @@ jb.component('openDialog', {
 
 jb.component('closeContainingPopup', {
 	type: 'action',
-	impl: function(context) {
-		context.vars.$dialog && context.vars.$dialog.close();
+	params: {
+		OK: { type: 'boolean', as: 'boolean', defaultValue: true}
+	}
+	impl: function(context,OK) {
+		context.vars.$dialog && context.vars.$dialog.close({OK:OK});
 	}
 })
 

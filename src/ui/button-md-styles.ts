@@ -4,14 +4,14 @@ import * as jb_ui from 'jb-ui';
 jb.component('button.md-flat', {
   type: 'button.style',
   impl :{$: 'customStyle', 
-      template: '<button md-button (click)="clicked()">{{title}}</button>',
+      template: '<span><button md-button (click)="clicked()">{{title}}</button></span>',
   }
 })
 
 jb.component('button.md-raised', {
   type: 'button.style',
   impl :{$: 'customStyle', 
-      template: '<button md-raised-button (click)="clicked()">{{title}}</button>',
+      template: '<span><button md-raised-button (click)="clicked()">{{title}}</button></span>',
   }
 })
 
