@@ -21,10 +21,12 @@
     }
   ],
   "scripts": {
-    "start": "concurrently \"npm run tsc:w\" \"npm run studio\" ",
+    "start": "npm run openStudio & npm run studio",
+    "start-dev": "concurrently \"npm run tsc:w\" \"npm run start\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "studio": "node jbart-studio.js"
+    "studio": "npm run openStudio & node jbart-studio.js",
+    "openStudio": "start http://localhost:8081/project/studio/material-demo"
   },
   "dependencies": {
     "@angular2-material/button": "^2.0.0-alpha.2",

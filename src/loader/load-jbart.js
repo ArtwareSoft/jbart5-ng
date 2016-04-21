@@ -82,7 +82,8 @@ jb_modules =
 'jb-ui/slider',
 ];
 
-jb_studio_modules = ['model','main','menu','toolbar','tests','popups','tree','properties','pick','save','probe','edit-source']
+jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
+,'tree','properties','pick','save','probe','edit-source','new-control']
   .map(x=>'studio/studio-' + x)
 
 jb_system_config = {

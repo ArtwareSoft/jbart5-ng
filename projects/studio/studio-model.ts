@@ -177,14 +177,6 @@ export class ControlModel {
 		}
 	}
 	// modify operations - must have same interface: path,args
-	push(path,args) { // add to array
-		var arr = this.asArray(path);
-		if (arr) {
-			arr.push(args.val);
-			args.modifiedPath = [path,this.controlParam(path),arr.length-1].join('~');
-			this.fixArray(path);
-		}
-	}
 
 	move(path,args) { // drag & drop
 		var dragged = profileValFromPath(args.dragged);
@@ -229,7 +221,16 @@ export class ControlModel {
 			if (p[1].defaultValue)
 				result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
 		})
-		this.push(path, { val: result });
+		// find group parent that can insert the control
+		var group_path = path;
+		while (!this.controlParam(group_path) && group_path)
+			group_path = parentPath(group_path);
+		var arr = this.asArray(group_path);
+		if (arr) {
+			arr.push(result);
+			args.modifiedPath = [group_path,this.controlParam(group_path),arr.length-1].join('~');
+			this.fixArray(group_path);
+		}
 	}
 
 	makeLocal(path) {

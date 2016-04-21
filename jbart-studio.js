@@ -1,7 +1,6 @@
 fs = require('fs');
 os = require('os');
 http = require('http');
-https = require('https');
 child = require('child_process');
 url = require('url');
 pathNS = require("path");
@@ -15,26 +14,14 @@ file_type_handlers = {};
 
 _iswin = /^win/.test(process.platform);
 
-http_dir = './';
-port = 8081;
-allowCmd = false;
-
-for(var i=0;i<process.argv.length;i++) {
-  var arg = process.argv[i];
-  if (arg.indexOf('-port:') == 0)
-    port = parseInt(arg.split(':')[1]);
-  if (arg.indexOf('-allowCmd') == 0)
-    allowCmd = true;
-  if (arg.indexOf('-fiddler') == 0)
-    fiddler = true;
-}
+var settings = JSON.parse(fs.readFileSync('jbart.json'));
 
 // Http server
 function serve(req, res) {
    try {
     var url_parts = req.url.split('#')[0].split('?');
     var path = url_parts[0].substring(1); //, query= url_parts[1] && url_parts[1].split('#')[0];
-    console.log(req.url,path);
+//    console.log(req.url,path);
     var base = path.split('/')[0] || '';
     var file_type = path.split('.').pop();
     var op = getURLParam(req,'op');
@@ -62,14 +49,9 @@ function serve(req, res) {
       var st = e.stack || ''
   }
 }
-http.createServer(serve).listen(port); 
-var httpsOptions = {
-  key: fs.readFileSync('https/key.pem'),
-  cert: fs.readFileSync('https/certificate.pem')
-};
-//https.createServer(httpsOptions, serve).listen(443);
+http.createServer(serve).listen(settings.port); 
 
-console.log('Running jBart5 studio server on port ' + port);
+console.log('open studio with http://localhost: ' + settings.port + '/project/studio/material-demo/');
 
 // static file handlers
 supported_ext =  ['js','gif','png','jpg','html','xml','css','xtml','txt','json','bmp','woff','jsx','prj','woff2','map','ico'];
@@ -77,7 +59,7 @@ for(i=0;i<supported_ext.length;i++)
   file_type_handlers[supported_ext[i]] = function(req, res,path) { serveFile(req,res,path); };
 
 function serveFile(req,res,path) {
-  var full_path = http_dir + path;
+  var full_path = settings.http_dir + path;
   var extension = path.split('.').pop();
 
   fs.readFile(_path(full_path), function (err, content) {
@@ -155,25 +137,6 @@ extend(op_post_handlers, {
                   fs.writeFileSync(srcPath,newContent);
                   endWithSuccess(res,'Comp saved to ' + srcPath + ' at index ' + found);
                 }
-
-                // var content = '' + fs.readFileSync(srcPath);
-                // if (content.indexOf('\r\n') != -1)
-                //   clientReq.original = clientReq.original.replace(/\n/g,'\r\n');
-                // if (clientReq.toSave.indexOf('\r\n') != -1)
-                //   clientReq.toSave = clientReq.toSave.replace(/\n/g,'\r\n');
-                // if (content.indexOf('\r\n') != -1)
-                //   content = content.replace(/\n/g,'\r\n');
-                // // console.log('content',content.replace(/\r/g,'\\r').replace(/\n/g,'\\n\n'));
-                // // console.log('original',clientReq.original.replace(/\r/g,'\\r').replace(/\n/g,'\\n\n'));
-                // var found = content.indexOf(clientReq.original);
-                // console.log(found);
-                // if (found != -1) {
-                //   comp_found = true;
-                //   var newContent = content.substr(0,found) + clientReq.toSave + content.substr(found+clientReq.original.length+1);
-                //   console.log(newContent);
-                //   fs.writeFileSync(srcPath,newContent);
-                //   endWithSuccess(res,'Comp saved to ' + srcPath + ' at index ' + found);
-                // }
             })
           )
 
@@ -218,7 +181,7 @@ extend(base_get_handlers, {
 
 extend(op_get_handlers, {   
     'runCmd': function(req,res,path) {
-      if (!allowCmd) return endWithFailure(res,'no permission to run cmd. Use -allowCmd');
+      if (!settings.allowCmd) return endWithFailure(res,'no permission to run cmd. allowCmd in jbart.json');
 
       var cmd = getURLParam(req,'cmd');
       if (!cmd) return endWithFailure(res,'missing cmd param in url');
@@ -248,7 +211,7 @@ extend(op_get_handlers, {
     },
     'getFile': function(req,res,path) {
       var path = getURLParam(req,'path');
-      var full_path = http_dir + path;
+      var full_path = settings.http_dir + path;
       fs.readFile(_path(full_path), function (err, content) {
         if (err) {
           if (err.errno === 34)

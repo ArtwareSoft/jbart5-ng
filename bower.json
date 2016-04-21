@@ -2,10 +2,10 @@
   "name": "jbart5",
   "description": "jBart - Visual DSL fun on top of angular2",
   "main": "",
-  "license": "MIT",
+  "license": "MIT for RT. Freeware for studio",
   "keywords": [
     "angular2",
-    "jbart"
+    "jbart", "visual", "RAD", "angular", "studio"
   ],
   "homepage": "https://github.com/ArtwareSoft/jbart5-ng",
   "moduleType": [
@@ -14,11 +14,8 @@
   ],
   "private": true,
   "ignore": [
-    "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
   ],
   "dependencies": {
     "dragula.js": "dragula#^3.6.8",
