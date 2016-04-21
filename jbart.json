@@ -1,5 +1,5 @@
 {
-  "sublime_path": "",
+  "open_source_cmd": "\"c:\\Program Files\\Sublime Text 3\\\"subl ",
   "port": 8081,
   "http_dir": "./",
   "allowCmd": false

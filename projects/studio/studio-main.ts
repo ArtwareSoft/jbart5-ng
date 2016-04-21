@@ -23,7 +23,7 @@ jb.component('studio.all', {
 			{ $: 'group', cssClass: 'studio-top-menu', controls: [
 				  { $: 'label',
 				  	style :{$: 'label.h1'},
-				  	features :{$: 'css', css: '{margin-top: 5px; margin-left: 8px}' } 
+				  	features :{$: 'css', css: '{margin-top: 5px; margin-left: 8px}' },
 					title: ['{%$globals/project%}', { $: 'replace', find: '_', replace: ' ' }],
 				  },
 				  { $: 'studio.mainMenu' }

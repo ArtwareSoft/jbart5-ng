@@ -41,7 +41,7 @@ jb.component('closeContainingPopup', {
 	type: 'action',
 	params: {
 		OK: { type: 'boolean', as: 'boolean', defaultValue: true}
-	}
+	},
 	impl: function(context,OK) {
 		context.vars.$dialog && context.vars.$dialog.close({OK:OK});
 	}

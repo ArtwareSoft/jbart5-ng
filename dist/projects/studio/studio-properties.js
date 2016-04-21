@@ -43,56 +43,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     }
                 }
             });
-            jb_core_1.jb.component('studio.openNewCtrlDialog', {
-                type: 'action',
-                impl: { $: 'openDialog',
-                    modal: true,
-                    title: 'New Control',
-                    style: { $: 'dialog.md-dialog-ok-cancel',
-                        features: [
-                            { $: 'dialogFeature.autoFocusOnFirstInput' },
-                            { $: 'dialogFeature.nearLauncherLocation' }
-                        ]
-                    },
-                    content: { $: 'picklist',
-                        databind: '%$dialogData/comp%',
-                        options: { $: 'studio.tgp-type-options', type: 'control' },
-                        features: { $: 'field.onChange',
-                            action: { $: 'closeContainingPopup' }
-                        }
-                    },
-                    onOK: { $runActions: [
-                            { $: 'studio.onNextModifiedPath',
-                                action: { $: 'studio.openModifiedPath' }
-                            },
-                            { $: 'studio.insertComp',
-                                path: { $: 'studio.currentProfilePath' },
-                                comp: '%$dialogData/comp%'
-                            }
-                        ] }
-                }
-            });
-            jb_core_1.jb.component('studio.onNextModifiedPath', {
-                type: 'action',
-                params: {
-                    action: { type: 'action', dynamic: true, essential: true }
-                },
-                impl: function (ctx, action) {
-                    return studio.modifyOperationsEm.take(1)
-                        .subscribe(function (e) {
-                        return action(ctx.setVars({ modifiedPath: e.args.modifiedPath }));
-                    });
-                }
-            });
-            jb_core_1.jb.component('studio.openModifiedPath', {
-                type: 'action',
-                impl: { $runActions: [
-                        { $: 'writeValue',
-                            to: '%$globals/profile_path%', value: '%$modifiedPath%'
-                        },
-                        { $: 'studio.openProperties' }
-                    ] }
-            });
             jb_core_1.jb.component('studio.openSourceDialog', {
                 type: 'action',
                 impl: { $: 'openDialog',
@@ -249,6 +199,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                                 { $: 'studio.openEditStyle', path: '%$path%' },
                                             ],
                                             features: { $: 'hidden', showCondition: { $not: { $: 'studio.isCustomStyle', path: '%$path%' } } }
+                                        },
+                                        { $: 'button',
+                                            title: 'open sublime',
+                                            style: { $: 'button.studio-properties-toolbar', icon: 'code' },
+                                            action: { $: 'studio.openSublime', path: '%$path%' },
                                         },
                                         { $: 'button',
                                             title: 'edit custom style',
@@ -471,7 +426,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: { $: 'customStyle',
                     template: "<span><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\">\n                <i class=\"material-icons\">%$icon%</i>\n              </button></span>",
-                    css: "button {position: absolute; min-width: 2px; margin-top: -12px; padding: 0}\n     \t.material-icons { font-size:12px }\n      "
+                    css: "button { width: 24px; height: 24px; padding: 0}\n     \t.material-icons { font-size:12px;  }\n      "
                 }
             });
             jb_core_1.jb.component('button.studio-edit-js', {

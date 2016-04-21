@@ -44,6 +44,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     };
                 }
             });
+            jb_core_1.jb.component('studio.openSublime', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: function (ctx, path) {
+                    return studio.model.compName(path) && $.ajax("/?op=gotoSource&comp=" + studio.model.compName(path));
+                }
+            });
         }
     }
 });

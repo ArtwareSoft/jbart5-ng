@@ -38,58 +38,6 @@ jb.component('studio.openProperties', {
 	}
 })
 
-jb.component('studio.openNewCtrlDialog', {
-  type: 'action', 
-  impl :{$: 'openDialog', 
-    modal: true, 
-    title: 'New Control', 
-    style :{$: 'dialog.md-dialog-ok-cancel', 
-      features: [
-        {$: 'dialogFeature.autoFocusOnFirstInput' }, 
-        {$: 'dialogFeature.nearLauncherLocation' }
-      ]
-    }, 
-    content :{$: 'picklist', 
-      databind: '%$dialogData/comp%', 
-      options :{$: 'studio.tgp-type-options', type: 'control' }, 
-      features :{$: 'field.onChange', 
-        action :{$: 'closeContainingPopup' }
-      }
-    }, 
-    onOK: { $runActions: [
-      {$: 'studio.onNextModifiedPath', 
-      	action :{$: 'studio.openModifiedPath' }
-  	  },
-      {$: 'studio.insertComp', 
-        path :{$: 'studio.currentProfilePath' }, 
-        comp: '%$dialogData/comp%'
-      }
-    ]}
-  }
-})
-
-jb.component('studio.onNextModifiedPath', {
-	type: 'action',
-	params: {
-		action: { type: 'action', dynamic: true, essential: true }
-	},
-	impl: (ctx,action) =>  
-		studio.modifyOperationsEm.take(1)
-            .subscribe(e =>
-            	action(ctx.setVars({ modifiedPath: e.args.modifiedPath }))
-            )
-})
-
-jb.component('studio.openModifiedPath', {
-	type: 'action',
-	impl :{ $runActions: [
-                { $: 'writeValue',
-                    to: '%$globals/profile_path%', value: '%$modifiedPath%'
-                },
-                { $: 'studio.openProperties' }
-          ]}
-})
-
 jb.component('studio.openSourceDialog', {
 	type: 'action',
 	impl :{$: 'openDialog',
@@ -256,6 +204,11 @@ jb.component('studio.propertyField-Style',{
 									{$: 'studio.openEditStyle', path: '%$path%' },
 								],
 								features :{$: 'hidden', showCondition :{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }}
+							},
+							{ $: 'button' ,
+								title: 'open sublime',
+								style :{$: 'button.studio-properties-toolbar', icon: 'code' },
+								action :{$: 'studio.openSublime', path: '%$path%' },
 							},
 							{ $: 'button' ,
 								title: 'edit custom style',
@@ -516,8 +469,8 @@ jb.component('button.studio-properties-toolbar', {
       template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}">
                 <i class="material-icons">%$icon%</i>
               </button></span>`,
-      css: `button {position: absolute; min-width: 2px; margin-top: -12px; padding: 0}
-     	.material-icons { font-size:12px }
+      css: `button { width: 24px; height: 24px; padding: 0}
+     	.material-icons { font-size:12px;  }
       `
   }
 })

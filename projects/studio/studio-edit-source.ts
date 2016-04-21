@@ -35,3 +35,12 @@ jb.component('studio.currentProfileAsScript', {
 		}
 	}
 })
+
+jb.component('studio.openSublime', {
+	type: 'action',
+	params: {
+		path: { as: 'string'}
+	},
+	impl: (ctx,path) => 
+		studio.model.compName(path) && $.ajax(`/?op=gotoSource&comp=${studio.model.compName(path)}`)
+}) 

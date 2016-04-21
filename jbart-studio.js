@@ -51,7 +51,7 @@ function serve(req, res) {
 }
 http.createServer(serve).listen(settings.port); 
 
-console.log('open studio with http://localhost: ' + settings.port + '/project/studio/material-demo/');
+console.log('open studio with http://localhost:' + settings.port + '/project/studio/material-demo/');
 
 // static file handlers
 supported_ext =  ['js','gif','png','jpg','html','xml','css','xtml','txt','json','bmp','woff','jsx','prj','woff2','map','ico'];
@@ -239,6 +239,22 @@ extend(op_get_handlers, {
           out = out.concat(fs.readdirSync('projects/'+widgetFile).filter(function(file) { return file.indexOf('.html') >= 0; }));
       });
       res.end(out.join(','));
+    },
+    'gotoSource': function(req,res,path) {
+      var comp = getURLParam(req,'comp');
+      var files = walk('projects').concat(walk('src'));
+      files.filter(x=>x.match(/\.(ts|js)$/))
+        .forEach(srcPath=>{
+                var source = ('' + fs.readFileSync(srcPath)).split('\n');
+                source.map((line,no)=> {
+                  if (line.indexOf(`component('${comp}'`) != -1) {
+                    var cmd = settings.open_source_cmd + srcPath+':'+(no+1);
+                    console.log(cmd);
+                    child.exec(cmd,{});
+                    endWithSuccess(res,'open editor cmd: ' + cmd);
+                  }
+                })
+        })
     }
 });
 
@@ -279,3 +295,17 @@ function now() {
   return pad(date.getDate()) + '/' + pad(date.getMonth()+1) + '/' + date.getFullYear() + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds())
 }
 function pad(i) { return i<10?'0'+i:i; }
+
+function walk(dir) {
+    var list = fs.readdirSync(dir);
+    var results = [];
+    list.forEach( file => {
+        var full_path = dir + '/' + file;
+        var stat = fs.statSync(full_path);
+        if (stat && stat.isDirectory()) 
+          results = results.concat(walk(full_path))
+        else 
+          results.push(full_path)
+    })
+    return results;
+}      
