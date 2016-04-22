@@ -2,8 +2,19 @@
 	"folders":
 	[
 		{
-			"path": "C:\\jbart5-ng",
-			"folder_exclude_patterns": ["node_modules","dist","bower_components","sublime","typings","https"],
+			"path": "C:\\jbart5-ng\\src\\ui"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"node_modules",
+				"dist",
+				"bower_components",
+				"sublime",
+				"typings",
+				"https"
+			],
+			"path": "C:\\jbart5-ng"
 		}
 	]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "jbart5",
+  "name": "jbart5-ng2",
   "version": "5.0.0-ng.alpha.1",
   "description": "jBart - Visual DSL fun on top of angular2",
   "homepage": "https://github.com/artwaresoft/jbart5-ng",
@@ -7,18 +7,9 @@
     "url": "https://github.com/artwaresoft/jbart5-ng/issues"
   },
   "contributors": [
-    {
-      "name": "Shai Ben-Yehuda",
-      "email": "shaiby@artwaresoft.com"
-    },
-    {
-      "name": "Yaniv Ben-Yehuda",
-      "email": "yanivby@artwaresoft.com"
-    },
-    {
-      "name": "Yaron Ben-Yehuda",
-      "email": "yaronby@artwaresoft.com"
-    }
+    "Shai Ben-Yehuda <shaiby@artwaresoft.com>",
+    "Yaniv Ben-Yehuda <yanivby@artwaresoft.com>",
+    "Yaron Ben-Yehuda <yaronby@artwaresoft.com>"
   ],
   "scripts": {
     "start": "npm run openStudio & npm run studio",
@@ -29,12 +20,12 @@
     "openStudio": "start http://localhost:8081/project/studio/material-demo"
   },
   "dependencies": {
-    "@angular2-material/button": "^2.0.0-alpha.2",
-    "@angular2-material/card": "^2.0.0-alpha.2",
-    "@angular2-material/checkbox": "^2.0.0-alpha.2",
-    "@angular2-material/core": "^2.0.0-alpha.2",
-    "@angular2-material/input": "^2.0.0-alpha.2",
-    "@angular2-material/toolbar": "^2.0.0-alpha.2",
+    "@angular2-material/core": "^2.0.0-alpha.3",
+    "@angular2-material/button": "^2.0.0-alpha.3",
+    "@angular2-material/card": "^2.0.0-alpha.3",
+    "@angular2-material/checkbox": "^2.0.0-alpha.3",
+    "@angular2-material/input": "^2.0.0-alpha.3",
+    "@angular2-material/toolbar": "^2.0.0-alpha.3",
     "angular2": "2.0.0-beta.13",
     "es6-promise": "^3.1.2",
     "es6-shim": "^0.35.0",
@@ -47,5 +38,14 @@
   "devDependencies": {
     "concurrently": "^2.0.0",
     "typescript": "^1.8.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtwareSoft/jbart5-ng.git"
+  },
+  "keywords": [
+    "angular","angular2","material","material-design","jbart","jbart5","visual","visual develpoment"
+  ],
+  "author": "Shai Ben-Yehuda (http://artwaresoft.com)",
+  "license": "SEE LICENSE IN license.txt"
 }

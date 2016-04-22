@@ -136,22 +136,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     databind: '%$TgpTypeCtrl/expanded%',
                                 },
                                 { $: 'button',
-                                    title: 'customize style',
-                                    style: { $: 'button.studio-edit-js' },
-                                    action: [
-                                        { $: 'studio.makeLocal', path: '%$path%' },
-                                        { $: 'studio.openEditStyle', path: '%$path%' },
-                                    ],
-                                    features: { $: 'hidden', showCondition: { $: 'endsWith', text: '%$path%', endsWith: '~style' } }
-                                },
-                                { $: 'button',
-                                    title: 'delete',
-                                    style: { $: 'button.studio-delete' },
-                                    action: [
-                                        { $: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%' },
-                                        { $: 'studio.delete', path: '%$path%' },
-                                    ],
-                                    features: { $: 'hidden', showCondition: { $: 'studio.compName-ref', path: '%$path%' } }
+                                    title: 'more',
+                                    style: { $: 'button.studio-properties-toolbar', icon: 'more_vert' },
+                                    action: { $: 'studio.open-property-menu', path: '%$path%' },
                                 },
                             ]
                         },
@@ -164,6 +151,35 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             ],
                         }
                     ]
+                }
+            });
+            jb_core_1.jb.component('studio.open-property-menu', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' },
+                },
+                impl: { $: 'openDialog',
+                    style: { $: 'pulldownPopup.contextMenuPopup' },
+                    content: { $: 'group',
+                        controls: [
+                            { $: 'pulldown.MenuItem', title: 'Delete',
+                                action: [
+                                    { $: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%' },
+                                    { $: 'studio.delete', path: '%$path%' },
+                                ],
+                            },
+                            { $: 'pulldown.MenuItem', title: 'javascript editor',
+                                action: { $: 'studio.editSource', path: '%$path%' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Goto sublime',
+                                action: { $: 'studio.openSublime', path: '%$path%' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Customize Style',
+                                action: { $: 'studio.openStyleEditor', path: '%$path%' },
+                                features: { $: 'hidden', showCondition: { $: 'endsWith', text: '%$path%', endsWith: '~style' } }
+                            },
+                        ]
+                    }
                 }
             });
             jb_core_1.jb.component('studio.propertyField-Style', {
@@ -236,27 +252,27 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.propertyField-JBEditor', {
-                type: 'control',
-                params: { path: { as: 'string' } },
-                impl: { $: 'group',
-                    title: { $: 'studio.prop-name', path: '%$path%' },
-                    controls: [
-                        { $: 'button',
-                            title: '(..)',
-                            //				cssStyle: 'jb-studio-primitive-jbeditor',
-                            action: { $: 'studio.openjbEditor', path: '%$path%' }
-                        },
-                        { $: 'button',
-                            style: { $: 'button.popup-menu' },
-                            action: { $: 'studio.openPrimitiveArrowPopup',
-                                path: '%$path%',
-                                isPrimitive: false
-                            }
-                        }
-                    ]
-                }
-            });
+            // jb.component('studio.propertyField-JBEditor',{
+            // 	type: 'control',
+            // 	params: { path: { as: 'string'} },
+            // 	impl :{$: 'group',
+            // 		title :{$: 'studio.prop-name', path: '%$path%' },
+            // 		controls: [
+            // 			{ $: 'button',
+            // 				title: '(..)',
+            // //				cssStyle: 'jb-studio-primitive-jbeditor',
+            // 				action :{$: 'studio.openjbEditor', path: '%$path%'} 
+            // 			},
+            // 			{ $: 'button', 
+            // 				style: {$: 'button.popup-menu' },
+            // 				action: { $: 'studio.openPrimitiveArrowPopup', 
+            // 					path: '%$path%', 
+            // 					isPrimitive: false 
+            // 				}
+            // 			}
+            // 		]
+            // 	}
+            // })
             jb_core_1.jb.component('studio.propertyField-Javascript', {
                 type: 'control',
                 params: { path: { as: 'string' } },
@@ -379,8 +395,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         else
                             fieldPT = 'studio.propertyField-Primitive';
                     }
-                    else if ((paramDef.type || '').indexOf('.style') > -1)
-                        fieldPT = 'studio.propertyField-Style';
                     else
                         fieldPT = 'studio.propertyField-TgpType';
                     return context.run({ $: fieldPT, path: path });
@@ -426,7 +440,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: { $: 'customStyle',
                     template: "<span><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\">\n                <i class=\"material-icons\">%$icon%</i>\n              </button></span>",
-                    css: "button { width: 24px; height: 24px; padding: 0}\n     \t.material-icons { font-size:12px;  }\n      "
+                    css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      "
                 }
             });
             jb_core_1.jb.component('button.studio-edit-js', {

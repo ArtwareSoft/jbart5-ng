@@ -34,3 +34,23 @@ jb.component('customCssStyle', {
 		})
 	}
 })
+
+jb.component('custom-control', {
+	type: 'control',
+	params: {
+		template: { as: 'string', essential: true},
+		isInnerTemplate: { type: 'boolean', as: 'boolean'},
+		css: { as: 'string'},
+		atts: { as: 'object'},
+		methods: { as: 'object'},
+    	features: { type: 'feature[]', dynamic: true },
+	},
+	impl: function (context,template,isInner,css,atts,methods,features) {
+		return jb_ui.Comp({},context).jbExtend(jb.extend(
+			jb.obj(isInner ? 'template' : 'jbTemplate',template), {
+				styles: css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'),
+				atts: atts,
+				featuresOptions: features()
+			},methods)
+	}
+})

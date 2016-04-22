@@ -11,13 +11,6 @@ jb.resource('material-demo','person',{
   "postalCode": "94043",
 })
 
-      // </md-input>
-      //   <div>
-      //             <button md-raised-button>raised</button>
-      //             <button md-fab><i class="material-icons md-24">add</i></button>     
-      //             </div>
-
-
 jb.component('material-demo.main', {
   type: 'control', 
   impl :{$: 'group',
@@ -57,37 +50,45 @@ jb.component('material-demo.main', {
   }
 })
 
+jb.component('material-demo.sidenav', {
+  type: 'control', 
+  impl :{$: 'group', 
+    controls: [
+      {$: 'sidenav', 
+        style :{$: 'sidenav.md', align: 'start', mode: 'over', width: '200' }, 
+        controls: [
+          {$: 'group', 
+            style :{$: 'group.section' }, 
+            controls: [
+              {$: 'image', 
+                units: 'px', 
+                style :{$: 'image.default' }, 
+                url: 'https://material.angularjs.org/latest/img/icons/angular-logo.svg', 
+                imageHeight: '150'
+              }, 
+              {$: 'custom-control', 
+                template: '<h1 class="docs-logotype md-heading">Angular Material</h1>', 
+                css: '{ color: white }'
+              }, 
+              {$: 'label', 
+                title: 'label', 
+                style :{$: 'label.span' }
+              }, 
+              {$: 'button', 
+                title: 'Hello', 
+                style :{$: 'button.md-flat' }
+              }
+            ], 
+            features :{$: 'css', css: '{ background-color: #145FA9 }' }
+          }
+        ]
+      }
+    ]
+  }
+})
+
 
 `
-from
-<md-card class="demo-card demo-basic">
-  <md-toolbar color="primary">Basic</md-toolbar>
-  <md-card-content>
-    <form>
-      <md-input class="demo-full-width" placeholder="Company (disabled)" disabled value="Google">
-      </md-input>
-
-      <table style="width: 100%" cellspacing="0"><tr>
-        <td><md-input placeholder="First name" style="width: 100%"></md-input></td>
-        <td><md-input placeholder="Long Last Name That Will Be Truncated" style="width: 100%"></md-input></td>
-      </tr></table>
-      <p>
-        <md-input class="demo-full-width" placeholder="Address" value="1600 Amphitheatre Pkway"></md-input>
-        <md-input class="demo-full-width" placeholder="Address 2"></md-input>
-      </p>
-      <table style="width: 100%" cellspacing="0"><tr>
-        <td><md-input class="demo-full-width" placeholder="City"></md-input></td>
-        <td><md-input class="demo-full-width" placeholder="State"></md-input></td>
-        <td><md-input #postalCode class="demo-full-width" maxLength="5"
-                      placeholder="Postal Code"
-                      value="94043">
-          <md-hint align="end">{{postalCode.characterCount}} / 5</md-hint>
-        </md-input></td>
-      </tr></table>
-    </form>
-  </md-card-content>
-</md-card>
-
 
 <button md-button>FLAT</button>
 <button md-raised-button>RAISED</button>

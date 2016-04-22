@@ -139,23 +139,28 @@ jb.component('studio.propertyField-TgpType',{
 						databind: '%$TgpTypeCtrl/expanded%',
 					},
 					{ $: 'button' ,
-						title: 'customize style',
-						style :{$: 'button.studio-edit-js' },
-						action : [ 
-							{$: 'studio.makeLocal', path: '%$path%' },
-							{$: 'studio.openEditStyle', path: '%$path%' },
-						],
-						features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' }}
+						title: 'more',
+						style :{$: 'button.studio-properties-toolbar', icon: 'more_vert' }, 
+						action :{$: 'studio.open-property-menu', path: '%$path%' },
 					},
-					{ $: 'button' ,
-						title: 'delete',
-						style :{$: 'button.studio-delete' },
-						action : [ 
-							{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
-							{$: 'studio.delete', path: '%$path%' },
-						],
-						features :{$: 'hidden', showCondition :{$: 'studio.compName-ref', path: '%$path%' }}
-					},
+					// { $: 'button' ,
+					// 	title: 'customize style',
+					// 	style :{$: 'button.studio-edit-js' },
+					// 	action : [ 
+					// 		{$: 'studio.makeLocal', path: '%$path%' },
+					// 		{$: 'studio.openEditStyle', path: '%$path%' },
+					// 	],
+					// 	features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' }}
+					// },
+					// { $: 'button' ,
+					// 	title: 'delete',
+					// 	style :{$: 'button.studio-delete' },
+					// 	action : [ 
+					// 		{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
+					// 		{$: 'studio.delete', path: '%$path%' },
+					// 	],
+					// 	features :{$: 'hidden', showCondition :{$: 'studio.compName-ref', path: '%$path%' }}
+					// },
 			  ]
 			},
 			{ $: 'group',
@@ -167,6 +172,36 @@ jb.component('studio.propertyField-TgpType',{
 				],
 			}
 		]
+	}
+})
+
+jb.component('studio.open-property-menu',{
+	type: 'action',
+	params: { 
+		path: { as: 'string' },
+	},
+	impl :{$: 'openDialog',
+		style :{$: 'pulldownPopup.contextMenuPopup' },
+		content :{$: 'group',
+			controls: [
+	 		    { $: 'pulldown.MenuItem', title: 'Delete',
+					action : [ 
+						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
+						{$: 'studio.delete', path: '%$path%' },
+					],
+	 		    },
+	 		    { $: 'pulldown.MenuItem', title: 'javascript editor',
+				    action :{$: 'studio.editSource', path: '%$path%' }
+	 		    },
+	 		    { $: 'pulldown.MenuItem', title: 'Goto sublime',
+				    action :{$: 'studio.openSublime', path: '%$path%' }
+	 		    },
+	 		    { $: 'pulldown.MenuItem', title: 'Customize Style',
+				    action :{$: 'studio.openStyleEditor', path: '%$path%' },
+				    features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' } }
+	 		    },
+			]
+		}
 	}
 })
 
@@ -203,7 +238,7 @@ jb.component('studio.propertyField-Style',{
 									{$: 'studio.makeLocal', path: '%$path%' },
 									{$: 'studio.openEditStyle', path: '%$path%' },
 								],
-								features :{$: 'hidden', showCondition :{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }}
+								features :{$: 'hidden', showCondition :{$not :{$: 'studio.isCustomStyle', path: '%$path%' } }}
 							},
 							{ $: 'button' ,
 								title: 'open sublime',
@@ -243,27 +278,27 @@ jb.component('studio.propertyField-Style',{
 	}
 })
 
-jb.component('studio.propertyField-JBEditor',{
-	type: 'control',
-	params: { path: { as: 'string'} },
-	impl :{$: 'group',
-		title :{$: 'studio.prop-name', path: '%$path%' },
-		controls: [
-			{ $: 'button',
-				title: '(..)',
-//				cssStyle: 'jb-studio-primitive-jbeditor',
-				action :{$: 'studio.openjbEditor', path: '%$path%'} 
-			},
-			{ $: 'button', 
-				style: {$: 'button.popup-menu' },
-				action: { $: 'studio.openPrimitiveArrowPopup', 
-					path: '%$path%', 
-					isPrimitive: false 
-				}
-			}
-		]
-	}
-})
+// jb.component('studio.propertyField-JBEditor',{
+// 	type: 'control',
+// 	params: { path: { as: 'string'} },
+// 	impl :{$: 'group',
+// 		title :{$: 'studio.prop-name', path: '%$path%' },
+// 		controls: [
+// 			{ $: 'button',
+// 				title: '(..)',
+// //				cssStyle: 'jb-studio-primitive-jbeditor',
+// 				action :{$: 'studio.openjbEditor', path: '%$path%'} 
+// 			},
+// 			{ $: 'button', 
+// 				style: {$: 'button.popup-menu' },
+// 				action: { $: 'studio.openPrimitiveArrowPopup', 
+// 					path: '%$path%', 
+// 					isPrimitive: false 
+// 				}
+// 			}
+// 		]
+// 	}
+// })
 
 jb.component('studio.propertyField-Javascript',{
 	type: 'control',
@@ -300,7 +335,7 @@ jb.component('studio.propertyField-Array',{
 			itemVariable: 'optionProfile',
 			controls: [
 			  { $: 'expandableSection', title: { $: 'studio.propertyArrayItemName' },
-			  	style: { $: 'expandableSection.studioExpandableInArray'},
+			  	style :{$: 'expandableSection.studioExpandableInArray'},
 			    controls :{$: 'studio.properties', topProfile: '{{$optionProfile}}' }
 			  },
 			  { $: 'button' , text: [ 'Delete {{$param}}', { $: 'replace', find: 's$', replace: '' } ], 
@@ -397,8 +432,8 @@ jb.component('studio.propertyField',{
 		// 	if (val && !Array.isArray(val)) val = [ val ];
 		// 	fieldPT = 'studio.propertyField-Array';
 		// }
-		else if ( (paramDef.type || '').indexOf('.style') > -1 )
-		 	fieldPT = 'studio.propertyField-Style';
+		// else if ( (paramDef.type || '').indexOf('.style') > -1 )
+		//  	fieldPT = 'studio.propertyField-Style';
 		else 
 			fieldPT = 'studio.propertyField-TgpType';
 
@@ -469,7 +504,7 @@ jb.component('button.studio-properties-toolbar', {
       template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}">
                 <i class="material-icons">%$icon%</i>
               </button></span>`,
-      css: `button { width: 24px; height: 24px; padding: 0}
+      css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
      	.material-icons { font-size:12px;  }
       `
   }

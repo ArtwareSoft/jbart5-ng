@@ -13,7 +13,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('pulldown.MenuItemSeparator', {
                 type: 'control',
-                impl: function (ctx) { return jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>' }, ctx); }
+                impl: function (ctx) {
+                    return jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>' }, ctx);
+                }
             });
             jb_core_1.jb.component('pulldown.MenuItem', {
                 type: 'control',
@@ -87,7 +89,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('pulldownPopup.mainMenuPopup', {
                 type: 'dialog.style',
                 impl: { $: 'customStyle',
-                    template: '<div class="jb-dialog pulldown-mainmenu-popup"><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>',
+                    template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>',
                     css: '.pulldown-menu-remove-top-border { width: %$popupWidth%px }',
                     features: [
                         { $: 'dialogFeature.uniqueDialog', id: 'pulldown main menu popup', remeberLastLocation: false },
@@ -103,7 +105,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 impl: function (context) {
                     return {
                         jbTemplate: '<div><div class="dialog-content" #Content></div></div>',
-                        cssClass: 'jb-dialog pulldown-contextmenu-popup',
+                        cssClass: 'jb-dialog jb-popup pulldown-mainmenu-popup',
                         features: [
                             { $: 'dialogFeature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },
                             { $: 'dialogFeature.maxZIndexOnClick' },

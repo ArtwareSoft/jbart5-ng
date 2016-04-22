@@ -80,6 +80,7 @@ jb_modules =
 'jb-ui/itemlog',
 'jb-ui/tab',
 'jb-ui/slider',
+'jb-ui/sidenav',
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'

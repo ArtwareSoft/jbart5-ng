@@ -3,7 +3,8 @@ import * as jb_ui from 'jb-ui';
 
 jb.component('pulldown.MenuItemSeparator', {
 	type: 'control',
-	impl: ctx => jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
+	impl: ctx => 
+		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
 })
 
 jb.component('pulldown.MenuItem', {
@@ -89,7 +90,7 @@ jb.component('pulldownTopMenuItem.default',{
 jb.component('pulldownPopup.mainMenuPopup',{
 	type: 'dialog.style',
 	impl :{$: 'customStyle',
-			template: '<div class="jb-dialog pulldown-mainmenu-popup"><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>', 
+			template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>', 
 			css: '.pulldown-menu-remove-top-border { width: %$popupWidth%px }',
 			features: [
 					{ $: 'dialogFeature.uniqueDialog', id: 'pulldown main menu popup', remeberLastLocation: false },
@@ -106,7 +107,7 @@ jb.component('pulldownPopup.contextMenuPopup',{
 	impl: function(context) {
 		return {
 			jbTemplate: '<div><div class="dialog-content" #Content></div></div>',
-			cssClass: 'jb-dialog pulldown-contextmenu-popup',
+			cssClass: 'jb-dialog jb-popup pulldown-mainmenu-popup',
 			features: [
 				{ $: 'dialogFeature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },
 				{ $: 'dialogFeature.maxZIndexOnClick' },
