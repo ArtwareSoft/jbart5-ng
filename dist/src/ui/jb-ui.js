@@ -478,7 +478,9 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                     this.redrawEm = new jb_rx.Subject();
                     this.redrawEm // source change - wait 1 sec
                         .debounceTime(300)
-                        .map(function (id) { return relevantSource(id); })
+                        .map(function (id) {
+                        return relevantSource(id);
+                    })
                         .distinctUntilChanged()
                         .subscribe(function (x) { return cmp.draw(); });
                     this.redrawEm // widget to show changed - no need to wait

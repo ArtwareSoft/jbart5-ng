@@ -404,13 +404,15 @@ export class jBartWidget {
 		this.redrawEm = new jb_rx.Subject();
 		this.redrawEm // source change - wait 1 sec
 		  .debounceTime(300)
-		  .map(id=>relevantSource(id))
+		  .map(id=>
+		  	relevantSource(id))
 		  .distinctUntilChanged()
 		  .subscribe(x => cmp.draw())
 
 		this.redrawEm // widget to show changed - no need to wait
 		  .distinctUntilChanged()
-		  .subscribe(x => cmp.draw())
+		  .subscribe(
+		  	x => cmp.draw())
 
 		function relevantSource(compID) {
 			var ns = compID.split('.')[0];

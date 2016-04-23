@@ -31,15 +31,9 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 studio = studio_1;
             }],
         execute: function() {
-            jbart.dialogsParent = function () {
-                return $('#jb-inspector-top')[0] || $('<div id="jb-inspector-top" />').appendTo('body')[0];
-            };
             jbart.studio = jbart.studio || {};
-            jb_core_1.jb.resource('studio', 'DragScriptEm', { $: 'rx.subject' });
-            jb_core_1.jb.resource('studio', 'ModifyScriptEm', { $: 'rx.subject', unique: false });
             jb_core_1.jb.resource('studio', 'UrlPathEm', { $: 'rx.urlPath', base: 'studio', zoneId: 'studio.all',
                 params: ['project', 'page', 'profile_path'], databind: '{%$globals%}' });
-            //jb.resource('studio','PageEm',{ $: 'studio.pageEm' })
             jb_core_1.jb.component('studio.all', {
                 type: 'control',
                 impl: {
@@ -78,10 +72,18 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                     cssClass: 'studio-page',
                                 }
                             },
-                            features: { $: 'wait',
-                                for: { $: 'studio.waitForPreviewIframe' },
-                                loadingControl: { $label: '...' }
-                            }
+                            features: [
+                                { $: 'wait',
+                                    for: { $: 'studio.waitForPreviewIframe' },
+                                    loadingControl: { $label: '...' }
+                                },
+                                { $: 'feature.afterLoad',
+                                    action: { $runActions: [
+                                            { $: 'studio.waitForPreviewIframe' },
+                                            { $: 'studio.fixProfilePath' }
+                                        ] }
+                                }
+                            ]
                         }
                     ]
                 }
@@ -134,11 +136,26 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 impl: function (context) {
                     if (jbart.previewjbart)
                         return;
-                    return new Promise(function (resolve) { return jb_core_1.jb.bind(jbart, 'preview_loaded', resolve, 'waitForPreviewIframe'); });
+                    return new Promise(function (resolve) {
+                        return jb_core_1.jb.bind(jbart, 'preview_loaded', resolve);
+                    });
+                }
+            });
+            jb_core_1.jb.component('studio.fixProfilePath', {
+                impl: function (ctx) {
+                    var path = ctx.exp('%$globals/profile_path%');
+                    if (!path)
+                        return;
+                    while (path.indexOf('~') != -1)
+                        path = studio.parentPath(path);
+                    if (path != ctx.exp('%$globals/profile_path%')) {
+                        jb_core_1.jb.writeValue(ctx.exp('%$globals/profile_path%', 'ref'), path);
+                        jb_ui.apply(ctx);
+                    }
                 }
             });
             jb_core_1.jb.component('studio.currentProfilePath', {
-                impl: { $firstSucceeding: ['{%$globals/profile_path%}', '{%$globals/project%}.{%$globals/page%}'] }
+                impl: { $firstSucceeding: ['%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
             });
             jb_core_1.jb.component('studio.short-title', {
                 params: { path: { as: 'string' } },

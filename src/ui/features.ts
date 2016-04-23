@@ -188,11 +188,13 @@ jb.component('feature.keyboard-shortcut', {
       init: function(cmp) {
             var doc = cmp.elementRef.nativeElement.ownerDocument;
             $(doc).keydown(event => {
-              var keyCode = key.split('+').pop().charCodeAt(0);
-              var helper = (key.match('([a-z]*)+') || ['',''])[1];
-              if (helper == 'Ctrl' && !event.ctrlKey) return
-              if (helper == 'Alt' && !event.altKey) return
-              if (event.keyCode == keyCode)
+                var keyCode = key.split('+').pop().charCodeAt(0);
+                if (key == 'Delete') keyCode = 46;
+
+                var helper = (key.match('([A-Za-z]*)+') || ['',''])[1];
+                if (helper == 'Ctrl' && !event.ctrlKey) return
+                if (helper == 'Alt' && !event.altKey) return
+                if (event.keyCode == keyCode)
                 action();
             })
           }

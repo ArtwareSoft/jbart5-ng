@@ -12,7 +12,7 @@
     "Yaron Ben-Yehuda <yaronby@artwaresoft.com>"
   ],
   "scripts": {
-    "start": "npm run openStudio & npm run studio",
+    "start": "npm run studio",
     "start-dev": "concurrently \"npm run tsc:w\" \"npm run start\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w",

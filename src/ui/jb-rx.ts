@@ -46,7 +46,6 @@ export function observableFromCtx(ctx) : Observable {
 
 jb.type('rx.elem');
 
-
 jb.component('rxLog',{
 	type: 'rx.elem',
 	params: {
@@ -248,27 +247,21 @@ jb.component('rx.urlPath',{
 	    	params.forEach(p=>dataParent[p] = newVal[p]);
 	    	var split_base = jbart.location.path().split(`/${base}`);
 	    	var vals = split_base[1].split('/').map(x=>decodeURIComponent(x));
-	    	params.forEach((p,i) => vals[i+1] = p == '*' ? vals[i+1] : newVal[p]);
+	    	params.forEach((p,i) => 
+	    		vals[i+1] = p == '*' ? vals[i+1] : newVal[p]);
 	    	var url = split_base[0] + `/${base}` + vals.join('/');
 	    	jbart.location.push(url.replace(/\/*$/,''));
 	    })
 	    if (jbart.location.subscribe)
-	    	jbart.location.subscribe(()=>subject.next(urlToObj()));
+	    	jbart.location.subscribe(()=>
+	    		subject.next(urlToObj()));
 	    subject.next(urlToObj());
 
-	    jb_ui.getZone(zoneId).then(zone=> zone.onStable.subscribe(()=>subject.next(jb.val(databind))) )
+	    jb_ui.getZone(zoneId).then(zone=> 
+	    	zone.onStable.subscribe(()=>
+	    		subject.next(jb.val(databind))) )
    	    return subject;
 	}
-})
-
-jb.component('rx.fullBind', {
-	params: {
-		subject1: { type: 'rx.subject' },
-		subject2: { type: 'rx.subject' },
-		pipe1to2: { type: 'rx.elem', dynamic: true },
-		pipe2to1: { type: 'rx.elem', dynamic: true },
-	},
-	impl: (ctx,subject1,subject2,pipe1to2,pipe2to1)=>fullRxBind(ctx,subject1,subject2,pipe1to2,pipe2to1,ctx)
 })
 
 // ************** tests ******************
@@ -282,8 +275,8 @@ jb.component('rx-test', {
 	impl: function(context, result, expectedResult,timeout) {
 		var res = result();
 		return expectedResult(context.setData(res))
-			.map(ctx=>{ return {id: context.vars.testID, success: ctx.data }})
-//			.map(x=>{console.log('tap',x); return x})
+			.map(ctx=>
+				({id: context.vars.testID, success: ctx.data }))
 	}
 })
 
@@ -295,9 +288,7 @@ jb.component('containsSeq',{
 	},
 	impl: function(context,seq,observable) {
 		return observable.take(seq.length)
-//			.map(x=>{console.log('tap1',x); return x})
 			.map(x=>x.data).toArray()
-//			.map(x=>{console.log('tap2',x); return x})
 			.map(arr=>jb.compareArrays(arr,seq))
 			.map(x=>context.setData(x))
 	}

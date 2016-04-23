@@ -9,7 +9,8 @@ jb.component('studio.mainMenu', {
   		{ $: 'pulldown.topMenuItem', title: 'File',
   		  controls: [
   		    { $: 'pulldown.menu-item', title: 'Open ...', action: { $: 'studio.openWidget'} },
-  		    { $: 'pulldown.menu-item', title: 'Save', icon: 'save', action: { $: 'studio.saveWidget'}, shortcut: 'Ctrl+S' },
+  		    { $: 'pulldown.menu-item', title: 'Save', icon: 'save', action: { $: 'studio.saveComponents'}, shortcut: 'Ctrl+S' },
+          { $: 'pulldown.menu-item', title: 'Force Save', icon: 'save', action: { $: 'studio.saveComponents' , force: true } },
           { $: 'pulldown.menu-item', title: 'Source ...', action: { $: 'studio.openSourceDialog'} },
   		  ]
   		},

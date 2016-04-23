@@ -162,19 +162,19 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',
                         controls: [
-                            { $: 'pulldown.menu-item', title: 'Delete',
+                            { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
                                 action: [
                                     { $: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%' },
                                     { $: 'studio.delete', path: '%$path%' },
                                 ],
                             },
-                            { $: 'pulldown.menu-item', title: 'javascript editor',
+                            { $: 'pulldown.menu-item', title: 'javascript editor', icon: 'code',
                                 action: { $: 'studio.editSource', path: '%$path%' }
                             },
                             { $: 'pulldown.menu-item', title: 'Goto sublime',
                                 action: { $: 'studio.openSublime', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item', title: 'Customize Style',
+                            { $: 'pulldown.menu-item', title: 'Customize Style', icon: 'build',
                                 action: { $: 'studio.openStyleEditor', path: '%$path%' },
                                 features: { $: 'hidden', showCondition: { $: 'endsWith', text: '%$path%', endsWith: '~style' } }
                             },

@@ -223,17 +223,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', 'angular2/core'],
                             var tree = cmp.tree;
                             cmp.keydown = cmp.keydown || new Rx_1.Subject();
                             cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () { cmp.elementRef.nativeElement.focus(); return false; });
-                            var alt = key.indexOf('Alt') == 0;
-                            var ctrl = key.indexOf('Ctrl') == 0;
-                            var char = key.split('+').pop().charCodeAt(0);
-                            cmp.keydown.filter(function (e) {
-                                return e.keyCode == char;
-                            })
-                                .filter(function (e) {
-                                return (e.altKey && alt) || (e.ctrlKey && ctrl);
-                            })
-                                .subscribe(function () {
-                                action(context.setData(tree.selected));
+                            cmp.keydown.subscribe(function (event) {
+                                var keyCode = key.split('+').pop().charCodeAt(0);
+                                if (key == 'Delete')
+                                    keyCode = 46;
+                                var helper = (key.match('([A-Za-z]*)+') || ['', ''])[1];
+                                if (helper == 'Ctrl' && !event.ctrlKey)
+                                    return;
+                                if (helper == 'Alt' && !event.altKey)
+                                    return;
+                                if (event.keyCode == keyCode)
+                                    action(context.setData(tree.selected));
                             });
                         }
                     };

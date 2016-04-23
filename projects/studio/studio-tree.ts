@@ -68,7 +68,7 @@ jb.component('studio.controlTree',{
 	type: 'control',
 	impl: {
 		$: 'tree', cssClass: 'jb-control-tree studio-control-tree',
-		nodeModel: { $: 'studio.controlTree.nodes' },
+		nodeModel :{$: 'studio.controlTree.nodes' },
 		features: [
 			{ $: 'tree.selection', 
 				autoSelectFirst: true, 
@@ -85,6 +85,9 @@ jb.component('studio.controlTree',{
 			{ $: 'tree.drag-and-drop' },
 			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-C', action :{$: 'studio.copy', path: '%%' } },
 			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-V', action :{$: 'studio.paste', path: '%%' } },
+			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-Z', action :{$: 'studio.undo', path: '%%' } },
+			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-Y', action :{$: 'studio.redo', path: '%%' } },
+			{ $: 'tree.keyboard-shortcut', key: 'Delete', action :{$: 'studio.Delete', path: '%%' } },
 			{ $: 'studio.controlTree.refreshPathChanges'},
 		]
 	}

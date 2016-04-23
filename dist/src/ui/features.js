@@ -200,7 +200,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             var doc = cmp.elementRef.nativeElement.ownerDocument;
                             $(doc).keydown(function (event) {
                                 var keyCode = key.split('+').pop().charCodeAt(0);
-                                var helper = (key.match('([a-z]*)+') || ['', ''])[1];
+                                if (key == 'Delete')
+                                    keyCode = 46;
+                                var helper = (key.match('([A-Za-z]*)+') || ['', ''])[1];
                                 if (helper == 'Ctrl' && !event.ctrlKey)
                                     return;
                                 if (helper == 'Alt' && !event.altKey)

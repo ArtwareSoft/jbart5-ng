@@ -76,22 +76,6 @@ function findjBartToLook(path) {
 		return jbart;
 }
 
-//var ref = profileRefFromPath; // function alias
-
-// export function profilePath(profile, jbartToLook) {
-// 	return getPath((jbartToLook || jbart_base()).comps, profile).slice(0, -2).replace(/([^~]*)~impl(.*)/, '$1$2');
-
-// 	function getPath(parent, dest, depth) {
-// 		if (depth > 50) debugger;
-// 		if (!parent) return '';
-// 		if (parent === dest) return '~'; // will be removed
-// 		return Object.getOwnPropertyNames(parent).filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0).map(function(p) {
-// 			var path = getPath(parent[p], dest, (depth || 0) + 1);
-// 			return path ? (p + '~' + path) : '';
-// 		}).join(''); // only one will succeed
-// 	}
-// }
-
 export function evalProfile(prof_str) {
 	try {
 		return eval(`(${prof_str})`)
@@ -132,11 +116,14 @@ export class ControlModel {
 			return 'folder_open'; //'view_headline' , 'folder_open'
 		}
 		var comp2icon = { 
-			label: 'format_color_text',
+			label: 'font_download',
 			button: 'crop_landscape',
 			tab: 'tab',
 			image: 'insert_photo',
-			'custom-control': 'build'
+			'custom-control': 'build',
+			'editable-text': 'data_usage',
+			'editable-boolean': 'radio_button',
+			'editable-number': 'donut_large',
 		}
 		var compName = this.compName(path);
 		if (comp2icon[compName])

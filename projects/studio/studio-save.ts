@@ -10,19 +10,26 @@ studio.modifyOperationsEm.subscribe(e=>{
 })
 
 jb.component('studio.saveComponents', {
+	params: {
+		force: {as: 'boolean', type: 'boolean' }
+	},
 	impl :{$rxLog : [
-		ctx => jb.entries(modified).map(x=>{return {key:x[0],val:x[1]}}),
-		ctx => {
-			var comp = ctx.data.key;
-			return $.ajax({ 
-				url: `/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}`, 
-				type: 'POST', 
-				data: JSON.stringify({ original: ctx.data.val.original, toSave: studio.comp_asStr(comp) }),
-				headers: { 'Content-Type': 'text/plain' } 
-			}).then(
-				()=>modified[comp] = null,
-				(e)=>jb.logException(e,'error while saving ' + comp)
-			)
+			ctx => jb.entries(modified).map(x=>{return {key:x[0],val:x[1]}}),
+			ctx => {
+				var comp = ctx.data.key;
+				return $.ajax({ 
+					url: `/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${ctx.exp('%$force%')}`, 
+					type: 'POST', 
+					data: JSON.stringify({ original: ctx.data.val.original, toSave: studio.comp_asStr(comp) }),
+					headers: { 'Content-Type': 'text/plain' } 
+				}).then(
+					()=>modified[comp] = null,
+					(e)=>jb.logException(e,'error while saving ' + comp)
+				)
+			}
+		], 
+		$vars: {
+			force: '%$force%'
 		}
-	]}
+	}
 });

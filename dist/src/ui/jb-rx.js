@@ -247,25 +247,24 @@ System.register(['rxjs/Rx', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, co
                         params.forEach(function (p) { return dataParent[p] = newVal[p]; });
                         var split_base = jbart.location.path().split("/" + base);
                         var vals = split_base[1].split('/').map(function (x) { return decodeURIComponent(x); });
-                        params.forEach(function (p, i) { return vals[i + 1] = p == '*' ? vals[i + 1] : newVal[p]; });
+                        params.forEach(function (p, i) {
+                            return vals[i + 1] = p == '*' ? vals[i + 1] : newVal[p];
+                        });
                         var url = split_base[0] + ("/" + base) + vals.join('/');
                         jbart.location.push(url.replace(/\/*$/, ''));
                     });
                     if (jbart.location.subscribe)
-                        jbart.location.subscribe(function () { return subject.next(urlToObj()); });
+                        jbart.location.subscribe(function () {
+                            return subject.next(urlToObj());
+                        });
                     subject.next(urlToObj());
-                    jb_ui.getZone(zoneId).then(function (zone) { return zone.onStable.subscribe(function () { return subject.next(jb_1.jb.val(databind)); }); });
+                    jb_ui.getZone(zoneId).then(function (zone) {
+                        return zone.onStable.subscribe(function () {
+                            return subject.next(jb_1.jb.val(databind));
+                        });
+                    });
                     return subject;
                 }
-            });
-            jb_1.jb.component('rx.fullBind', {
-                params: {
-                    subject1: { type: 'rx.subject' },
-                    subject2: { type: 'rx.subject' },
-                    pipe1to2: { type: 'rx.elem', dynamic: true },
-                    pipe2to1: { type: 'rx.elem', dynamic: true },
-                },
-                impl: function (ctx, subject1, subject2, pipe1to2, pipe2to1) { return fullRxBind(ctx, subject1, subject2, pipe1to2, pipe2to1, ctx); }
             });
             // ************** tests ******************
             jb_1.jb.component('rx-test', {
@@ -277,8 +276,9 @@ System.register(['rxjs/Rx', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, co
                 impl: function (context, result, expectedResult, timeout) {
                     var res = result();
                     return expectedResult(context.setData(res))
-                        .map(function (ctx) { return { id: context.vars.testID, success: ctx.data }; });
-                    //			.map(x=>{console.log('tap',x); return x})
+                        .map(function (ctx) {
+                        return ({ id: context.vars.testID, success: ctx.data });
+                    });
                 }
             });
             jb_1.jb.component('containsSeq', {

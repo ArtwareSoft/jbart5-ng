@@ -13,41 +13,40 @@ jb.resource('material-demo','person',{
 
 jb.component('material-demo.main', {
   type: 'control', 
-  impl :{$: 'group',
-    $vars: {
-      'editable-text.default-style-profile': 'editable-text.md-input'
-    },
-    features :{$: 'group.data', data: '%$person%'},
+  impl :{$: 'group', 
+    $vars: { "editable-text.default-style-profile": 'editable-text.md-input' }, 
+    features :{$: 'group.data', data: '%$person%' }, 
     controls: [
-      { $: 'editable-text', 
-        title: 'Company (disabled)',
-        databind: '%company%',
-        //features: [ {$: 'disabled', showCondition: false }, {$: 'material-demo.input.full-width'} ], 
-      },
-      { $: 'group', 
-        style :{$: 'layout.horizontal'},
+      {$: 'editable-text', title: 'Company (disabled)', databind: '%company%' }, 
+      {$: 'group', 
+        style :{$: 'layout.horizontal' }, 
         controls: [
-            { $: 'editable-text', title: 'First Name', databind: '%firstName%' },
-            { $: 'editable-text', title: 'Long Last Name That Will Be Truncated', databind: '%lastName%' },
+          {$: 'editable-text', title: 'First Name', databind: '%firstName%' }, 
+          {$: 'editable-text', 
+            title: 'Long Last Name That Will Be Truncated', 
+            databind: '%lastName%'
+          }
         ]
-      },
-      { $: 'group', 
-        style :{$: 'layout.vertical'},
+      }, 
+      {$: 'group', 
+        style :{$: 'layout.vertical' }, 
         controls: [
-            { $: 'editable-text', title: 'Address', databind: '%address%' },
-            { $: 'editable-text', title: 'Address 2', databind: '%address2%' },
+          {$: 'editable-text', title: 'Address', databind: '%address%' }, 
+          {$: 'editable-text', title: 'Address 2', databind: '%address2%' }
         ]
-      },
-      { $: 'group', 
-        style :{$: 'layout.horizontal'},
+      }, 
+      {$: 'group', 
+        style :{$: 'layout.horizontal' }, 
         controls: [
-            { $: 'editable-text', title: 'City', databind: '%city%' },
-            { $: 'editable-text', title: 'State', databind: '%state%' },
-            { $: 'editable-text', title: 'Postal Code', databind: '%postalCode%' },
+          {$: 'editable-text', title: 'City', databind: '%city%' }, 
+          {$: 'editable-text', title: 'State', databind: '%state%' }, 
+          {$: 'editable-text', title: 'Postal Code', databind: '%postalCode%' }
         ]
-      },
-    ],
+      }
+    ]
   }
+})
+})
 })
 
 jb.component('material-demo.sidenav', {

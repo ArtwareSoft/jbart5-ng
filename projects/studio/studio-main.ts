@@ -2,17 +2,10 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
-jbart.dialogsParent = function() {
-	return $('#jb-inspector-top')[0] || $('<div id="jb-inspector-top" />').appendTo('body')[0];
-}
-
 jbart.studio = jbart.studio || {}
 
-jb.resource('studio','DragScriptEm',{ $: 'rx.subject' })
-jb.resource('studio','ModifyScriptEm',{ $: 'rx.subject' , unique: false })
 jb.resource('studio','UrlPathEm',{ $: 'rx.urlPath', base: 'studio', zoneId: 'studio.all', 
 	params: [ 'project', 'page', 'profile_path' ] , databind: '{%$globals%}' } )
-//jb.resource('studio','PageEm',{ $: 'studio.pageEm' })
 
 jb.component('studio.all', {
 	type: 'control',
@@ -52,10 +45,18 @@ jb.component('studio.all', {
 						cssClass: 'studio-page', 
 					}
 				},
-				features :{$: 'wait', 
-					for :{$: 'studio.waitForPreviewIframe' }, 
-					loadingControl :{$label: '...' } 
-				}
+				features: [
+					{ $: 'wait', 
+						for :{$: 'studio.waitForPreviewIframe' }, 
+						loadingControl :{$label: '...' } 
+					},
+					{ $: 'feature.afterLoad',
+						action :{$runActions: [
+							{$: 'studio.waitForPreviewIframe' },
+							{$: 'studio.fixProfilePath' }
+						] }
+					}
+				]
 			}
 		]
 	}
@@ -128,12 +129,27 @@ jb.component('studio.waitForPreviewIframe',{
 	type:'action',
 	impl: function(context) {
 		if (jbart.previewjbart) return;
-		return new Promise(resolve => jb.bind(jbart, 'preview_loaded', resolve, 'waitForPreviewIframe'))
+		return new Promise(resolve => 
+			jb.bind(jbart, 'preview_loaded', resolve))
 	}
 })
 
+jb.component('studio.fixProfilePath', {
+	impl: ctx => {
+		var path = ctx.exp('%$globals/profile_path%');
+		if (!path) return;
+		while (path.indexOf('~') != -1)
+			path = studio.parentPath(path);
+		if (path != ctx.exp('%$globals/profile_path%')) {
+			jb.writeValue(ctx.exp('%$globals/profile_path%','ref'),path);
+			jb_ui.apply(ctx);
+		}
+	}
+})
+
+
 jb.component('studio.currentProfilePath', {
-	impl: { $firstSucceeding: ['{%$globals/profile_path%}', '{%$globals/project%}.{%$globals/page%}'] }
+	impl: { $firstSucceeding: ['%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
 })
 
 

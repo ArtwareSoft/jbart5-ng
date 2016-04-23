@@ -111,6 +111,7 @@ extend(op_post_handlers, {
         if (!clientReq.toSave) return endWithFailure(res,'missing toSave in request');
 
         var project = getURLParam(req,'project');
+        var force = getURLParam(req,'force') == 'true';
         if (!project) return endWithFailure(res,'missing project param in url');
         var comp = getURLParam(req,'comp');
         if (!comp) return endWithFailure(res,'missing comp param in url');
@@ -128,31 +129,34 @@ extend(op_post_handlers, {
                 var source = ('' + fs.readFileSync(srcPath)).replace(/\r/g,'').split('\n');
                 var toFind = clientReq.original.replace(/\r/g,'').split('\n');
                 var replaceWith = clientReq.toSave.replace(/\r/g,'').split('\n');
-                var found = indexOf(source,toFind);
-                if (found != -1) {
+                var found = findSection(source,toFind);
+                if (found) {
                   comp_found = true;
-                  console.log('splice',source,found,toFind.length,replaceWith);
-                  source.splice.apply(source, [found, toFind.length].concat(replaceWith));
+                  console.log('splice',source,found.index,found.length,replaceWith);
+                  source.splice.apply(source, [found.index, found.length].concat(replaceWith));
                   var newContent = source.join(_iswin ? '\r\n' : '\n');
                   fs.writeFileSync(srcPath,newContent);
-                  endWithSuccess(res,'Comp saved to ' + srcPath + ' at index ' + found);
+                  endWithSuccess(res,`component ${comp} saved to ${srcPath} at ${JSON.stringify(found)}`);
                 }
             })
           )
 
         if (!comp_found)
-          endWithFailure(res,'Can not find comp in project')
+          endWithFailure(res,`Can not find component ${comp} in project`)
 
-        function indexOf(source,toFind) {
+        function findSection(source,toFind) {
           var index = source.indexOf(toFind[0]);
-          if (index != -1 && !compareArrays(source.slice(index,index+toFind.length),toFind))
-            index = -1;
-          return index;
+          if (force) {// ignore content - just look for the end
+            for(end_index=index;end_index<source.length;end_index++)
+              if ((source[end_index]||'').match(/^}\)$/m))
+                return { index: index, length: end_index - index }
+          } else { // compare content
+            if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind))
+              return { index: index, length: toFind.length }
+          }
         }
+
         function compareArrays(arr1,arr2) {
-          console.log(arr1.join('#\n'));
-          console.log('\n');
-          console.log(arr2.join('#\n'));
           return arr1.join('\n') == arr2.join('\n')
         }
     },

@@ -213,16 +213,16 @@ jb.component('tree.keyboard-shortcut', {
 				cmp.keydown = cmp.keydown || new Subject();
 				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {cmp.elementRef.nativeElement.focus(); return false});
 
-				var alt = key.indexOf('Alt') == 0;
-				var ctrl = key.indexOf('Ctrl') == 0;
-				var char = key.split('+').pop().charCodeAt(0);
+				cmp.keydown.subscribe(event=>{
+	              var keyCode = key.split('+').pop().charCodeAt(0);
+	              if (key == 'Delete') keyCode = 46;
 
-				cmp.keydown.filter(e=> 
-					e.keyCode == char)
-				.filter(e=> 
-					(e.altKey && alt) || (e.ctrlKey && ctrl) )
-						.subscribe(()=>{
-							action(context.setData(tree.selected))})
+	              var helper = (key.match('([A-Za-z]*)+') || ['',''])[1];
+	              if (helper == 'Ctrl' && !event.ctrlKey) return
+	              if (helper == 'Alt' && !event.altKey) return
+	              if (event.keyCode == keyCode)
+	                action(context.setData(tree.selected));
+				})
 			}
 		}
 	}

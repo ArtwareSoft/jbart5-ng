@@ -19,18 +19,25 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     modified[comp] = { original: e.before };
             });
             jb_core_1.jb.component('studio.saveComponents', {
+                params: {
+                    force: { as: 'boolean', type: 'boolean' }
+                },
                 impl: { $rxLog: [
                         function (ctx) { return jb_core_1.jb.entries(modified).map(function (x) { return { key: x[0], val: x[1] }; }); },
                         function (ctx) {
                             var comp = ctx.data.key;
                             return $.ajax({
-                                url: "/?op=saveComp&comp=" + comp + "&project=" + ctx.exp('%$globals/project%'),
+                                url: "/?op=saveComp&comp=" + comp + "&project=" + ctx.exp('%$globals/project%') + "&force=" + ctx.exp('%$force%'),
                                 type: 'POST',
                                 data: JSON.stringify({ original: ctx.data.val.original, toSave: studio.comp_asStr(comp) }),
                                 headers: { 'Content-Type': 'text/plain' }
                             }).then(function () { return modified[comp] = null; }, function (e) { return jb_core_1.jb.logException(e, 'error while saving ' + comp); });
                         }
-                    ] }
+                    ],
+                    $vars: {
+                        force: '%$force%'
+                    }
+                }
             });
         }
     }
