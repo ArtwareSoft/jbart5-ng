@@ -1,19 +1,18 @@
-System.register(['jb-core/jb'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1;
+    var jb_core_1;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            ;
             if (window.jbartTest) {
                 // jb.resource('ui-tests','UrlPathEm',{ $: 'rx.urlPath', base: 'ui-tests', zoneId: 'single-test', 
                 // 	params: [ 'test','project', 'page', 'profile_path' ] , databind: '{%$globals%}' } );
-                jb_1.jb.resource('ui-tests', 'DragScriptEm', { $: 'rx.subject' });
-                jb_1.jb.resource('ui-tests', 'WidgetLoaded', { $: 'rx.subject' });
+                jb_core_1.jb.resource('ui-tests', 'DragScriptEm', { $: 'rx.subject' });
+                jb_core_1.jb.resource('ui-tests', 'WidgetLoaded', { $: 'rx.subject' });
             }
             jb_tests('studio-tests', {
                 'studio-label': { $: 'studio-test',
@@ -53,7 +52,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
                 },
             });
-            jb_1.jb.component('studio-test', {
+            jb_core_1.jb.component('studio-test', {
                 params: {
                     project: { as: 'string', defaultValue: 'hello-world' },
                     page: { as: 'string', defaultValue: 'group1' },
@@ -87,7 +86,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     expectedHtmlResult: { $call: 'expectedHtmlResult' }
                 }
             });
-            jb_1.jb.component('run-studio-test', {
+            jb_core_1.jb.component('run-studio-test', {
                 params: {
                     project: { as: 'string', defaultValue: 'hello-world' },
                     page: { as: 'string', defaultValue: 'group1' },

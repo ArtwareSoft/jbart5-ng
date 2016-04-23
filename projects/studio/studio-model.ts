@@ -125,21 +125,39 @@ export class ControlModel {
 		}
 	}
 
-	iconPos(path) {
-		if (this.controlParam(path))
-			return '21,1';
+	icon(path) {
+		if (this.controlParam(path)) {
+			if (this.compName(path+'~style') == 'layout.horizontal')
+				return 'view_column'
+			return 'folder_open'; //'view_headline' , 'folder_open'
+		}
+		var comp2icon = { 
+			label: 'format_color_text',
+			button: 'crop_landscape',
+			tab: 'tab',
+			image: 'insert_photo',
+			'custom-control': 'build'
+		}
 		var compName = this.compName(path);
-		if (compName == 'label')
-			return '27,0'
-		if (compName == 'button')
-			return '20,1'
+		if (comp2icon[compName])
+			return comp2icon[compName];
 
-		return '17,1';
+		if (this.isOfType(path,'action'))
+			return 'play_arrow'
+
+		return 'radio_button_unchecked';
 	}
 
 	compName(path) {
 		var val = profileValFromPath(path);
 		return val && jb.compName(val);
+	}
+
+	isOfType(path,type) {
+		var val = profileValFromPath(path);
+		var name = val && jb.compName(val);
+		if (name)
+			return (jbart.comps[name].type || '').indexOf(type) == 0;
 	}
 
 	title(path, collapsed) {
@@ -285,7 +303,7 @@ export class ControlModel {
 		var comp_arr = types.map(t=>jb_entries((jbartToLook || jbart_base()).comps)
 			.filter(c=>
 				(c[1].type||'data').split(',').indexOf(t) != -1
-//				|| (c[1].typePattern && t.match(c[1].typePattern.match))
+				|| (c[1].typePattern && t.match(c[1].typePattern.match))
 			)
 			.map(c=>c[0]));
 		return comp_arr.reduce((all,ar)=>all.concat(ar),[]);

@@ -1,4 +1,4 @@
-System.register(['jb-core/jb', 'jb-ui/tree/tree', 'angular2/core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui/tree/tree', 'angular2/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,12 +10,12 @@ System.register(['jb-core/jb', 'jb-ui/tree/tree', 'angular2/core'], function(exp
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_1, tree_1, core_1;
+    var jb_core_1, tree_1, core_1;
     var Undo;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (tree_1_1) {
                 tree_1 = tree_1_1;
@@ -24,8 +24,7 @@ System.register(['jb-core/jb', 'jb-ui/tree/tree', 'angular2/core'], function(exp
                 core_1 = core_1_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('json.undo', {
+            jb_core_1.jb.component('json.undo', {
                 type: 'feature',
                 params: {},
                 impl: function (context) {
@@ -34,12 +33,12 @@ System.register(['jb-core/jb', 'jb-ui/tree/tree', 'angular2/core'], function(exp
                         }
                         TreeUndo.prototype.ngAfterViewInit = function () {
                             var undo = new Undo(this.tree);
-                            jb_1.jb.extend(this.tree, { undo: undo });
-                            jb_1.jb.bind(this.tree, 'store', function (e) { undo.store(); });
-                            jb_1.jb.bind(this.tree, 'undo', function (e) { undo.undo(); });
-                            jb_1.jb.bind(this.tree, 'redo', function (e) { undo.redo(); });
-                            jb_1.jb.bind(this.tree, 'copy', function (e) { undo.copy(); });
-                            jb_1.jb.bind(this.tree, 'paste', function (e) { undo.paste(); });
+                            jb_core_1.jb.extend(this.tree, { undo: undo });
+                            jb_core_1.jb.bind(this.tree, 'store', function (e) { undo.store(); });
+                            jb_core_1.jb.bind(this.tree, 'undo', function (e) { undo.undo(); });
+                            jb_core_1.jb.bind(this.tree, 'redo', function (e) { undo.redo(); });
+                            jb_core_1.jb.bind(this.tree, 'copy', function (e) { undo.copy(); });
+                            jb_core_1.jb.bind(this.tree, 'paste', function (e) { undo.paste(); });
                         };
                         __decorate([
                             core_1.Input(), 
@@ -72,7 +71,7 @@ System.register(['jb-core/jb', 'jb-ui/tree/tree', 'angular2/core'], function(exp
                     this.index = 0;
                 }
                 Undo.prototype.store = function () {
-                    var newContent = jb_1.jb.stringify(this.tree.root.parent);
+                    var newContent = jb_core_1.jb.stringify(this.tree.root.parent);
                     if (this.index > 0 && newContent == this.history[this.index - 1].content)
                         return;
                     if (this.index != this.history.length)
@@ -95,7 +94,7 @@ System.register(['jb-core/jb', 'jb-ui/tree/tree', 'angular2/core'], function(exp
                 Undo.prototype.copy = function () {
                     var selectedNode = this.tree.selectedNode();
                     if (selectedNode)
-                        this.clipboard = jb_1.jb.stringify(selectedNode.val());
+                        this.clipboard = jb_core_1.jb.stringify(selectedNode.val());
                 };
                 Undo.prototype.paste = function () {
                     var selectedNode = this.tree.selectedNode();

@@ -1,11 +1,11 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1, jb_ui, jb_rx;
+    var jb_core_1, jb_ui, jb_rx;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
@@ -14,8 +14,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1
                 jb_rx = jb_rx_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('tab-control', {
+            jb_core_1.jb.component('tab-control', {
                 type: 'control',
                 spritePosition: '1,1',
                 params: {
@@ -25,8 +24,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1
                 },
                 impl: jb_ui.ctrl
             });
-            jb_1.jb.type('tab-control.style');
-            jb_1.jb.component('tab-control.md', {
+            jb_core_1.jb.type('tab-control.style');
+            jb_core_1.jb.component('tab-control.md', {
                 type: 'tab-control.style',
                 impl: function (context) {
                     return {

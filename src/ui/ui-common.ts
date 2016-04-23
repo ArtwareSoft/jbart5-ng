@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as ui_utils from 'jb-ui/jb-ui-utils';
 
 jb.component('addCssClass',{

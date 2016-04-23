@@ -53,17 +53,17 @@ jb.component('tree.ul-li', {
 						<button class="treenode-expandbox" (click)="flip()" [ngClass]="{nochildren: !model.isArray(path)}">
 							<div class="frame"></div><div class="line-lr"></div><div class="line-tb"></div>
 						</button>
-						<span class="treenode-icon" style="background-position: {{iconPos}}"></span>
+						<i class="material-icons">{{icon}}</i>
 						<span class="treenode-label">{{model.title(path,!tree.expanded[path])}}</span>
 					  </div>`,
+			styles: ['i {font-size: 16px; margin-left: -4px; padding-right:2px }']
 		})
 		class TreeNodeLine {
 			@Input('path') path;
 			ngOnInit() {
 				this.tree = tree;
 				this.model = tree.nodeModel;
-				var spritePosition = tree.nodeModel.iconPos ? tree.nodeModel.iconPos(this.path) : '0,-1';
-				this.iconPos = spritePosition.split(',').map(item => (-parseInt(item) * 16) + 'px').join(' ');
+				this.icon = tree.nodeModel.icon ? tree.nodeModel.icon(this.path) : 'radio_button_unchecked';
 			}
 			flip(x) { 
 				tree.expanded[this.path] = !(tree.expanded[this.path]);
@@ -145,22 +145,6 @@ jb.component('tree.selection', {
         	'(click)': 'click.next($event)',
       	}
   	}
-  //   var tree = context.vars.$tree; 
-  //   @Directive({
-  //     selector: '[tree-selection]',
-  //   })
-  //   class treeSelection {
-  //     @Input('tree-selection') s;
-  //     @Input() node;
-  //     click = new Subject();
-  //     ngOnInit() {
-		// }
-  //   }
-  //   return {
-		// init: function(cmp) { cmp.tree = tree },
-	 //    atts: { '[tree-selection]' : '' },
-	 //    directives: [treeSelection,NgClass]
-  //   }
   }
 })
 
@@ -181,14 +165,16 @@ jb.component('tree.keyboard-selection', {
 			},
 			init: cmp=> {
 				var tree = cmp.tree;
-				cmp.keydown = new Subject();
-				cmp.getKeyboardFocus = () => {cmp.elementRef.nativeElement.focus(); return false};
+				cmp.keydown = cmp.keydown || new Subject();
+				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {cmp.elementRef.nativeElement.focus(); return false});
 
 				if (context.params.autoFocus)
 					setTimeout(() => cmp.elementRef.nativeElement.focus(), 1);
 
-				cmp.keydown.filter(e=> e.keyCode == 13)
-					.subscribe(()=>{context.params.onEnter(context.setData(tree.selected))})
+				cmp.keydown.filter(e=> 
+					e.keyCode == 13)
+						.subscribe(()=>{
+							context.params.onEnter(context.setData(tree.selected))})
 
 				cmp.keydown.filter(e=> e.keyCode == 38 || e.keyCode == 40)
 					.map(event => {
@@ -204,6 +190,39 @@ jb.component('tree.keyboard-selection', {
 						if (tree.selected) 
 							tree.expanded[tree.selected] = (event.keyCode == 39);
 					});
+			}
+		}
+	}
+})
+
+jb.component('tree.keyboard-shortcut', {
+	type: 'feature',
+	params: {
+		key: { as: 'string', description: 'Ctrl+C or Alt+V' },
+		action: { type: 'action', dynamic: true },
+	},
+	impl: function(context,key,action) {
+		return {
+			host: {
+				'(keydown)': 'keydown.next($event)',
+				'tabIndex': '0',
+		        '(mousedown)': 'getKeyboardFocus()',
+			},
+			init: cmp=> {
+				var tree = cmp.tree;
+				cmp.keydown = cmp.keydown || new Subject();
+				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {cmp.elementRef.nativeElement.focus(); return false});
+
+				var alt = key.indexOf('Alt') == 0;
+				var ctrl = key.indexOf('Ctrl') == 0;
+				var char = key.split('+').pop().charCodeAt(0);
+
+				cmp.keydown.filter(e=> 
+					e.keyCode == char)
+				.filter(e=> 
+					(e.altKey && alt) || (e.ctrlKey && ctrl) )
+						.subscribe(()=>{
+							action(context.setData(tree.selected))})
 			}
 		}
 	}
@@ -256,27 +275,6 @@ jb.component('tree.drag-and-drop', {
   		}
 
   	}
-  //   var tree = context.vars.$tree; 
-
-  //   @Directive({
-  //     selector: '[tree-drag-and-drop]'
-  //   })
-  //   class treeDragAndDrop {
-  //     @Input('tree-drag-and-drop') s;
-  //     touch = false;
-  //     constructor(private elementRef: ElementRef, private ngZone: NgZone) {}
-  //     ngDoCheck() {
-		//   var cmp = this;
-  //     }
-  //     ngAfterViewInit() {
-		// var cmp = this;
-  //     }
-  //   }
-
-  //   return {
-  //     innerhost: { '*' : { '[tree-drag-and-drop]' : '' } } ,
-  //     directives: [treeDragAndDrop]
-  //   }
   }
 })
 

@@ -1,11 +1,11 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1, jb_ui, jb_rx;
+    var jb_core_1, jb_ui, jb_rx;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
@@ -14,9 +14,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1
                 jb_rx = jb_rx_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.type('text.style');
-            jb_1.jb.component('text', {
+            jb_core_1.jb.type('text.style');
+            jb_core_1.jb.component('text', {
                 type: "control",
                 params: {
                     text: { essential: true, as: 'ref' },
@@ -25,10 +24,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (ctx, text) {
-                    return jb_ui.ctrl(ctx.setVars({ text: jb_1.jb.val(ctx.params.text) }));
+                    return jb_ui.ctrl(ctx.setVars({ text: jb_core_1.jb.val(ctx.params.text) }));
                 }
             });
-            jb_1.jb.component('text.multi-line', {
+            jb_core_1.jb.component('text.multi-line', {
                 type: 'text.style',
                 params: {
                     rows: { as: 'number', defaultValue: '8' },
@@ -39,14 +38,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1
                     features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
                 }
             });
-            jb_1.jb.component('text.paragraph', {
+            jb_core_1.jb.component('text.paragraph', {
                 type: 'text.style',
                 impl: { $: 'customStyle',
                     template: '<p>{{text}}</p>',
                     features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
                 }
             });
-            jb_1.jb.component('text.codemirror', {
+            jb_core_1.jb.component('text.codemirror', {
                 type: 'text.style',
                 params: {
                     cm_settings: { as: 'single' },

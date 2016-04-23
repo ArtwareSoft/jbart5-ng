@@ -1,5 +1,5 @@
-import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 
 jb.component('studio.mainMenu', {
 	type: 'control',
@@ -9,7 +9,7 @@ jb.component('studio.mainMenu', {
   		{ $: 'pulldown.topMenuItem', title: 'File',
   		  controls: [
   		    { $: 'pulldown.MenuItem', title: 'Open ...', action: { $: 'studio.openWidget'} },
-  		    { $: 'pulldown.MenuItem', title: 'Save', spritePosition: '4,0', action: { $: 'studio.saveWidget'} },
+  		    { $: 'pulldown.MenuItem', title: 'Save', icon: 'save', action: { $: 'studio.saveWidget'}, shortcut: 'Ctrl+S' },
           { $: 'pulldown.MenuItem', title: 'Source ...', action: { $: 'studio.openSourceDialog'} },
   		  ]
   		},
@@ -26,7 +26,7 @@ jb.component('studio.mainMenu', {
   		    { $: 'dynamic-fields', fieldItems: { $: 'studio.dataResources' },
   		    	 genericField: { $: 'pulldown.MenuItem', title: '%$fieldItem.name%', action: { '$studio.showDataResource': '%$fieldItem%'} }
 			    },
-  		    { $: 'pulldown.MenuItemSeparator' },
+  		    { $: 'pulldown.menu-item-separator' },
   		    { $: 'pulldown.MenuItem', title: 'Add Data Resource...', action: { $: 'studio.addDataResource'} }
   		  ]
   		}

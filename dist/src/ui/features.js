@@ -191,7 +191,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             jb_core_1.jb.component('feature.keyboard-shortcut', {
                 type: 'feature',
                 params: {
-                    key: { as: 'string', description: 'e.g. alt-C' },
+                    key: { as: 'string', description: 'e.g. Alt+C' },
                     action: { type: 'action', dynamic: true }
                 },
                 impl: function (context, key, action) {
@@ -199,11 +199,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                         init: function (cmp) {
                             var doc = cmp.elementRef.nativeElement.ownerDocument;
                             $(doc).keydown(function (event) {
-                                var keyCode = key.split('-').pop().charCodeAt(0);
-                                var helper = (key.match('([a-z]*)-') || ['', ''])[1];
-                                if (helper == 'ctrl' && !event.ctrlKey)
+                                var keyCode = key.split('+').pop().charCodeAt(0);
+                                var helper = (key.match('([a-z]*)+') || ['', ''])[1];
+                                if (helper == 'Ctrl' && !event.ctrlKey)
                                     return;
-                                if (helper == 'alt' && !event.altKey)
+                                if (helper == 'Alt' && !event.altKey)
                                     return;
                                 if (event.keyCode == keyCode)
                                     action();

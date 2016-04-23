@@ -1,15 +1,14 @@
-System.register(['jb-core/jb'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1;
+    var jb_core_1;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('group.md-expandable2', {
+            jb_core_1.jb.component('group.md-expandable2', {
                 type: 'group.style',
                 params: {},
                 impl: function (context) {
@@ -23,7 +22,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     };
                 }
             });
-            jb_1.jb.component('group.md-expandable', {
+            jb_core_1.jb.component('group.md-expandable', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     template: "<section class=\"jb-group\">\n          <md-toolbar class=\"md-primary\">\n            <div class=\"md-toolbar-tools\">\n              <button md-button class=\"md-icon-button\" aria-label=\"Open\" (click)=\"toggle()\">\n                <i md-icon>code</i>\n              </button>\n              <h3>{{title}}</h3>\n              <span flex></span>\n            </div>\n          </md-toolbar>\n          <jb_comp [hidden]=\"show\" *ngFor=\"var ctrl of ctrls\" [comp]=\"ctrl.comp\"></jb_comp>\n      </section>",
@@ -36,14 +35,14 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     }
                 }
             });
-            jb_1.jb.component('group.div', {
+            jb_core_1.jb.component('group.div', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"var ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
                     features: { $: 'group.initGroup' }
                 }
             });
-            jb_1.jb.component('layout.vertical', {
+            jb_core_1.jb.component('layout.vertical', {
                 type: 'group.style',
                 params: {
                     spacing: { as: 'number', defaultValue: 3 }
@@ -53,7 +52,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     css: ".group-item { margin-bottom: %$spacing%px; display: block }\n        .group-item:last-child { margin-bottom:0 }",
                 }
             });
-            jb_1.jb.component('layout.horizontal', {
+            jb_core_1.jb.component('layout.horizontal', {
                 type: 'group.style',
                 params: {
                     spacing: { as: 'number', defaultValue: 3 }
@@ -63,7 +62,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     css: "{display: flex}\n        .group-item { margin-right: %$spacing%px }\n        .group-item:last-child { margin-right:0 }",
                 }
             });
-            jb_1.jb.component('property-sheet.titles-above', {
+            jb_core_1.jb.component('property-sheet.titles-above', {
                 type: 'group.style',
                 params: {
                     spacing: { as: 'number', defaultValue: 20 }
@@ -74,7 +73,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     css: ".property { margin-bottom: %$spacing%px }\n      .property:last-child { margin-bottom:0 }\n      .property>.property-title {\n        width:100px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n      }\n      .property>div { display:inline-block }"
                 }
             });
-            jb_1.jb.component('property-sheet.titles-above-float-left', {
+            jb_core_1.jb.component('property-sheet.titles-above-float-left', {
                 type: 'group.style',
                 params: {
                     spacing: { as: 'number', defaultValue: 20 },
@@ -86,7 +85,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     css: ".property { \n          float: left;\n          width: %$fieldWidth%px;\n          margin-right: %$spacing}%px \n        }\n      .clearfix { clear: both }\n      .property:last-child { margin-right:0 }\n      .property>.property-title {\n        margin-bottom: 3px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        font-size:14px;\n      }",
                 }
             });
-            jb_1.jb.component('property-sheet.titles-left', {
+            jb_core_1.jb.component('property-sheet.titles-left', {
                 type: 'group.style',
                 params: {
                     vSpacing: { as: 'number', defaultValue: 20 },
@@ -101,7 +100,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             });
             // Seems that ng.md is not too flexible and dynamic.
             // Needs to build the template with the input fields before loading the comp.
-            jb_1.jb.component('property-sheet.md', {
+            jb_core_1.jb.component('property-sheet.md', {
                 type: 'group.style',
                 impl: function (context) {
                     var comps = (context.vars.$model.controls.profile || []).map(function (prof) { return context.run(prof); });
@@ -115,13 +114,13 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             if (!Reflect.getMetadata('annotations', comp))
                                 debugger;
                             var annotations = Reflect.getMetadata('annotations', comp)[0];
-                            var title = comp.jb_title ? jb_1.jb.val(comp.jb_title(context)) : '';
+                            var title = comp.jb_title ? jb_core_1.jb.val(comp.jb_title(context)) : '';
                             return "<md-input-container class=\"md-block\" flex-gt-sm>\n                  <label>" + title + "</label>\n                  " + annotations.template + "\n                </md-input-container>\n                ";
                         }).join('')
                     };
                 }
             });
-            jb_1.jb.component('group-expandable-subgroups', {
+            jb_core_1.jb.component('group-expandable-subgroups', {
                 type: 'group.section_style',
                 params: {
                     icon: { as: 'string ', defaultValue: 'code' }
@@ -139,7 +138,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     template: "<section class=\"jb-group\">\n        <section *ngFor=\"var ctrl of ctrls\" class=\"md-whiteframe-z3\" [ngClass]=\"{'open': selected==ctrl}\">\n          <md-toolbar class=\"md-primary\">\n            <div class=\"md-toolbar-tools\">\n              <h3>{{ ctrl.title }}</h3>\n              <span flex></span>\n              <button md-button\n                      class=\"md-icon-button\"\n                      aria-label=\"Open\"\n                      (click)=\"select(ctrl)\">\n                <i md-icon>%$icon%</i>\n              </button>\n            </div>\n          </md-toolbar>\n          <jb_comp *ngIf=\"selected==ctrl\" [comp]=\"ctrl.comp\"></jb_comp>\n      </section></section>",
                 }
             });
-            jb_1.jb.component('toolbar.simple', {
+            jb_core_1.jb.component('toolbar.simple', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },

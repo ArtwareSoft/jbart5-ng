@@ -180,7 +180,7 @@ jb.component('cssClass', {
 jb.component('feature.keyboard-shortcut', {
   type: 'feature',
   params: {
-    key: { as: 'string', description: 'e.g. alt-C' },
+    key: { as: 'string', description: 'e.g. Alt+C' },
     action: { type: 'action', dynamic: true }
   },
   impl: (context,key,action) => 
@@ -188,10 +188,10 @@ jb.component('feature.keyboard-shortcut', {
       init: function(cmp) {
             var doc = cmp.elementRef.nativeElement.ownerDocument;
             $(doc).keydown(event => {
-              var keyCode = key.split('-').pop().charCodeAt(0);
-              var helper = (key.match('([a-z]*)-') || ['',''])[1];
-              if (helper == 'ctrl' && !event.ctrlKey) return
-              if (helper == 'alt' && !event.altKey) return
+              var keyCode = key.split('+').pop().charCodeAt(0);
+              var helper = (key.match('([a-z]*)+') || ['',''])[1];
+              if (helper == 'Ctrl' && !event.ctrlKey) return
+              if (helper == 'Alt' && !event.altKey) return
               if (event.keyCode == keyCode)
                 action();
             })

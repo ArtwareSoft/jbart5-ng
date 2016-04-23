@@ -1,4 +1,4 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'angular2/core', 'jb-ui/dialog'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,26 +10,26 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_1, jb_ui, core_1, dialog_1;
+    var jb_core_1, jb_ui, core_1, dialog_1;
     var testModules, allTestModules, jBartTest, jBartTests;
     //var testModules = ['ng-ui-tests','rx-tests'];
     //testModules = allTestModules;
     //testModules = ['studio-tests'];
     function testComp(compID, ngZone) {
         var ns = 'ui-tests';
-        var resources = (jb_1.jb.widgets[ns] && jb_1.jb.widgets[ns].resources) || {};
-        jb_1.jb.extend(resources, { window: window, globals: {} });
-        var ctx = jb_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: ngZone }, }, {});
+        var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
+        jb_core_1.jb.extend(resources, { window: window, globals: {} });
+        var ctx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: ngZone }, }, {});
         Object.getOwnPropertyNames(resources).forEach(function (id) {
             var r = resources[id];
             if (r && r.$)
                 resources[id] = ctx.run(r);
         });
-        var profile = allTestModules.reduce(function (found, module) { return found || jb_1.jb.widgets[module].tests[compID]; }, false);
+        var profile = allTestModules.reduce(function (found, module) { return found || jb_core_1.jb.widgets[module].tests[compID]; }, false);
         if (!profile)
             console.log('can not find a test ' + compID);
         else if (profile.control && profile.$ == 'studio-test') {
-            return ctx.run(jb_1.jb.extend({}, profile, { $: 'run-studio-test' }));
+            return ctx.run(jb_core_1.jb.extend({}, profile, { $: 'run-studio-test' }));
         }
         else if (profile.control)
             return ctx.run(profile.control);
@@ -47,9 +47,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
             return;
         var ns = compID.split('.')[0];
         try {
-            var resources = (jb_1.jb.widgets[ns] && jb_1.jb.widgets[ns].resources) || {};
-            jb_1.jb.extend(resources, { window: window, globals: {}, ngZone: ngZone });
-            var ctx = jb_1.jb.ctx({ ngMode: true, resources: resources, vars: {} }, {});
+            var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
+            jb_core_1.jb.extend(resources, { window: window, globals: {}, ngZone: ngZone });
+            var ctx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: {} }, {});
             Object.getOwnPropertyNames(resources).forEach(function (id) {
                 var r = resources[id];
                 if (r && r.$)
@@ -63,8 +63,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
     }
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
@@ -76,7 +76,6 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                 dialog_1 = dialog_1_1;
             }],
         execute: function() {
-            ;
             testModules = ['ng-ui-tests'];
             allTestModules = ['ng-ui-tests', 'studio-tests', 'rx-tests'];
             jBartTest = (function () {
@@ -131,7 +130,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                 return jBartTests;
             }());
             exports_1("jBartTests", jBartTests);
-            jb_1.jb.component('ng2-ui-test', {
+            jb_core_1.jb.component('ng2-ui-test', {
                 params: {
                     control: { type: 'control', dynamic: true },
                     expectedTemplateResult: { type: 'boolean', dynamic: true, as: 'boolean' },
@@ -155,7 +154,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                                     promise = Promise.resolve(1);
                                 promise.then(checkIt, checkIt);
                                 function checkIt() {
-                                    return jb_1.jb.delay(1).then(function () {
+                                    return jb_core_1.jb.delay(1).then(function () {
                                         var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
                                         cmp.elementRef.nativeElement.setAttribute('test', ctx.vars.testID);
                                         //if (ctx.vars.testID == 'picklist') debugger;
@@ -174,7 +173,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                         } }));
                 }); }
             });
-            jb_1.jb.component('ui-tests.show-tests', {
+            jb_core_1.jb.component('ui-tests.show-tests', {
                 impl: { $: 'itemlog',
                     items: [
                         function () { return testModules; },
@@ -190,7 +189,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                     controls: { $: 'ui-tests.show-one-test' }
                 }
             });
-            jb_1.jb.component('ui-tests.show-one-test', {
+            jb_core_1.jb.component('ui-tests.show-one-test', {
                 impl: { $: 'group',
                     layout: { $: 'md-layout', layout: 'row', },
                     controls: [

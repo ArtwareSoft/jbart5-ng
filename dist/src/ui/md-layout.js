@@ -1,21 +1,20 @@
-System.register(['jb-core/jb'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1;
+    var jb_core_1;
     var flexOptions, offsetOptions, responsiveSelectors, responsive_dictionary, persentage_dictionary;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.type('md-layout-child');
-            jb_1.jb.type('md-layout-child-responsive');
+            jb_core_1.jb.type('md-layout-child');
+            jb_core_1.jb.type('md-layout-child-responsive');
             flexOptions = 'none,initial,auto,grow,nogrow,noshrink,0,1,1/2,1/3,2/3,1/4,3/4,1/5,2/5,3/5,4/5,1/10,3/10,7/10,9/10,1/20,3/20,7/20,9/20,11/20,13/20,17/20,19/20';
             offsetOptions = '0,1,1/2,1/3,2/3,1/4,3/4,1/5,2/5,3/5,4/5,1/10,3/10,7/10,9/10,1/20,3/20,7/20,9/20,11/20,13/20,17/20,19/20';
             responsiveSelectors = '<600,>600,600-960,>960,960-1280,>1280,1280-1920,>1920';
-            jb_1.jb.component('layout.md', {
+            jb_core_1.jb.component('layout.md', {
                 type: 'group.style,md-layout',
                 params: {
                     layout: { as: 'string', options: 'row,column' },
@@ -39,7 +38,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     });
                     if (context.params.align)
                         atts['layout-align' + responsiveSelector] = context.params.align + (context.params.subAlign ? (' ' + context.params.subAlign) : '');
-                    context.params.responsive.forEach(function (responsive) { return jb_1.jb.extend(atts, responsive); });
+                    context.params.responsive.forEach(function (responsive) { return jb_core_1.jb.extend(atts, responsive); });
                     return {
                         init: function (cmp) {
                             cmp.initGroup();
@@ -50,7 +49,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     };
                 }
             });
-            jb_1.jb.component('md-layout-child', {
+            jb_core_1.jb.component('md-layout-child', {
                 type: 'md-layout-child',
                 params: {
                     flex: { as: 'string', options: flexOptions },
@@ -72,11 +71,11 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         atts['show' + responsiveSelector] = ctx.params.show;
                     if (ctx.params.hide)
                         atts['hide' + responsiveSelector] = ctx.params.hide;
-                    ctx.params.responsive.forEach(function (responsive) { return jb_1.jb.extend(atts, responsive); });
+                    ctx.params.responsive.forEach(function (responsive) { return jb_core_1.jb.extend(atts, responsive); });
                     return atts;
                 }
             });
-            jb_1.jb.component('md-layout-responsive-layout', {
+            jb_core_1.jb.component('md-layout-responsive-layout', {
                 type: 'md-layout-responsive-layout',
                 params: {
                     selector: { as: 'string', options: responsiveSelectors, essential: true },
@@ -86,7 +85,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     return ctx.params.layout(ctx.setVars({ responsiveSelector: '-' + responsive_dictionary[ctx.params.selector] }));
                 }
             });
-            jb_1.jb.component('md-layout-child-responsive-child', {
+            jb_core_1.jb.component('md-layout-child-responsive-child', {
                 type: 'md-layout-child-responsive-child',
                 params: {
                     selector: { as: 'string', options: responsiveSelectors, essential: true },

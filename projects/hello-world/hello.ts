@@ -1,4 +1,4 @@
-import {jb} from 'jb-core/jb';;
+import {jb} from 'jb-core';
 
 jb.component('hello-world.test2', {
 	type: 'control',

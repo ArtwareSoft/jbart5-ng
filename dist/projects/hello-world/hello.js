@@ -1,23 +1,22 @@
-System.register(['jb-core/jb'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1;
+    var jb_core_1;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('hello-world.test2', {
+            jb_core_1.jb.component('hello-world.test2', {
                 type: 'control',
                 impl: { $: 'label', title: 'hello test2' }
             });
-            jb_1.jb.component('hello-world.main', {
+            jb_core_1.jb.component('hello-world.main', {
                 type: 'control',
                 impl: { $: 'label', title: 'hello main' }
             });
-            jb_1.jb.component('hello-world.group1', {
+            jb_core_1.jb.component('hello-world.group1', {
                 type: 'control',
                 impl: { $: 'group',
                     title: 'main',

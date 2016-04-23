@@ -1,15 +1,14 @@
-System.register(['jb-core/jb'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1;
+    var jb_core_1;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('studio.mainMenu', {
+            jb_core_1.jb.component('studio.mainMenu', {
                 type: 'control',
                 impl: {
                     $: 'group', style: { $: 'group.section', cssClass: 'pulldown-main-menu' },
@@ -17,7 +16,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         { $: 'pulldown.topMenuItem', title: 'File',
                             controls: [
                                 { $: 'pulldown.MenuItem', title: 'Open ...', action: { $: 'studio.openWidget' } },
-                                { $: 'pulldown.MenuItem', title: 'Save', spritePosition: '4,0', action: { $: 'studio.saveWidget' } },
+                                { $: 'pulldown.MenuItem', title: 'Save', icon: 'save', action: { $: 'studio.saveWidget' }, shortcut: 'Ctrl+S' },
                                 { $: 'pulldown.MenuItem', title: 'Source ...', action: { $: 'studio.openSourceDialog' } },
                             ]
                         },
@@ -34,7 +33,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 { $: 'dynamic-fields', fieldItems: { $: 'studio.dataResources' },
                                     genericField: { $: 'pulldown.MenuItem', title: '%$fieldItem.name%', action: { '$studio.showDataResource': '%$fieldItem%' } }
                                 },
-                                { $: 'pulldown.MenuItemSeparator' },
+                                { $: 'pulldown.menu-item-separator' },
                                 { $: 'pulldown.MenuItem', title: 'Add Data Resource...', action: { $: 'studio.addDataResource' } }
                             ]
                         }

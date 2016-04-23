@@ -1,20 +1,19 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1, jb_ui;
+    var jb_core_1, jb_ui;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.type('picklist.style');
-            jb_1.jb.type('picklist.options');
-            jb_1.jb.component('picklist', {
+            jb_core_1.jb.type('picklist.style');
+            jb_core_1.jb.type('picklist.options');
+            jb_core_1.jb.component('picklist', {
                 type: 'control',
                 params: {
                     title: { as: 'string', dynamic: true },
@@ -34,7 +33,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                 }
             });
             // ********* styles
-            jb_1.jb.component('picklist.native', {
+            jb_core_1.jb.component('picklist.native', {
                 type: 'picklist.style',
                 impl: { $: 'customStyle',
                     template: "<div><select %$field.modelExp%>\n                    <option *ngFor=\"#option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
@@ -42,7 +41,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                 }
             });
             // ********* options
-            jb_1.jb.component('picklist.optionsByComma', {
+            jb_core_1.jb.component('picklist.optionsByComma', {
                 type: 'picklist.options',
                 params: {
                     options: { as: 'string', essential: true },
@@ -55,7 +54,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                     }));
                 }
             });
-            jb_1.jb.component('picklist.options', {
+            jb_core_1.jb.component('picklist.options', {
                 type: 'picklist.options',
                 params: {
                     options: { as: 'array', essential: true },
@@ -66,7 +65,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                     return emptyValue.concat(options.map(function (code) { return { code: code, text: code }; }));
                 }
             });
-            jb_1.jb.component('picklist.coded-options', {
+            jb_core_1.jb.component('picklist.coded-options', {
                 type: 'picklist.options',
                 params: {
                     options: { as: 'array', essential: true },

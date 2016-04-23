@@ -15,9 +15,60 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'action',
                 impl: { $: 'openDialog',
                     title: 'Control Tree',
-                    //		styles: ['* {padding:3px}'],
                     style: { $: 'dialog.studioFloating', id: 'studio control tree', width: 300 },
-                    content: { $: 'studio.controlTree' }
+                    content: { $: 'group',
+                        controls: [
+                            { $: 'button',
+                                style: { $: 'button.md-icon', icon: 'menu', css: '{position: fixed; margin-top: -10px; margin-left: 230px; }' },
+                                action: { $: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
+                            },
+                            { $: 'studio.controlTree' },
+                        ] }
+                }
+            });
+            jb_core_1.jb.component('studio.open-tree-menu', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' },
+                },
+                impl: { $: 'openDialog',
+                    style: { $: 'pulldownPopup.contextMenuPopup' },
+                    content: { $: 'group',
+                        controls: [
+                            { $: 'pulldown.MenuItem', title: 'Delete', icon: 'delete', shortcut: 'Delete',
+                                action: [
+                                    { $: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%' },
+                                    { $: 'studio.delete', path: '%$path%' },
+                                ],
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Wrap with group',
+                                action: { $: 'studio.openSublime', path: '%$path%' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Duplicate',
+                                action: { $: 'studio.openSublime', path: '%$path%' }
+                            },
+                            { $: 'pulldown.menu-item-separator' },
+                            { $: 'pulldown.MenuItem', title: 'javascript editor',
+                                action: { $: 'studio.editSource', path: '%$path%' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Goto sublime',
+                                action: { $: 'studio.openSublime', path: '%$path%' }
+                            },
+                            { $: 'pulldown.menu-item-separator' },
+                            { $: 'pulldown.MenuItem', title: 'Copy', icon: 'copy', shortcut: 'Ctrl+C',
+                                action: { $: 'studio.copy', path: '%$path%' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Paste', icon: 'paste', shortcut: 'Ctrl+V',
+                                action: { $: 'studio.paste', path: '%$path%' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z',
+                                action: { $: 'studio.undo' }
+                            },
+                            { $: 'pulldown.MenuItem', title: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y',
+                                action: { $: 'studio.redo' }
+                            },
+                        ]
+                    }
                 }
             });
             jb_core_1.jb.component('studio.controlTree', {
@@ -39,6 +90,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         },
                         { $: 'tree.keyboard-selection', onEnter: { $: 'studio.openProperties' } },
                         { $: 'tree.drag-and-drop' },
+                        { $: 'tree.keyboard-shortcut', key: 'Ctrl-C', action: { $: 'studio.copy', path: '%%' } },
+                        { $: 'tree.keyboard-shortcut', key: 'Ctrl-V', action: { $: 'studio.paste', path: '%%' } },
                         { $: 'studio.controlTree.refreshPathChanges' },
                     ]
                 }

@@ -1,15 +1,14 @@
-System.register(['jb-core/jb'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1;
+    var jb_core_1;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('json-editable-tree', {
+            jb_core_1.jb.component('json-editable-tree', {
                 type: 'control',
                 params: {
                     nodeModel: { type: 'tree.nodeModel', dynamic: true },
@@ -17,7 +16,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 impl: { $: 'tree', cssClass: 'jb-control-tree', nodeModel: { $call: 'nodeModel' },
                     features: [{ $: 'tree.selection' }, { $: 'tree.keyboard-selection' }] }
             });
-            jb_1.jb.component('tree.json', {
+            jb_core_1.jb.component('tree.json', {
                 type: 'tree.nodeModel',
                 params: {
                     object: {},
@@ -26,11 +25,11 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 impl: function (context, json, rootPath) {
                     var model = {
                         rootPath: rootPath,
-                        val: function (path) { return jb_1.jb.val(ref(path)); },
+                        val: function (path) { return jb_core_1.jb.val(ref(path)); },
                         subNodes: function (path) {
-                            var val = jb_1.jb.val(ref(path));
+                            var val = jb_core_1.jb.val(ref(path));
                             if (Array.isArray(val))
-                                return jb_1.jb.range(0, val.length).map(function (x) { return path + '~' + x; });
+                                return jb_core_1.jb.range(0, val.length).map(function (x) { return path + '~' + x; });
                             if (typeof val == 'object')
                                 return Object.getOwnPropertyNames(val || {})
                                     .map(function (x) { return path + '~' + x; });
@@ -40,7 +39,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         icon: function () { return ''; },
                         title: function (path, collapsed) {
                             var _ref = ref(path);
-                            var val = jb_1.jb.val(_ref);
+                            var val = jb_core_1.jb.val(_ref);
                             if (!collapsed && typeof val == 'object')
                                 return _ref.$jb_property;
                             if (typeof val != 'object')
@@ -57,13 +56,13 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 delete _ref.$jb_parent[_ref.$jb_property];
                         },
                         isArray: function (path) {
-                            return typeof jb_1.jb.val(ref(path)) == 'object';
+                            return typeof jb_core_1.jb.val(ref(path)) == 'object';
                         }
                     };
                     model.children = function (path) {
                         model.cache = model.cache || {};
                         var res = model.subNodes(path);
-                        if (!jb_1.jb.compareArrays(res, model.cache[path])) {
+                        if (!jb_core_1.jb.compareArrays(res, model.cache[path])) {
                             //				console.log(path,'no cache');
                             model.cache[path] = res;
                         }
@@ -72,7 +71,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         return model.cache[path];
                     };
                     model.rootPath = rootPath ? rootPath : 'root';
-                    model.root = jb_1.jb.obj(model.rootPath, json);
+                    model.root = jb_core_1.jb.obj(model.rootPath, json);
                     function ref(path) {
                         return {
                             $jb_parent: path.split('~').slice(0, -1).reduce(function (o, p) { return o[p]; }, model.root),

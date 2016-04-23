@@ -1,19 +1,18 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1, jb_ui;
+    var jb_core_1, jb_ui;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.type('image.style');
-            jb_1.jb.component('image', {
+            jb_core_1.jb.type('image.style');
+            jb_core_1.jb.component('image', {
                 type: 'control',
                 params: {
                     url: { as: 'string', dynamic: true },
@@ -41,7 +40,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                         } }, context);
                 }
             });
-            jb_1.jb.component('image.default', {
+            jb_core_1.jb.component('image.default', {
                 type: 'image.style',
                 impl: function () {
                     return {

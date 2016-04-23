@@ -28,17 +28,29 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     style: { $: 'studio-toolbar' },
                     features: [
                         { $: 'feature.keyboard-shortcut',
-                            key: 'alt-C',
+                            key: 'Alt+C',
                             action: { $: 'studio.pickAndOpen' }
                         },
                         { $: 'feature.keyboard-shortcut',
-                            key: 'alt-R',
+                            key: 'Alt+R',
                             action: { $: 'studio.redraw' }
                         },
                         { $: 'feature.keyboard-shortcut',
-                            key: 'alt-N',
+                            key: 'Alt+N',
                             action: { $: 'studio.pickAndOpen', from: 'studio' }
-                        }
+                        },
+                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+C',
+                            action: { $: 'studio.copy', path: '%$path%' }
+                        },
+                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+V',
+                            action: { $: 'studio.paste', path: '%$path%' }
+                        },
+                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+Z',
+                            action: { $: 'studio.undo' }
+                        },
+                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+Y',
+                            action: { $: 'studio.redo' }
+                        },
                     ],
                     controls: [
                         { $: 'label', title: '', cssClass: 'studio-toolbar-left-margin' },

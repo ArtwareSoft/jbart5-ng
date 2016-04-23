@@ -1,5 +1,5 @@
-import { jb } from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
+import { jb } from 'jb-core';
+import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, provide, NgZone} from 'angular2/core';
 import {jb_dialogs} from 'jb-ui/dialog';

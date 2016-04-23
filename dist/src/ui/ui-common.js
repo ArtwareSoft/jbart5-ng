@@ -1,11 +1,11 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-ui-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_1, jb_ui, ui_utils;
+    var jb_core_1, jb_ui, ui_utils;
     return {
         setters:[
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
@@ -14,8 +14,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                 ui_utils = ui_utils_1;
             }],
         execute: function() {
-            ;
-            jb_1.jb.component('addCssClass', {
+            jb_core_1.jb.component('addCssClass', {
                 type: 'action',
                 params: {
                     cssClass: { as: 'string' }
@@ -25,7 +24,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                         context.vars.control.$el.addClass(cssClass);
                 }
             });
-            jb_1.jb.component('setText', {
+            jb_core_1.jb.component('setText', {
                 type: 'action',
                 params: {
                     text: { as: 'string' },
@@ -42,7 +41,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                     }
                 }
             });
-            jb_1.jb.component('urlParam', {
+            jb_core_1.jb.component('urlParam', {
                 type: 'data',
                 params: {
                     param: { as: 'string' }
@@ -51,14 +50,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                     return ui_utils.urlParam(param);
                 }
             });
-            jb_1.jb.component('url', {
+            jb_core_1.jb.component('url', {
                 type: 'data',
                 impl: function (context, param) {
                     ui_utils.listenToUrlChange();
                     return window.location.href;
                 }
             });
-            jb_1.jb.component('urlHashParam', {
+            jb_core_1.jb.component('urlHashParam', {
                 type: 'data',
                 params: {
                     param: { as: 'string' }
@@ -66,13 +65,13 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                 impl: function (context, param) {
                     if (!jbart.classes.urlHashParam) {
                         jbart.classes.urlHashParam = function (param) { this.param = this.$jb_property = param; this.type = 'urlHashParam'; };
-                        jbart.classes.urlHashParam.prototype.$jb_val = function (val) { return ui_utils.urlHashParam(this.param, typeof val == 'undefined' ? undefined : jb_1.jb.tostring(val)); };
+                        jbart.classes.urlHashParam.prototype.$jb_val = function (val) { return ui_utils.urlHashParam(this.param, typeof val == 'undefined' ? undefined : jb_core_1.jb.tostring(val)); };
                         jbart.classes.urlHashParam.prototype.$jb_equals = function (other) { return other && other.type == this.type && other.param == this.param; };
                     }
                     return new jbart.classes.urlHashParam(param);
                 }
             });
-            jb_1.jb.component('runDOMEvent', {
+            jb_core_1.jb.component('runDOMEvent', {
                 type: 'action',
                 params: {
                     eventType: { as: 'string' },
@@ -82,7 +81,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                     context.vars.control.$(on).trigger(eventType);
                 }
             });
-            jb_1.jb.component('htmlContainsText', {
+            jb_core_1.jb.component('htmlContainsText', {
                 params: {
                     text: { type: 'data[]', as: 'array' }
                 },
@@ -105,7 +104,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                     return true;
                 }
             });
-            jb_1.jb.component('sessionStorage', {
+            jb_core_1.jb.component('sessionStorage', {
                 params: {
                     key: { as: 'string' }
                 },
@@ -115,12 +114,12 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                             if (typeof value == 'undefined')
                                 return sessionStorage[key];
                             else
-                                sessionStorage[key] = jb_1.jb.tostring(value);
+                                sessionStorage[key] = jb_core_1.jb.tostring(value);
                         }
                     };
                 }
             });
-            jb_1.jb.component('openUrl', {
+            jb_core_1.jb.component('openUrl', {
                 type: 'action',
                 params: {
                     url: { as: 'string' },
@@ -131,7 +130,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-ui-utils'], function(exp
                     window.open(url, _target);
                 }
             });
-            jb_1.jb.component('apply', {
+            jb_core_1.jb.component('apply', {
                 type: 'action',
                 impl: jb_ui.apply
             });

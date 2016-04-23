@@ -191,19 +191,35 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             return [path + '~' + prop];
                     }
                 };
-                ControlModel.prototype.iconPos = function (path) {
-                    if (this.controlParam(path))
-                        return '21,1';
+                ControlModel.prototype.icon = function (path) {
+                    if (this.controlParam(path)) {
+                        if (this.compName(path + '~style') == 'layout.horizontal')
+                            return 'view_column';
+                        return 'folder_open'; //'view_headline' , 'folder_open'
+                    }
+                    var comp2icon = {
+                        label: 'format_color_text',
+                        button: 'crop_landscape',
+                        tab: 'tab',
+                        image: 'insert_photo',
+                        'custom-control': 'build'
+                    };
                     var compName = this.compName(path);
-                    if (compName == 'label')
-                        return '27,0';
-                    if (compName == 'button')
-                        return '20,1';
-                    return '17,1';
+                    if (comp2icon[compName])
+                        return comp2icon[compName];
+                    if (this.isOfType(path, 'action'))
+                        return 'play_arrow';
+                    return 'radio_button_unchecked';
                 };
                 ControlModel.prototype.compName = function (path) {
                     var val = profileValFromPath(path);
                     return val && jb_core_1.jb.compName(val);
+                };
+                ControlModel.prototype.isOfType = function (path, type) {
+                    var val = profileValFromPath(path);
+                    var name = val && jb_core_1.jb.compName(val);
+                    if (name)
+                        return (jbart.comps[name].type || '').indexOf(type) == 0;
                 };
                 ControlModel.prototype.title = function (path, collapsed) {
                     var val = profileValFromPath(path);
@@ -334,7 +350,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var types = (type || '').split(',').map(function (x) { return x.match(/([^\[]*)([])?/)[1]; });
                     var comp_arr = types.map(function (t) { return jb_entries((jbartToLook || jbart_base()).comps)
                         .filter(function (c) {
-                        return (c[1].type || 'data').split(',').indexOf(t) != -1;
+                        return (c[1].type || 'data').split(',').indexOf(t) != -1
+                            || (c[1].typePattern && t.match(c[1].typePattern.match));
                     })
                         .map(function (c) { return c[0]; }); });
                     return comp_arr.reduce(function (all, ar) { return all.concat(ar); }, []);

@@ -51,6 +51,6 @@ jb.component('custom-control', {
 				styles: css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'),
 				atts: atts,
 				featuresOptions: features()
-			},methods)
+			},methods))
 	}
 })
