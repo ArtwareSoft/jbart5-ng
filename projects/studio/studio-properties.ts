@@ -184,19 +184,19 @@ jb.component('studio.open-property-menu',{
 		style :{$: 'pulldownPopup.contextMenuPopup' },
 		content :{$: 'group',
 			controls: [
-	 		    { $: 'pulldown.MenuItem', title: 'Delete',
+	 		    { $: 'pulldown.menu-item', title: 'Delete',
 					action : [ 
 						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
 						{$: 'studio.delete', path: '%$path%' },
 					],
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'javascript editor',
+	 		    { $: 'pulldown.menu-item', title: 'javascript editor',
 				    action :{$: 'studio.editSource', path: '%$path%' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Goto sublime',
+	 		    { $: 'pulldown.menu-item', title: 'Goto sublime',
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Customize Style',
+	 		    { $: 'pulldown.menu-item', title: 'Customize Style',
 				    action :{$: 'studio.openStyleEditor', path: '%$path%' },
 				    features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' } }
 	 		    },
@@ -388,10 +388,10 @@ jb.component('studio.openPrimitiveArrowPopup',{
 		cssClass: 'jb-popup pulldown-mainmenu-popup',
 		content :{$: 'group',
 			controls: [
-	 		    { $: 'pulldown.MenuItem', title: 'Edit in jbEditor', spritePosition: '6,0', 
+	 		    { $: 'pulldown.menu-item', title: 'Edit in jbEditor', spritePosition: '6,0', 
 				    action :{$: 'studio.openjbEditor', path: '%$path%' }
 	 		    },
-			    { $: 'pulldown.MenuItem', title: 'Delete script', 
+			    { $: 'pulldown.menu-item', title: 'Delete script', 
 			    	atts: { '[hidden]' : '%$isPrimitive%' },
 				    action: [
 				      { $: 'closeContainingPopup' },

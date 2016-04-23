@@ -547,8 +547,8 @@ dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},
   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
       controls: 
       [
-        { $: 'pulldown.MenuItem', title: 'Open ...'} ,
-        { $: 'pulldown.MenuItem', title: 'Save', spritePosition: '4,0'}
+        { $: 'pulldown.menu-item', title: 'Open ...'} ,
+        { $: 'pulldown.menu-item', title: 'Save', spritePosition: '4,0'}
       ]
   },
   expectedHtmlResult: { $: 'contains', text: ['Open'], lookin: 'popups' },

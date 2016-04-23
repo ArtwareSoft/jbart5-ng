@@ -27,36 +27,36 @@ jb.component('studio.open-tree-menu',{
 		style :{$: 'pulldownPopup.contextMenuPopup' },
 		content :{$: 'group',
 			controls: [
-	 		    { $: 'pulldown.MenuItem', title: 'Delete', icon: 'delete', shortcut: 'Delete',
+	 		    { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
 					action : [ 
 						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
 						{$: 'studio.delete', path: '%$path%' },
 					],
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Wrap with group',
+	 		    { $: 'pulldown.menu-item', title: 'Wrap with group',
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Duplicate',
+	 		    { $: 'pulldown.menu-item', title: 'Duplicate',
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
 	 		    { $: 'pulldown.menu-item-separator' },
-	 		    { $: 'pulldown.MenuItem', title: 'javascript editor',
+	 		    { $: 'pulldown.menu-item', title: 'javascript editor',
 				    action :{$: 'studio.editSource', path: '%$path%' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Goto sublime',
+	 		    { $: 'pulldown.menu-item', title: 'Goto sublime',
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
 	 		    { $: 'pulldown.menu-item-separator' },
-	 		    { $: 'pulldown.MenuItem', title: 'Copy', icon: 'copy', shortcut: 'Ctrl+C',
+	 		    { $: 'pulldown.menu-item', title: 'Copy', icon: 'copy', shortcut: 'Ctrl+C',
 				    action :{$: 'studio.copy', path: '%$path%' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Paste', icon: 'paste', shortcut: 'Ctrl+V',
+	 		    { $: 'pulldown.menu-item', title: 'Paste', icon: 'paste', shortcut: 'Ctrl+V',
 				    action :{$: 'studio.paste', path: '%$path%' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z',
+	 		    { $: 'pulldown.menu-item', title: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z',
 				    action :{$: 'studio.undo' }
 	 		    },
-	 		    { $: 'pulldown.MenuItem', title: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y',
+	 		    { $: 'pulldown.menu-item', title: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y',
 				    action :{$: 'studio.redo' }
 	 		    },
 			]

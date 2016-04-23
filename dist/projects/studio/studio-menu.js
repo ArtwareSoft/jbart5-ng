@@ -15,26 +15,26 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controls: [
                         { $: 'pulldown.topMenuItem', title: 'File',
                             controls: [
-                                { $: 'pulldown.MenuItem', title: 'Open ...', action: { $: 'studio.openWidget' } },
-                                { $: 'pulldown.MenuItem', title: 'Save', icon: 'save', action: { $: 'studio.saveWidget' }, shortcut: 'Ctrl+S' },
-                                { $: 'pulldown.MenuItem', title: 'Source ...', action: { $: 'studio.openSourceDialog' } },
+                                { $: 'pulldown.menu-item', title: 'Open ...', action: { $: 'studio.openWidget' } },
+                                { $: 'pulldown.menu-item', title: 'Save', icon: 'save', action: { $: 'studio.saveWidget' }, shortcut: 'Ctrl+S' },
+                                { $: 'pulldown.menu-item', title: 'Source ...', action: { $: 'studio.openSourceDialog' } },
                             ]
                         },
                         { $: 'pulldown.topMenuItem', title: 'View',
                             controls: [
-                                { $: 'pulldown.MenuItem', title: 'Refresh', spritePosition: '10,0', action: { $: 'studio.refreshPreview' } },
-                                { $: 'pulldown.MenuItem', title: 'Edit source', spritePosition: '3,0', action: { $: 'studio.editSource' } },
-                                { $: 'pulldown.MenuItem', title: 'Control tree', spritePosition: '5,0', action: { $: 'studio.openControlTree' } },
-                                { $: 'pulldown.MenuItem', title: 'jbEditor', spritePosition: '6,0', action: { $: 'studio.openjbEditor' } }
+                                { $: 'pulldown.menu-item', title: 'Refresh', spritePosition: '10,0', action: { $: 'studio.refreshPreview' } },
+                                { $: 'pulldown.menu-item', title: 'Edit source', spritePosition: '3,0', action: { $: 'studio.editSource' } },
+                                { $: 'pulldown.menu-item', title: 'Control tree', spritePosition: '5,0', action: { $: 'studio.openControlTree' } },
+                                { $: 'pulldown.menu-item', title: 'jbEditor', spritePosition: '6,0', action: { $: 'studio.openjbEditor' } }
                             ]
                         },
                         { $: 'pulldown.topMenuItem', title: 'Data',
                             controls: [
                                 { $: 'dynamic-fields', fieldItems: { $: 'studio.dataResources' },
-                                    genericField: { $: 'pulldown.MenuItem', title: '%$fieldItem.name%', action: { '$studio.showDataResource': '%$fieldItem%' } }
+                                    genericField: { $: 'pulldown.menu-item', title: '%$fieldItem.name%', action: { '$studio.showDataResource': '%$fieldItem%' } }
                                 },
                                 { $: 'pulldown.menu-item-separator' },
-                                { $: 'pulldown.MenuItem', title: 'Add Data Resource...', action: { $: 'studio.addDataResource' } }
+                                { $: 'pulldown.menu-item', title: 'Add Data Resource...', action: { $: 'studio.addDataResource' } }
                             ]
                         }
                     ]

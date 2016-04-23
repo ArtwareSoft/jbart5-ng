@@ -7,7 +7,7 @@ jb.component('pulldown.menu-item-separator', {
 		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
 })
 
-jb.component('pulldown.MenuItem', {
+jb.component('pulldown.menu-item', {
 	type: 'control',
 	params: {
 		title: { as: 'string', dynamic: true, essential: true },
