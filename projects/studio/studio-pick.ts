@@ -146,6 +146,11 @@ jb.component('studio.highlight-in-preview',{
 		var _window = jbart.previewWindow || window;
 		if (!_window) return;
 		var elems = _window.document.querySelectorAll('[jb-path="'+ path +'"]');
+		if (elems.length == 0) {// studio
+			elems = window.document.querySelectorAll('[jb-path="'+ path +'"]');
+			if (elems.length)
+				_window = window;
+		}
 		var boxes = [];
 		
 		$('.jbstudio_highlight_in_preview').remove();

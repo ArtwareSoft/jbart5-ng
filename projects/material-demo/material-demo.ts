@@ -46,8 +46,6 @@ jb.component('material-demo.main', {
     ]
   }
 })
-})
-})
 
 jb.component('material-demo.sidenav', {
   type: 'control', 
@@ -179,5 +177,4 @@ intermediate
 <md-checkbox [checked]="true" align="end">
   I come after my label.
 </md-checkbox>
-
 `

@@ -120,17 +120,20 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     };
                 }
             });
+            //            position: absolute; top: 60px; height: 33px; left: 0px;right:0; 
             jb_core_1.jb.component('studio-toolbar', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     template: '<section class="jb-group"><jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
-                    css: "{ \n            display: flex;\n            position: absolute; top: 60px; height: 33px; left: 0px;right:0; \n            background: #F5F5F5; \n            height: 33px; \n            width: 100%;\n            border-bottom: 1px solid #D9D9D9; \n            border-top: 1px solid #fff;\n        }\n        * { margin-right: 0 }"
+                    css: "{ \n            display: flex;\n            background: #F5F5F5; \n            height: 33px; \n            width: 100%;\n            border-bottom: 1px solid #D9D9D9; \n            border-top: 1px solid #fff;\n        }\n        * { margin-right: 0 }"
                 }
             });
             jb_core_1.jb.component('studio.redraw', {
                 type: 'action',
-                impl: function () { return jbart.redrawStudio && jbart.redrawStudio(); }
+                impl: function () {
+                    return jbart.redrawStudio && jbart.redrawStudio();
+                }
             });
         }
     }

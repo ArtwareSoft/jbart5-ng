@@ -44,3 +44,4 @@ jb.component('studio.openSublime', {
 	impl: (ctx,path) => 
 		studio.model.compName(path) && $.ajax(`/?op=gotoSource&comp=${studio.model.compName(path)}`)
 }) 
+

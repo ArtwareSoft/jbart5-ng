@@ -35,7 +35,16 @@ jb.component('label.h1', {
         template: '<h1>{{title}}</h1>',
         features :{$: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
     }
+})
+
+jb.component('label.h2', {
+    type: 'label.style',
+    impl :{$: 'customStyle', 
+        template: '<h2>{{title}}</h2>',
+        features :{$: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
+    }
 });
+
 
 
 

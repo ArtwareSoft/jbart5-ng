@@ -379,7 +379,7 @@ export class jBartWidget {
 		jbart.widgetLoaded = true; // for studio
 	}
 	ngDoCheck() {
-		if (this.compId == 'studio.all' && jbart.redrawStudio) // put the redrawStudio function ob jbart
+		if (this.compId == 'studio.all' && !jbart.redrawStudio) // put the redrawStudio function ob jbart
 			jbart.redrawStudio = () => 
 				this.redrawEm.next(this.compId);
 
@@ -407,12 +407,14 @@ export class jBartWidget {
 		  .map(id=>
 		  	relevantSource(id))
 		  .distinctUntilChanged()
-		  .subscribe(x => cmp.draw())
+		  .subscribe(x => 
+		  	cmp.draw())
 
 		this.redrawEm // widget to show changed - no need to wait
 		  .distinctUntilChanged()
 		  .subscribe(
-		  	x => cmp.draw())
+		  	x => 
+		  	cmp.draw())
 
 		function relevantSource(compID) {
 			var ns = compID.split('.')[0];

@@ -45,6 +45,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('custom-control', {
                 type: 'control',
                 params: {
+                    title: { as: 'string', dynamic: true },
                     template: { as: 'string', essential: true },
                     isInnerTemplate: { type: 'boolean', as: 'boolean' },
                     css: { as: 'string' },
@@ -52,7 +53,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     methods: { as: 'object' },
                     features: { type: 'feature[]', dynamic: true },
                 },
-                impl: function (context, template, isInner, css, atts, methods, features) {
+                impl: function (context, title, template, isInner, css, atts, methods, features) {
                     return jb_ui.Comp({}, context).jbExtend(jb_core_1.jb.extend(jb_core_1.jb.obj(isInner ? 'template' : 'jbTemplate', template), {
                         styles: css.split(/}$/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }),
                         atts: atts,

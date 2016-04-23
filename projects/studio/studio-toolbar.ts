@@ -116,6 +116,8 @@ jb.component('studio_button.toolbarButton', {
 	}
 })
 
+//            position: absolute; top: 60px; height: 33px; left: 0px;right:0; 
+
 jb.component('studio-toolbar', {
   type: 'group.style',
   impl :{$: 'customStyle', 
@@ -123,7 +125,6 @@ jb.component('studio-toolbar', {
     template: '<section class="jb-group"><jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
     css: `{ 
             display: flex;
-            position: absolute; top: 60px; height: 33px; left: 0px;right:0; 
             background: #F5F5F5; 
             height: 33px; 
             width: 100%;
@@ -137,6 +138,7 @@ jb.component('studio-toolbar', {
 
 jb.component('studio.redraw',{
 	type: 'action',
-	impl: () => jbart.redrawStudio && jbart.redrawStudio()
+	impl: () => 
+    jbart.redrawStudio && jbart.redrawStudio()
 })
 

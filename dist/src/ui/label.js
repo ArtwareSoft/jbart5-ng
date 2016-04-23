@@ -43,6 +43,13 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
                 }
             });
+            jb_core_1.jb.component('label.h2', {
+                type: 'label.style',
+                impl: { $: 'customStyle',
+                    template: '<h2>{{title}}</h2>',
+                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
+                }
+            });
         }
     }
 });

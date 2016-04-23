@@ -42,7 +42,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     return {
                         init: function (cmp) {
                             cmp.initGroup();
-                            context.params.children.forEach(function (child, index) { return cmp.extendChild(index, { atts: child }); });
+                            context.params.children.forEach(function (child, index) {
+                                return cmp.extendChild(index, { atts: child });
+                            });
                         },
                         jbTemplate: "<div class=\"md-layout\">\n            <jb_comp *ngFor=\"var ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n          </div>",
                         atts: atts

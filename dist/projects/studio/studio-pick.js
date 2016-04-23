@@ -149,6 +149,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     if (!_window)
                         return;
                     var elems = _window.document.querySelectorAll('[jb-path="' + path + '"]');
+                    if (elems.length == 0) {
+                        elems = window.document.querySelectorAll('[jb-path="' + path + '"]');
+                        if (elems.length)
+                            _window = window;
+                    }
                     var boxes = [];
                     $('.jbstudio_highlight_in_preview').remove();
                     $(elems).each(function () {

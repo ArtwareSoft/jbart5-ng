@@ -37,7 +37,8 @@ jb.component('layout.md',{
     return {
       init: function(cmp) { 
         cmp.initGroup();
-        context.params.children.forEach((child,index)=>cmp.extendChild(index,{atts: child}))
+        context.params.children.forEach((child,index)=>
+          cmp.extendChild(index,{atts: child}))
       },
       jbTemplate: `<div class="md-layout">
             <jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>

@@ -410,7 +410,8 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
           ownPropertyNames(obj).forEach(function(prop,index,array) {
               if (prop != '$')
                 newLine();
-              printProp(obj,prop,path);
+              if (obj[prop] != null)
+                printProp(obj,prop,path);
               if (index < array.length -1) {
                 result += ', ';//newLine();
             }
@@ -428,7 +429,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
       return `"${p}"`
   }
   function printProp(obj,prop,path) {
-    if (obj[prop].$jb_arrayShortcut)
+    if (obj[prop] && obj[prop].$jb_arrayShortcut)
       obj = jb_obj(prop,obj[prop].items);
 
     if (printInLine(flat_property(obj,prop))) return;

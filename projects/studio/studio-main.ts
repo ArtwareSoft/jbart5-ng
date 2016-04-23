@@ -8,59 +8,90 @@ jb.resource('studio','UrlPathEm',{ $: 'rx.urlPath', base: 'studio', zoneId: 'stu
 	params: [ 'project', 'page', 'profile_path' ] , databind: '{%$globals%}' } )
 
 jb.component('studio.all', {
-	type: 'control',
-	impl: {
-		$: 'group', cssClass: 'studio-top-bar',
-	    features :{$: 'group.watch', data: '%$globals/project%' }, 
-	    controls: [
-			{ $: 'group', cssClass: 'studio-top-menu', controls: [
-				  { $: 'label',
-				  	style :{$: 'label.h1'},
-				  	features :{$: 'css', css: '{margin-top: 5px; margin-left: 8px}' },
-					title: ['{%$globals/project%}', { $: 'replace', find: '_', replace: ' ' }],
-				  },
-				  { $: 'studio.mainMenu' }
-		      ],
-			},
-			{ $: 'studio.toolbar' },
-			{ $: 'group', cssClass: 'studio-jbart-logo',
-			  	controls :{$: 'image', url: '/projects/studio/css/favicon.png' }
-			},
-			{ $: 'group', cssClass: 'studio-widget-placeholder', 
-				controls :{$: 'studio.renderWidget' , cssClass: 'studio-widget-placeholder'},
-			},
-			{ $: 'group', title: 'pages', cssClass: 'studio-footer', 
-				controls :{$: 'itemlist', 
-					items :{$: 'studio.projectPages' }, 
-					cssClass: 'studio-pages',
-					features :{$: 'itemlist.selection', 
-							autoSelectFirst: true, 
-							databind: '%$globals/page%',
-							onSelection :{$: 'onNextTimer',
-								action :{$: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' }
-							}
-					},
-					controls :{$: 'label', 
-						title :{$: 'extractSuffix', separator: '.' },
-						cssClass: 'studio-page', 
-					}
-				},
-				features: [
-					{ $: 'wait', 
-						for :{$: 'studio.waitForPreviewIframe' }, 
-						loadingControl :{$label: '...' } 
-					},
-					{ $: 'feature.afterLoad',
-						action :{$runActions: [
-							{$: 'studio.waitForPreviewIframe' },
-							{$: 'studio.fixProfilePath' }
-						] }
-					}
-				]
-			}
-		]
-	}
+  type: 'control', 
+  impl :{$: 'group', 
+    cssClass1: 'studio-top-bar', 
+    features :{$: 'group.watch', data: '%$globals/project%' }, 
+    controls: [
+      {$: 'group', 
+        style :{$: 'layout.horizontal', spacing: '3' }, 
+        title: 'top bar', 
+        controls: [
+          {$: 'studio.jbart-logo' },
+          {$: 'group', 
+            controls: [
+              {$: 'label', 
+                style :{$: 'label.span' }, 
+                title: [
+                  '{%$globals/project%}', 
+                  {$: 'replace', find: '_', replace: ' ' }
+                ], 
+                features :{$: 'css', 
+                  css: '{ font: 18px Arial; margin-left: 6px; margin-top: 10px}'
+                }
+              }, 
+              {$: 'studio.main-menu' }
+            ], 
+            title: 'title and menu', 
+            style :{$: 'layout.vertical', spacing: '6' }, 
+            features :{$: 'css', css: '{ width: 100% }' }
+          }
+        ], 
+        features :{$: 'css', css: '{ height: 65px; border-bottom: 1px #d9d9d9 solid}' }
+      }, 
+      {$: 'studio.toolbar' }, 
+      {$: 'group', 
+        cssClass: 'studio-widget-placeholder', 
+        controls :{$: 'studio.renderWidget' }, 
+        title: 'preview'
+      }, 
+      {$: 'group', 
+        title: 'pages', 
+        cssClass: 'studio-footer', 
+        controls :{$: 'itemlist', 
+          items :{$: 'studio.projectPages' }, 
+          cssClass: 'studio-pages', 
+          features :{$: 'itemlist.selection', 
+            autoSelectFirst: true, 
+            databind: '%$globals/page%', 
+            onSelection :{$: 'onNextTimer', 
+              action :{$: 'writeValue', 
+                to: '%$globals/profile_path%', 
+                value: '{%$globals/project%}.{%$globals/page%}'
+              }
+            }
+          }, 
+          controls :{$: 'label', 
+            title :{$: 'extractSuffix', separator: '.' }, 
+            cssClass: 'studio-page'
+          }
+        }, 
+        features: [
+          {$: 'wait', 
+            for :{$: 'studio.waitForPreviewIframe' }, 
+            loadingControl :{ $label: '...' }
+          }, 
+          {$: 'feature.afterLoad', 
+            action :{
+              $runActions: [
+                {$: 'studio.waitForPreviewIframe' }, 
+                {$: 'studio.fixProfilePath' }
+              ]
+            }
+          }
+        ]
+      }
+    ], 
+    style :{$: 'layout.vertical', spacing: '0' }
+  }
 })
+
+jb.component('studio.jbart-logo',{
+	type: 'control',
+	impl :{$: 'custom-control', 
+        template: '<div style="padding: 60px 30px 30px 30px;background-color: #327DC8;zoom: 20%;"> <span style="position: absolute;margin-top:20px;margin-left:50px; color: white; font-size: 127px; font-family: Times New Roman, Times, serif">jB</span>  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215px" height="228px" viewBox="0 0 215 228" preserveAspectRatio="xMidYMid meet" zoomAndPan="disable" xmlns:svg="http://www.w3.org/2000/svg"> <polygon points="106 0 0   38 17  178 106 228" fill="#DE3641"></polygon> <polygon points="106 0 215 38 198 178 106 228" fill="#B13138"></polygon> </svg> </div>'
+    }
+}) 
 
 jb.component('studio.projectPages',{
 	type: 'data',

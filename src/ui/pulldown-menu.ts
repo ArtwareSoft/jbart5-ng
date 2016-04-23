@@ -55,7 +55,7 @@ jb.component('pulldown-menu-item.default', {
   		</div></div>`,
 	css: `.line { display: flex; user-select: none; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}
 		  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }
-		  span { padding-top: 3px}
+		  span { padding-top: 3px }
           .title { display: block; text-align: left; } 
 		  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }
 		  .line:hover { background: #eee; }

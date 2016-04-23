@@ -146,14 +146,14 @@ extend(op_post_handlers, {
 
         function findSection(source,toFind) {
           var index = source.indexOf(toFind[0]);
-          if (force) {// ignore content - just look for the end
+          if (index != -1 && force) {// ignore content - just look for the end
             for(end_index=index;end_index<source.length;end_index++)
               if ((source[end_index]||'').match(/^}\)$/m))
-                return { index: index, length: end_index - index }
-          } else { // compare content
-            if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind))
+                return { index: index, length: end_index - index +1}
+          } else if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind))
               return { index: index, length: toFind.length }
-          }
+          else if (index != -1)
+              endWithFailure(res,`${comp} found with different source, use "force save" to save.`);
         }
 
         function compareArrays(arr1,arr2) {

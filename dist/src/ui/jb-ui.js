@@ -454,7 +454,7 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                 };
                 jBartWidget.prototype.ngDoCheck = function () {
                     var _this = this;
-                    if (this.compId == 'studio.all' && jbart.redrawStudio)
+                    if (this.compId == 'studio.all' && !jbart.redrawStudio)
                         jbart.redrawStudio = function () {
                             return _this.redrawEm.next(_this.compId);
                         };
@@ -482,10 +482,14 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                         return relevantSource(id);
                     })
                         .distinctUntilChanged()
-                        .subscribe(function (x) { return cmp.draw(); });
+                        .subscribe(function (x) {
+                        return cmp.draw();
+                    });
                     this.redrawEm // widget to show changed - no need to wait
                         .distinctUntilChanged()
-                        .subscribe(function (x) { return cmp.draw(); });
+                        .subscribe(function (x) {
+                        return cmp.draw();
+                    });
                     function relevantSource(compID) {
                         var ns = compID.split('.')[0];
                         return Object.getOwnPropertyNames(jb_core_1.jb.comps).filter(function (id) { return id.indexOf(ns + '.') == 0; }).map(function (id) { return jb_core_1.jb.prettyPrint(jb_core_1.jb.comps[id].impl); }).join('');
