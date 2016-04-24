@@ -58,7 +58,8 @@ function profileFromPath(path) {
 	if (!innerPath)
 		return comp;
 	return comp && innerPath.split('~').reduce(function(obj, p) { 
-		if (!obj) debugger;
+		if (!obj)
+			jb.logError('profileFromPath: non existing path '+ path+ ' property: ' + p);
 		return obj && obj[p] 
 	}, comp);
 }

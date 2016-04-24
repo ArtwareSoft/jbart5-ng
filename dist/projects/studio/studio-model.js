@@ -58,7 +58,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             return comp;
         return comp && innerPath.split('~').reduce(function (obj, p) {
             if (!obj)
-                debugger;
+                jb_core_1.jb.logError('profileFromPath: non existing path ' + path + ' property: ' + p);
             return obj && obj[p];
         }, comp);
     }

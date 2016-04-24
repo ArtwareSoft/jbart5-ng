@@ -32,22 +32,29 @@ jb.component('studio.toolbar', {
       {$: 'feature.keyboard-shortcut', 
         key: 'Alt+N', 
         action :{$: 'studio.pickAndOpen', from: 'studio' }
-      },
-      { $: 'feature.keyboard-shortcut', key: 'Ctrl+C',
+      }, 
+      {$: 'feature.keyboard-shortcut', 
+        key: 'Ctrl+C', 
         action :{$: 'studio.copy', path: '%$path%' }
-      },
-      { $: 'feature.keyboard-shortcut', key: 'Ctrl+V',
+      }, 
+      {$: 'feature.keyboard-shortcut', 
+        key: 'Ctrl+V', 
         action :{$: 'studio.paste', path: '%$path%' }
-      },
-      { $: 'feature.keyboard-shortcut', key: 'Ctrl+Z',
+      }, 
+      {$: 'feature.keyboard-shortcut', 
+        key: 'Ctrl+Z', 
         action :{$: 'studio.undo' }
-      },
-      { $: 'feature.keyboard-shortcut', key: 'Ctrl+Y',
+      }, 
+      {$: 'feature.keyboard-shortcut', 
+        key: 'Ctrl+Y', 
         action :{$: 'studio.redo' }
-      },
+      }
     ], 
     controls: [
-      {$: 'label', title: '', cssClass: 'studio-toolbar-left-margin' }, 
+      {$: 'label', 
+        title: '', 
+        features :{$: 'css', css: '{ width: 170px }' }
+      }, 
       {$: 'button', 
         title: 'Select', 
         style :{$: 'button.md-icon', 
@@ -92,7 +99,7 @@ jb.component('studio.toolbar', {
         action :{$: 'studio.showProbeData' }
       }, 
       {$: 'button', 
-        title: 'insert control',
+        title: 'insert control', 
         style :{$: 'button.md-icon', icon: 'add' }, 
         action :{$: 'studio.openNewCtrlDialog' }
       }
@@ -125,11 +132,8 @@ jb.component('studio-toolbar', {
     template: '<section class="jb-group"><jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
     css: `{ 
             display: flex;
-            background: #F5F5F5; 
             height: 33px; 
             width: 100%;
-            border-bottom: 1px solid #D9D9D9; 
-            border-top: 1px solid #fff;
         }
         * { margin-right: 0 }`
   }

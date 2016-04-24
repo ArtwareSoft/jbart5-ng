@@ -17,7 +17,12 @@ jb.component('studio.all', {
         style :{$: 'layout.horizontal', spacing: '3' }, 
         title: 'top bar', 
         controls: [
-          {$: 'studio.jbart-logo' },
+          {$: 'image', 
+            units: 'px', 
+            style :{$: 'image.default' }, 
+            url: '/projects/studio/css/logo470x200.png', 
+            imageHeight: '90'
+          }, 
           {$: 'group', 
             controls: [
               {$: 'label', 
@@ -27,19 +32,25 @@ jb.component('studio.all', {
                   {$: 'replace', find: '_', replace: ' ' }
                 ], 
                 features :{$: 'css', 
-                  css: '{ font: 18px Arial; margin-left: 6px; margin-top: 10px}'
+                  css: '{ font: 20px Arial; margin-left: 6px; margin-top: 20px}'
                 }
               }, 
-              {$: 'studio.main-menu' }
+              {$: 'group', 
+                style :{$: 'layout.horizontal', spacing: 3 }, 
+                controls: [
+                  {$: 'studio.main-menu' }, 
+                  {$: 'studio.toolbar' }
+                ]
+              }
             ], 
             title: 'title and menu', 
-            style :{$: 'layout.vertical', spacing: '6' }, 
-            features :{$: 'css', css: '{ width: 100% }' }
+            style :{$: 'layout.vertical', spacing: '12' }, 
+            features :{$: 'css', css: '{ padding-left: 18px; width: 100% }' }, 
+            url: '/projects/studio/css/logo470x200.png'
           }
         ], 
-        features :{$: 'css', css: '{ height: 65px; border-bottom: 1px #d9d9d9 solid}' }
+        features :{$: 'css', css: '{ height: 90px; border-bottom: 1px #d9d9d9 solid}' }
       }, 
-      {$: 'studio.toolbar' }, 
       {$: 'group', 
         cssClass: 'studio-widget-placeholder', 
         controls :{$: 'studio.renderWidget' }, 
@@ -85,7 +96,6 @@ jb.component('studio.all', {
     style :{$: 'layout.vertical', spacing: '0' }
   }
 })
-
 jb.component('studio.jbart-logo',{
 	type: 'control',
 	impl :{$: 'custom-control', 

@@ -1,8 +1,6 @@
 npm install
 
-md-button styles
-md-toolbar
-md-left-nav 
+property-sheet.md
 
 dialog-ok-cancel
 	fix button positions
@@ -25,15 +23,11 @@ create control (maybe dragable to the tree)
 	----------
 	section, propertySheet,tabs,itemlist,
 
-hamburger toolbar menu in the studio-tree
-	delete
-	wrap with group
 	duplicate: ctrl-drag
 
 studio
 ======
 jb logo
-main toolbar design
 undo
 property editor
   array editor for the property editor

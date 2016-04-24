@@ -39,21 +39,28 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             key: 'Alt+N',
                             action: { $: 'studio.pickAndOpen', from: 'studio' }
                         },
-                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+C',
+                        { $: 'feature.keyboard-shortcut',
+                            key: 'Ctrl+C',
                             action: { $: 'studio.copy', path: '%$path%' }
                         },
-                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+V',
+                        { $: 'feature.keyboard-shortcut',
+                            key: 'Ctrl+V',
                             action: { $: 'studio.paste', path: '%$path%' }
                         },
-                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+Z',
+                        { $: 'feature.keyboard-shortcut',
+                            key: 'Ctrl+Z',
                             action: { $: 'studio.undo' }
                         },
-                        { $: 'feature.keyboard-shortcut', key: 'Ctrl+Y',
+                        { $: 'feature.keyboard-shortcut',
+                            key: 'Ctrl+Y',
                             action: { $: 'studio.redo' }
-                        },
+                        }
                     ],
                     controls: [
-                        { $: 'label', title: '', cssClass: 'studio-toolbar-left-margin' },
+                        { $: 'label',
+                            title: '',
+                            features: { $: 'css', css: '{ width: 170px }' }
+                        },
                         { $: 'button',
                             title: 'Select',
                             style: { $: 'button.md-icon',
@@ -126,7 +133,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     template: '<section class="jb-group"><jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
-                    css: "{ \n            display: flex;\n            background: #F5F5F5; \n            height: 33px; \n            width: 100%;\n            border-bottom: 1px solid #D9D9D9; \n            border-top: 1px solid #fff;\n        }\n        * { margin-right: 0 }"
+                    css: "{ \n            display: flex;\n            height: 33px; \n            width: 100%;\n        }\n        * { margin-right: 0 }"
                 }
             });
             jb_core_1.jb.component('studio.redraw', {
