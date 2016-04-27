@@ -142,24 +142,6 @@ jb.component('studio.propertyField-TgpType',{
 						style :{$: 'button.studio-properties-toolbar', icon: 'more_vert' }, 
 						action :{$: 'studio.open-property-menu', path: '%$path%' },
 					},
-					// { $: 'button' ,
-					// 	title: 'customize style',
-					// 	style :{$: 'button.studio-edit-js' },
-					// 	action : [ 
-					// 		{$: 'studio.makeLocal', path: '%$path%' },
-					// 		{$: 'studio.openEditStyle', path: '%$path%' },
-					// 	],
-					// 	features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' }}
-					// },
-					// { $: 'button' ,
-					// 	title: 'delete',
-					// 	style :{$: 'button.studio-delete' },
-					// 	action : [ 
-					// 		{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
-					// 		{$: 'studio.delete', path: '%$path%' },
-					// 	],
-					// 	features :{$: 'hidden', showCondition :{$: 'studio.compName-ref', path: '%$path%' }}
-					// },
 			  ]
 			},
 			{ $: 'group',
@@ -204,78 +186,78 @@ jb.component('studio.open-property-menu',{
 	}
 })
 
-jb.component('studio.propertyField-Style',{
-	type: 'control',
-	params: { path: { as: 'string' } },
-	impl :{$: 'group',
-		title :{$: 'studio.prop-name', path: '%$path%' },
-		$vars: {
-			'TgpTypeCtrl' :{$: 'object' , expanded: true }
-		},
-		controls: [
-			{ $: 'group',
-			  style :{$: 'layout.horizontal' },
-			  controls: [
-					{ $: 'picklist',
-						cssClass: 'jb-studio-tgpType-picklist',
-						databind :{$: 'studio.compName-ref', path: '%$path%' },
-						options :{$: 'studio.tgp-path-options', path: '%$path%' },
-					},
-					{ $: 'group',
-			  			style :{$: 'layout.horizontal' },
-			  			controls:
-			  			[
-			  				{ $: 'editable-boolean',
-								style :{$: 'editable-boolean.expand-collapse'},
-								databind: '%$TgpTypeCtrl/expanded%',
-								features :{$: 'hidden', showCondition :{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }}
-							},
-							{ $: 'button' ,
-								title: 'customize style',
-								style :{$: 'button.studio-properties-toolbar', icon: 'build' }, 
-								action : [ 
-									{$: 'studio.makeLocal', path: '%$path%' },
-									{$: 'studio.openEditStyle', path: '%$path%' },
-								],
-								features :{$: 'hidden', showCondition :{$not :{$: 'studio.isCustomStyle', path: '%$path%' } }}
-							},
-							{ $: 'button' ,
-								title: 'open sublime',
-								style :{$: 'button.studio-properties-toolbar', icon: 'code' },
-								action :{$: 'studio.openSublime', path: '%$path%' },
-							},
-							{ $: 'button' ,
-								title: 'edit custom style',
-								style :{$: 'button.md-icon', icon: 'input' }, 
-								action :{$: 'studio.openEditStyle', path: '%$path%' },
-								features :{$: 'hidden', showCondition :{$: 'studio.isCustomStyle', path: '%$path%' } }
-							},
-							{ $: 'button' ,
-								title: 'share style',
-								style :{$: 'button.md-icon', icon: 'add' }, 
-								action :{$: 'studio.shareStyle', path: '%$path%' },
-								features :{$: 'hidden', showCondition : false } //{$: 'studio.isCustomStyle', path: '%$path%' } }
-							},
-					  ]
-					},
-				]
-			},
-			{ $: 'group',
-				controls :{$: 'studio.properties', 	path: '%$path%' },
-				features : [ 
-					{$: 'group.watch', data :{$: 'studio.compName', path: '%$path%' }},
-					{$: 'hidden', showCondition: {$and: 
-						[
-							'%$TgpTypeCtrl.expanded%', 
-							{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }
-						] 
-					}},
-					{$: 'css', css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'},
-				],
-			}
-		]
-	}
-})
+// jb.component('studio.propertyField-Style',{
+// 	type: 'control',
+// 	params: { path: { as: 'string' } },
+// 	impl :{$: 'group',
+// 		title :{$: 'studio.prop-name', path: '%$path%' },
+// 		$vars: {
+// 			'TgpTypeCtrl' :{$: 'object' , expanded: true }
+// 		},
+// 		controls: [
+// 			{ $: 'group',
+// 			  style :{$: 'layout.horizontal' },
+// 			  controls: [
+// 					{ $: 'picklist',
+// 						cssClass: 'jb-studio-tgpType-picklist',
+// 						databind :{$: 'studio.compName-ref', path: '%$path%' },
+// 						options :{$: 'studio.tgp-path-options', path: '%$path%' },
+// 					},
+// 					{ $: 'group',
+// 			  			style :{$: 'layout.horizontal' },
+// 			  			controls:
+// 			  			[
+// 			  				{ $: 'editable-boolean',
+// 								style :{$: 'editable-boolean.expand-collapse'},
+// 								databind: '%$TgpTypeCtrl/expanded%',
+// 								features :{$: 'hidden', showCondition :{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }}
+// 							},
+// 							{ $: 'button' ,
+// 								title: 'customize style',
+// 								style :{$: 'button.studio-properties-toolbar', icon: 'build' }, 
+// 								action : [ 
+// 									{$: 'studio.makeLocal', path: '%$path%' },
+// 									{$: 'studio.openEditStyle', path: '%$path%' },
+// 								],
+// 								features :{$: 'hidden', showCondition :{$not :{$: 'studio.isCustomStyle', path: '%$path%' } }}
+// 							},
+// 							{ $: 'button' ,
+// 								title: 'open sublime',
+// 								style :{$: 'button.studio-properties-toolbar', icon: 'code' },
+// 								action :{$: 'studio.openSublime', path: '%$path%' },
+// 							},
+// 							{ $: 'button' ,
+// 								title: 'edit custom style',
+// 								style :{$: 'button.md-icon', icon: 'input' }, 
+// 								action :{$: 'studio.openEditStyle', path: '%$path%' },
+// 								features :{$: 'hidden', showCondition :{$: 'studio.isCustomStyle', path: '%$path%' } }
+// 							},
+// 							{ $: 'button' ,
+// 								title: 'share style',
+// 								style :{$: 'button.md-icon', icon: 'add' }, 
+// 								action :{$: 'studio.shareStyle', path: '%$path%' },
+// 								features :{$: 'hidden', showCondition : false } //{$: 'studio.isCustomStyle', path: '%$path%' } }
+// 							},
+// 					  ]
+// 					},
+// 				]
+// 			},
+// 			{ $: 'group',
+// 				controls :{$: 'studio.properties', 	path: '%$path%' },
+// 				features : [ 
+// 					{$: 'group.watch', data :{$: 'studio.compName', path: '%$path%' }},
+// 					{$: 'hidden', showCondition: {$and: 
+// 						[
+// 							'%$TgpTypeCtrl.expanded%', 
+// 							{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }
+// 						] 
+// 					}},
+// 					{$: 'css', css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'},
+// 				],
+// 			}
+// 		]
+// 	}
+// })
 
 // jb.component('studio.propertyField-JBEditor',{
 // 	type: 'control',
@@ -299,25 +281,25 @@ jb.component('studio.propertyField-Style',{
 // 	}
 // })
 
-jb.component('studio.propertyField-Javascript',{
-	type: 'control',
-	params: { path: { as: 'string'} },
-	impl :{$: 'group',
-		title :{$: 'studio.prop-name', path: '%$path%' },
-		controls: [
-			{ $: 'button',
-				text: '(..)',
-				cssClass: 'jb-studio-primitive-javascript',
-				action: { $: 'studio.openjsEditor', path: '%$path%'	}
-			},
-			{ $: 'button' ,
-				title: 'more',
-				style :{$: 'button.studio-properties-toolbar', icon: 'more_vert' }, 
-				action :{$: 'studio.open-property-menu', path: '%$path%' },
-			},
-		]
-	}
-})
+// jb.component('studio.propertyField-Javascript',{
+// 	type: 'control',
+// 	params: { path: { as: 'string'} },
+// 	impl :{$: 'group',
+// 		title :{$: 'studio.prop-name', path: '%$path%' },
+// 		controls: [
+// 			{ $: 'button',
+// 				text: '(..)',
+// 				cssClass: 'jb-studio-primitive-javascript',
+// 				action: { $: 'studio.openjsEditor', path: '%$path%'	}
+// 			},
+// 			{ $: 'button' ,
+// 				title: 'more',
+// 				style :{$: 'button.studio-properties-toolbar', icon: 'more_vert' }, 
+// 				action :{$: 'studio.open-property-menu', path: '%$path%' },
+// 			},
+// 		]
+// 	}
+// })
 
 jb.component('studio.propertyField-Array',{
 	type: 'control',
