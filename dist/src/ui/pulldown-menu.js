@@ -17,6 +17,12 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     return jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>' }, ctx);
                 }
             });
+            jb_core_1.jb.component('pulldown.menu-item-group', {
+                type: 'control',
+                impl: function (ctx) {
+                    return jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>' }, ctx);
+                }
+            });
             jb_core_1.jb.component('pulldown.menu-item', {
                 type: 'control',
                 params: {

@@ -345,7 +345,10 @@ border: 1px solid rgb(213, 213, 213);}
 
 /* .jb-studio-primitive-textbox */
 
-.jb-studio-primitive-textbox { font-size: 12px;}
+.jb-studio-primitive-textbox input { 
+    padding-left: 2px;
+    font-size: 12px;
+}
 
 /* jb-studio-arrowMenu-openJbEditor */
 .jb-studio-arrowMenu-openJbEditor { border: none; background: transparent;   padding: 6px 20px 6px 12px;  font-size: 13px; width: 100%;}

@@ -57,7 +57,7 @@ jb.component('dialog.studioFloating', {
 						padding: 0 12px 12px 12px; 
 						box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12)
 				}
-				.dialog-title { background: none }
+				.dialog-title { background: none; padding: 10px 5px; }
 				.jb-dialog-content-parent { padding: 8px; overflow-y: scroll; max-height: 500px }
 				.dialog-close {
 						position: absolute; 

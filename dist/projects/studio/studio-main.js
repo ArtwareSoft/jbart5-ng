@@ -47,7 +47,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                 { $: 'image',
                                     units: 'px',
                                     style: { $: 'image.default' },
-                                    url: '/projects/studio/css/logo470x200.png',
+                                    url: '/projects/studio/css/logo90.png',
                                     imageHeight: '90'
                                 },
                                 { $: 'group',

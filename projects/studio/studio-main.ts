@@ -20,7 +20,7 @@ jb.component('studio.all', {
           {$: 'image', 
             units: 'px', 
             style :{$: 'image.default' }, 
-            url: '/projects/studio/css/logo470x200.png', 
+            url: '/projects/studio/css/logo90.png', 
             imageHeight: '90'
           }, 
           {$: 'group', 

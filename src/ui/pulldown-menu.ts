@@ -7,6 +7,12 @@ jb.component('pulldown.menu-item-separator', {
 		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
 })
 
+jb.component('pulldown.menu-item-group', {
+	type: 'control',
+	impl: ctx => 
+		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
+})
+
 jb.component('pulldown.menu-item', {
 	type: 'control',
 	params: {

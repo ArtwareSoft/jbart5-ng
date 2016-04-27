@@ -78,20 +78,17 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'group',
-                    style: { $: 'layout.horizontal' },
+                    style: { $: 'layout.horizontal', spacing: 2 },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     controls: [
                         { $: 'editable-text',
-                            cssClass: 'jb-studio-primitive-textbox',
+                            features: { $: 'css', css: 'input { font-size: 12px; padding-left: 2px; width: 145px;}' },
                             databind: { $: 'studio.ref', path: '%$path%' }
                         },
                         { $: 'button',
-                            style: { $: 'button.popup-menu' },
-                            title: '',
-                            action: { $: 'studio.openPrimitiveArrowPopup',
-                                path: '%$path%',
-                                isPrimitive: true
-                            }
+                            title: 'more',
+                            style: { $: 'button.studio-properties-toolbar', icon: 'more_vert' },
+                            action: { $: 'studio.open-property-menu', path: '%$path%' },
                         }
                     ]
                 }
@@ -112,6 +109,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     style: { $: 'editable-number.slider', width: '120px' },
+                    features: { $: 'css', css: '{ margin-left: -5px; }' },
                 }
             });
             jb_core_1.jb.component('studio.propertyField-TgpType', {
@@ -126,14 +124,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
                             controls: [
-                                { $: 'picklist',
-                                    cssClass: 'jb-studio-tgpType-picklist',
-                                    databind: { $: 'studio.compName-ref', path: '%$path%' },
-                                    options: { $: 'studio.tgp-path-options', path: '%$path%' },
-                                },
                                 { $: 'editable-boolean',
                                     style: { $: 'editable-boolean.expand-collapse' },
+                                    features: { $: 'css', css: 'button { position: absolute; margin-left: -20px; margin-top: 5px }' },
                                     databind: '%$TgpTypeCtrl/expanded%',
+                                },
+                                { $: 'picklist',
+                                    features: { $: 'css', css: 'select { margin-left: -3px; width: 150px; font-size: 12px; height: 23px;}' },
+                                    databind: { $: 'studio.compName-ref', path: '%$path%' },
+                                    options: { $: 'studio.tgp-path-options', path: '%$path%' },
                                 },
                                 { $: 'button',
                                     title: 'more',
@@ -285,12 +284,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             action: { $: 'studio.openjsEditor', path: '%$path%' }
                         },
                         { $: 'button',
-                            style: { $: 'button.popup-menu' },
-                            action: { $: 'studio.openPrimitiveArrowPopup',
-                                path: '%$path%',
-                                isPrimitive: false
-                            }
-                        }
+                            title: 'more',
+                            style: { $: 'button.studio-properties-toolbar', icon: 'more_vert' },
+                            action: { $: 'studio.open-property-menu', path: '%$path%' },
+                        },
                     ]
                 }
             });
@@ -348,31 +345,31 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.openPrimitiveArrowPopup', {
-                type: 'action',
-                params: {
-                    path: { as: 'string' },
-                    isPrimitive: { type: 'boolean', as: 'boolean' }
-                },
-                impl: { $: 'openDialog',
-                    style: { $: 'pulldownPopup.contextMenuPopup' },
-                    cssClass: 'jb-popup pulldown-mainmenu-popup',
-                    content: { $: 'group',
-                        controls: [
-                            { $: 'pulldown.menu-item', title: 'Edit in jbEditor', spritePosition: '6,0',
-                                action: { $: 'studio.openjbEditor', path: '%$path%' }
-                            },
-                            { $: 'pulldown.menu-item', title: 'Delete script',
-                                atts: { '[hidden]': '%$isPrimitive%' },
-                                action: [
-                                    { $: 'closeContainingPopup' },
-                                    { $: 'studio.delete', path: '%$path%' }
-                                ],
-                            }
-                        ]
-                    }
-                }
-            });
+            // jb.component('studio.openPrimitiveArrowPopup',{
+            // 	type: 'action',
+            // 	params: { 
+            // 		path: { as: 'string' },
+            // 		isPrimitive: { type: 'boolean', as: 'boolean'}
+            // 	},
+            // 	impl :{$: 'openDialog',
+            // 		style :{$: 'pulldownPopup.contextMenuPopup' },
+            // 		cssClass: 'jb-popup pulldown-mainmenu-popup',
+            // 		content :{$: 'group',
+            // 			controls: [
+            // 	 		    { $: 'pulldown.menu-item', title: 'Edit in jbEditor', spritePosition: '6,0', 
+            // 				    action :{$: 'studio.openjbEditor', path: '%$path%' }
+            // 	 		    },
+            // 			    { $: 'pulldown.menu-item', title: 'Delete script', 
+            // 			    	atts: { '[hidden]' : '%$isPrimitive%' },
+            // 				    action: [
+            // 				      { $: 'closeContainingPopup' },
+            // 				      { $: 'studio.delete', path: '%$path%' }
+            // 				    ],
+            // 	 		    }
+            // 			]
+            // 		}
+            // 	}
+            // })
             jb_core_1.jb.component('studio.propertyField', {
                 type: 'control',
                 params: {

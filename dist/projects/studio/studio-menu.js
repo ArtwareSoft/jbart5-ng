@@ -63,6 +63,23 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             ]
                         },
                         { $: 'pulldown.topMenuItem',
+                            title: 'Insert',
+                            controls: [
+                                { $: 'pulldown.menu-item',
+                                    title: 'Field',
+                                    action: { $: 'studio.refreshPreview' }
+                                },
+                                { $: 'pulldown.menu-item',
+                                    title: 'Control',
+                                    action: { $: 'studio.editSource' }
+                                },
+                                { $: 'pulldown.menu-item',
+                                    title: 'Group',
+                                    action: { $: 'studio.openControlTree' }
+                                }
+                            ]
+                        },
+                        { $: 'pulldown.topMenuItem',
                             title: 'Data',
                             controls: [
                                 { $: 'dynamic-fields',
