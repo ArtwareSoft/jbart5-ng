@@ -12,7 +12,7 @@ bower install
 
 npm start
 
-#install with npm
+##install with npm
 npm install jbart5-ng2
 
 cd node_modules/jbart5-ng2
