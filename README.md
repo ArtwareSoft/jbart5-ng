@@ -2,12 +2,25 @@
 Visual DSL fun on top angular2 (DSL - Domain Specific Languages)
 
 ##install and play from github
+download zip or git into a directory (jbart5-ng in this example)
 
 cd jbart5-ng
+
 npm install
+
 bower install
+
 npm start
+
+#install with npm
+npm install jbart5-ng2
+
+cd node_modules/jbart5-ng2
+
+npm start
+
 [material demo in studio](http://localhost:8081/project/studio/material-demo)
+
 
 ###screenshots
 ![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
