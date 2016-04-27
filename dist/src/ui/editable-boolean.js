@@ -33,10 +33,16 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             cmp.bindViaSettings = function () {
                                 jb_rx.refObservable(databind, ctx)
                                     .map(setting.toBool || (function (x) { return x; }))
-                                    .subscribe(function (x) { cmp.yesNo = x; jb_ui.apply(ctx); });
+                                    .subscribe(function (x) {
+                                    cmp.yesNo = x;
+                                    jb_ui.apply(ctx);
+                                });
                                 jb_rx.refObservable(jb_ui.ngRef('{{yesNo}}', cmp), ctx)
                                     .map(setting.fromBool || (function (x) { return x; }))
-                                    .subscribe(function (x) { jb_core_1.jb.writeValue(databind, x); jb_ui.apply(ctx); });
+                                    .subscribe(function (x) {
+                                    jb_core_1.jb.writeValue(databind, x);
+                                    jb_ui.apply(ctx);
+                                });
                             };
                             cmp.toggle = function () {
                                 cmp.yesNo = !cmp.yesNo;
@@ -73,6 +79,16 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }
             });
             jb_core_1.jb.component('editable-boolean.expand-collapse', {
+                type: 'editable-boolean.style',
+                impl: { $: 'customStyle',
+                    template: "<div><i class=\"material-icons\" style=\"font-size:16px;\" (click)=\"toggle()\">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i></div>",
+                    css: '{ cursor: pointer; user-select: none }',
+                    methods: {
+                        afterViewInit: function (ctx) { return function (cmp) { return cmp.bindViaSettings(); }; }
+                    }
+                }
+            });
+            jb_core_1.jb.component('editable-boolean.expand-collapse-plus', {
                 type: 'editable-boolean.style',
                 impl: function (context) {
                     return {

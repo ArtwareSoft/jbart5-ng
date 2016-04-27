@@ -129,11 +129,11 @@ jb.component('studio.propertyField-TgpType',{
 			  controls: [
 					{ 	$: 'editable-boolean',
 						style :{$: 'editable-boolean.expand-collapse'},
-						features :{$: 'css', css: 'button { position: absolute; margin-left: -20px; margin-top: 5px }' },
+						features :{$: 'css', css: '{ position: absolute; margin-left: -20px; margin-top: 2px }' },
 						databind: '%$TgpTypeCtrl/expanded%',
 					},
 					{ $: 'picklist',
-						features :{$: 'css', css: 'select { margin-left: -3px; width: 150px; font-size: 12px; height: 23px;}' },
+						features :{$: 'css', css: 'select { width: 150px; font-size: 12px; height: 23px;}' },
 						databind :{$: 'studio.compName-ref', path: '%$path%' },
 						options :{$: 'studio.tgp-path-options', path: '%$path%' },
 					},
@@ -507,42 +507,42 @@ jb.component('button.studio-properties-toolbar', {
   }
 })
 
-jb.component('button.studio-edit-js', {
-  type: 'button.style',
-  impl :{$: 'customStyle',  
-  	template: '<span><button (click)="clicked()" [title]="title">{}</button></span>',
-  	css: `{ margin-top: -2px; margin-left: -3px; margin-right: -5px;}
-  		 button { cursor: pointer; 
-            font: 12px sans-serif; 
-            border: none; 
-            background: transparent; 
-            color: #91B193; 
-            text-shadow: 0 1px 0 #fff; 
-            font-weight: 700; 
-            opacity: .8;
-        }
-        button:hover { opacity: 1 }`
-  }
-})
+// jb.component('button.studio-edit-js', {
+//   type: 'button.style',
+//   impl :{$: 'customStyle',  
+//   	template: '<span><button (click)="clicked()" [title]="title">{}</button></span>',
+//   	css: `{ margin-top: -2px; margin-left: -3px; margin-right: -5px;}
+//   		 button { cursor: pointer; 
+//             font: 12px sans-serif; 
+//             border: none; 
+//             background: transparent; 
+//             color: #91B193; 
+//             text-shadow: 0 1px 0 #fff; 
+//             font-weight: 700; 
+//             opacity: .8;
+//         }
+//         button:hover { opacity: 1 }`
+//   }
+// })
 
-jb.component('button.studio-delete', {
-  type: 'button.style',
-  impl :{$: 'customStyle',  
-      template: '<span><button (click)="clicked()" [title]="title">&#215;</button></span>',
-      css: `{ margin-left: -4px; margin-top: -1px }
-      button {
-            cursor: pointer; 
-            font: 16px sans-serif; 
-            border: none; 
-            background: transparent; 
-            color: #000; 
-            text-shadow: 0 1px 0 #fff; 
-            font-weight: 700; 
-            opacity: .2;
-        }
-        button:hover { opacity: .5 }`
-  }
-})
+// jb.component('button.studio-delete', {
+//   type: 'button.style',
+//   impl :{$: 'customStyle',  
+//       template: '<span><button (click)="clicked()" [title]="title">&#215;</button></span>',
+//       css: `{ margin-left: -4px; margin-top: -1px }
+//       button {
+//             cursor: pointer; 
+//             font: 16px sans-serif; 
+//             border: none; 
+//             background: transparent; 
+//             color: #000; 
+//             text-shadow: 0 1px 0 #fff; 
+//             font-weight: 700; 
+//             opacity: .2;
+//         }
+//         button:hover { opacity: .5 }`
+//   }
+// })
 
 jb.component('button.popup-menu', {
   type: 'button.style',

@@ -23,15 +23,21 @@ jb.component('editable-boolean',{
   			cmp.bindViaSettings = () => {
   				jb_rx.refObservable(databind,ctx)
   					.map(setting.toBool||(x=>x))
-  					.subscribe(x=>{cmp.yesNo=x;jb_ui.apply(ctx)});
+  					.subscribe(x=>{
+              cmp.yesNo=x;
+              jb_ui.apply(ctx)
+            });
 
   				jb_rx.refObservable(jb_ui.ngRef('{{yesNo}}',cmp),ctx)
   					.map(setting.fromBool||(x=>x))
-  					.subscribe(x=>{jb.writeValue(databind,x);jb_ui.apply(ctx)});
+  					.subscribe(x=>{
+              jb.writeValue(databind,x);jb_ui.apply(ctx)}
+            );
   			}
 			   
         cmp.toggle = () => { 
-          cmp.yesNo = !cmp.yesNo; jb_ui.apply(ctx);
+          cmp.yesNo = !cmp.yesNo; 
+          jb_ui.apply(ctx);
         };
   			cmp.text = () => (setting.textFromBool || (x=>x))(cmp.yesNo);
   		}
@@ -66,7 +72,19 @@ jb.component('editable-boolean.md-switch', {
 	}
 })
 
+
 jb.component('editable-boolean.expand-collapse', {
+  type: 'editable-boolean.style',
+  impl :{$: 'customStyle',
+      template: `<div><i class="material-icons" style="font-size:16px;" (click)="toggle()">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i></div>`,
+      css: '{ cursor: pointer; user-select: none }',
+      methods: {
+        afterViewInit: ctx => cmp => cmp.bindViaSettings()
+      }
+   }
+})
+
+jb.component('editable-boolean.expand-collapse-plus', {
   type: 'editable-boolean.style',
   impl: function(context) {
 	  return { 

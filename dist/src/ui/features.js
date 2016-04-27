@@ -179,14 +179,18 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 params: {
                     css: { essential: true, as: 'string' },
                 },
-                impl: function (context, css) { return jb_core_1.jb.obj('styles', css.split(/}$/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; })); }
+                impl: function (context, css) {
+                    return ({ css: css });
+                }
             });
             jb_core_1.jb.component('cssClass', {
                 type: 'feature',
                 params: {
                     cssClass: { essential: true, as: 'string' },
                 },
-                impl: function (context, cssClass) { return jb_core_1.jb.obj('atts', { class: cssClass }); }
+                impl: function (context, cssClass) {
+                    return ({ atts: { class: cssClass } });
+                }
             });
             jb_core_1.jb.component('feature.keyboard-shortcut', {
                 type: 'feature',

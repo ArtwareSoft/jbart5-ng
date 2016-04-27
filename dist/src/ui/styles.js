@@ -23,7 +23,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 },
                 impl: function (context, template, isInner, css, atts, methods, features) {
                     var options = jb_core_1.jb.extend(jb_core_1.jb.obj(isInner ? 'template' : 'jbTemplate', template), {
-                        styles: css.split(/}$/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }),
+                        css: css,
                         atts: atts,
                         featuresOptions: features()
                     }, methods);
@@ -37,9 +37,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     css: { as: 'string' },
                 },
                 impl: function (context, basedOn, css) {
-                    return jb_core_1.jb.extend({}, basedOn, {
-                        styles: css.split(/}$/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }),
-                    });
+                    return jb_core_1.jb.extend({}, basedOn, { css: css });
                 }
             });
             jb_core_1.jb.component('custom-control', {

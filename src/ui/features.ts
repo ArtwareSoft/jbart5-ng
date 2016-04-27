@@ -123,9 +123,8 @@ jb.component('hidden', {
   },
   impl: function(context,showCondition) { return {
       init: function(cmp) {
-        cmp.jb_hidden = () => {
-          return !showCondition(cmp.ctx)
-        }
+        cmp.jb_hidden = () =>
+          !showCondition(cmp.ctx)
       },
       atts: { '[hidden]': 'jb_hidden()'}
     }
@@ -166,7 +165,8 @@ jb.component('css', {
   params: {
     css: { essential: true, as: 'string' },
   },
-  impl: (context,css) => jb.obj('styles',css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'))
+  impl: (context,css) => 
+    ({css:css})
 })
 
 jb.component('cssClass', {
@@ -174,7 +174,8 @@ jb.component('cssClass', {
   params: {
     cssClass: { essential: true, as: 'string' },
   },
-  impl: (context,cssClass) => jb.obj('atts',{ class: cssClass } )
+  impl: (context,cssClass) => 
+    ({ atts:{ class: cssClass } })
 })
 
 jb.component('feature.keyboard-shortcut', {

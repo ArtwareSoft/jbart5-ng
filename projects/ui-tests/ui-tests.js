@@ -450,9 +450,7 @@ ngIf :{$: 'ng2-ui-test',
           databind: '%$MyWidget/expanded%',
       },
       { $: 'label', title: 'inner text', 
-        atts: { 
-          '[hidden]' : '!ctx.vars.MyWidget.expanded' 
-        } 
+        features :{ $: 'hidden', showCondition: '%$MyWidget.expanded%' }
       }
     ]
   },

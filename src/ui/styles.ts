@@ -14,7 +14,7 @@ jb.component('customStyle', {
 	impl: function (context,template,isInner,css,atts,methods,features) {
 		var options = jb.extend(
 			jb.obj(isInner ? 'template' : 'jbTemplate',template), {
-				styles: css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'),
+				css: css,
 				atts: atts,
 				featuresOptions: features()
 			},methods)
@@ -29,9 +29,7 @@ jb.component('customCssStyle', {
 		css: { as: 'string'},
 	},
 	impl: function (context,basedOn,css) {
-		return jb.extend({},basedOn, {
-				styles: css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'),
-		})
+		return jb.extend({},basedOn, { css: css })
 	}
 })
 
