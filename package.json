@@ -1,6 +1,6 @@
 {
   "name": "jbart5-ng2",
-  "version": "5.0.0-ng.alpha.1",
+  "version": "5.0.0",
   "description": "jBart - Visual DSL fun on top of angular2",
   "homepage": "https://github.com/artwaresoft/jbart5-ng",
   "bugs": {
@@ -44,7 +44,14 @@
     "url": "git+https://github.com/ArtwareSoft/jbart5-ng.git"
   },
   "keywords": [
-    "angular","angular2","material","material-design","jbart","jbart5","visual","visual develpoment"
+    "angular",
+    "angular2",
+    "material",
+    "material-design",
+    "jbart",
+    "jbart5",
+    "visual",
+    "visual develpoment"
   ],
   "author": "Shai Ben-Yehuda (http://artwaresoft.com)",
   "license": "SEE LICENSE IN license.txt"
