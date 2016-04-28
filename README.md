@@ -21,10 +21,13 @@ npm start
 
 [material demo in studio](http://localhost:8081/project/studio/material-demo)
 
+##video
+[visual development with angular2](http://www.screencast.com/t/5kaJDduxzaci)
 
-###screenshots
+##screenshots
 ![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
 
+##learn jbart
 If you want to learn more about jBart visual development concepts, please start with [jbart4](https://github.com/ArtwareSoft/jbart4)
  and work through the tutorial carefully.
 
