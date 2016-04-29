@@ -59,6 +59,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         return comp && innerPath.split('~').reduce(function (obj, p) {
             if (!obj)
                 jb_core_1.jb.logError('profileFromPath: non existing path ' + path + ' property: ' + p);
+            if (obj && p == '0' && obj[p] == null)
+                return obj;
             return obj && obj[p];
         }, comp);
     }
@@ -168,8 +170,16 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             return [];
                         return childPath(prop);
                     }
-                    else {
-                        return this.nonControlParams(path).map(function (prop) { return childPath(prop); });
+                    else if (childrenType == 'non-controls') {
+                        return this.nonControlParams(path).map(function (prop) { return path + '~' + prop; });
+                    }
+                    else if (childrenType == 'array') {
+                        if (!val)
+                            return [];
+                        else if (!Array.isArray(val))
+                            return [path + '~0'];
+                        else
+                            return val.map(function (inner, i) { return path + '~' + i; });
                     }
                     function childPath(prop) {
                         if (Array.isArray(val[prop]))
@@ -267,8 +277,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     if (existing && typeof existing == 'object')
                         jb_core_1.jb.entries(comp.params).forEach(function (p) {
                             result[p[0]] = existing[p[0]];
-                            if (p[1].defaultValue)
-                                result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue));
+                            // if (p[1].defaultValue)
+                            // 	result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
                         });
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);
                 };
@@ -308,25 +318,17 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     });
                     jb_core_1.jb.writeValue(profileRefFromPath(path), evalProfile(res));
                 };
-                ControlModel.prototype.controlChildren = function (path) {
-                    return this.children(path);
-                };
-                ControlModel.prototype.nonControlChildren = function (path) {
-                    return this.children(path, 'non-controls');
-                };
                 ControlModel.prototype.children = function (path, childrenType) {
                     childrenType = childrenType || 'controls';
                     this.cache = this.cache || {};
                     var res = this.subNodes(path, childrenType);
-                    if (!jb_core_1.jb.compareArrays(res, this.cache[path])) {
-                        //			console.log(path,'diff', res,this.cache[path]);
+                    if (!jb_core_1.jb.compareArrays(res, this.cache[path]))
                         this.cache[path] = res;
-                    }
-                    else {
-                    }
                     return this.cache[path];
                 };
                 ControlModel.prototype.paramDef = function (path) {
+                    if (!isNaN(Number(path.split('~').pop())))
+                        path = parentPath(path);
                     var parent_prof = profileValFromPath(parentPath(path));
                     if (!parent_prof)
                         return;
@@ -358,7 +360,11 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     if (!prof)
                         return [];
                     var params = (getComp(jb_core_1.jb.compName(prof)) || {}).params;
-                    return jb_core_1.jb.entries(params).filter(function (p) { return (p[1].type || '').indexOf('control') == -1; }).map(function (p) { return p[0]; });
+                    return jb_core_1.jb.entries(params)
+                        .filter(function (p) {
+                        return (p[1].type || '').indexOf('control') == -1;
+                    })
+                        .map(function (p) { return p[0]; });
                 };
                 ControlModel.prototype.asArray = function (path) {
                     var val = profileValFromPath(path);
@@ -373,6 +379,16 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     }
                     return arr;
                 };
+                ControlModel.prototype.addArrayItem = function (path) {
+                    var val = profileValFromPath(path);
+                    var toAdd = { $: '' };
+                    if (Array.isArray(val))
+                        val.push(toAdd);
+                    else if (!val)
+                        jb_core_1.jb.writeValue(profileRefFromPath(path), toAdd);
+                    else
+                        jb_core_1.jb.writeValue(profileRefFromPath(path), [val].concat(toAdd));
+                };
                 ControlModel.prototype.fixArray = function (path) {
                     // var val = profileValFromPath(path);
                     // var prop = controlParam(path);
@@ -381,6 +397,18 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     // if (Array.isArray(arr) && arr.length == 1)
                     // 	val[prop] = arr[0];
                     //			fixArrayWrapperPath();
+                };
+                ControlModel.prototype.propName = function (path) {
+                    if (!isNaN(Number(path.split('~').pop())))
+                        return parentPath(path).split('~').pop().replace(/s$/, '');
+                    var paramDef = this.paramDef(path);
+                    var val = profileValFromPath(path);
+                    if ((paramDef.type || '').indexOf('[]') != -1) {
+                        var length = this.subNodes(path, 'array').length;
+                        if (length)
+                            return path.split('~').pop() + ' (' + length + ')';
+                    }
+                    return path.split('~').pop();
                 };
                 return ControlModel;
             }());

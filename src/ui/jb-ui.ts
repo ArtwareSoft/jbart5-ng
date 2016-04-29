@@ -16,7 +16,7 @@ enableProdMode();
 jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
-	console.log('apply');
+//	console.log('apply');
 	jb.delay(1);
 	ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{})
 }
@@ -110,7 +110,7 @@ export function enrichComp(comp,ctrl_ctx) {
 		options.template = options.template && context.exp(options.template);
 
 	   	if (options.css)
-    		options.styles = (options.styles || []).concat(options.css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'));
+    		options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'));
 
 		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
     	(options.styles || [])
@@ -306,6 +306,14 @@ export function ngRef(ref,cmp) {
 }
 
 export function twoWayBind(ref) {
+	if (!ref) return {
+		bindToCmp: () => {},
+		valueExp: '',
+		modelExp: '',
+		observable: ctx => new jb_rx.Subject(), 
+		getValue: () => null,
+		writeValue: val => {}
+	}
 	if (ref.$jb_parent) {
 	  var fieldName = ref.$jb_property;
 	  var parentName = ref.$jb_parent.$jb_property || 'model';
@@ -332,9 +340,12 @@ export function twoWayBind(ref) {
 		valueExp: modelPath,
 		modelExp: modelExp,
 
-		observable: ctx => jb_rx.refObservable(ref,ctx), 
-		getValue: () => jb.val(ref),
-		writeValue: val => jb.writeValue(ref,val)
+		observable: ctx => 
+			jb_rx.refObservable(ref,ctx), 
+		getValue: () => 
+			jb.val(ref),
+		writeValue: val => 
+			jb.writeValue(ref,val)
 	}
 }
 

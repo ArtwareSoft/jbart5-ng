@@ -40,7 +40,7 @@ jb.component('group.data', {
           .map(()=> jb.val(ref())) 
           .distinctUntilChanged()
           .filter(x=>x && x!='undefined')
-          .map(x=>{console.log('group.data: ref changed',x);return x})
+//          .map(x=>{console.log('group.data: ref changed',x);return x})
           .flatMap(function(val) {
               return originalCtrlsEmFunc(ctxWithItemVar(ctx.setData(val),val))
             }
@@ -56,7 +56,6 @@ jb.component('group.watch', {
   type: 'feature',
   params: {
     data: { essential: true, dynamic: true },
-//    emptyGroupWhenDataEmpty: { type: 'boolean', as: 'boolean'}
   },
   impl: function(context, data,emptyGroupWhenDataEmpty) {
     return {
@@ -65,9 +64,8 @@ jb.component('group.watch', {
           .map(()=> 
             jb.val(data())) 
           .distinctUntilChanged()
-//          .filter(x=>x && x!='undefined')
-          .map(x=>{console.log('group.watch: data changed',x);
-            return x})
+//          .map(x=>{console.log('group.watch: data changed',x);
+//            return x})
           .flatMap(x=>
               originalCtrlsEmFunc(ctx)
           );

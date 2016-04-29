@@ -32,7 +32,7 @@ jb_resource('ui-tests','wait2sec', new Promise(res => setTimeout(()=>{res(2)}, 2
 jb_tests('just-a-label', {
 // debug the test fw
 label :{$: 'ng2-ui-test',  
-  control :{$: 'label', title: 'Hello World2', cssClass: 'aa' },
+  control :{$: 'label', title: 'Hello World2' },
   expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 })
@@ -164,7 +164,7 @@ itemlist :{$: 'ng2-ui-test',
 'itemlist-DD' :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [
     { $: 'itemlist', items: '%$people%', 
-        controls :{$: 'label', title: '%$item.name% - %name%' }, 
+        controls :{$: 'label', title: '%name%' }, 
         features: [
             { $: 'itemlist.selection', databind: '%$globals/selectedPerson%', autoSelectFirst: true }, 
             { $: 'itemlist.keyboard-selection', autoFocus: true },
@@ -240,12 +240,12 @@ control :{$: 'group',
       { $: 'group', 
         features :{$: 'group.data', data: '%$globals/selectedPerson%'} , 
          controls: [
-            {$: 'label' , title: '%name%aa' },
+            {$: 'label' , title: '%name% selected' },
           ]
         }
     ]
   } ,
-  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', 'Homer Simpsonaa'] },
+  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', 'Homer Simpson selected'] },
 },
 
 'ngShow-label' :{$: 'ng2-ui-test',  

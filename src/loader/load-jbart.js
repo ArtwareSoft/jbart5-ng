@@ -81,6 +81,7 @@ jb_modules =
 'jb-ui/tab',
 'jb-ui/slider',
 'jb-ui/sidenav',
+'jb-ui/separator',
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'

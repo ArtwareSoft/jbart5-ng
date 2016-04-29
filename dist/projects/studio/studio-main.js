@@ -212,11 +212,21 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             });
             jb_core_1.jb.component('studio.short-title', {
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return studio.model.shortTitle(path); }
+                impl: function (context, path) {
+                    return studio.model.shortTitle(path);
+                }
             });
             jb_core_1.jb.component('studio.non-control-children', {
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return studio.model.children(path, 'non-control'); }
+                impl: function (context, path) {
+                    return studio.model.children(path, 'non-controls');
+                }
+            });
+            jb_core_1.jb.component('studio.array-children', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return studio.model.children(path, 'array');
+                }
             });
             jb_core_1.jb.component('studio.compName', {
                 params: { path: { as: 'string' } },
@@ -224,11 +234,15 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             });
             jb_core_1.jb.component('studio.enum-options', {
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return ((studio.model.paramDef(path) || {}).options || '').split(',').map(function (x) { return { code: x, text: x }; }); }
+                impl: function (context, path) {
+                    return ((studio.model.paramDef(path) || {}).options || '').split(',').map(function (x) { return { code: x, text: x }; });
+                }
             });
             jb_core_1.jb.component('studio.prop-name', {
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return path.split('~').pop(); }
+                impl: function (context, path) {
+                    return studio.model.propName(path);
+                }
             });
             jb_core_1.jb.component('studio.compName-ref', {
                 params: { path: { as: 'string' } },
@@ -250,6 +264,12 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 },
                 impl: function (context, path, comp) {
                     return studio.model.modify(studio.model.insertComp, path, { comp: comp }, context);
+                }
+            });
+            jb_core_1.jb.component('studio.newArrayItem', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return studio.model.modify(studio.model.addArrayItem, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.delete', {

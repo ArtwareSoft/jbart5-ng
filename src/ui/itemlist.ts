@@ -18,15 +18,21 @@ jb.component('itemlist',{
 	},
 	impl: function(context) {
     return jb_ui.ctrl(context).jbExtend({
+      doCheck: cmp => {
+        cmp.items = context.params.items();
+      },
       beforeInit: function(cmp) {
         cmp.items = context.params.items();
         cmp.itemlist = {
-          items: cmp.items,
-          elems: () => Array.from($(cmp._nativeElement).find('[jb-item]')),
-          el: cmp.elementRef.nativeElement,
-          elemToItem: (elem) => cmp.items[$(elem).closest('[jb-item]').index()],
-          itemToElem: function(item) { return this.elems()[cmp.items.indexOf(item)] },
-          selectionEmitter: new jb_rx.Subject(),
+            items: cmp.items,
+            elems: () => Array.from($(cmp._nativeElement).find('[jb-item]')),
+            el: cmp.elementRef.nativeElement,
+            elemToItem: (elem) => 
+              cmp.items[$(elem).closest('[jb-item]').index()],
+            itemToElem: function(item) { 
+              return this.elems()[cmp.items.indexOf(item)] 
+            },
+            selectionEmitter: new jb_rx.Subject(),
         }
        },
       directives: [jb_itemlist_comp(context.params, context)]
@@ -58,8 +64,12 @@ function jb_itemlist_comp(model,context) {
 
 jb.component('itemlist.ul-li', {
   type: 'itemlist.style',
-  impl: function(context) {
-    return { template: '<ul class="jb-itemlist"><li *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>' }
+  impl :{$: 'customStyle',
+    template: '<ul class="jb-itemlist"><li *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
+    css: `[jb-item].selected { background: #337AB7; color: #fff ;}
+    li { list-style: none; padding: 0; margin: 0;}
+    { list-style: none; padding: 0; margin: 0;}
+    `
   }
 })
 
@@ -68,6 +78,12 @@ jb.component('itemlist.div', {
   impl: function(context) {
     return { template: '<div *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></div>' }
   }
+})
+
+jb.component('itemlist.divider', {
+  type: 'feature',
+  impl : ctx =>
+    ({css: `[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 10px }`})
 })
 
 // ****************** Selection ******************
@@ -149,7 +165,7 @@ jb.component('itemlist.drag-and-drop', {
     return {
       init: function(cmp) {
         var itemlist = cmp.itemlist;
-        var drake = itemlist.drake = dragula($(itemlist.el).find('.jb-itemlist').get(), {
+        var drake = itemlist.drake = dragula($(itemlist.el).findIncludeSelf('.jb-itemlist').get(), {
           moves: el => $(el).attr('jb-item') != null
         });
 

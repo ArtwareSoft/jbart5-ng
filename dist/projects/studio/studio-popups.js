@@ -60,11 +60,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         if (sessionStorage[dialog.id])
                             return;
                         if (dialog.id == 'studio properties')
-                            // dialog.$el.css('top','100px').css('left',(window.outerWidth-320)+'px');
-                            dialog.$el.css('top', '110px').css('right', '0px').css('left', 'initial');
+                            dialog.$el.css('top', '100px').css('left', (window.outerWidth - 320) + 'px');
+                        //dialog.$el.css('top','110px').css('right','600px').css('left','600px');
                         if (dialog.id == 'studio control tree')
-                            dialog.$el.css('top', '0px').css('right', '306px').css('left', 'initial');
-                        // dialog.$el.css('top','100px').css('left',(window.outerWidth-320-310)+'px');
+                            //dialog.$el.css('top','0px').css('right','306px').css('left','initial');
+                            dialog.$el.css('top', '100px').css('left', (window.outerWidth - 320 - 310) + 'px');
                         if (dialog.id == 'studio main window')
                             dialog.$el.css('top', '0px').css('right', '0px').css('left', 'initial');
                         if (dialog.id == 'studio templates')

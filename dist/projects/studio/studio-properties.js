@@ -32,15 +32,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         'Properties of %comp% %title%'
                     ],
                     style: { $: 'dialog.studioFloating', id: 'studio properties' },
-                    content: { $: 'group',
-                        //			style :{$: 'tab-control.studio-properties-accordion' },
-                        controls: [
-                            { $: 'group', title: 'Properties',
-                                //					cssClass: 'studio-properties-in-dialog',
-                                controls: { $: 'studio.properties', path: { $: 'studio.currentProfilePath' } }
-                            },
-                        ]
-                    }
+                    content: { $: 'studio.properties', path: { $: 'studio.currentProfilePath' } }
                 }
             });
             jb_core_1.jb.component('studio.openSourceDialog', {
@@ -63,18 +55,49 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     features: { $: 'group.studio-watch-path', path: '%$path%' },
                     controls: { $: 'dynamic-controls',
                         controlItems: { $: 'studio.non-control-children', path: '%$path%' },
-                        genericControl: { $: 'studio.propertyField', path: '%$controlItem%' }
+                        genericControl: { $: 'studio.property-field', path: '%$controlItem%' }
                     }
                 }
             });
-            jb_core_1.jb.component('studio.propertyField-Label', {
+            jb_core_1.jb.component('studio.property-field', {
+                type: 'control',
+                params: {
+                    path: { as: 'string' },
+                },
+                impl: function (context, path) {
+                    var fieldPT = 'studio.property-label';
+                    var val = studio.model.val(path);
+                    var valType = typeof val;
+                    var paramDef = studio.model.paramDef(path);
+                    if (!paramDef)
+                        jb_core_1.jb.logError('property-field: no param def for path ' + path);
+                    if (valType == 'function')
+                        fieldPT = 'studio.property-javascript';
+                    else if (paramDef.as == 'number')
+                        fieldPT = 'studio.property-slider';
+                    else if (paramDef.options)
+                        fieldPT = 'studio.property-enum';
+                    else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1 && ['number', 'string', 'undefined'].indexOf(valType) != -1) {
+                        if (studio.model.compName(path))
+                            fieldPT = 'studio.property-JBEditor';
+                        else
+                            fieldPT = 'studio.property-primitive';
+                    }
+                    else if ((paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
+                        fieldPT = 'studio.property-array';
+                    else
+                        fieldPT = 'studio.property-tgp';
+                    return context.run({ $: fieldPT, path: path });
+                }
+            });
+            jb_core_1.jb.component('studio.property-label', {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'label',
                     title: { $: 'studio.prop-name', path: '%$path%' },
                 }
             });
-            jb_core_1.jb.component('studio.propertyField-Primitive', {
+            jb_core_1.jb.component('studio.property-primitive', {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'group',
@@ -93,7 +116,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.propertyField-enum', {
+            jb_core_1.jb.component('studio.property-enum', {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'picklist',
@@ -102,7 +125,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     options: { $: 'studio.enum-options', path: '%$path%' },
                 }
             });
-            jb_core_1.jb.component('studio.propertyField-slider', {
+            jb_core_1.jb.component('studio.property-slider', {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'editable-number',
@@ -112,13 +135,16 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     features: { $: 'css', css: '{ margin-left: -5px; }' },
                 }
             });
-            jb_core_1.jb.component('studio.propertyField-TgpType', {
+            jb_core_1.jb.component('studio.property-tgp', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: {
+                    path: { as: 'string' },
+                    inArray: { type: 'boolean' }
+                },
                 impl: { $: 'group',
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     $vars: {
-                        'TgpTypeCtrl': { $: 'object', expanded: true }
+                        'tgpCtrl': { $: 'object', expanded: true }
                     },
                     controls: [
                         { $: 'group',
@@ -127,7 +153,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 { $: 'editable-boolean',
                                     style: { $: 'editable-boolean.expand-collapse' },
                                     features: { $: 'css', css: '{ position: absolute; margin-left: -20px; margin-top: 2px }' },
-                                    databind: '%$TgpTypeCtrl/expanded%',
+                                    databind: '%$tgpCtrl/expanded%',
                                 },
                                 { $: 'picklist',
                                     features: { $: 'css', css: 'select { width: 150px; font-size: 12px; height: 23px;}' },
@@ -145,11 +171,59 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             controls: { $: 'studio.properties', path: '%$path%' },
                             features: [
                                 { $: 'group.watch', data: { $: 'studio.compName', path: '%$path%' } },
-                                { $: 'hidden', showCondition: '%$TgpTypeCtrl.expanded%' },
-                                { $: 'css', css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}' },
+                                { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
+                                { $: 'css',
+                                    css: { $if: '%$inArray%',
+                                        then: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}',
+                                        else: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
+                                    }
+                                }
                             ],
                         }
                     ]
+                }
+            });
+            jb_core_1.jb.component('studio.property-array', {
+                type: 'control',
+                params: { path: { as: 'string' } },
+                impl: { $: 'group',
+                    $vars: {
+                        'arrayCtrl': { $: 'object', expanded: true }
+                    },
+                    title: { $: 'studio.prop-name', path: '%$path%' },
+                    controls: [
+                        { $: 'group',
+                            style: { $: 'layout.horizontal' },
+                            features: { $: 'css', css: '{ height: 28px; margin-left: 174px; }' },
+                            controls: [
+                                { $: 'editable-boolean',
+                                    style: { $: 'editable-boolean.studio-expand-collapse-in-toolbar' },
+                                    features: { $: 'css', css: '.material-icons { font-size: 16px }' },
+                                    databind: '%$arrayCtrl/expanded%',
+                                },
+                                { $: 'button',
+                                    title: 'add',
+                                    style: { $: 'button.studio-properties-toolbar', icon: 'add' },
+                                    action: { $: 'studio.newArrayItem', path: '%$path%' },
+                                    features: { $: 'css', css: '.material-icons { font-size: 16px }' },
+                                },
+                            ]
+                        },
+                        { $: 'itemlist',
+                            items: { $: 'studio.array-children', path: '%$path%' },
+                            itemVariable: 'arrayItem',
+                            controls: { $: 'group',
+                                style: { $: 'property-sheet.studio-properties' },
+                                controls: { $: 'studio.property-tgp', path: '%$arrayItem%', inArray: true },
+                            },
+                            features: [
+                                { $: 'hidden', showCondition: '%$arrayCtrl.expanded%' },
+                                { $: 'css', css: "{ margin-left: -80px}" },
+                                { $: 'itemlist.divider' },
+                                { $: 'itemlist.drag-and-drop' },
+                            ]
+                        }
+                    ],
                 }
             });
             jb_core_1.jb.component('studio.open-property-menu', {
@@ -181,7 +255,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     }
                 }
             });
-            // jb.component('studio.propertyField-Style',{
+            // jb.component('studio.property-Style',{
             // 	type: 'control',
             // 	params: { path: { as: 'string' } },
             // 	impl :{$: 'group',
@@ -253,7 +327,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             // 		]
             // 	}
             // })
-            // jb.component('studio.propertyField-JBEditor',{
+            // jb.component('studio.property-JBEditor',{
             // 	type: 'control',
             // 	params: { path: { as: 'string'} },
             // 	impl :{$: 'group',
@@ -274,7 +348,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             // 		]
             // 	}
             // })
-            // jb.component('studio.propertyField-Javascript',{
+            // jb.component('studio.property-Javascript',{
             // 	type: 'control',
             // 	params: { path: { as: 'string'} },
             // 	impl :{$: 'group',
@@ -293,60 +367,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             // 		]
             // 	}
             // })
-            jb_core_1.jb.component('studio.propertyField-Array', {
-                type: 'control',
-                params: { path: { as: 'string' } },
-                impl: { $: 'group',
-                    title: { $: 'studio.prop-name', path: '%$path%' },
-                    controls: [
-                        // { $: 'label', text: '{{param}}:' },
-                        { $: 'itemlist',
-                            cssClass: 'jb-studio-array',
-                            items: { $: 'studio.children', path: '%$path%' },
-                            itemVariable: 'optionProfile',
-                            controls: [
-                                { $: 'expandableSection', title: { $: 'studio.propertyArrayItemName' },
-                                    style: { $: 'expandableSection.studioExpandableInArray' },
-                                    controls: { $: 'studio.properties', topProfile: '{{$optionProfile}}' }
-                                },
-                                { $: 'button', text: ['Delete {{$param}}', { $: 'replace', find: 's$', replace: '' }],
-                                    style: { $: 'customCssStyle', base: { $: 'button.imageOnly' }, cssClass: 'jb-studio-delete-array-item' },
-                                    action: { $: 'studio.deleteArrayItem', profile: '{{$profile}}', param: '{{$param}}', item: '{{$optionProfile}}' }
-                                }
-                            ],
-                            features: [
-                                { $show: function (context) {
-                                        return context.vars.control.items.length > 0;
-                                    }
-                                }
-                            ]
-                        },
-                        { $: 'button',
-                            text: ['Add {{$param}}', { $: 'replace', find: 's$', replace: '' }],
-                            style: 'jb-studio-add-array-item',
-                            action: {
-                                $: 'studio.selectPT',
-                                type: '{{$paramDef.type}}',
-                                selectAction: [
-                                    { $: 'studio.addToProfileArray', profile: '{{$profile}}', param: '{{$param}}' },
-                                    function (context) {
-                                        setTimeout(function () {
-                                            // auto open the last added profile
-                                            var $button = context.vars.$dialog.originalContext.vars.control.$el;
-                                            var $lastPanel = $button.parent().find('.panel').last();
-                                            $lastPanel.find('.panel-heading').first().click();
-                                            $lastPanel.find('input,textarea').first().focus();
-                                        }, 20);
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    features: [
-                        { $: 'hidePropertyTitle' }
-                    ]
-                }
-            });
             // jb.component('studio.openPrimitiveArrowPopup',{
             // 	type: 'action',
             // 	params: { 
@@ -372,33 +392,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             // 		}
             // 	}
             // })
-            jb_core_1.jb.component('studio.propertyField', {
-                type: 'control',
-                params: {
-                    path: { as: 'string' },
-                },
-                impl: function (context, path) {
-                    var fieldPT = 'studio.propertyField-Label';
-                    var val = studio.model.val(path);
-                    var valType = typeof val;
-                    var paramDef = studio.model.paramDef(path);
-                    if (valType == 'function')
-                        fieldPT = 'studio.propertyField-Javascript';
-                    else if (paramDef.as == 'number')
-                        fieldPT = 'studio.propertyField-slider';
-                    else if (paramDef.options)
-                        fieldPT = 'studio.propertyField-enum';
-                    else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1 && ['number', 'string', 'undefined'].indexOf(valType) != -1) {
-                        if (studio.model.compName(path))
-                            fieldPT = 'studio.propertyField-JBEditor';
-                        else
-                            fieldPT = 'studio.propertyField-Primitive';
-                    }
-                    else
-                        fieldPT = 'studio.propertyField-TgpType';
-                    return context.run({ $: fieldPT, path: path });
-                }
-            });
             // ********************* styles **********************
             jb_core_1.jb.component('tabControl.studioPropertiesAccordion', {
                 type: 'tabControl.style',
@@ -428,7 +421,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n      <div *ngFor=\"var ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <jb_comp [comp]=\"ctrl.comp\" class=\"property-ctrl\"></jb_comp>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"var ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <jb_comp [comp]=\"ctrl.comp\" class=\"property-ctrl\"></jb_comp>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
@@ -440,6 +433,16 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: "<span><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\">\n                <i class=\"material-icons\">%$icon%</i>\n              </button></span>",
                     css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      "
+                }
+            });
+            jb_core_1.jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
+                type: 'editable-boolean.style',
+                impl: { $: 'customStyle',
+                    template: "<span><button md-icon-button md-button (click)=\"toggle()\" title=\"{{yesNo ? 'collapse' : 'expand'}}\">\n      \t<i class=\"material-icons\">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      \t</button></span>",
+                    css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      ",
+                    methods: {
+                        afterViewInit: function (ctx) { return function (cmp) { return cmp.bindViaSettings(); }; }
+                    }
                 }
             });
             // jb.component('button.studio-edit-js', {

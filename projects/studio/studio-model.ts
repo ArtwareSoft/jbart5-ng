@@ -60,6 +60,8 @@ function profileFromPath(path) {
 	return comp && innerPath.split('~').reduce(function(obj, p) { 
 		if (!obj)
 			jb.logError('profileFromPath: non existing path '+ path+ ' property: ' + p);
+		if (obj && p == '0' && obj[p] == null) // flatten one-item array
+			return obj;
 		return obj && obj[p] 
 	}, comp);
 }
@@ -99,9 +101,17 @@ export class ControlModel {
 			var prop = this.controlParam(path);
 			if (!prop || !val[prop]) return [];
 			return childPath(prop);
-		} else {
-			return this.nonControlParams(path).map(prop=>childPath(prop))
+		} else if (childrenType == 'non-controls') {
+			return this.nonControlParams(path).map(prop=>path + '~' + prop)
+		} else if (childrenType == 'array') {
+			if (!val) 
+				return [];
+			else if (!Array.isArray(val)) 
+				return [path + '~0'];
+			else
+				return val.map((inner, i) => path + '~' + i)
 		}
+
 		function childPath(prop) {
 			if (Array.isArray(val[prop]))
 				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
@@ -211,8 +221,8 @@ export class ControlModel {
 		if (existing && typeof existing == 'object')
 			jb.entries(comp.params).forEach(p=>{
 				result[p[0]] = existing[p[0]];
-				if (p[1].defaultValue)
-					result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
+				// if (p[1].defaultValue)
+				// 	result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
 			})
 		jb.writeValue(profileRefFromPath(path),result);
 	}
@@ -254,29 +264,19 @@ export class ControlModel {
 		jb.writeValue(profileRefFromPath(path),evalProfile(res));
 	}
 
-	controlChildren(path) {
-		return this.children(path);
-	}
-
-	nonControlChildren(path) {
-		return this.children(path,'non-controls');
-	}
-
 	children(path,childrenType) {
 		childrenType = childrenType || 'controls';
 		this.cache = this.cache || {};
 		var res = this.subNodes(path,childrenType);
-		if (!jb.compareArrays(res, this.cache[path])) {
-//			console.log(path,'diff', res,this.cache[path]);
+		if (!jb.compareArrays(res, this.cache[path]))
 			this.cache[path] = res;
-		} else {
-//			console.log(path,'match cache');
-		}
 
 		return this.cache[path];
 	}
 
 	paramDef(path) {
+		if (!isNaN(Number(path.split('~').pop()))) // array elements
+			path = parentPath(path);
 		var parent_prof = profileValFromPath(parentPath(path));
 		if (!parent_prof) return;
 		var params = (getComp(jb.compName(parent_prof)) || {}).params;
@@ -306,7 +306,10 @@ export class ControlModel {
 		var prof = profileValFromPath(path);
 		if (!prof) return [];
 		var params = (getComp(jb.compName(prof)) || {}).params;
-		return jb.entries(params).filter(p=>(p[1].type||'').indexOf('control')==-1).map(p=>p[0])
+		return jb.entries(params)
+			.filter(p=>
+				(p[1].type||'').indexOf('control')==-1)
+			.map(p=>p[0])
 	}
 
 	asArray(path) {
@@ -322,6 +325,18 @@ export class ControlModel {
 		}
 		return arr;
 	}
+
+	addArrayItem(path) {
+		var val = profileValFromPath(path);
+		var toAdd = {$:''};
+		if (Array.isArray(val))
+			val.push(toAdd)
+		else if (!val)
+			jb.writeValue(profileRefFromPath(path),toAdd);
+		else
+			jb.writeValue(profileRefFromPath(path),[val].concat(toAdd));
+	}
+
 	fixArray(path) { // turn arrays with single element into single object
 		// var val = profileValFromPath(path);
 		// var prop = controlParam(path);
@@ -330,6 +345,21 @@ export class ControlModel {
 		// if (Array.isArray(arr) && arr.length == 1)
 		// 	val[prop] = arr[0];
 	//			fixArrayWrapperPath();
+	}
+
+	propName(path) {
+		if (!isNaN(Number(path.split('~').pop()))) // array elements
+			return parentPath(path).split('~').pop().replace(/s$/,'');
+
+		var paramDef = this.paramDef(path);
+		var val = profileValFromPath(path);
+		if ((paramDef.type ||'').indexOf('[]') != -1) {
+			var length = this.subNodes(path,'array').length;
+			if (length)
+				return path.split('~').pop() + ' (' + length + ')';
+		}
+
+		return path.split('~').pop();
 	}
 
 }

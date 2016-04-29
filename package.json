@@ -1,6 +1,6 @@
 {
   "name": "jbart5-ng2",
-  "version": "5.0.0",
+  "version": "5.0.0-alpha.2",
   "description": "jBart - Visual DSL fun on top of angular2",
   "homepage": "https://github.com/artwaresoft/jbart5-ng",
   "bugs": {

@@ -69,14 +69,21 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], f
                 },
                 impl: function (context) {
                     return jb_ui.ctrl(context).jbExtend({
+                        doCheck: function (cmp) {
+                            cmp.items = context.params.items();
+                        },
                         beforeInit: function (cmp) {
                             cmp.items = context.params.items();
                             cmp.itemlist = {
                                 items: cmp.items,
                                 elems: function () { return Array.from($(cmp._nativeElement).find('[jb-item]')); },
                                 el: cmp.elementRef.nativeElement,
-                                elemToItem: function (elem) { return cmp.items[$(elem).closest('[jb-item]').index()]; },
-                                itemToElem: function (item) { return this.elems()[cmp.items.indexOf(item)]; },
+                                elemToItem: function (elem) {
+                                    return cmp.items[$(elem).closest('[jb-item]').index()];
+                                },
+                                itemToElem: function (item) {
+                                    return this.elems()[cmp.items.indexOf(item)];
+                                },
                                 selectionEmitter: new jb_rx.Subject(),
                             };
                         },
@@ -86,14 +93,21 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], f
             });
             jb_1.jb.component('itemlist.ul-li', {
                 type: 'itemlist.style',
-                impl: function (context) {
-                    return { template: '<ul class="jb-itemlist"><li *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>' };
+                impl: { $: 'customStyle',
+                    template: '<ul class="jb-itemlist"><li *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
+                    css: "[jb-item].selected { background: #337AB7; color: #fff ;}\n    li { list-style: none; padding: 0; margin: 0;}\n    { list-style: none; padding: 0; margin: 0;}\n    "
                 }
             });
             jb_1.jb.component('itemlist.div', {
                 type: 'itemlist.style',
                 impl: function (context) {
                     return { template: '<div *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></div>' };
+                }
+            });
+            jb_1.jb.component('itemlist.divider', {
+                type: 'feature',
+                impl: function (ctx) {
+                    return ({ css: "[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 10px }" });
                 }
             });
             // ****************** Selection ******************
@@ -169,7 +183,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], f
                     return {
                         init: function (cmp) {
                             var itemlist = cmp.itemlist;
-                            var drake = itemlist.drake = dragula($(itemlist.el).find('.jb-itemlist').get(), {
+                            var drake = itemlist.drake = dragula($(itemlist.el).findIncludeSelf('.jb-itemlist').get(), {
                                 moves: function (el) { return $(el).attr('jb-item') != null; }
                             });
                             drake.on('drag', function (el, source) {

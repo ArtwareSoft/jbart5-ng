@@ -13,7 +13,7 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
     var jb_core_1, core_1, common_1, button_js_1, input_js_1, card_js_1, jb_rx, jb_dialog;
     var MATERIAL_DIRECTIVES, jbComp, jBartWidget;
     function apply(ctx) {
-        console.log('apply');
+        //	console.log('apply');
         jb_core_1.jb.delay(1);
         ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
     }
@@ -115,7 +115,7 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                 Reflect.decorate([core_1.Input(), Reflect.metadata('design:type', Object)], comp.prototype, options.input, void 0);
             options.template = options.template && context.exp(options.template);
             if (options.css)
-                options.styles = (options.styles || []).concat(options.css.split(/}$/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }));
+                options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }));
             options.styles = options.styles && (options.styles || []).map(function (st) { return context.exp(st); });
             (options.styles || [])
                 .filter(function (x) { return x.match(/^{([^]*)}$/m); })
@@ -270,6 +270,15 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
     }
     exports_1("ngRef", ngRef);
     function twoWayBind(ref) {
+        if (!ref)
+            return {
+                bindToCmp: function () { },
+                valueExp: '',
+                modelExp: '',
+                observable: function (ctx) { return new jb_rx.Subject(); },
+                getValue: function () { return null; },
+                writeValue: function (val) { }
+            };
         if (ref.$jb_parent) {
             var fieldName = ref.$jb_property;
             var parentName = ref.$jb_parent.$jb_property || 'model';
@@ -297,9 +306,15 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
             bindToCmp: bindToCmp,
             valueExp: modelPath,
             modelExp: modelExp,
-            observable: function (ctx) { return jb_rx.refObservable(ref, ctx); },
-            getValue: function () { return jb_core_1.jb.val(ref); },
-            writeValue: function (val) { return jb_core_1.jb.writeValue(ref, val); }
+            observable: function (ctx) {
+                return jb_rx.refObservable(ref, ctx);
+            },
+            getValue: function () {
+                return jb_core_1.jb.val(ref);
+            },
+            writeValue: function (val) {
+                return jb_core_1.jb.writeValue(ref, val);
+            }
         };
     }
     exports_1("twoWayBind", twoWayBind);

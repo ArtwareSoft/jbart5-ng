@@ -12,12 +12,14 @@ jb.component('editable-text',{
     style: { type: 'editable-text.style', defaultValue: { $: 'editable-text.input' }, dynamic: true },
     features: { type: 'feature[]', dynamic: true },
   },
-  impl: ctx => jb_ui.ctrl(ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) }))
+  impl: ctx => 
+  	jb_ui.ctrl(ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) }))
 });
 
 jb.component('editable-text.bindField', {
   type: 'feature',
-  impl: ctx => jb.obj('init', cmp => ctx.vars.field.bindToCmp(cmp, ctx))
+  impl: ctx => 
+  	jb.obj('init', cmp => ctx.vars.field.bindToCmp(cmp, ctx))
 })
 
 jb.component('editable-text.input',{

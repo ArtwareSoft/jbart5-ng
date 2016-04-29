@@ -211,12 +211,20 @@ jb.component('studio.val',{
 
 jb.component('studio.short-title',{
 	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.shortTitle(path)
+	impl: (context,path) => 
+		studio.model.shortTitle(path)
 })
 
 jb.component('studio.non-control-children',{
 	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.children(path,'non-control')
+	impl: (context,path) => 
+		studio.model.children(path,'non-controls')
+})
+
+jb.component('studio.array-children',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		studio.model.children(path,'array')
 })
 
 jb.component('studio.compName',{
@@ -226,12 +234,14 @@ jb.component('studio.compName',{
 
 jb.component('studio.enum-options',{
 	params: { path: { as: 'string' } },
-	impl: (context,path) => ((studio.model.paramDef(path) || {}).options ||'').split(',').map(x=>{return {code:x,text:x}})
+	impl: (context,path) => 
+		((studio.model.paramDef(path) || {}).options ||'').split(',').map(x=>{return {code:x,text:x}})
 })
 
 jb.component('studio.prop-name',{
 	params: { path: { as: 'string' } },
-	impl: (context,path) => path.split('~').pop()
+	impl: (context,path) => 
+		studio.model.propName(path)
 })
 
 jb.component('studio.compName-ref',{
@@ -255,6 +265,13 @@ jb.component('studio.insertComp',{
 	impl: (context,path,comp) => 
 		studio.model.modify(studio.model.insertComp, path, { comp: comp },context)
 })
+
+jb.component('studio.newArrayItem',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		studio.model.modify(studio.model.addArrayItem, path, {},context)
+})
+
 
 jb.component('studio.delete',{
 	params: { path: { as: 'string' } },

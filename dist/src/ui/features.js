@@ -51,7 +51,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 .map(function () { return jb_core_1.jb.val(ref()); })
                                 .distinctUntilChanged()
                                 .filter(function (x) { return x && x != 'undefined'; })
-                                .map(function (x) { console.log('group.data: ref changed', x); return x; })
                                 .flatMap(function (val) {
                                 return originalCtrlsEmFunc(ctxWithItemVar(ctx.setData(val), val));
                             });
@@ -74,10 +73,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 return jb_core_1.jb.val(data());
                             })
                                 .distinctUntilChanged()
-                                .map(function (x) {
-                                console.log('group.watch: data changed', x);
-                                return x;
-                            })
                                 .flatMap(function (x) {
                                 return originalCtrlsEmFunc(ctx);
                             });
