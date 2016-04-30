@@ -237,7 +237,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var comp = path.split('~')[0];
                     var before = comp_asStr(comp);
                     op.call(this, path, args);
-                    modifyOperationsEm.next({ comp: comp, before: before, path: path, args: args, ctx: ctx });
+                    modifyOperationsEm.next({ comp: comp, before: before, after: comp_asStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
                 };
                 ControlModel.prototype._delete = function (path) {
                     var prop = path.split('~').pop();

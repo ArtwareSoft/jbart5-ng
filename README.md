@@ -2,8 +2,6 @@
 
 ![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
 
-Enjoy jBart DSL technology on top angular2 (DSL - Domain Specific Languages)
-
 ##Effective Visual Programming
 - pick & edit (like in Chrome debugger)
 - work by example data
@@ -18,26 +16,22 @@ Enjoy jBart DSL technology on top angular2 (DSL - Domain Specific Languages)
 - develop larger projects
 - enhance team work effectiveness
 
+##Who Use jBart?
+- large teams
+- hybrid teams: architects build the components, implementers build the applications
+
 ##Install from npm
 npm install jbart5-ng2
-
 cd node_modules/jbart5-ng2
-
 npm start
 
-##Install and play from github
-download zip or git into a directory (jbart5-ng in this example)
-
+##Install from github
 cd jbart5-ng
-
 npm install
-
 bower install
-
 npm start
 
-
-[material demo in studio](http://localhost:8081/project/studio/material-demo)
+open the studio [http://localhost:8081/project/studio/material-demo](http://localhost:8081/project/studio/material-demo)
 
 ##Video
 [visual development with angular2](http://www.screencast.com/t/5kaJDduxzaci)

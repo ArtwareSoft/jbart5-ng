@@ -2,43 +2,52 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
-studio.modifyOperationsEm.subscribe(e=>{
-})
-
 class Undo {
-	clipboard: string;
 	history = [];
 	index = 0;
-	constructor() {}
-	store() {
-		this.history.push({ path: this.tree.selectedNode.path(), content: newContent });
-		this.index++;
+	constructor() {
+		studio.modifyOperationsEm.subscribe(change=>{
+			this.history.push(change);
+			this.index = this.history.length;
+		})
 	}
-	undo() {
-		if (this.index > 1) {
+	undo(ctx) {
+		if (this.index > 0) {
 			this.index--;
-			this.tree.root.parent = JSON.parse(this.history[this.index - 1].content);
+			var change = this.history[this.index];
+			setComp(change.before,change.jbart);
+			jb_ui.apply(ctx);
 		}
 	}
-	redo() {
+	redo(ctx) {
 		if (this.index < this.history.length) {
-			this.tree.root.parent = JSON.parse(this.history[this.index].content);
+			var change = this.history[this.index];
+			setComp(change.after,change.jbart);
 			this.index++;
-		}
-	}
-	copy() {
-		var selectedNode = this.tree.selectedNode();
-		if (selectedNode)
-	     	this.clipboard = jb.stringify(selectedNode.val());
-	}
-	paste() {
-		var selectedNode = this.tree.selectedNode();
-		if (this.clipboard && selectedNode) {
-			selectedNode.assign(JSON.parse(this.clipboard));
-			this.store();
+			jb_ui.apply(ctx);
 		}
 	}
 }
 
-export var undo = new Undo();
+var undo = new Undo();
 
+jb.component('studio.undo',{
+	impl: ctx => undo.undo(ctx)
+})
+
+jb.component('studio.redo',{
+	impl: ctx => undo.redo(ctx)
+})
+
+function doSetComp(jbart_base,id,comp) {
+	jbart_base.comps[id] = comp;
+}
+
+function setComp(code,jbart_base) {
+	var fixed = code.replace(/^jb.component\(/,'doSetComp(jbart_base,')
+	try {
+		return eval(`(${fixed})`)
+	} catch (e) {
+		jb.logException(e,'set comp:'+code);
+	}
+}

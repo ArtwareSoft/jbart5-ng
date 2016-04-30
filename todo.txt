@@ -1,5 +1,7 @@
 property-sheet.md
 
+wrap with group
+duplicate
 $vars support
 animation in expand/collapse
 select2

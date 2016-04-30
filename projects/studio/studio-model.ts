@@ -177,7 +177,7 @@ export class ControlModel {
 		var comp = path.split('~')[0];
 		var before = comp_asStr(comp);
 		op.call(this,path,args);
-		modifyOperationsEm.next({ comp: comp, before: before, path: path, args: args, ctx: ctx });
+		modifyOperationsEm.next({ comp: comp, before: before, after: comp_asStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
 	}
 
 	_delete(path) {

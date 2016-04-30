@@ -27,12 +27,6 @@ jb.component('studio.open-tree-menu',{
 		style :{$: 'pulldownPopup.contextMenuPopup' },
 		content :{$: 'group',
 			controls: [
-	 		    { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
-					action : [ 
-						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
-						{$: 'studio.delete', path: '%$path%' },
-					],
-	 		    },
 	 		    { $: 'pulldown.menu-item', title: 'Wrap with group',
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
@@ -47,6 +41,12 @@ jb.component('studio.open-tree-menu',{
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
 	 		    { $: 'pulldown.menu-item-separator' },
+	 		    { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
+					action : [ 
+						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
+						{$: 'studio.delete', path: '%$path%' },
+					],
+	 		    },
 	 		    { $: 'pulldown.menu-item', title: 'Copy', icon: 'copy', shortcut: 'Ctrl+C',
 				    action :{$: 'studio.copy', path: '%$path%' }
 	 		    },
@@ -87,7 +87,7 @@ jb.component('studio.controlTree',{
 			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-V', action :{$: 'studio.paste', path: '%%' } },
 			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-Z', action :{$: 'studio.undo', path: '%%' } },
 			{ $: 'tree.keyboard-shortcut', key: 'Ctrl-Y', action :{$: 'studio.redo', path: '%%' } },
-			{ $: 'tree.keyboard-shortcut', key: 'Delete', action :{$: 'studio.Delete', path: '%%' } },
+			{ $: 'tree.keyboard-shortcut', key: 'Delete', action :{$: 'studio.delete', path: '%%' } },
 			{ $: 'studio.controlTree.refreshPathChanges'},
 		]
 	}
