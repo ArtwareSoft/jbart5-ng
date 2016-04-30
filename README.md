@@ -1,5 +1,7 @@
 #Visual Development with angular2
 
+![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
+
 Enjoy jBart DSL technology on top angular2 (DSL - Domain Specific Languages)
 
 ##Effective Visual Programming
@@ -39,9 +41,6 @@ npm start
 
 ##Video
 [visual development with angular2](http://www.screencast.com/t/5kaJDduxzaci)
-
-##Screenshots
-![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
 
 ##Learn jbart
 If you want to learn more about jBart visual development concepts, please start with [jbart4](https://github.com/ArtwareSoft/jbart4)

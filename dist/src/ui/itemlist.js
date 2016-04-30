@@ -107,7 +107,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], f
             jb_1.jb.component('itemlist.divider', {
                 type: 'feature',
                 impl: function (ctx) {
-                    return ({ css: "[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 10px }" });
+                    return ({ css: "[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 5px }" });
                 }
             });
             // ****************** Selection ******************

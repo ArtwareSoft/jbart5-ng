@@ -11,7 +11,6 @@ System.register(['jb-core', 'jb-ui/tree/tree', 'angular2/core'], function(export
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_core_1, tree_1, core_1;
-    var Undo;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -64,47 +63,6 @@ System.register(['jb-core', 'jb-ui/tree/tree', 'angular2/core'], function(export
                     };
                 }
             });
-            Undo = (function () {
-                function Undo(tree) {
-                    this.tree = tree;
-                    this.history = [];
-                    this.index = 0;
-                }
-                Undo.prototype.store = function () {
-                    var newContent = jb_core_1.jb.stringify(this.tree.root.parent);
-                    if (this.index > 0 && newContent == this.history[this.index - 1].content)
-                        return;
-                    if (this.index != this.history.length)
-                        this.history = this.history.slice(0, this.index);
-                    this.history.push({ path: this.tree.selectedNode.path(), content: newContent });
-                    this.index++;
-                };
-                Undo.prototype.undo = function () {
-                    if (this.index > 1) {
-                        this.index--;
-                        this.tree.root.parent = JSON.parse(this.history[this.index - 1].content);
-                    }
-                };
-                Undo.prototype.redo = function () {
-                    if (this.index < this.history.length) {
-                        this.tree.root.parent = JSON.parse(this.history[this.index].content);
-                        this.index++;
-                    }
-                };
-                Undo.prototype.copy = function () {
-                    var selectedNode = this.tree.selectedNode();
-                    if (selectedNode)
-                        this.clipboard = jb_core_1.jb.stringify(selectedNode.val());
-                };
-                Undo.prototype.paste = function () {
-                    var selectedNode = this.tree.selectedNode();
-                    if (this.clipboard && selectedNode) {
-                        selectedNode.assign(JSON.parse(this.clipboard));
-                        this.store();
-                    }
-                };
-                return Undo;
-            }());
         }
     }
 });

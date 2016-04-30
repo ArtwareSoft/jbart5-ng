@@ -7,9 +7,9 @@ jb.type('group.style');
 jb.component('group',{
   type: 'control',
   params: {
-    controls: { type: 'control[]', essential: true, flattenArray: true, dynamic: true },
     title: { as: 'string' , dynamic: true },
     style: { type: 'group.style', defaultValue: { $: 'group.section' }, essential: true , dynamic: true },
+    controls: { type: 'control[]', essential: true, flattenArray: true, dynamic: true },
     features: { type: 'feature[]', dynamic: true },
   },
   impl: function(context) { 

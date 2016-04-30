@@ -366,9 +366,13 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
   printValue(profile,initialPath || '');
   return { result : result, positions : positions }
 
-  function ownPropertyNames(obj) {
+  function sortedPropertyNames(obj) {
     var props = jb_entries(obj).map(x=>x[0]).filter(p=>p.indexOf('$jb') != 0); // keep the order
-    if (props.indexOf('$') > 0) { // move the $ to the begining
+    if (props.indexOf('$') != -1) { // tgp obj
+      var params = jb_entries((jbart.comps[obj.$] || {}).params || {}).map(x=>x[0]);
+      props.sort((p1,p2)=>params.indexOf(p1) - params.indexOf(p2));
+    }
+    if (props.indexOf('$') > 0) { // make the $ first
       props.splice(props.indexOf('$'),1);
       props.unshift('$');
     }
@@ -407,7 +411,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
         depth++;
         result += '{';
         if (!printInLine(obj_str)) { // object does not fit in its own line
-          ownPropertyNames(obj).forEach(function(prop,index,array) {
+          sortedPropertyNames(obj).forEach(function(prop,index,array) {
               if (prop != '$')
                 newLine();
               if (obj[prop] != null)
@@ -470,7 +474,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
     remainedInLine = colWidth - tabSize * depth;
   }
   function flat_obj(obj) {
-    var props = ownPropertyNames(obj).filter(x=>x!='$').map(prop => 
+    var props = sortedPropertyNames(obj).filter(x=>x!='$').map(prop => 
       quotePropName(prop) + ': ' + flat_val(obj[prop]));
     if (obj.$) {
       props.unshift("$: '" + obj.$+ "'");

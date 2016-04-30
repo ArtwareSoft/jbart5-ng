@@ -64,8 +64,6 @@ jb.component('group.watch', {
           .map(()=> 
             jb.val(data())) 
           .distinctUntilChanged()
-//          .map(x=>{console.log('group.watch: data changed',x);
-//            return x})
           .flatMap(x=>
               originalCtrlsEmFunc(ctx)
           );
@@ -109,7 +107,8 @@ jb.component('feature.emitter',{
     varName: { as: 'string'},
   },
   impl: function(context,varName) { return  { 
-    extendCtx: (ctx,cmp) => ctx.setVars(jb.obj(varName,cmp.jbEmitter)),
+    extendCtx: (ctx,cmp) => 
+      ctx.setVars(jb.obj(varName,cmp.jbEmitter)),
     observable: (obs,ctx) => {}, // register
   }}
 })

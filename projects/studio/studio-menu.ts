@@ -44,7 +44,7 @@ jb.component('studio.main-menu', {
             action :{$: 'studio.editSource' }
           }, 
           {$: 'pulldown.menu-item', 
-            title: 'Control tree', 
+            title: 'Outline', 
             spritePosition: '5,0', 
             action :{$: 'studio.openControlTree' }
           }, 

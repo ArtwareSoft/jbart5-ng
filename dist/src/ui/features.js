@@ -118,7 +118,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 },
                 impl: function (context, varName) {
                     return {
-                        extendCtx: function (ctx, cmp) { return ctx.setVars(jb_core_1.jb.obj(varName, cmp.jbEmitter)); },
+                        extendCtx: function (ctx, cmp) {
+                            return ctx.setVars(jb_core_1.jb.obj(varName, cmp.jbEmitter));
+                        },
                         observable: function (obs, ctx) { },
                     };
                 }

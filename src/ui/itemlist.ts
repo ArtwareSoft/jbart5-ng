@@ -83,7 +83,7 @@ jb.component('itemlist.div', {
 jb.component('itemlist.divider', {
   type: 'feature',
   impl : ctx =>
-    ({css: `[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 10px }`})
+    ({css: `[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 5px }`})
 })
 
 // ****************** Selection ******************

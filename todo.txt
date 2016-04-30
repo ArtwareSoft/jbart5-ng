@@ -1,6 +1,10 @@
-npm install
-
 property-sheet.md
+
+$vars support
+animation in expand/collapse
+select2
+
+sort features by name according to context
 
 dialog-ok-cancel
 	fix button positions
@@ -27,11 +31,8 @@ create control (maybe dragable to the tree)
 
 studio
 ======
-jb logo
 undo
 property editor
-  array editor for the property editor
-  features (accordion)
   style toolbar
   use material fields
 
@@ -43,3 +44,7 @@ indication
 
 bugs
  make local with icon
+
+tests
+======
+move core tests to project

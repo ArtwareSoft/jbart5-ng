@@ -14,8 +14,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             jb_core_1.jb.component('studio.openControlTree', {
                 type: 'action',
                 impl: { $: 'openDialog',
-                    title: 'Control Tree',
-                    style: { $: 'dialog.studioFloating', id: 'studio control tree', width: 300 },
+                    title: 'Outline',
+                    style: { $: 'dialog.studioFloating', id: 'studio outline', width: 300 },
                     content: { $: 'group',
                         controls: [
                             { $: 'button',

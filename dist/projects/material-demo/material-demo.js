@@ -22,11 +22,10 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('material-demo.main', {
                 type: 'control',
                 impl: { $: 'group',
-                    $vars: { "editable-text.default-style-profile": 'editable-text.md-input' },
-                    features: { $: 'group.data', data: '%$person%' },
                     controls: [
                         { $: 'editable-text', title: 'Company (disabled)', databind: '%company%' },
                         { $: 'group',
+                            title: 'Name',
                             style: { $: 'layout.horizontal' },
                             controls: [
                                 { $: 'editable-text', title: 'First Name', databind: '%firstName%' },
@@ -37,19 +36,27 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             ]
                         },
                         { $: 'group',
+                            title: 'address',
                             style: { $: 'layout.vertical' },
                             controls: [
                                 { $: 'editable-text', title: 'Address', databind: '%address%' },
-                                { $: 'editable-text', title: 'Address 2', databind: '%address2%' }
+                                { $: 'editable-text', title: 'Address2', databind: '%address2%' }
                             ]
                         },
                         { $: 'group',
+                            title: 'City State',
                             style: { $: 'layout.horizontal' },
                             controls: [
                                 { $: 'editable-text', title: 'City', databind: '%city%' },
                                 { $: 'editable-text', title: 'State', databind: '%state%' },
                                 { $: 'editable-text', title: 'Postal Code', databind: '%postalCode%' }
                             ]
+                        }
+                    ],
+                    features: [
+                        { $: 'group.data', data: '%$person%' },
+                        { $: 'group.theme',
+                            theme: { $: 'theme.material-design' }
                         }
                     ]
                 }

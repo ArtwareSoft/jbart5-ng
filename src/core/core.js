@@ -14,6 +14,7 @@ function jb_run(context,parentParam) {
       case 'object': return jb_entriesToObject(jb_entries(profile).map(e=>[e[0],context.run(e[1])]));
       case 'function': return jb_tojstype(profile(context),jstype, context);
       case 'null': return jb_tojstype(null,jstype, context);
+      case 'ignore': return context.data;
       case 'pipeline': return jb_tojstype(jbart.comps.pipeline.impl(jb_ctx(context,{profile: { items : profile }})),jstype, context);
       case 'rx-pipeline': return jb_tojstype(jbart.comps.rxPipe.impl(jb_ctx(context,{profile: { items : profile }})),jstype,context);
       case 'foreach': return profile.forEach(function(inner) { jb_run(jb_ctx(context,{profile: inner})) });
@@ -89,8 +90,10 @@ function jb_run(context,parentParam) {
         elseParentParam: { type: parentParam_type, as:jstype }
       }
     var comp_name = jb_compName(profile);
+    if (!comp_name) 
+      return { type: 'ignore' }
     var comp = jbart.comps[comp_name];
-    if (!comp) { jb_logError('component ' + comp_name + ' is not defined'); return { type:'null' } }
+    if (!comp && comp_name) { jb_logError('component ' + comp_name + ' is not defined'); return { type:'null' } }
     if (!comp.impl) { jb_logError('component ' + comp_name + ' has no implementation'); return { type:'null' } }
 
     var ctx = new jbCtx(context,{});

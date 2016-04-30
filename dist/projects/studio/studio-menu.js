@@ -51,7 +51,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     action: { $: 'studio.editSource' }
                                 },
                                 { $: 'pulldown.menu-item',
-                                    title: 'Control tree',
+                                    title: 'Outline',
                                     spritePosition: '5,0',
                                     action: { $: 'studio.openControlTree' }
                                 },
