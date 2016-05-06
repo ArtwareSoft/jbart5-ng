@@ -31,7 +31,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             return $.ajax({
                                 url: "/?op=saveComp&comp=" + comp + "&project=" + ctx.exp('%$globals/project%') + "&force=" + ctx.exp('%$force%'),
                                 type: 'POST',
-                                data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.comp_asStr(comp) }),
+                                data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.compAsStr(comp) }),
                                 headers: { 'Content-Type': 'text/plain' }
                             }).then(function () { return modified[comp] = null; }, function (e) {
                                 return jb_core_1.jb.logException(e, 'error while saving ' + comp);

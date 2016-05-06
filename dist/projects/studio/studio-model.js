@@ -7,10 +7,10 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         return jbart.previewjbart || jbart;
     }
     exports_1("jbart_base", jbart_base);
-    function comp_asStr(id) {
+    function compAsStr(id) {
         return jb_prettyPrintComp(id, getComp(id));
     }
-    exports_1("comp_asStr", comp_asStr);
+    exports_1("compAsStr", compAsStr);
     function parentPath(path) {
         return path.split('~').slice(0, -1).join('~');
     }
@@ -19,6 +19,15 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         return profileFromPath(path);
     }
     exports_1("profileValFromPath", profileValFromPath);
+    function compAsStrFromPath(path) {
+        return compAsStr(path.split('~')[0]);
+    }
+    exports_1("compAsStrFromPath", compAsStrFromPath);
+    function notifyModifcation(path, before, ctx) {
+        var comp = path.split('~')[0];
+        modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
+    }
+    exports_1("notifyModifcation", notifyModifcation);
     function profileRefFromPath(path) {
         if (path.indexOf('~') == -1)
             return {
@@ -235,9 +244,9 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 };
                 ControlModel.prototype.modify = function (op, path, args, ctx) {
                     var comp = path.split('~')[0];
-                    var before = comp_asStr(comp);
+                    var before = compAsStr(comp);
                     op.call(this, path, args);
-                    modifyOperationsEm.next({ comp: comp, before: before, after: comp_asStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
+                    modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
                 };
                 ControlModel.prototype._delete = function (path) {
                     var prop = path.split('~').pop();
@@ -265,6 +274,21 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 };
                 ControlModel.prototype.writeValue = function (path, args) {
                     jb_core_1.jb.writeValue(profileRefFromPath(path), args.value);
+                };
+                ControlModel.prototype.wrapWithGroup = function (path) {
+                    var result = { $: 'group', controls: [profileValFromPath(path)] };
+                    jb_core_1.jb.writeValue(profileRefFromPath(path), result);
+                };
+                ControlModel.prototype.duplicate = function (path) {
+                    var prop = path.split('~').pop();
+                    var val = profileValFromPath(path);
+                    var arr = profileValFromPath(parentPath(path));
+                    if (Array.isArray(arr)) {
+                        var clone = evalProfile(jb_core_1.jb.prettyPrint(val));
+                        var index = Number(prop);
+                        arr.splice(index, 0, clone);
+                        fixIndexPaths(path, 1);
+                    }
                 };
                 ControlModel.prototype.setComp = function (path, args) {
                     var compName = args.comp;

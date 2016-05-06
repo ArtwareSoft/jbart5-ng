@@ -21,7 +21,7 @@ jb.component('studio.saveComponents', {
 				return $.ajax({ 
 					url: `/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${ctx.exp('%$force%')}`, 
 					type: 'POST', 
-					data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.comp_asStr(comp) }),
+					data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.compAsStr(comp) }),
 					headers: { 'Content-Type': 'text/plain' } 
 				}).then(
 					()=>modified[comp] = null,

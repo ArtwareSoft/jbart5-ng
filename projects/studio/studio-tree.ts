@@ -28,10 +28,10 @@ jb.component('studio.open-tree-menu',{
 		content :{$: 'group',
 			controls: [
 	 		    { $: 'pulldown.menu-item', title: 'Wrap with group',
-				    action :{$: 'studio.openSublime', path: '%$path%' }
+				    action :{$: 'studio.wrapWithGroup', path: '%$path%' }
 	 		    },
 	 		    { $: 'pulldown.menu-item', title: 'Duplicate',
-				    action :{$: 'studio.openSublime', path: '%$path%' }
+				    action :{$: 'studio.duplicate', path: '%$path%' }
 	 		    },
 	 		    { $: 'pulldown.menu-item-separator' },
 	 		    { $: 'pulldown.menu-item', title: 'javascript editor',

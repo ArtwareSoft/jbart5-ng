@@ -1,17 +1,29 @@
 property-sheet.md
 
-wrap with group
-duplicate
-$vars support
+wrap as group should open group and select inner
+	control-tree context menu as tree aspect
+		actions
+			control-tree-expand(path)
+			control-tree-select(path,focus)
+
+features.var
 animation in expand/collapse
 select2
 
-sort features by name according to context
+default theme
+fix theme var name
+ editable-text.default-style-profile => them.editable-text
+
+tgp pt selection - sort into groups (add group property in tgp?) - sort groups according to context
+	features
+		sort features by name according to context (use groups in select2)
+	controls
+	actions?
 
 dialog-ok-cancel
 	fix button positions
 
-create control (maybe dragable to the tree)
+create control dialog (maybe dragable from menu)
 	controls
 	---------
 	button,label
@@ -33,7 +45,6 @@ create control (maybe dragable to the tree)
 
 studio
 ======
-undo
 property editor
   style toolbar
   use material fields

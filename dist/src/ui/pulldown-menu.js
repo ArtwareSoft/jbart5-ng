@@ -14,11 +14,14 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('pulldown.menu-item-separator', {
                 type: 'control',
                 impl: function (ctx) {
-                    return jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>' }, ctx);
+                    return jb_ui.Comp({ jbTemplate: '<div></div>', css: '{ margin: 6px 0; border-bottom: 1px solid #EBEBEB}' }, ctx);
                 }
             });
             jb_core_1.jb.component('pulldown.menu-item-group', {
                 type: 'control',
+                params: {
+                    title: { as: 'string', dynamic: true, essential: true },
+                },
                 impl: function (ctx) {
                     return jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>' }, ctx);
                 }

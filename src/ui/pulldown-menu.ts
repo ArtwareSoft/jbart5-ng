@@ -4,11 +4,14 @@ import * as jb_ui from 'jb-ui';
 jb.component('pulldown.menu-item-separator', {
 	type: 'control',
 	impl: ctx => 
-		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
+		jb_ui.Comp({ jbTemplate: '<div></div>', css: '{ margin: 6px 0; border-bottom: 1px solid #EBEBEB}'},ctx)
 })
 
 jb.component('pulldown.menu-item-group', {
 	type: 'control',
+	params: {
+		title: { as: 'string', dynamic: true, essential: true },
+	},
 	impl: ctx => 
 		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
 })

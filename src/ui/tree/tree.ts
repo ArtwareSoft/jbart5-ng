@@ -54,7 +54,7 @@ jb.component('tree.ul-li', {
 							<div class="frame"></div><div class="line-lr"></div><div class="line-tb"></div>
 						</button>
 						<i class="material-icons">{{icon}}</i>
-						<span class="treenode-label">{{model.title(path,!tree.expanded[path])}}</span>
+						<span class="treenode-label">{{title}}</span>
 					  </div>`,
 			styles: ['i {font-size: 16px; margin-left: -4px; padding-right:2px }']
 		})
@@ -63,6 +63,9 @@ jb.component('tree.ul-li', {
 			ngOnInit() {
 				this.tree = tree;
 				this.model = tree.nodeModel;
+			}
+			ngDoCheck() {
+				this.title = this.model.title(this.path,!this.tree.expanded[this.path]);
 				this.icon = tree.nodeModel.icon ? tree.nodeModel.icon(this.path) : 'radio_button_unchecked';
 			}
 			flip(x) { 
@@ -85,9 +88,11 @@ jb.component('tree.ul-li', {
 			constructor(private elementRef: ElementRef) { }
 			ngOnInit() {
 				this.tree = tree;
-				$(this.elementRef.nativeElement).attr('path', this.path);
+			}
+			ngDoCheck() {
 				if (tree.nodeModel.isArray(this.path))
 					$(this.elementRef.nativeElement).addClass('jb-array-node');
+				$(this.elementRef.nativeElement).attr('path', this.path);
 			}
 		}
 
@@ -270,7 +275,8 @@ jb.component('tree.drag-and-drop', {
 			  tree.drake.containers = 
 				  $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-array-node').children().filter('.treenode-children').get();
 			// make a place for drop in empty containers
-	  		  tree.drake.containers.forEach(el=>{if ($(el).height() < 3) $(el).height(7)})
+	  		  tree.drake.containers.forEach(el=>{
+	  		  	if ($(el).height() < 3) $(el).height(7)})
 		  	}
   		}
 

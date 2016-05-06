@@ -37,17 +37,17 @@ jb_tests('studio-tests', {
     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 
-'studio-propertyField-Primitive' :{$: 'studio-test', 
+'studio-property-Primitive' :{$: 'studio-test', 
   	page: 'main', 
   	profile_path: 'hello-world.main', 
-  	control :{$: 'studio.propertyField-Primitive', path: 'hello-world.main~title' },
+  	control :{$: 'studio.property-Primitive', path: 'hello-world.main~title' },
     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 
-'studio-propertyField-TgpType' :{$: 'studio-test', 
+'studio-property-TgpType' :{$: 'studio-test', 
     page: 'group1', 
     profile_path: 'hello-world.group1', 
-  	control :{$: 'studio.propertyField-TgpType', path: 'hello-world.group1~style' },
+  	control :{$: 'studio.property-TgpType', path: 'hello-world.group1~style' },
     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 

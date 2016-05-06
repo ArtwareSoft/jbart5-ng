@@ -7,10 +7,7 @@ jb.component('button', {
   type: "control",
   params: {
     title: { as: 'string', dynamic: true, essential: true, defaultValue: 'Hello' },
-//    icon: { type: 'icon', dynamic: true },
     action: { type: 'action', essential: true, dynamic: true },
-//   disabled: { type: 'boolean', dynamic: true },
-//   description: { as: 'string' },
     style: { type: 'button.style', defaultValue: { $: 'button.md-flat' }, dynamic: true },
     features: { type: 'feature[]', dynamic: true },
     $click: { type: 'boolean' }, // used by tests to simulate click

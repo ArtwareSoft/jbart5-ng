@@ -9,7 +9,7 @@ export function jbart_base() {
 	return jbart.previewjbart || jbart;
 }
 
-export function comp_asStr(id) {
+export function compAsStr(id) {
 	return jb_prettyPrintComp(id,getComp(id))
 }
 
@@ -19,6 +19,15 @@ export function parentPath(path) {
 
 export function profileValFromPath(path) {
 	return profileFromPath(path);
+}
+
+export function compAsStrFromPath(path) {
+	return compAsStr(path.split('~')[0])
+}
+
+export function notifyModifcation(path,before,ctx) {
+	var comp = path.split('~')[0];
+	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
 }
 
 export function profileRefFromPath(path) {
@@ -175,9 +184,9 @@ export class ControlModel {
 
 	modify(op,path,args,ctx) {
 		var comp = path.split('~')[0];
-		var before = comp_asStr(comp);
+		var before = compAsStr(comp);
 		op.call(this,path,args);
-		modifyOperationsEm.next({ comp: comp, before: before, after: comp_asStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
+		modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
 	}
 
 	_delete(path) {
@@ -209,6 +218,23 @@ export class ControlModel {
 
 	writeValue(path,args) {
 		jb.writeValue(profileRefFromPath(path),args.value);
+	}
+
+	wrapWithGroup(path) {
+		var result = { $: 'group', controls: [ profileValFromPath(path) ] };
+		jb.writeValue(profileRefFromPath(path),result);
+	}
+
+	duplicate(path) {
+		var prop = path.split('~').pop();
+		var val = profileValFromPath(path);
+		var arr = profileValFromPath(parentPath(path));
+		if (Array.isArray(arr)) {
+			var clone = evalProfile(jb.prettyPrint(val));
+			var index = Number(prop);
+			arr.splice(index, 0,clone);
+			fixIndexPaths(path,1);
+		}
 	}
 
 	setComp(path,args) {

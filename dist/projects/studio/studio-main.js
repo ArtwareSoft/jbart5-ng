@@ -266,6 +266,22 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     return studio.model.modify(studio.model.insertComp, path, { comp: comp }, context);
                 }
             });
+            jb_core_1.jb.component('studio.wrapWithGroup', {
+                params: {
+                    path: { as: 'string' },
+                },
+                impl: function (context, path) {
+                    return studio.model.modify(studio.model.wrapWithGroup, path, {}, context);
+                }
+            });
+            jb_core_1.jb.component('studio.duplicate', {
+                params: {
+                    path: { as: 'string' },
+                },
+                impl: function (context, path) {
+                    return studio.model.modify(studio.model.duplicate, path, {}, context);
+                }
+            });
             jb_core_1.jb.component('studio.newArrayItem', {
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
@@ -288,7 +304,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     if (!project)
                         return;
                     var comps = jb_core_1.jb.entries(studio.jbart_base().comps).map(function (x) { return x[0]; }).filter(function (x) { return x.indexOf(project) == 0; });
-                    return comps.map(function (comp) { return studio.comp_asStr(comp); }).join('\n\n');
+                    return comps.map(function (comp) { return studio.compAsStr(comp); }).join('\n\n');
                 }
             });
             jb_core_1.jb.component('studio.compSource', {
@@ -296,7 +312,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
                 },
                 impl: function (context, comp) {
-                    return studio.comp_asStr(comp.split('~')[0]);
+                    return studio.compAsStr(comp.split('~')[0]);
                 }
             });
             jb_core_1.jb.component('studio.isCustomStyle', {

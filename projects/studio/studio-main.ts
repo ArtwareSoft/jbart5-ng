@@ -266,6 +266,22 @@ jb.component('studio.insertComp',{
 		studio.model.modify(studio.model.insertComp, path, { comp: comp },context)
 })
 
+jb.component('studio.wrapWithGroup',{
+	params: { 
+		path: { as: 'string' },
+	},
+	impl: (context,path) => 
+		studio.model.modify(studio.model.wrapWithGroup, path, {},context)
+})
+
+jb.component('studio.duplicate',{
+	params: { 
+		path: { as: 'string' },
+	},
+	impl: (context,path) => 
+		studio.model.modify(studio.model.duplicate, path, {},context)
+})
+
 jb.component('studio.newArrayItem',{
 	params: { path: { as: 'string' } },
 	impl: (context,path) => 
@@ -290,7 +306,7 @@ jb.component('studio.projectSource',{
 	impl: (context,project) => {
 		if (!project) return;
 		var comps = jb.entries(studio.jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
-		return comps.map(comp=>studio.comp_asStr(comp)).join('\n\n')
+		return comps.map(comp=>studio.compAsStr(comp)).join('\n\n')
 	}
 })
 
@@ -299,7 +315,7 @@ jb.component('studio.compSource',{
 		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
 	},
 	impl: (context,comp) => 
-		studio.comp_asStr(comp.split('~')[0])
+		studio.compAsStr(comp.split('~')[0])
 })
 
 jb.component('studio.isCustomStyle',{

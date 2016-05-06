@@ -95,7 +95,10 @@ jb.component('studio.property-primitive',{
 		title :{$: 'studio.prop-name', path: '%$path%' },
 		controls: [
 			{ $: 'editable-text',
-				features :{$: 'css', css: 'input { font-size: 12px; padding-left: 2px; width: 145px;}' },
+				features : [
+					{$: 'css', css: 'input { font-size: 12px; padding-left: 2px; width: 145px;}' },
+					{$: 'studio.undo-support', path: '%$path%' }
+				],
 				databind :{$: 'studio.ref', path: '%$path%' }
 			},
 			{ $: 'button' ,
@@ -168,7 +171,7 @@ jb.component('studio.property-tgp',{
 					{$: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
 					{$: 'css', 
 						css :{$if: '%$inArray%',
-							then: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}'
+							then: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}',
 							else: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
 						}
 					}
@@ -192,7 +195,7 @@ jb.component('studio.property-array',{
 			  features :{$: 'css', css: '{ height: 28px; margin-left: 174px; }' },
 			  controls: [
 					{ 	$: 'editable-boolean',
-						style :{$: 'editable-boolean.studio-expand-collapse-in-toolbar'}
+						style :{$: 'editable-boolean.studio-expand-collapse-in-toolbar'},
 						features :{$: 'css', css: '.material-icons { font-size: 16px }' },
 						databind: '%$arrayCtrl/expanded%',
 					},
@@ -544,7 +547,30 @@ jb.component('studio.tgp-type-options',{
 	params: { 
 		type: { as: 'string'} 
 	},
-	impl: (context,type) => studio.model.PTsOfType(type).map(op=> { return { code: op, text: op}})
+	impl: (context,type) => 
+		studio.model.PTsOfType(type).map(op=>({ code: op, text: op}))
+})
+
+jb.component('studio.undo-support', {
+  type: 'feature',
+  params: {
+    path: { essential: true, as: 'string' },
+  },
+  impl: (ctx,path) => 
+  	({
+  		// saving state on focus and setting the change on blur
+  		init: cmp => {
+  			var before = studio.compAsStrFromPath(path);
+  			$(cmp.elementRef.nativeElement).findIncludeSelf('input')
+  				.focus(e=> {
+  					before = studio.compAsStrFromPath(path)
+  				})
+  				.blur(e=> {
+  					if (before != studio.compAsStrFromPath(path))
+						studio.notifyModifcation(path,before,ctx)
+  				})
+  		}
+  })
 })
 
 

@@ -105,7 +105,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     controls: [
                         { $: 'editable-text',
-                            features: { $: 'css', css: 'input { font-size: 12px; padding-left: 2px; width: 145px;}' },
+                            features: [
+                                { $: 'css', css: 'input { font-size: 12px; padding-left: 2px; width: 145px;}' },
+                                { $: 'studio.undo-support', path: '%$path%' }
+                            ],
                             databind: { $: 'studio.ref', path: '%$path%' }
                         },
                         { $: 'button',
@@ -499,7 +502,31 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 params: {
                     type: { as: 'string' }
                 },
-                impl: function (context, type) { return studio.model.PTsOfType(type).map(function (op) { return { code: op, text: op }; }); }
+                impl: function (context, type) {
+                    return studio.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
+                }
+            });
+            jb_core_1.jb.component('studio.undo-support', {
+                type: 'feature',
+                params: {
+                    path: { essential: true, as: 'string' },
+                },
+                impl: function (ctx, path) {
+                    return ({
+                        // saving state on focus and setting the change on blur
+                        init: function (cmp) {
+                            var before = studio.compAsStrFromPath(path);
+                            $(cmp.elementRef.nativeElement).findIncludeSelf('input')
+                                .focus(function (e) {
+                                before = studio.compAsStrFromPath(path);
+                            })
+                                .blur(function (e) {
+                                if (before != studio.compAsStrFromPath(path))
+                                    studio.notifyModifcation(path, before, ctx);
+                            });
+                        }
+                    });
+                }
             });
             jb_core_1.jb.component('group.studio-watch-path', {
                 type: 'feature',
