@@ -45,4 +45,5 @@ If you want to learn more about jBart visual development concepts, please start 
 We plan to have a beta for jbart5 in a month or two
 
 ###jBart Name Story
+BART - business art
 jBart - light javascript business art
