@@ -1,6 +1,6 @@
 import {jb} from 'jb-core';
-import {enableProdMode, Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, provide, NgZone} from 'angular2/core';
-import {NgForm,FORM_DIRECTIVES,NgClass} from 'angular2/common';
+import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
+import {NgForm,FORM_DIRECTIVES,NgClass} from '@angular/common';
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 //import {MdInput} from '/node_modules/@angular2-material/core/input.js';
 import {MdButton, MdAnchor} from '@angular2-material/button/button.js';
@@ -49,7 +49,7 @@ export function Comp(options,context) {
 			template: options.template || '',
 			directives: [MATERIAL_DIRECTIVES,FORM_DIRECTIVES, NgClass] 
 		}),
-		Reflect.metadata('design:paramtypes', [DynamicComponentLoader, ElementRef])
+		Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
 	], Cmp);
 	return enrichComp(Cmp,context).jbExtend(options,context);
 }
@@ -262,36 +262,61 @@ export function enrichComp(comp,ctrl_ctx) {
 export class jbComp {
   @Input() comp;
   @Input() flatten;
-  constructor(public dcl: DynamicComponentLoader, public elementRef: ElementRef) {}
+  @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
+  constructor(private componentResolver:ComponentResolver) {}
+
   ngOnInit() {
-  	  var cmp = this;
-  	  var parentCmp = cmp.elementRef._appElement.parentView.context;
-      var r = loadIntoLocation(this.comp, this, 'jb_comp');
-      if (!r) debugger;
-      r.then( ref=>{
-      	if (!cmp.flatten) return;
-      	// very ugly: flatten the structure and pushing the dispose function to the group parent.
-      	var to_keep = $(ref.location.nativeElement);
-      	if (cmp._parent)
-      		debugger;
-      	cmp._parent = to_keep.parent();
-      	// copy class and ng id attributes - for css
-      	to_keep.addClass(to_keep.parent().attr('class')||'');
-      	Array.from(to_keep.parent()[0].attributes)
-      		.map(x=>x.name).filter(x=>x.match(/_ng/))
-      		.forEach(att=>to_keep.attr(att,''))
-    	to_keep.parent().replaceWith(to_keep);
-      	parentCmp.jb_disposable = parentCmp.jb_disposable || [];
-      	parentCmp.jb_disposable.push(() => { // put it back as it was, and dispose
-      		try {
-    			to_keep.replaceWith(cmp._parent);
-    			cmp._parent.append(to_keep);
-    		} catch(e) {}
-    		cmp._parent = null;
-    		ref.dispose();
-    	})
-      })
+    this.componentResolver
+      .resolveComponent(this.comp)
+      .then(componentFactory => {
+        var cmp_ref = this.childView.createComponent(componentFactory);
+        this.flattenjBComp(cmp_ref);
+      });
   }
+
+// very ugly: flatten the structure and pushing the dispose function to the group parent.
+  flattenjBComp(cmp_ref) {
+  	var cmp = this;
+  	if (!cmp.flatten) 
+  		return;
+	var parentView = this.childView.parentInjector._view;
+	var parentCmp = parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
+  	if (cmp._deleted_parent)
+  		return jb.logError('flattenjBComp: can not get parent component');
+  	if (cmp._deleted_parent || !parentCmp)
+  		return jb.logError('flattenjBComp: deleted parent exists');
+
+  	var to_keep = cmp_ref._hostElement.nativeElement;
+  	var to_delete = to_keep.parentNode
+  	cmp._deleted_parent = to_delete;
+  	// copy class and ng id attributes - for css
+  	to_keep.className = ((to_keep.className||'') + ' ' + (to_delete.className||'')).trim();
+  	Array.from(to_delete.attributes)
+  		.map(x=>x.name)
+  		.filter(x=>x.match(/_ng/))
+  		.forEach(att=>
+  			to_keep.setAttribute(att,to_delete.getAttribute(att))
+  		)
+	$(to_delete).replaceWith(to_keep);
+  	parentCmp.jb_disposable = parentCmp.jb_disposable || [];
+  	parentCmp.jb_disposable.push(() => { // put it back as it was, then dispose
+  		try {
+			$(to_keep).replaceWith(cmp._deleted_parent);
+			cmp._deleted_parent.appendChild(to_keep);
+		} catch(e) {}
+		cmp._deleted_parent = null;
+		cmp_ref.dispose();
+	})
+  }
+ 
+  // ngOnInitOld() {
+  // 	  var cmp = this;
+  // 	  var parentCmp = cmp.elementRef._appElement && cmp.elementRef._appElement.parentView.context;
+  //     var r = loadIntoLocation(this.comp, this, 'jb_comp');
+  //     if (!r) debugger;
+  //     r.then( ref=>{
+  //     })
+  // }
 }
 
 export function controlsToGroupEmitter(controlsFunc, cmp) { 
@@ -349,11 +374,20 @@ export function twoWayBind(ref) {
 	}
 }
 
-export function loadIntoLocation(comp, parentCmp, id,context) {
-	try {
-    	return parentCmp.dcl.loadIntoLocation(comp, parentCmp.elementRef, id);
-    } catch(e) { debugger; jb.logException(e,'') }
+export function insertComponent(comp, resolver, parentView) {
+    return resolver
+      .resolveComponent(comp)
+      .then(componentFactory => 
+        parentView.createComponent(componentFactory)
+      )
 }
+
+// export function loadIntoLocation(comp, parentCmp, id,context) {
+// 	debugger;
+// 	try {
+//     	return parentCmp.dcl.loadIntoLocation(comp, parentCmp.elementRef, id);
+//     } catch(e) { debugger; jb.logException(e,'') }
+// }
 
 export function parseHTML(text) {
 	var res = document.createElement('div');
@@ -370,14 +404,14 @@ export function addAttribute(element, attrName, attrValue) {
 
 @Component({
     selector: 'jbart',
-	template:  `<div *ngFor="#comp of comps"><jb_comp [comp]="comp"></jb_comp></div>
-				<div *ngFor="#dialog of dialogs">
+	template:  `<div *ngFor="let comp of comps"><jb_comp [comp]="comp"></jb_comp></div>
+				<div *ngFor="let dialog of dialogs">
 					<jb_comp [comp]="dialog.comp"></jb_comp>
 				</div>`,
 	directives: [jbComp]
 })
 export class jBartWidget {
-	constructor(private dcl: DynamicComponentLoader, private elementRef: ElementRef, public ngZone: NgZone) { }
+	constructor(private elementRef: ElementRef, public ngZone: NgZone) { }
 	ngOnInit() { 
 		this.compId = this.elementRef.nativeElement.getAttribute('compID');
 		this.dialogs = jb_dialog.jb_dialogs.dialogs;

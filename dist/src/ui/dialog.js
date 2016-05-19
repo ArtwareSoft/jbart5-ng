@@ -1,4 +1,4 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx, core_1;
@@ -40,12 +40,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(e
                             cmp.dialog.$el = $(cmp.elementRef.nativeElement);
                             cmp.dialog.$el.css('z-index', 100);
                             cmp.dialogClose = dialog.close;
-                            var content = ctx.params.content(ctx);
-                            jb_ui.loadIntoLocation(content, cmp, 'content', ctx).then(function (ref) {
-                                $(ref.location.nativeElement).addClass('dialog-content');
-                                jb_core_1.jb.trigger(cmp.dialog, 'attach');
-                            });
+                            cmp.contentComp = ctx.params.content(ctx);
+                            //				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
+                            // jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
+                            // 	$(ref.location.nativeElement).addClass('dialog-content');
+                            // 	jb.trigger(cmp.dialog, 'attach')
+                            // })
                         },
+                        directives: [jb_ui.jbComp]
                     });
                     jb_dialogs.addDialog(dialog, ctx);
                 }
@@ -62,7 +64,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(e
             jb_core_1.jb.component('dialog.default', {
                 type: 'dialog.style',
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      <div class=\"dialog-title\">{{title}}</div>\n\t\t\t\t      <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t      <div #content></div>\n\t\t\t\t    </div>"
+                    template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      <div class=\"dialog-title\">{{title}}</div>\n\t\t\t\t      <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t      <jb_comp [comp]=\"contentComp\"></jb_comp>\n\t\t\t\t    </div>"
                 }
             });
             jb_core_1.jb.component('dialog.md-dialog-ok-cancel', {
@@ -72,7 +74,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(e
                     cancelLabel: { as: 'string', defaultValue: 'Cancel' },
                 },
                 impl: { $: 'customStyle',
-                    template: "\n\t\t\t\t<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      <div class=\"dialog-title\">{{title}}</div>\n\t\t\t\t      <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t      <div #content></div>\n\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<button md-button=\"\" type=\"button\" (click)=\"dialogClose({OK:false})\">\n\t\t\t\t\t\t\t  \t<span class=\"md-button-wrapper\">\n\t\t\t\t\t\t\t\t      <span>%$cancelLabel%</span>\n    \t\t\t\t\t\t\t</span>\n    \t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<button class=\"md-primary\" md-button=\"\" (click)=\"dialogClose({OK:true})\" type=\"button\">\n\t\t\t\t\t\t\t\t\t<span class=\"md-button-wrapper\">\n\t\t\t\t\t\t\t      \t\t<span>%$okLabel%</span>\n\t\t\t\t\t\t\t    \t</span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\n\t\t"
+                    template: "\n\t\t\t\t<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      <div class=\"dialog-title\">{{title}}</div>\n\t\t\t\t      <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t      <jb_comp [comp]=\"contentComp\"></jb_comp>\n\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<button md-button=\"\" type=\"button\" (click)=\"dialogClose({OK:false})\">\n\t\t\t\t\t\t\t  \t<span class=\"md-button-wrapper\">\n\t\t\t\t\t\t\t\t      <span>%$cancelLabel%</span>\n    \t\t\t\t\t\t\t</span>\n    \t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<button class=\"md-primary\" md-button=\"\" (click)=\"dialogClose({OK:true})\" type=\"button\">\n\t\t\t\t\t\t\t\t\t<span class=\"md-button-wrapper\">\n\t\t\t\t\t\t\t      \t\t<span>%$okLabel%</span>\n\t\t\t\t\t\t\t    \t</span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\n\t\t"
                 }
             });
             jb_core_1.jb.component('dialogFeature.uniqueDialog', {
@@ -242,7 +244,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(e
                     this._initDialogs();
                     dialog.context = context;
                     var dialogs = this.dialogs;
-                    dialogs.forEach(function (d) { return jb_core_1.jb.trigger(d, 'otherDialogCreated', dialog); });
+                    dialogs.forEach(function (d) {
+                        return jb_core_1.jb.trigger(d, 'otherDialogCreated', dialog);
+                    });
                     dialogs.push(dialog);
                     if (dialog.modal)
                         $('body').prepend('<div class="modal-overlay"></div>');
@@ -265,7 +269,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(e
                     };
                 },
                 closeAll: function () {
-                    this.dialogs.forEach(function (d) { return d.close(); });
+                    this.dialogs.forEach(function (d) {
+                        return d.close();
+                    });
                 }
             });
         }

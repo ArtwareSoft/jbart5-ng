@@ -36,7 +36,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('picklist.native', {
                 type: 'picklist.style',
                 impl: { $: 'customStyle',
-                    template: "<div><select %$field.modelExp%>\n                    <option *ngFor=\"#option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
+                    template: "<div><select %$field.modelExp%>\n                    <option *ngFor=\"let option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
                     css: 'select {height: 23px}'
                 }
             });

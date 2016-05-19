@@ -1,4 +1,4 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', 'angular2/core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -108,7 +108,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', 'angular2/core'],
                         TreeNode = __decorate([
                             core_1.Component({
                                 selector: 'jb_node',
-                                template: "<node_line [path]=\"path\"></node_line>\n\t\t\t\t<ul *ngIf=\"tree.expanded[path]\" class=\"treenode-children\">\n\t\t\t\t  <li *ngFor=\"#childPath of tree.nodeModel.children(path)\" class=\"treenode-li\">\n\t\t\t\t\t<jb_node [path]=\"childPath\" class=\"treenode\" [ngClass]=\"{selected: tree.selected == childPath}\"></jb_node>\n\t\t\t\t  </li>\n\t\t\t\t</ul>",
+                                template: "<node_line [path]=\"path\"></node_line>\n\t\t\t\t<ul *ngIf=\"tree.expanded[path]\" class=\"treenode-children\">\n\t\t\t\t  <li *ngFor=\"let childPath of tree.nodeModel.children(path)\" class=\"treenode-li\">\n\t\t\t\t\t<jb_node [path]=\"childPath\" class=\"treenode\" [ngClass]=\"{selected: tree.selected == childPath}\"></jb_node>\n\t\t\t\t  </li>\n\t\t\t\t</ul>",
                                 directives: [TreeNodeLine, TreeNode]
                             }), 
                             __metadata('design:paramtypes', [core_1.ElementRef])

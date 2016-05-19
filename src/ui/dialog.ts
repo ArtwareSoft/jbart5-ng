@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, NgZone, EventEmitter} from 'angular2/core';
+import {Directive, Component, View, ElementRef, Injector, Input, NgZone, EventEmitter} from '@angular/core';
 //import {bootstrap} from 'angular2/platform/browser';
 
 jb.component('openDialog', {
@@ -26,12 +26,14 @@ jb.component('openDialog', {
 				cmp.dialog.$el.css('z-index',100);
 
 				cmp.dialogClose = dialog.close;
-				var content = ctx.params.content(ctx);
-				jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
-					$(ref.location.nativeElement).addClass('dialog-content');
-					jb.trigger(cmp.dialog, 'attach')
-				})
+				cmp.contentComp = ctx.params.content(ctx);
+//				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
+				// jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
+				// 	$(ref.location.nativeElement).addClass('dialog-content');
+				// 	jb.trigger(cmp.dialog, 'attach')
+				// })
 			},
+			directives: [jb_ui.jbComp]
 		});
 		jb_dialogs.addDialog(dialog,ctx);
 	}
@@ -53,7 +55,7 @@ jb.component('dialog.default', {
 		template: `<div class="jb-dialog jb-default-dialog">
 				      <div class="dialog-title">{{title}}</div>
 				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
-				      <div #content></div>
+				      <jb_comp [comp]="contentComp"></jb_comp>
 				    </div>` 
 	}
 })
@@ -69,7 +71,7 @@ jb.component('dialog.md-dialog-ok-cancel', {
 				<div class="jb-dialog jb-default-dialog">
 				      <div class="dialog-title">{{title}}</div>
 				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
-				      <div #content></div>
+				      <jb_comp [comp]="contentComp"></jb_comp>
 					  <div>
 							<button md-button="" type="button" (click)="dialogClose({OK:false})">
 							  	<span class="md-button-wrapper">
@@ -263,7 +265,8 @@ export var jb_dialogs = {
 		this._initDialogs();
 		dialog.context = context;
 		var dialogs = this.dialogs;
-		dialogs.forEach(d=> jb.trigger(d, 'otherDialogCreated', dialog));
+		dialogs.forEach(d=>
+			jb.trigger(d, 'otherDialogCreated', dialog));
 		dialogs.push(dialog);
 		if (dialog.modal)
 			$('body').prepend('<div class="modal-overlay"></div>');
@@ -287,6 +290,7 @@ export var jb_dialogs = {
 		}
 	},
 	closeAll: function() {
-		this.dialogs.forEach(d=>d.close());
+		this.dialogs.forEach(d=>
+			d.close());
 	}
 }

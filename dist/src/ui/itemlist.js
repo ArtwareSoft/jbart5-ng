@@ -1,4 +1,4 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], function(exports_1, context_1) {
+System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,28 +13,40 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], f
     var jb_1, jb_ui, jb_rx, core_1;
     function jb_itemlist_comp(model, context) {
         var ItemListChild = (function () {
-            function ItemListChild(dcl, elementRef) {
-                this.dcl = dcl;
-                this.elementRef = elementRef;
+            function ItemListChild(componentResolver) {
+                this.componentResolver = componentResolver;
             }
-            ItemListChild.prototype.ngOnInit = function () {
+            // ngOnInit() {
+            //   this.componentResolver
+            //     .resolveComponent(this.comp)
+            //     .then(componentFactory => {
+            //       this.childView.createComponent(componentFactory)
+            //     });
+            // }
+            ItemListChild.prototype.ngAfterViewInit = function () {
                 var cmp = this;
                 var vars = { item: cmp.item };
                 if (model.itemVariable && model.itemVariable != 'item')
                     vars[model.itemVariable] = cmp.item;
                 var ctx = jb_1.jb.ctx(context, { data: cmp.item, vars: vars });
-                model.controls(ctx).forEach(function (ctrl) { return jb_ui.loadIntoLocation(ctrl, cmp, 'jb_item_repl', context); });
+                model.controls(ctx).forEach(function (ctrl) {
+                    return jb_ui.insertComponent(ctrl, cmp.componentResolver, cmp.childView);
+                });
             };
             __decorate([
                 core_1.Input(), 
                 __metadata('design:type', Object)
             ], ItemListChild.prototype, "item", void 0);
+            __decorate([
+                core_1.ViewChild('jb_item_repl', { read: core_1.ViewContainerRef }), 
+                __metadata('design:type', Object)
+            ], ItemListChild.prototype, "childView", void 0);
             ItemListChild = __decorate([
                 core_1.Component({
                     selector: 'jb_item',
                     template: '<div #jb_item_repl></div>',
                 }), 
-                __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef])
+                __metadata('design:paramtypes', [core_1.ComponentResolver])
             ], ItemListChild);
             return ItemListChild;
         }());
@@ -94,14 +106,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', 'angular2/core'], f
             jb_1.jb.component('itemlist.ul-li', {
                 type: 'itemlist.style',
                 impl: { $: 'customStyle',
-                    template: '<ul class="jb-itemlist"><li *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
+                    template: '<ul class="jb-itemlist"><li *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
                     css: "[jb-item].selected { background: #337AB7; color: #fff ;}\n    li { list-style: none; padding: 0; margin: 0;}\n    { list-style: none; padding: 0; margin: 0;}\n    "
                 }
             });
             jb_1.jb.component('itemlist.div', {
                 type: 'itemlist.style',
                 impl: function (context) {
-                    return { template: '<div *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></div>' };
+                    return { template: '<div *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></div>' };
                 }
             });
             jb_1.jb.component('itemlist.divider', {

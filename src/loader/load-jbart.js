@@ -30,7 +30,7 @@ if (!window.jbPackaged) {
 
     "css/font.css", // material fonts
 
-    "node_modules/history/umd/History.js"
+    "node_modules/history/umd/history.js"
 
   ].
   forEach(function(file) {
@@ -50,11 +50,10 @@ function jb_loadEditableFile(file) {
 
 jb_modules = 
 [
-'angular2/core','angular2/common', 'angular2/platform/browser',
+'@angular/core', '@angular/common', '@angular/platform-browser-dynamic',
 'jb-core',
 'jb-ui',
 'jb-ui/jb-ui-utils',
-'jb-ui/tests',
 'jb-ui/jb-rx',
 'jb-ui/styles',
 'jb-ui/tree/tree',
@@ -81,7 +80,7 @@ jb_modules =
 'jb-ui/tab',
 'jb-ui/slider',
 'jb-ui/sidenav',
-'jb-ui/separator',
+'jb-ui/divider',
 'jb-ui/theme',
 ];
 
@@ -93,9 +92,12 @@ jb_system_config = {
       map: {
         'jb-core': '/dist/src/core',
         'jb-ui': '/dist/src/ui',
+        'testing': '/dist/src/testing',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
+        'rxjs' : '/node_modules/rxjs',
         '@angular2-material': '/node_modules/@angular2-material',
+        '@angular':  '/node_modules/@angular'
       },
       packages: {  
         '/dist' : {
@@ -109,10 +111,19 @@ jb_system_config = {
           defaultExtension: 'js',
           main: 'jb-ui.js'
         },     
+        'testing': {
+          defaultExtension: 'js',
+        },     
         '@angular2-material': {
           format: 'cjs',
           defaultExtension: 'js',
         },
+        'rxjs': { main: 'Rx.js', defaultExtension: 'js' },
+        '@angular/core': { main: 'index.js', defaultExtension: 'js' },
+        '@angular/common': { main: 'index.js', defaultExtension: 'js' },
+        '@angular/compiler': { main: 'index.js', defaultExtension: 'js' },
+        '@angular/platform-browser': { main: 'index.js', defaultExtension: 'js' },
+        '@angular/platform-browser-dynamic': { main: 'index.js', defaultExtension: 'js' },
       }
 }
 
@@ -136,4 +147,9 @@ function jbLoadModules(modules) {
         }
       )
     }));
+}
+
+function jbBootstrap(loadedModules) {
+     var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
+     bootstrap(loadedModules['jb-ui'].jBartWidget);
 }

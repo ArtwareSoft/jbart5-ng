@@ -39,7 +39,7 @@ jb.component('dialog.studioFloating', {
 				      		  <div class="dialog-title">{{title}}</div>
 							  <button class="dialog-close" (click)="dialogClose()">&#215;</button>
 							  <div class="jb-dialog-content-parent">
-						  	 	<div #content></div>
+ 								<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
 						  	  </div>
 						</div>`,
 			features: [

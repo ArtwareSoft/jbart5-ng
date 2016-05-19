@@ -1,4 +1,4 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], function(exports_1, context_1) {
+System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -11,7 +11,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_1, jb_ui, core_1, dialog_1;
-    var testModules, allTestModules, jBartTest, jBartTests;
+    var testModules, allTestModules, jBartSingleTest, jBartTests;
     //var testModules = ['ng-ui-tests','rx-tests'];
     //testModules = allTestModules;
     //testModules = ['studio-tests'];
@@ -42,25 +42,6 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                 }
             }, ctx);
     }
-    function refreshjBartComp(cmp, compID, ngZone) {
-        if (!compID)
-            return;
-        var ns = compID.split('.')[0];
-        try {
-            var resources = (jb_1.jb.widgets[ns] && jb_1.jb.widgets[ns].resources) || {};
-            jb_1.jb.extend(resources, { window: window, globals: {}, ngZone: ngZone });
-            var ctx = jb_1.jb.ctx({ ngMode: true, resources: resources, vars: {} }, {});
-            Object.getOwnPropertyNames(resources).forEach(function (id) {
-                var r = resources[id];
-                if (r && r.$)
-                    resources[id] = ctx.run(r);
-            });
-            var inner_comp = ctx.run({ $: compID });
-            cmp.old_cmp && cmp.old_cmp.then(function (cmp) { return cmp.dispose(); });
-            cmp.old_cmp = cmp.dcl.loadIntoLocation(inner_comp, cmp.elementRef, 'child');
-        }
-        catch (e) { }
-    }
     return {
         setters:[
             function (jb_1_1) {
@@ -79,54 +60,64 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
             ;
             testModules = ['ng-ui-tests'];
             allTestModules = ['ng-ui-tests', 'studio-tests', 'rx-tests'];
-            jBartTest = (function () {
-                function jBartTest(dcl, elementRef, ngZone) {
-                    this.dcl = dcl;
-                    this.elementRef = elementRef;
+            jBartSingleTest = (function () {
+                function jBartSingleTest(componentResolver, ngZone, elementRef) {
+                    this.componentResolver = componentResolver;
                     this.ngZone = ngZone;
+                    this.elementRef = elementRef;
                     window.ngZone = this.ngZone;
                     jbart.zones['single-test'] = this.ngZone;
                     if ((this.elementRef.nativeElement.getAttribute('compID') || '').indexOf('studio') == 0)
                         jbart.zones['studio.all'] = this.ngZone;
                 }
-                jBartTest.prototype.ngOnInit = function () {
+                jBartSingleTest.prototype.ngOnInit = function () {
+                    var _this = this;
                     this.counter = 0;
-                    this.ngZone.onTurnDone.subscribe(function () {
-                        //			console.log('Zone Counter',this.counter++)
+                    var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'), this.ngZone);
+                    this.componentResolver.resolveComponent(comp)
+                        .then(function (componentFactory) {
+                        _this.childView.createComponent(componentFactory);
                     });
-                    return this.dcl.loadIntoLocation(testComp(this.elementRef.nativeElement.getAttribute('compID'), this.ngZone), this.elementRef, 'single_test');
                 };
-                jBartTest = __decorate([
+                __decorate([
+                    core_1.ViewChild('single_test', { read: core_1.ViewContainerRef }), 
+                    __metadata('design:type', Object)
+                ], jBartSingleTest.prototype, "childView", void 0);
+                jBartSingleTest = __decorate([
                     core_1.Component({
-                        selector: 'jbartTest',
+                        selector: 'jBartSingleTest',
                         template: '<div #single_test></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef, core_1.NgZone])
-                ], jBartTest);
-                return jBartTest;
+                    __metadata('design:paramtypes', [core_1.ComponentResolver, core_1.NgZone, core_1.ElementRef])
+                ], jBartSingleTest);
+                return jBartSingleTest;
             }());
-            exports_1("jBartTest", jBartTest);
+            exports_1("jBartSingleTest", jBartSingleTest);
             jBartTests = (function () {
-                function jBartTests(dcl, elementRef, ngZone) {
-                    this.dcl = dcl;
-                    this.elementRef = elementRef;
+                function jBartTests(componentResolver, ngZone) {
+                    this.componentResolver = componentResolver;
                     this.ngZone = ngZone;
                     window.jbartTestsInstance = this;
                     window.jbartTestsNgZone = ngZone;
                     //		window.ngZone = this.ngZone;
                 }
                 jBartTests.prototype.addComp = function (comp) {
-                    // if (this.oldComp)
-                    // 	this.oldComp.then(ref=>ref.dispose());
-                    this.oldComp = this.dcl.loadIntoLocation(comp, this.elementRef, 'tests');
-                    return this.oldComp;
+                    var _this = this;
+                    this.componentResolver.resolveComponent(comp)
+                        .then(function (componentFactory) {
+                        return _this.childView.createComponent(componentFactory);
+                    });
                 };
+                __decorate([
+                    core_1.ViewChild('tests', { read: core_1.ViewContainerRef }), 
+                    __metadata('design:type', Object)
+                ], jBartTests.prototype, "childView", void 0);
                 jBartTests = __decorate([
                     core_1.Component({
                         selector: 'jbartTests',
                         template: '<div #tests></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef, core_1.NgZone])
+                    __metadata('design:paramtypes', [core_1.ComponentResolver, core_1.NgZone])
                 ], jBartTests);
                 return jBartTests;
             }());
@@ -197,7 +188,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'angular2/core', 'jb-ui/dialog'], 
                         { $: 'button', title: '%id%',
                             style: { $: 'button.href' },
                             features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
-                            action: { $: 'openUrl', url: '/project/ui-tests/%id%' }
+                            action: { $: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%id%' }
                         },
                         { $: 'label', title: 'success',
                             features: [

@@ -30,7 +30,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     opened: { as: 'boolean', type: 'boolean' }
                 },
                 impl: { $: 'customStyle',
-                    template: "<md-sidenav-layout>\n      <md-sidenav>\n        <jb_comp *ngFor=\"var ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" align=\"%$align%\" mode=\"%$mode%\"></jb_comp>\n      </md-sidenav>\n      </md-sidenav-layout>",
+                    template: "<md-sidenav-layout>\n      <md-sidenav>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" align=\"%$align%\" mode=\"%$mode%\"></jb_comp>\n      </md-sidenav>\n      </md-sidenav-layout>",
                     css: "md-sidenav { width: %$width%px }",
                     features: { $: 'group.initGroup' }
                 }

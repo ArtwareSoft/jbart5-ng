@@ -1,11 +1,12 @@
-import {Observable,Subject} from 'rxjs/Rx';
+import {Observable,Subject} from 'rxjs';
 import {jb} from 'jb-core/jb';;
 import * as jb_ui from 'jb-ui/jb-ui';
-//import {Location} from '/jbart/node_modules/angular2/router';
-export {Observable,Subject} from 'rxjs/Rx';
+
+export {Observable,Subject} from 'rxjs';
 
 jb_initJstypes();
-jbart.jstypes.observable = (obj,ctx) => observableFromCtx(ctx.setData(obj));
+jbart.jstypes.observable = (obj,ctx) => 
+	observableFromCtx(ctx.setData(obj));
 
 export function tap(label) { return ctx => { console.log('tap'+label||'',ctx.data); return ctx.data } }
 

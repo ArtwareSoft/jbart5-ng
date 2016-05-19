@@ -120,9 +120,9 @@ jb_component('objectToArray',{
 	params: {
 		object: { defaultValue: '{%%}', as: 'single' }
 	},
-	impl: function(context,object) {
-		return jb_ownPropertyNames(object).map(function(id) { return {id: id, val: object[id]}});
-	}
+	impl: (context,object) =>
+		jb_ownPropertyNames(object).map((id,index) => 
+			({id: id, val: object[id], index: index}))
 });
 
 jb_component('objectMap',{
@@ -377,13 +377,12 @@ jb_component('endsWith',{
 jb_component('filter',{
 	type: 'aggregator',
 	params: {
-		filter: { type: "boolean", as: 'boolean', dynamic: true }
+		filter: { type: 'boolean', as: 'boolean', dynamic: true }
 	},
-	impl: function(context,filter) {
-		return context.data.filter(function(item) {
-			return filter(context,item);
-		});
-	}
+	impl: (context,filter) =>
+		context.data.filter(item =>
+			filter(context,item)
+		)
 });
 
 jb_component('count',{

@@ -31,17 +31,10 @@ jb.component('picklist.native', {
   type: 'picklist.style',
   impl :{$: 'customStyle', 
     template: `<div><select %$field.modelExp%>
-                    <option *ngFor="#option of options" [value]="option.code">{{option.text}}</option>
+                    <option *ngFor="let option of options" [value]="option.code">{{option.text}}</option>
                  </select></div>`,
     css: 'select {height: 23px}'
   }
-  // impl: function(context) {  return { //${context.vars.field.modelExp} value=""
-  //     template: `<select ${context.vars.field.modelExp}>
-  //                   <option *ngFor="#option of options" [value]="option.code">{{option.text}}</option>
-  //                </select>`,
-  //     styles: ['* { height: 23px }'],
-  //   }
-  // }
 })
 
 // ********* options

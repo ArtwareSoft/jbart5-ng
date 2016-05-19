@@ -1,4 +1,4 @@
-System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-material/button/button.js', '@angular2-material/input/input.js', '@angular2-material/card/card.js', 'jb-ui/jb-rx', 'jb-ui/dialog'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-material/button/button.js', '@angular2-material/input/input.js', '@angular2-material/card/card.js', 'jb-ui/jb-rx', 'jb-ui/dialog'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -45,7 +45,7 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                 template: options.template || '',
                 directives: [MATERIAL_DIRECTIVES, common_1.FORM_DIRECTIVES, common_1.NgClass]
             }),
-            Reflect.metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef])
+            Reflect.metadata('design:paramtypes', [core_1.ComponentResolver, core_1.ElementRef])
         ], Cmp);
         return enrichComp(Cmp, context).jbExtend(options, context);
     }
@@ -318,16 +318,20 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
         };
     }
     exports_1("twoWayBind", twoWayBind);
-    function loadIntoLocation(comp, parentCmp, id, context) {
-        try {
-            return parentCmp.dcl.loadIntoLocation(comp, parentCmp.elementRef, id);
-        }
-        catch (e) {
-            debugger;
-            jb_core_1.jb.logException(e, '');
-        }
+    function insertComponent(comp, resolver, parentView) {
+        return resolver
+            .resolveComponent(comp)
+            .then(function (componentFactory) {
+            return parentView.createComponent(componentFactory);
+        });
     }
-    exports_1("loadIntoLocation", loadIntoLocation);
+    exports_1("insertComponent", insertComponent);
+    // export function loadIntoLocation(comp, parentCmp, id,context) {
+    // 	debugger;
+    // 	try {
+    //     	return parentCmp.dcl.loadIntoLocation(comp, parentCmp.elementRef, id);
+    //     } catch(e) { debugger; jb.logException(e,'') }
+    // }
     function parseHTML(text) {
         var res = document.createElement('div');
         res.innerHTML = text;
@@ -396,40 +400,50 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
             core_1.enableProdMode();
             jbart.zones = jbart.zones || {};
             jbComp = (function () {
-                function jbComp(dcl, elementRef) {
-                    this.dcl = dcl;
-                    this.elementRef = elementRef;
+                function jbComp(componentResolver) {
+                    this.componentResolver = componentResolver;
                 }
                 jbComp.prototype.ngOnInit = function () {
+                    var _this = this;
+                    this.componentResolver
+                        .resolveComponent(this.comp)
+                        .then(function (componentFactory) {
+                        var cmp_ref = _this.childView.createComponent(componentFactory);
+                        _this.flattenjBComp(cmp_ref);
+                    });
+                };
+                // very ugly: flatten the structure and pushing the dispose function to the group parent.
+                jbComp.prototype.flattenjBComp = function (cmp_ref) {
                     var cmp = this;
-                    var parentCmp = cmp.elementRef._appElement.parentView.context;
-                    var r = loadIntoLocation(this.comp, this, 'jb_comp');
-                    if (!r)
-                        debugger;
-                    r.then(function (ref) {
-                        if (!cmp.flatten)
-                            return;
-                        // very ugly: flatten the structure and pushing the dispose function to the group parent.
-                        var to_keep = $(ref.location.nativeElement);
-                        if (cmp._parent)
-                            debugger;
-                        cmp._parent = to_keep.parent();
-                        // copy class and ng id attributes - for css
-                        to_keep.addClass(to_keep.parent().attr('class') || '');
-                        Array.from(to_keep.parent()[0].attributes)
-                            .map(function (x) { return x.name; }).filter(function (x) { return x.match(/_ng/); })
-                            .forEach(function (att) { return to_keep.attr(att, ''); });
-                        to_keep.parent().replaceWith(to_keep);
-                        parentCmp.jb_disposable = parentCmp.jb_disposable || [];
-                        parentCmp.jb_disposable.push(function () {
-                            try {
-                                to_keep.replaceWith(cmp._parent);
-                                cmp._parent.append(to_keep);
-                            }
-                            catch (e) { }
-                            cmp._parent = null;
-                            ref.dispose();
-                        });
+                    if (!cmp.flatten)
+                        return;
+                    var parentView = this.childView.parentInjector._view;
+                    var parentCmp = parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
+                    if (cmp._deleted_parent)
+                        return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
+                    if (cmp._deleted_parent || !parentCmp)
+                        return jb_core_1.jb.logError('flattenjBComp: deleted parent exists');
+                    var to_keep = cmp_ref._hostElement.nativeElement;
+                    var to_delete = to_keep.parentNode;
+                    cmp._deleted_parent = to_delete;
+                    // copy class and ng id attributes - for css
+                    to_keep.className = ((to_keep.className || '') + ' ' + (to_delete.className || '')).trim();
+                    Array.from(to_delete.attributes)
+                        .map(function (x) { return x.name; })
+                        .filter(function (x) { return x.match(/_ng/); })
+                        .forEach(function (att) {
+                        return to_keep.setAttribute(att, to_delete.getAttribute(att));
+                    });
+                    $(to_delete).replaceWith(to_keep);
+                    parentCmp.jb_disposable = parentCmp.jb_disposable || [];
+                    parentCmp.jb_disposable.push(function () {
+                        try {
+                            $(to_keep).replaceWith(cmp._deleted_parent);
+                            cmp._deleted_parent.appendChild(to_keep);
+                        }
+                        catch (e) { }
+                        cmp._deleted_parent = null;
+                        cmp_ref.dispose();
                     });
                 };
                 __decorate([
@@ -440,19 +454,22 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                     core_1.Input(), 
                     __metadata('design:type', Object)
                 ], jbComp.prototype, "flatten", void 0);
+                __decorate([
+                    core_1.ViewChild('jb_comp', { read: core_1.ViewContainerRef }), 
+                    __metadata('design:type', Object)
+                ], jbComp.prototype, "childView", void 0);
                 jbComp = __decorate([
                     core_1.Component({
                         selector: 'jb_comp',
                         template: '<div #jb_comp></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef])
+                    __metadata('design:paramtypes', [core_1.ComponentResolver])
                 ], jbComp);
                 return jbComp;
             }());
             exports_1("jbComp", jbComp);
             jBartWidget = (function () {
-                function jBartWidget(dcl, elementRef, ngZone) {
-                    this.dcl = dcl;
+                function jBartWidget(elementRef, ngZone) {
                     this.elementRef = elementRef;
                     this.ngZone = ngZone;
                 }
@@ -528,10 +545,10 @@ System.register(['jb-core', 'angular2/core', 'angular2/common', '@angular2-mater
                 jBartWidget = __decorate([
                     core_1.Component({
                         selector: 'jbart',
-                        template: "<div *ngFor=\"#comp of comps\"><jb_comp [comp]=\"comp\"></jb_comp></div>\n\t\t\t\t<div *ngFor=\"#dialog of dialogs\">\n\t\t\t\t\t<jb_comp [comp]=\"dialog.comp\"></jb_comp>\n\t\t\t\t</div>",
+                        template: "<div *ngFor=\"let comp of comps\"><jb_comp [comp]=\"comp\"></jb_comp></div>\n\t\t\t\t<div *ngFor=\"let dialog of dialogs\">\n\t\t\t\t\t<jb_comp [comp]=\"dialog.comp\"></jb_comp>\n\t\t\t\t</div>",
                         directives: [jbComp]
                     }), 
-                    __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef, core_1.NgZone])
+                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone])
                 ], jBartWidget);
                 return jBartWidget;
             }());

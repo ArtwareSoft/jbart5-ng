@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import {Directive,Component, DynamicComponentLoader, ElementRef, Input } from 'angular2/core';
+import {Directive,Component, ElementRef, Input } from '@angular/core';
 
 jb.component('tab-control',{
 	type: 'control',
@@ -29,7 +29,7 @@ jb.component('tab-control.md', {
 		jbTemplate: `
 				<md-content class="md-padding">
 				  <md-tabs [selected]="selectedIndex" md-border-bottom md-autoselect>
-				    <template md-tab *ngFor="var tab of tabs" [label]="tab.title">
+				    <template md-tab *ngFor="let tab of tabs" [label]="tab.title">
  				      <jb_comp [comp]="tab.comp"></jb_comp>
 				    </template>
 				  </md-tabs>

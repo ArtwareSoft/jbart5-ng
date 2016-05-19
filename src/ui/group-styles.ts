@@ -20,7 +20,7 @@ jb.component('group.md-expandable2', {
               <span flex></span>
             </div>
           </md-toolbar>
-          <jb_comp [hidden]="show" *ngFor="var ctrl of ctrls" [comp]="ctrl.comp"></jb_comp>
+          <jb_comp [hidden]="show" *ngFor="let ctrl of ctrls" [comp]="ctrl.comp"></jb_comp>
       </section>`
   } }
 })
@@ -39,7 +39,7 @@ jb.component('group.md-expandable', {
               <span flex></span>
             </div>
           </md-toolbar>
-          <jb_comp [hidden]="show" *ngFor="var ctrl of ctrls" [comp]="ctrl.comp"></jb_comp>
+          <jb_comp [hidden]="show" *ngFor="let ctrl of ctrls" [comp]="ctrl.comp"></jb_comp>
       </section>`,
       features :{$: 'group.initGroup' },
       methods: {
@@ -55,7 +55,7 @@ jb.component('group.div', {
   type: 'group.style',
   impl :{$: 'customStyle',
     template: `<div class="jb-group">
-        <jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
       </div>`,
     features :{$: 'group.initGroup'}
   }
@@ -95,7 +95,7 @@ jb.component('property-sheet.titles-above', {
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup'},
     template: `<div>
-      <div *ngFor="var ctrl of ctrls" class="property">
+      <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
         <jb_comp [comp]="ctrl.comp"></jb_comp>
       </div>
@@ -124,7 +124,7 @@ jb.component('property-sheet.titles-above-float-left', {
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup'},
     template: `<div>
-        <div *ngFor="var ctrl of ctrls" class="property">
+        <div *ngFor="let ctrl of ctrls" class="property">
           <label class="property-title">{{ctrl.title}}</label>
           <jb_comp [comp]="ctrl.comp"></jb_comp>
         </div>
@@ -158,7 +158,7 @@ jb.component('property-sheet.titles-left', {
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup'},
     template: `<div>
-      <div *ngFor="var ctrl of ctrls" class="property">
+      <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
         <jb_comp [comp]="ctrl.comp" class="property-ctrl"></jb_comp>
       </div>
@@ -220,7 +220,7 @@ jb.component('group-expandable-subgroups', {
         }
     },
     template: `<section class="jb-group">
-        <section *ngFor="var ctrl of ctrls" class="md-whiteframe-z3" [ngClass]="{'open': selected==ctrl}">
+        <section *ngFor="let ctrl of ctrls" class="md-whiteframe-z3" [ngClass]="{'open': selected==ctrl}">
           <md-toolbar class="md-primary">
             <div class="md-toolbar-tools">
               <h3>{{ ctrl.title }}</h3>
@@ -243,7 +243,7 @@ jb.component('toolbar.simple', {
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup' },
     template: `<div class="toolbar">
-        <jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp>
+        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp>
       </div>`,
     css: `.toolbar { 
             display: flex;

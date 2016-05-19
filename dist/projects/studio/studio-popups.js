@@ -42,7 +42,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: { $: 'customStyle',
                     $vars: { dialogID: '%$id%' },
-                    template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      \t\t  <div class=\"dialog-title\">{{title}}</div>\n\t\t\t\t\t\t\t  <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t  <div class=\"jb-dialog-content-parent\">\n\t\t\t\t\t\t  \t \t<div #content></div>\n\t\t\t\t\t\t  \t  </div>\n\t\t\t\t\t\t</div>",
+                    template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      \t\t  <div class=\"dialog-title\">{{title}}</div>\n\t\t\t\t\t\t\t  <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t  <div class=\"jb-dialog-content-parent\">\n \t\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t  \t  </div>\n\t\t\t\t\t\t</div>",
                     features: [
                         { $: 'dialogFeature.dragTitle', id: '%$dialogID%' },
                         { $: 'dialogFeature.uniqueDialog', id: '%$dialogID%', remeberLastLocation: true },

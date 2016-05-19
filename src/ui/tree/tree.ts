@@ -4,7 +4,7 @@ import * as jb_rx from 'jb-ui/jb-rx';
 import * as ui_utils from 'jb-ui/jb-ui-utils';
 import {NgClass} from 'angular2/common';
 import {Observable,Subject} from 'rxjs/Rx';
-import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, NgZone} from 'angular2/core';
+import {Directive, Component, View, ElementRef, Injector, Input, NgZone} from '@angular/core';
 
 jb.type('tree.nodeModel');
 jb.type('tree.style'); 
@@ -77,7 +77,7 @@ jb.component('tree.ul-li', {
 		    selector: 'jb_node',
 			template: `<node_line [path]="path"></node_line>
 				<ul *ngIf="tree.expanded[path]" class="treenode-children">
-				  <li *ngFor="#childPath of tree.nodeModel.children(path)" class="treenode-li">
+				  <li *ngFor="let childPath of tree.nodeModel.children(path)" class="treenode-li">
 					<jb_node [path]="childPath" class="treenode" [ngClass]="{selected: tree.selected == childPath}"></jb_node>
 				  </li>
 				</ul>`,

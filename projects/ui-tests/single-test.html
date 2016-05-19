@@ -2,7 +2,7 @@
 <html>
 
   <head>
-  <title>tests - jbart ui</title>
+  <title>Single Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"> 
   <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
 
@@ -17,20 +17,19 @@
 
 
 <body>
-  <jbart compID="ui-tests.show-tests">loading tests</jbart>
-  <jbartTests style="display:none"></jbartTests>
+  <jBartSingleTest></jBartSingleTest>
 
 <script>
 
-jbLoadModules(jb_modules.concat(['testing/ui-testers','/projects/ui-tests/ui-tests.js']))
-  .then(loadedModules=> {
-     var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
-     bootstrap(loadedModules['testing/ui-testers'].jBartTests);
-     bootstrap(loadedModules['jb-ui'].jBartWidget);
-  });
+jbLoadModules(jb_modules.concat(['testing/ui-testers','/projects/ui-tests/ui-tests.js'])).then(loadedModules=> {
+    var test = location.href.split('?test=').pop();
+    if (test)
+        document.querySelector('jBartSingleTest').setAttribute('compID',test);
+    var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
+    bootstrap(loadedModules['testing/ui-testers'].jBartSingleTest);
+})
   
 </script>
 
 </body>
 </html>
-

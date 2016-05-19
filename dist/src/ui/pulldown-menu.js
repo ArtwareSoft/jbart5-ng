@@ -111,7 +111,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('pulldownPopup.mainMenuPopup', {
                 type: 'dialog.style',
                 impl: { $: 'customStyle',
-                    template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><div class="dialog-content" #content></div><div class="pulldown-menu-remove-top-border"></div></div>',
+                    template: "<div class=\"jb-dialog jb-popup pulldown-mainmenu-popup\">\n\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t\t<div class=\"pulldown-menu-remove-top-border\"></div>\n\t\t\t\t\t\t</div>",
                     css: '.pulldown-menu-remove-top-border { width: %$popupWidth%px }',
                     features: [
                         { $: 'dialogFeature.uniqueDialog', id: 'pulldown main menu popup', remeberLastLocation: false },
@@ -126,7 +126,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 type: 'dialog.style',
                 impl: function (context) {
                     return {
-                        jbTemplate: '<div><div class="dialog-content" #Content></div></div>',
+                        jbTemplate: '<div><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
                         cssClass: 'jb-dialog jb-popup pulldown-mainmenu-popup',
                         features: [
                             { $: 'dialogFeature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },

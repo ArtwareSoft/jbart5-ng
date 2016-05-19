@@ -1,7 +1,7 @@
 import { jb } from 'jb-core/jb';;
 import * as jb_ui from 'jb-ui/jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import {Directive, Component, View, DynamicComponentLoader, ElementRef, Injector, Input, provide, NgZone} from 'angular2/core';
+import {Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
 import {jb_dialogs} from 'jb-ui/dialog';
 import {Observable,Subject} from 'rxjs/Rx';
 
@@ -38,41 +38,28 @@ function testComp(compID,ngZone) {
 		},ctx)
 }
 
-function refreshjBartComp(cmp,compID,ngZone) {
-	if (!compID) return;
-	var ns = compID.split('.')[0];
-	try {
-		var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
-		jb.extend(resources, { window: window, globals: {}, ngZone: ngZone });
-		var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {} }, {});
-		Object.getOwnPropertyNames(resources).forEach(id=>{
-			var r = resources[id];
-			if (r && r.$) resources[id] = ctx.run(r);
-		})
-		var inner_comp = ctx.run({ $: compID });
-		cmp.old_cmp && cmp.old_cmp.then(cmp => cmp.dispose());
-		cmp.old_cmp = cmp.dcl.loadIntoLocation(inner_comp, cmp.elementRef, 'child');
-	} catch (e) {}
-}
 
 @Component({
-    selector: 'jbartTest',
+    selector: 'jBartSingleTest',
 	template: '<div #single_test></div>',
 })
-export class jBartTest {
-	constructor(private dcl: DynamicComponentLoader, private elementRef: ElementRef, private ngZone: NgZone) {
+export class jBartSingleTest {
+  @ViewChild('single_test', {read: ViewContainerRef}) childView;
+  constructor(private componentResolver:ComponentResolver, private ngZone: NgZone, private elementRef: ElementRef) {
 		window.ngZone = this.ngZone;
 		jbart.zones['single-test'] = this.ngZone;
 		if ((this.elementRef.nativeElement.getAttribute('compID')||'').indexOf('studio') == 0)
 			jbart.zones['studio.all'] = this.ngZone;
 	}
-	ngOnInit() {
-		this.counter = 0;
-		this.ngZone.onTurnDone.subscribe(()=>{
-//			console.log('Zone Counter',this.counter++)
-		})
-		return this.dcl.loadIntoLocation(testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone), this.elementRef, 'single_test');
-	}
+
+  ngOnInit() {
+	this.counter = 0;
+  	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
+    this.componentResolver.resolveComponent(comp)
+      .then(componentFactory => {
+        this.childView.createComponent(componentFactory);
+      });
+  }
 }
 
 @Component({
@@ -80,16 +67,17 @@ export class jBartTest {
 	template: '<div #tests></div>',
 })
 export class jBartTests {
-	constructor(private dcl: DynamicComponentLoader, private elementRef: ElementRef, private ngZone: NgZone) { 
+  @ViewChild('tests', {read: ViewContainerRef}) childView;
+  constructor(private componentResolver:ComponentResolver, private ngZone: NgZone) {
 		window.jbartTestsInstance = this;
 		window.jbartTestsNgZone = ngZone;
 //		window.ngZone = this.ngZone;
 	}
 	addComp(comp) {
-		// if (this.oldComp)
-		// 	this.oldComp.then(ref=>ref.dispose());
-		this.oldComp = this.dcl.loadIntoLocation(comp, this.elementRef, 'tests');
-		return this.oldComp;
+	    this.componentResolver.resolveComponent(comp)
+	      .then(componentFactory =>
+	        this.childView.createComponent(componentFactory)
+	    );
 	}
 }
 
@@ -164,7 +152,7 @@ jb.component('ui-tests.show-one-test', {
 				{	$: 'button', title: '%id%',
 					style :{$: 'button.href' },
 					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
-					action :{$: 'openUrl', url: '/project/ui-tests/%id%' }
+					action :{$: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%id%' }
 				},
 				{ $: 'label', title: 'success', 
 					features: [

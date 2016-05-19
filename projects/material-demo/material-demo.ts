@@ -162,7 +162,7 @@ title group
 check box
 ==========
 <ul>
-  <li *ngFor="#todo of todos">
+  <li *ngFor="let todo of todos">
     <md-checkbox [checked]="todo.completed"
                  (change)="todo.completed = $event">
       {{todo.name}}

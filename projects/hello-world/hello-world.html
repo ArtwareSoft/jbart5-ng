@@ -2,21 +2,17 @@
 <html>
 
   <head>
-    <title>Hello World</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+  <title>Hello World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
 
-    <!-- 1. Load libraries -->
-    <!-- IE required polyfills, in this exact order -->
 	<script type="text/javascript" src="/src/loader/load-jbart.js"></script>
-    <script src="/node_modules/es6-shim/es6-shim.min.js"></script>
-    <script src="/node_modules/systemjs/dist/system-polyfills.js"></script>
-    <script src="/node_modules/angular2/es6/dev/src/testing/shims_for_IE.js"></script>   
 
-    <script src="/node_modules/angular2/bundles/angular2-polyfills.js"></script>
-    <script src="/node_modules/systemjs/dist/system.src.js"></script>
-    <script src="/node_modules/rxjs/bundles/Rx.js"></script>
-    <script src="/node_modules/angular2/bundles/angular2.dev.js"></script>
+  <script src="/node_modules/es6-shim/es6-shim.min.js"></script>
+  <script src="/node_modules/zone.js/dist/zone.js"></script>
+  <script src="/node_modules/reflect-metadata/Reflect.js"></script>
+  <script src="/node_modules/systemjs/dist/system.src.js"></script>
+
   </head>
 
 
@@ -25,11 +21,11 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(['projects/hello-world/hello'])).then(loadedModules=>{
-    var bootstrap = loadedModules['angular2/platform/browser'].bootstrap;
-    bootstrap(loadedModules['jb-ui'].jBartWidget);
-})
-
+jbLoadModules(jb_modules.concat(['projects/hello-world/hello']))
+  .then(loadedModules=>
+    jbBootstrap(loadedModules)
+  );
+  
 </script>
 
 </body>

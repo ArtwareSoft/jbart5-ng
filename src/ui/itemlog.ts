@@ -42,10 +42,10 @@ jb.component('itemlog',{
 jb.component('itemlog.div', {
   type: 'group.style',
   impl :{$: 'customStyle',
-    template: `<div class="jb-group jb-itemlog"><div jb-item *ngFor="var item of items">
+    template: `<div class="jb-group jb-itemlog"><div jb-item *ngFor="let item of items">
         <jb_comp [comp]="itemToComp(item)" flatten="true"></jb_comp>
       </div></div>`
-//    <jb_comp jb-item *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="false"></jb_comp></div>',
+//    <jb_comp jb-item *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="false"></jb_comp></div>',
   }
 })
 

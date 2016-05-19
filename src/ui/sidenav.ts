@@ -27,7 +27,7 @@ jb.component('sidenav.md', {
   impl :{$: 'customStyle',
     template: `<md-sidenav-layout>
       <md-sidenav>
-        <jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" align="%$align%" mode="%$mode%"></jb_comp>
+        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" align="%$align%" mode="%$mode%"></jb_comp>
       </md-sidenav>
       </md-sidenav-layout>`,
     css: `md-sidenav { width: %$width%px }`,

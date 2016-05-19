@@ -36,7 +36,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 cmp.tabs.push({ title: comp.jb_title(context), comp: comp });
                             });
                         },
-                        jbTemplate: "\n\t\t\t\t<md-content class=\"md-padding\">\n\t\t\t\t  <md-tabs [selected]=\"selectedIndex\" md-border-bottom md-autoselect>\n\t\t\t\t    <template md-tab *ngFor=\"var tab of tabs\" [label]=\"tab.title\">\n \t\t\t\t      <jb_comp [comp]=\"tab.comp\"></jb_comp>\n\t\t\t\t    </template>\n\t\t\t\t  </md-tabs>\n\t\t\t\t</md-content>\n\t\t",
+                        jbTemplate: "\n\t\t\t\t<md-content class=\"md-padding\">\n\t\t\t\t  <md-tabs [selected]=\"selectedIndex\" md-border-bottom md-autoselect>\n\t\t\t\t    <template md-tab *ngFor=\"let tab of tabs\" [label]=\"tab.title\">\n \t\t\t\t      <jb_comp [comp]=\"tab.comp\"></jb_comp>\n\t\t\t\t    </template>\n\t\t\t\t  </md-tabs>\n\t\t\t\t</md-content>\n\t\t",
                         directives: [jb_ui.jbComp]
                     };
                 }

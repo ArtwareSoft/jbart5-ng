@@ -2,7 +2,7 @@ import {jb} from 'jb-core/jb';;
 import * as jb_ui from 'jb-ui/jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as ui_utils from 'jb-ui/jb-ui-utils';
-import {Directive,Component, DynamicComponentLoader, ElementRef, Input } from 'angular2/core';
+import {Directive,Component, ElementRef, Input, ViewContainerRef, ViewChild, ComponentResolver } from '@angular/core';
 
 jb.type('itemlist.style');
 
@@ -47,15 +47,30 @@ function jb_itemlist_comp(model,context) {
     })
     class ItemListChild {
       @Input() item;
-      constructor(public dcl: DynamicComponentLoader, public elementRef: ElementRef) {}
-      ngOnInit() {
+      @ViewChild('jb_item_repl', {read: ViewContainerRef}) childView;
+      constructor(private componentResolver:ComponentResolver) {}
+
+      // ngOnInit() {
+      //   this.componentResolver
+      //     .resolveComponent(this.comp)
+      //     .then(componentFactory => {
+      //       this.childView.createComponent(componentFactory)
+      //     });
+      // }
+
+      ngAfterViewInit() {
         var cmp = this;
         var vars = {item: cmp.item};
         if (model.itemVariable && model.itemVariable != 'item')
           vars[model.itemVariable] = cmp.item;
         var ctx = jb.ctx(context,{data: cmp.item, vars: vars});
-        model.controls(ctx).forEach(
-          ctrl => jb_ui.loadIntoLocation(ctrl, cmp, 'jb_item_repl',context)
+        model.controls(ctx).forEach(ctrl =>
+              jb_ui.insertComponent(ctrl, cmp.componentResolver, cmp.childView)
+            // cmp.componentResolver
+            //   .resolveComponent(ctrl)
+            //   .then(componentFactory => {
+            //     cmp.childView.createComponent(componentFactory)
+            //   });
         )
       }
     }
@@ -65,7 +80,7 @@ function jb_itemlist_comp(model,context) {
 jb.component('itemlist.ul-li', {
   type: 'itemlist.style',
   impl :{$: 'customStyle',
-    template: '<ul class="jb-itemlist"><li *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
+    template: '<ul class="jb-itemlist"><li *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
     css: `[jb-item].selected { background: #337AB7; color: #fff ;}
     li { list-style: none; padding: 0; margin: 0;}
     { list-style: none; padding: 0; margin: 0;}
@@ -76,7 +91,7 @@ jb.component('itemlist.ul-li', {
 jb.component('itemlist.div', {
   type: 'itemlist.style',
   impl: function(context) {
-    return { template: '<div *ngFor="#item of items" jb-item><jb_item [item]="item"></jb_item></div>' }
+    return { template: '<div *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></div>' }
   }
 })
 

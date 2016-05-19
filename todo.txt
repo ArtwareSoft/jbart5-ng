@@ -10,9 +10,10 @@ features.var
 animation in expand/collapse
 select2
 
-default theme
 fix theme var name
  editable-text.default-style-profile => them.editable-text
+ default theme with empty values
+
 
 tgp pt selection - sort into groups (add group property in tgp?) - sort groups according to context
 	features

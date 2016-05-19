@@ -41,7 +41,7 @@ jb.component('layout.md',{
           cmp.extendChild(index,{atts: child}))
       },
       jbTemplate: `<div class="md-layout">
-            <jb_comp *ngFor="var ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+            <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
           </div>`,
       atts: atts
     }

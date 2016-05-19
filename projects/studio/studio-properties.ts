@@ -431,7 +431,7 @@ jb.component('property-sheet.studio-properties', {
   impl :{$: 'customStyle',
     features :{$: 'group.initGroup' },
   	template: `<div>
-      <div *ngFor="var ctrl of ctrls" class="property">
+      <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.comp.jb_title()}}</label>
         <jb_comp [comp]="ctrl.comp" class="property-ctrl"></jb_comp>
       </div>

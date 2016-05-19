@@ -1,4 +1,4 @@
-System.register(['jb-core', 'jb-ui', 'angular2/core', 'jb-ui/dialog'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', '@angular/core', 'jb-ui/dialog'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -79,8 +79,7 @@ System.register(['jb-core', 'jb-ui', 'angular2/core', 'jb-ui/dialog'], function(
             testModules = ['ng-ui-tests'];
             allTestModules = ['ng-ui-tests', 'studio-tests', 'rx-tests'];
             jBartTest = (function () {
-                function jBartTest(dcl, elementRef, ngZone) {
-                    this.dcl = dcl;
+                function jBartTest(elementRef, ngZone) {
                     this.elementRef = elementRef;
                     this.ngZone = ngZone;
                     window.ngZone = this.ngZone;
@@ -100,14 +99,13 @@ System.register(['jb-core', 'jb-ui', 'angular2/core', 'jb-ui/dialog'], function(
                         selector: 'jbartTest',
                         template: '<div #single_test></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef, core_1.NgZone])
+                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone])
                 ], jBartTest);
                 return jBartTest;
             }());
             exports_1("jBartTest", jBartTest);
             jBartTests = (function () {
-                function jBartTests(dcl, elementRef, ngZone) {
-                    this.dcl = dcl;
+                function jBartTests(elementRef, ngZone) {
                     this.elementRef = elementRef;
                     this.ngZone = ngZone;
                     window.jbartTestsInstance = this;
@@ -125,7 +123,7 @@ System.register(['jb-core', 'jb-ui', 'angular2/core', 'jb-ui/dialog'], function(
                         selector: 'jbartTests',
                         template: '<div #tests></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.DynamicComponentLoader, core_1.ElementRef, core_1.NgZone])
+                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone])
                 ], jBartTests);
                 return jBartTests;
             }());

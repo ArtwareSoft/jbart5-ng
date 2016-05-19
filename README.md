@@ -21,15 +21,17 @@
 - hybrid teams: architects build the components, implementers build the applications
 
 ##Install from npm
-npm install jbart5-ng2
-cd node_modules/jbart5-ng2
-npm start
+
+	npm install jbart5-ng2
+	cd node_modules/jbart5-ng2
+	npm start
 
 ##Install from github
-cd jbart5-ng
-npm install
-bower install
-npm start
+
+	cd jbart5-ng
+	npm install
+	bower install
+	npm start
 
 open the studio [http://localhost:8081/project/studio/material-demo](http://localhost:8081/project/studio/material-demo)
 

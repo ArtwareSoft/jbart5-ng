@@ -53,7 +53,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx'], function(exports_1
             jb_1.jb.component('itemlog.div', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-group jb-itemlog\"><div jb-item *ngFor=\"var item of items\">\n        <jb_comp [comp]=\"itemToComp(item)\" flatten=\"true\"></jb_comp>\n      </div></div>"
+                    template: "<div class=\"jb-group jb-itemlog\"><div jb-item *ngFor=\"let item of items\">\n        <jb_comp [comp]=\"itemToComp(item)\" flatten=\"true\"></jb_comp>\n      </div></div>"
                 }
             });
             jb_1.jb.component('itemlog.selection', {
