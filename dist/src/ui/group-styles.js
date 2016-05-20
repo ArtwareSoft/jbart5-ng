@@ -47,9 +47,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 params: {
                     spacing: { as: 'number', defaultValue: 3 }
                 },
-                impl: { $: 'customCssStyle',
-                    basedOn: { $: 'group.div' },
+                impl: { $: 'customStyle',
+                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
                     css: ".group-item { margin-bottom: %$spacing%px; display: block }\n        .group-item:last-child { margin-bottom:0 }",
+                    features: { $: 'group.initGroup' }
                 }
             });
             jb_core_1.jb.component('layout.horizontal', {
@@ -57,9 +58,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 params: {
                     spacing: { as: 'number', defaultValue: 3 }
                 },
-                impl: { $: 'customCssStyle',
-                    basedOn: { $: 'group.div' },
+                impl: { $: 'customStyle',
+                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
                     css: "{display: flex}\n        .group-item { margin-right: %$spacing%px }\n        .group-item:last-child { margin-right:0 }",
+                    features: { $: 'group.initGroup' }
                 }
             });
             jb_core_1.jb.component('property-sheet.titles-above', {

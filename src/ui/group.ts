@@ -13,13 +13,6 @@ jb.component('group',{
     features: { type: 'feature[]', dynamic: true },
   },
   impl: function(context) { 
-
-    function disposeChildren(cmp) {
-        (cmp.jb_disposable||[]).forEach(del=>del()); // ugly - dispose the jb_comp components
-        cmp.jb_disposable = []; 
-        $(cmp.elementRef.nativeElement).find('jb_comp').remove(); // even uglier - clean the elements
-    }
-
     return jb_ui.ctrl(context).jbExtend({
       beforeInit(cmp) {
         cmp.ctrls = [];
@@ -28,6 +21,7 @@ jb.component('group',{
           if (options)
             cmp.jbToExtend[index] = options;
         }
+
         cmp.initGroup = function() {
           cmp.title = context.params.title(context);
           var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.controls,cmp);
@@ -67,7 +61,8 @@ jb.component('dynamic-controls', {
 
 jb.component('group.initGroup', {
   type: 'feature',
-  impl: ctx => jb.obj('init', cmp => cmp.initGroup())
+  impl: ctx => 
+    jb.obj('init', cmp => cmp.initGroup())
 })
 
 // ** sample style 

@@ -21,11 +21,6 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (context) {
-                    function disposeChildren(cmp) {
-                        (cmp.jb_disposable || []).forEach(function (del) { return del(); }); // ugly - dispose the jb_comp components
-                        cmp.jb_disposable = [];
-                        $(cmp.elementRef.nativeElement).find('jb_comp').remove(); // even uglier - clean the elements
-                    }
                     return jb_ui.ctrl(context).jbExtend({
                         beforeInit: function (cmp) {
                             cmp.ctrls = [];
@@ -70,7 +65,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('group.initGroup', {
                 type: 'feature',
-                impl: function (ctx) { return jb_core_1.jb.obj('init', function (cmp) { return cmp.initGroup(); }); }
+                impl: function (ctx) {
+                    return jb_core_1.jb.obj('init', function (cmp) { return cmp.initGroup(); });
+                }
             });
             // ** sample style 
             jb_core_1.jb.component('group.section', {

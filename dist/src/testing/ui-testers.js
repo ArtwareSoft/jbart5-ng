@@ -20,11 +20,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
         var resources = (jb_1.jb.widgets[ns] && jb_1.jb.widgets[ns].resources) || {};
         jb_1.jb.extend(resources, { window: window, globals: {} });
         var ctx = jb_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: ngZone }, }, {});
-        Object.getOwnPropertyNames(resources).forEach(function (id) {
-            var r = resources[id];
-            if (r && r.$)
-                resources[id] = ctx.run(r);
-        });
+        // Object.getOwnPropertyNames(resources).forEach(id=> {
+        // 	var r = resources[id];
+        // 	if (r && r.$) resources[id] = ctx.run(r);
+        // })
         var profile = allTestModules.reduce(function (found, module) { return found || jb_1.jb.widgets[module].tests[compID]; }, false);
         if (!profile)
             console.log('can not find a test ' + compID);

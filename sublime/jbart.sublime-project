@@ -11,6 +11,7 @@
 				"dist",
 				"bower_components",
 				"sublime",
+				"src/ui",
 				"typings",
 				"https"
 			],

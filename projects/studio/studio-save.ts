@@ -18,13 +18,17 @@ jb.component('studio.saveComponents', {
 				({key:x[0],val:x[1]})),
 			ctx => {
 				var comp = ctx.data.key;
+				if (ctx.exp('%$force%') && !ctx.data.val.original)
+					ctx.data.val.original = `jb.component('${comp}', {`;
+
 				return $.ajax({ 
 					url: `/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${ctx.exp('%$force%')}`, 
 					type: 'POST', 
 					data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.compAsStr(comp) }),
 					headers: { 'Content-Type': 'text/plain' } 
 				}).then(
-					()=>modified[comp] = null,
+					()=>
+						delete modified[comp],
 					(e)=>
 						jb.logException(e,'error while saving ' + comp)
 				)

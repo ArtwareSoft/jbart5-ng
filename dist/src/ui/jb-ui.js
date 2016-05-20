@@ -403,13 +403,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                 function jbComp(componentResolver) {
                     this.componentResolver = componentResolver;
                 }
-                jbComp.prototype.ngOnInit = function () {
+                jbComp.prototype.ngOnChanges = function () {
                     var _this = this;
-                    this.componentResolver
-                        .resolveComponent(this.comp)
-                        .then(function (componentFactory) {
-                        var cmp_ref = _this.childView.createComponent(componentFactory);
-                        _this.flattenjBComp(cmp_ref);
+                    this.componentResolver.resolveComponent(this.comp).then(function (componentFactory) {
+                        _this.flattenjBComp(_this.childView.createComponent(componentFactory));
                     });
                 };
                 // very ugly: flatten the structure and pushing the dispose function to the group parent.
@@ -428,8 +425,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                     cmp._deleted_parent = to_delete;
                     // copy class and ng id attributes - for css
                     to_keep.className = ((to_keep.className || '') + ' ' + (to_delete.className || '')).trim();
-                    Array.from(to_delete.attributes)
-                        .map(function (x) { return x.name; })
+                    Array.from(to_delete.attributes).map(function (x) { return x.name; })
                         .filter(function (x) { return x.match(/_ng/); })
                         .forEach(function (att) {
                         return to_keep.setAttribute(att, to_delete.getAttribute(att));
@@ -534,11 +530,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                     var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
                     var ctx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
                     jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                    Object.getOwnPropertyNames(resources).forEach(function (id) {
-                        var r = resources[id];
-                        if (r && r.$)
-                            resources[id] = ctx.run(r);
-                    });
+                    // Object.getOwnPropertyNames(resources).forEach(id=>{
+                    // 	var r = resources[id];
+                    // 	if (r && r.$) resources[id] = ctx.run(r);
+                    // })
                     this.$jbInitialCtx = ctx;
                     return ctx;
                 };

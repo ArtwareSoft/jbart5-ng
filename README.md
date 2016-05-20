@@ -46,4 +46,5 @@ We plan to have a beta for jbart5 in a month or two
 
 ###jBart Name Story
 BART - business art
+
 jBart - light javascript business art

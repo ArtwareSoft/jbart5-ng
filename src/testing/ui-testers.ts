@@ -16,10 +16,10 @@ function testComp(compID,ngZone) {
 	var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 	jb.extend(resources, { window: window, globals: {} });
 	var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: ngZone},  }, {});
-	Object.getOwnPropertyNames(resources).forEach(id=> {
-		var r = resources[id];
-		if (r && r.$) resources[id] = ctx.run(r);
-	})
+	// Object.getOwnPropertyNames(resources).forEach(id=> {
+	// 	var r = resources[id];
+	// 	if (r && r.$) resources[id] = ctx.run(r);
+	// })
 	var profile = allTestModules.reduce((found,module) => found || jb.widgets[module].tests[compID],false);
 	if (!profile)
 		console.log('can not find a test ' + compID);

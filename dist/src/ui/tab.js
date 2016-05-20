@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx;
+    var jb_core_1, jb_ui;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,41 +9,77 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
-            },
-            function (jb_rx_1) {
-                jb_rx = jb_rx_1;
             }],
         execute: function() {
             jb_core_1.jb.component('tab-control', {
                 type: 'control',
-                spritePosition: '1,1',
                 params: {
-                    tabs: { type: 'control[]', essential: true, flattenArray: true, dynamic: true, as: 'observable' },
-                    style: { type: 'tab-control.style', dynamic: true, defaultValue: { $: 'tab-control.md' } },
+                    tabs: { type: 'control[]', essential: true, flattenArray: true, dynamic: true },
+                    style: { type: 'tab-control.style', dynamic: true, defaultValue: { $: 'tab-control.simple' } },
                     features: { type: 'feature[]', dynamic: true },
                 },
-                impl: jb_ui.ctrl
+                impl: function (context) {
+                    return jb_ui.ctrl(context).jbExtend({
+                        beforeInit: function (cmp) {
+                            cmp.empty = jb_ui.Comp({ template: '<div></div>' }, context);
+                            cmp.selectedTab = 0;
+                            cmp.selectedTabContent = function () {
+                                return [cmp.comps[cmp.selectedTab] || cmp.empty];
+                            };
+                            cmp.initTabs = function () {
+                                var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.tabs, cmp);
+                                cmpEmitterFunc(cmp.ctx).subscribe(function (comps) {
+                                    cmp.comps = comps;
+                                    cmp.titles = comps.map(function (comp) {
+                                        return comp.jb_title ? comp.jb_title() : '';
+                                    });
+                                });
+                            };
+                        },
+                        directives: [jb_ui.jbComp]
+                    });
+                }
+            });
+            jb_core_1.jb.component('tab.initTabs', {
+                type: 'feature',
+                impl: function (ctx) {
+                    return ({ init: function (cmp) { return cmp.initTabs(); } });
+                }
             });
             jb_core_1.jb.type('tab-control.style');
-            jb_core_1.jb.component('tab-control.md', {
+            jb_core_1.jb.component('tab-control.simple', {
                 type: 'tab-control.style',
-                impl: function (context) {
-                    return {
-                        init: function (cmp) {
-                            cmp.tabs = [];
-                            cmp.selectedIndex = 0;
-                            jb_rx.concat(context.vars.$model.tabs()).subscribe(function (comp) {
-                                cmp.tabs.push({ title: comp.jb_title(context), comp: comp });
-                            });
-                        },
-                        jbTemplate: "\n\t\t\t\t<md-content class=\"md-padding\">\n\t\t\t\t  <md-tabs [selected]=\"selectedIndex\" md-border-bottom md-autoselect>\n\t\t\t\t    <template md-tab *ngFor=\"let tab of tabs\" [label]=\"tab.title\">\n \t\t\t\t      <jb_comp [comp]=\"tab.comp\"></jb_comp>\n\t\t\t\t    </template>\n\t\t\t\t  </md-tabs>\n\t\t\t\t</md-content>\n\t\t",
-                        directives: [jb_ui.jbComp]
-                    };
+                impl: { $: 'customStyle',
+                    template: "<div class=\"jb-tab\">\n\t    \t<div class=\"tab-titles\">\n\t    \t\t<button *ngFor=\"let title of titles; let i = index\" md-button (click)=\"selectedTab = i\" [ngClass]=\"{'selected': i==selectedTab}\">{{title}}</button>\n\t        </div>\n\t        <jb_comp *ngFor=\"let comp of selectedTabContent()\" [comp]=\"comp\" [flatten]=\"true\"></jb_comp>\n\t      </div>",
+                    css: ".selected { border-bottom: 1px solid black }",
+                    features: { $: 'tab.initTabs' },
                 }
             });
         }
     }
 });
+// jb.component('tab-control.md', {
+// 	type: 'tab-control.style',
+// 	impl: function(context) { return {
+// 		init: function(cmp) {
+// 			cmp.tabs = [];
+// 			cmp.selectedIndex = 0;
+// 			jb_rx.concat(context.vars.$model.tabs()).subscribe(comp=> {
+// 					cmp.tabs.push(	{ title: comp.jb_title(context), comp: comp	})
+// 			})
+// 		},
+// 		jbTemplate: `
+// 				<md-content class="md-padding">
+// 				  <md-tabs [selected]="selectedIndex" md-border-bottom md-autoselect>
+// 				    <template md-tab *ngFor="let tab of tabs" [label]="tab.title">
+//  				      <jb_comp [comp]="tab.comp"></jb_comp>
+// 				    </template>
+// 				  </md-tabs>
+// 				</md-content>
+// 		`,
+// 		directives: [jb_ui.jbComp]
+// 	} }
+// })
 // jb.component('tab-control.accordion',{
 // 	type: 'tab-control.style',
 // 	impl :{$: 'group', 
@@ -52,24 +88,3 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
 // 		style :{$: 'group-expandable-subgroups' } 
 // 	}
 // }) 
-// jb.component('tab-control.simple',{
-// 	type: 'tab-control.style',
-// 	impl: { $: 'group', cssClass: 'simple-tab',
-// 		controls: [ 
-// 			{ $: 'group', cssClass: 'tab', 
-// 				controls: [
-// 					'%$$model.controls%', 
-// 					{$: 'button', 
-// 						title: ctx => ctx.vars.controlsGenerator.jb_title(), 
-// 						click: ctx => comp => {
-// 							ctx.vars.tab.selectionEmitter.next(comp);
-// 							ctx.vars.$model.controls.next('empty');
-// 						},
-// 						features :{$: '' }
-// 					}
-// 				]
-// 			},
-// 			{ $: 'group', controls: '%$tab.selectionEmitter%', cssClass: 'tab-content' }
-// 		]
-// 	}
-// })

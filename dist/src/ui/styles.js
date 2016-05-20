@@ -30,16 +30,16 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     return options;
                 }
             });
-            jb_core_1.jb.component('customCssStyle', {
-                typePattern: /.*-style/,
-                params: {
-                    basedOn: {},
-                    css: { as: 'string' },
-                },
-                impl: function (context, basedOn, css) {
-                    return jb_core_1.jb.extend({}, basedOn, { css: css });
-                }
-            });
+            // jb.component('customCssStyle', {
+            // 	typePattern: /.*-style/,
+            // 	params: {
+            // 		basedOn: {},
+            // 		css: { as: 'string'},
+            // 	},
+            // 	impl: function (context,basedOn,css) {
+            // 		return jb.extend({},basedOn, { css: css })
+            // 	}
+            // })
             jb_core_1.jb.component('custom-control', {
                 type: 'control',
                 params: {

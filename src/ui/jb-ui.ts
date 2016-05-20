@@ -265,13 +265,10 @@ export class jbComp {
   @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
   constructor(private componentResolver:ComponentResolver) {}
 
-  ngOnInit() {
-    this.componentResolver
-      .resolveComponent(this.comp)
-      .then(componentFactory => {
-        var cmp_ref = this.childView.createComponent(componentFactory);
-        this.flattenjBComp(cmp_ref);
-      });
+  ngOnChanges() {
+    this.componentResolver.resolveComponent(this.comp).then(componentFactory => {
+        this.flattenjBComp(this.childView.createComponent(componentFactory))
+    });
   }
 
 // very ugly: flatten the structure and pushing the dispose function to the group parent.
@@ -291,8 +288,7 @@ export class jbComp {
   	cmp._deleted_parent = to_delete;
   	// copy class and ng id attributes - for css
   	to_keep.className = ((to_keep.className||'') + ' ' + (to_delete.className||'')).trim();
-  	Array.from(to_delete.attributes)
-  		.map(x=>x.name)
+  	Array.from(to_delete.attributes).map(x=>x.name)
   		.filter(x=>x.match(/_ng/))
   		.forEach(att=>
   			to_keep.setAttribute(att,to_delete.getAttribute(att))
@@ -308,15 +304,6 @@ export class jbComp {
 		cmp_ref.dispose();
 	})
   }
- 
-  // ngOnInitOld() {
-  // 	  var cmp = this;
-  // 	  var parentCmp = cmp.elementRef._appElement && cmp.elementRef._appElement.parentView.context;
-  //     var r = loadIntoLocation(this.comp, this, 'jb_comp');
-  //     if (!r) debugger;
-  //     r.then( ref=>{
-  //     })
-  // }
 }
 
 export function controlsToGroupEmitter(controlsFunc, cmp) { 
@@ -473,10 +460,10 @@ export class jBartWidget {
 		var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 		var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
 		jb.extend(resources, { window: window, globals: {} });
-		Object.getOwnPropertyNames(resources).forEach(id=>{
-			var r = resources[id];
-			if (r && r.$) resources[id] = ctx.run(r);
-		})
+		// Object.getOwnPropertyNames(resources).forEach(id=>{
+		// 	var r = resources[id];
+		// 	if (r && r.$) resources[id] = ctx.run(r);
+		// })
 		this.$jbInitialCtx = ctx;
 		return ctx;
     }

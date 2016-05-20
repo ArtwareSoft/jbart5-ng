@@ -32,32 +32,34 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             }],
         execute: function() {
             jbart.studio = jbart.studio || {};
-            jb_core_1.jb.resource('studio', 'UrlPathEm', { $: 'rx.urlPath', base: 'studio', zoneId: 'studio.all',
-                params: ['project', 'page', 'profile_path'], databind: '{%$globals%}' });
+            // jb.resource('studio','UrlPathEm',{$: 'rx.urlPath', base: 'studio', zoneId: 'studio.all', 
+            // 	params: [ 'project', 'page', 'profile_path' ] , databind: '{%$globals%}' } )
             jb_core_1.jb.component('studio.all', {
                 type: 'control',
                 impl: { $: 'group',
-                    cssClass1: 'studio-top-bar',
-                    features: { $: 'group.watch', data: '%$globals/project%' },
+                    style: { $: 'layout.vertical', spacing: '0' },
                     controls: [
                         { $: 'group',
-                            style: { $: 'layout.horizontal', spacing: '3' },
                             title: 'top bar',
+                            style: { $: 'layout.horizontal', spacing: '3' },
                             controls: [
                                 { $: 'image',
-                                    units: 'px',
-                                    style: { $: 'image.default' },
                                     url: '/projects/studio/css/logo90.png',
-                                    imageHeight: '90'
+                                    imageHeight: '90',
+                                    units: 'px',
+                                    style: { $: 'image.default' }
                                 },
                                 { $: 'group',
+                                    url: '/projects/studio/css/logo470x200.png',
+                                    title: 'title and menu',
+                                    style: { $: 'layout.vertical', spacing: '12' },
                                     controls: [
                                         { $: 'label',
-                                            style: { $: 'label.span' },
                                             title: [
                                                 '{%$globals/project%}',
                                                 { $: 'replace', find: '_', replace: ' ' }
                                             ],
+                                            style: { $: 'label.span' },
                                             features: { $: 'css',
                                                 css: '{ font: 20px Arial; margin-left: 6px; margin-top: 20px}'
                                             }
@@ -70,39 +72,40 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                             ]
                                         }
                                     ],
-                                    title: 'title and menu',
-                                    style: { $: 'layout.vertical', spacing: '12' },
-                                    features: { $: 'css', css: '{ padding-left: 18px; width: 100% }' },
-                                    url: '/projects/studio/css/logo470x200.png'
+                                    features: { $: 'css', css: '{ padding-left: 18px; width: 100% }' }
                                 }
                             ],
                             features: { $: 'css', css: '{ height: 90px; border-bottom: 1px #d9d9d9 solid}' }
                         },
                         { $: 'group',
                             cssClass: 'studio-widget-placeholder',
-                            controls: { $: 'studio.renderWidget' },
-                            title: 'preview'
+                            title: 'preview',
+                            controls: { $: 'studio.renderWidget' }
                         },
                         { $: 'group',
-                            title: 'pages',
                             cssClass: 'studio-footer',
+                            title: 'pages',
                             controls: { $: 'itemlist',
                                 items: { $: 'studio.projectPages' },
-                                cssClass: 'studio-pages',
-                                features: { $: 'itemlist.selection',
-                                    autoSelectFirst: true,
-                                    databind: '%$globals/page%',
-                                    onSelection: { $: 'onNextTimer',
-                                        action: { $: 'writeValue',
-                                            to: '%$globals/profile_path%',
-                                            value: '{%$globals/project%}.{%$globals/page%}'
-                                        }
-                                    }
-                                },
                                 controls: { $: 'label',
-                                    title: { $: 'extractSuffix', separator: '.' },
-                                    cssClass: 'studio-page'
-                                }
+                                    cssClass: 'studio-page',
+                                    title: { $: 'extractSuffix', separator: '.' }
+                                },
+                                features: [
+                                    { $: 'itemlist.selection',
+                                        databind: '%$globals/page%',
+                                        onSelection: { $: 'onNextTimer',
+                                            action: { $: 'writeValue',
+                                                to: '%$globals/profile_path%',
+                                                value: '{%$globals/project%}.{%$globals/page%}'
+                                            }
+                                        },
+                                        autoSelectFirst: true
+                                    },
+                                    { $: 'css',
+                                        css: "{ list-style: none; padding: 0; margin: 0; margin-left: 20px; font-family: \"Arial\"}\n                li { list-style: none; display: inline-block; padding: 6px 10px; font-size: 12px; border: 1px solid transparent; cursor: pointer;}\n                li label { cursor: inherit; }\n                li.selected { background: #fff;  border: 1px solid #ccc;  border-top: 1px solid transparent; color: inherit;  }"
+                                    }
+                                ]
                             },
                             features: [
                                 { $: 'wait',
@@ -120,7 +123,17 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                             ]
                         }
                     ],
-                    style: { $: 'layout.vertical', spacing: '0' }
+                    features: [
+                        { $: 'group.watch', data: '%$globals/project%' },
+                        { $: 'feature.init',
+                            action: { $: 'rx.urlPath',
+                                base: 'studio',
+                                zoneId: 'studio.all',
+                                params: ['project', 'page', 'profile_path'],
+                                databind: '{%$globals%}'
+                            }
+                        }
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.jbart-logo', {
@@ -158,6 +171,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                             jbart.previewWindow = w;
                             jbart.previewjbart = w.jbart;
                             jbart.preview_jbart_widgets = w.jbart_widgets;
+                            document.title = cmp.project + ' with jBart';
                             // forward the studio zone to the preview widget so it will be updated
                             jb_ui.getZone('studio.all').then(function (zone) {
                                 zone.onStable.subscribe(function () {
