@@ -272,6 +272,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 }
             });
             jb_core_1.jb.component('studio.insertComp', {
+                type: 'action',
                 params: {
                     path: { as: 'string' },
                     comp: { as: 'string' },
@@ -281,6 +282,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 }
             });
             jb_core_1.jb.component('studio.wrapWithGroup', {
+                type: 'action',
                 params: {
                     path: { as: 'string' },
                 },
@@ -289,6 +291,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 }
             });
             jb_core_1.jb.component('studio.duplicate', {
+                type: 'action',
                 params: {
                     path: { as: 'string' },
                 },
@@ -297,16 +300,19 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 }
             });
             jb_core_1.jb.component('studio.newArrayItem', {
+                type: 'action',
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
                     return studio.model.modify(studio.model.addArrayItem, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.delete', {
+                type: 'action',
                 params: { path: { as: 'string' } },
                 impl: function (context, path) { return studio.model.modify(studio.model._delete, path, {}, context); }
             });
             jb_core_1.jb.component('studio.makeLocal', {
+                type: 'action',
                 params: { path: { as: 'string' } },
                 impl: function (context, path) { return studio.model.modify(studio.model.makeLocal, path, {}, context); }
             });

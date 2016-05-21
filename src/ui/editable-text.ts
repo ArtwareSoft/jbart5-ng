@@ -45,7 +45,7 @@ jb.component('editable-text.md-input',{
 })
 
 jb.component('editable-text.textarea', {
-	type: 'editableText.style',
+	type: 'editable-text.style',
 	impl :{$: 'customStyle', 
       features :{$: 'editable-text.bindField' },
       template: '<textarea %$field/modelExp%></textarea>',
@@ -53,7 +53,7 @@ jb.component('editable-text.textarea', {
 })
 
 jb.component('editable-text.codemirror', {
-	type: 'editableText.style',
+	type: 'editable-text.style',
 	params: {
 		cm_settings: { as: 'single' },
 		resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },

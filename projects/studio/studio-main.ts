@@ -275,6 +275,7 @@ jb.component('studio.compName-ref',{
 })
 
 jb.component('studio.insertComp',{
+	type: 'action',
 	params: { 
 		path: { as: 'string' },
 		comp: { as: 'string' },
@@ -284,6 +285,7 @@ jb.component('studio.insertComp',{
 })
 
 jb.component('studio.wrapWithGroup',{
+	type: 'action',
 	params: { 
 		path: { as: 'string' },
 	},
@@ -292,6 +294,7 @@ jb.component('studio.wrapWithGroup',{
 })
 
 jb.component('studio.duplicate',{
+	type: 'action',
 	params: { 
 		path: { as: 'string' },
 	},
@@ -300,6 +303,7 @@ jb.component('studio.duplicate',{
 })
 
 jb.component('studio.newArrayItem',{
+	type: 'action',
 	params: { path: { as: 'string' } },
 	impl: (context,path) => 
 		studio.model.modify(studio.model.addArrayItem, path, {},context)
@@ -307,11 +311,13 @@ jb.component('studio.newArrayItem',{
 
 
 jb.component('studio.delete',{
+	type: 'action',
 	params: { path: { as: 'string' } },
 	impl: (context,path) => studio.model.modify(studio.model._delete,path,{},context)
 })
 
 jb.component('studio.makeLocal',{
+	type: 'action',
 	params: { path: { as: 'string' } },
 	impl: (context,path) => studio.model.modify(studio.model.makeLocal,path,{},context)
 })

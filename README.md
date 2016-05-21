@@ -2,7 +2,12 @@
 
 ![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
 
-##Effective Visual Programming
+Visual development was broken in the world of web development, mostly because pre-defined visual components could not be re-used anymore.
+The industry accepts the fact that complex web apps can be developed only textually.
+
+However, jBart suggests a revolutionary approach for visual development of complex apps that actually works.
+
+##Visual Development Concepts
 - pick & edit (like in Chrome debugger)
 - work by example data
 - smart data/code guidance in context
@@ -15,6 +20,10 @@
 - less technical people can build complex business apps
 - develop larger projects
 - enhance team work effectiveness
+
+##jBart is written by itself
+- core is written in angular2
+- studio is written by itself (like the C compiler written in C)
 
 ##Who Use jBart?
 - large teams

@@ -510,11 +510,13 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                         return relevantSource(id);
                     })
                         .distinctUntilChanged()
+                        .skip(1)
                         .subscribe(function (x) {
                         return cmp.draw();
                     });
                     this.redrawEm // widget to show changed - no need to wait
                         .distinctUntilChanged()
+                        .skip(1)
                         .subscribe(function (x) {
                         return cmp.draw();
                     });

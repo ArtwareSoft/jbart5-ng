@@ -41,13 +41,14 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         var ref = {
             path: path,
             $jb_val: function (value) {
-                var parent = profileFromPath(parentPath(path));
-                if (!parent)
-                    return;
                 if (typeof value == 'undefined')
-                    return parent[this.path.split('~').pop()];
+                    return profileFromPath(this.path);
+                if (profileFromPath(parentPath(this.path)) == profileFromPath(this.path))
+                    var actual_path = parentPath(this.path);
                 else
-                    parent[this.path.split('~').pop()] = value;
+                    var actual_path = this.path;
+                var parent = profileFromPath(parentPath(actual_path));
+                parent[actual_path.split('~').pop()] = value;
             }
         };
         pathChangesEm.subscribe(function (fixer) { return ref.path = fixer.fix(ref.path); });

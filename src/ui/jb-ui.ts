@@ -439,11 +439,13 @@ export class jBartWidget {
 		  .map(id=>
 		  	relevantSource(id))
 		  .distinctUntilChanged()
+		  .skip(1)
 		  .subscribe(x => 
 		  	cmp.draw())
 
 		this.redrawEm // widget to show changed - no need to wait
 		  .distinctUntilChanged()
+		  .skip(1)
 		  .subscribe(
 		  	x => 
 		  	cmp.draw())
