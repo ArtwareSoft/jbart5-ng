@@ -169,7 +169,7 @@ jb.component('property-sheet.titles-left', {
         <jb_comp [comp]="ctrl.comp" class="property-ctrl"></jb_comp>
       </div>
     </div>`,
-    styles: `.property { margin-bottom: %$vSpacing%px; display: flex }
+    css: `.property { margin-bottom: %$vSpacing%px; display: flex }
       .property:last-child { margin-bottom:0px }
       .property>.property-title {
         width: %$titleWidth%px;
@@ -183,6 +183,49 @@ jb.component('property-sheet.titles-left', {
       .property>*:last-child { margin-right:0 }`
   }
 })
+
+jb.component('property-sheet.growing', {
+  type: 'group.style',
+  params: {
+    vSpacing: { as: 'number', defaultValue: 20 },
+    hSpacing: { as: 'number', defaultValue: 20 },
+    titleWidth: { as: 'number', defaultValue: 100 },
+  },
+  impl :{$: 'customStyle', 
+    features : {$: 'group.initGroup'},
+    methods: {
+        afterViewInit: ctx => cmp =>
+          jb.delay(1).then(() =>
+            $(cmp.elementRef.nativeElement).find('input,select')
+              .focus(e=>$(e.target).parents().filter('.property').addClass('focused'))
+              .blur(e=>$(e.target).parents().filter('.property').removeClass('focused'))
+          )
+    },
+    template: `<div>
+      <div *ngFor="let ctrl of ctrls" class="property">
+        <label class="property-title">{{ctrl.title}}</label>
+        <div class="input-and-toolbar">
+          <jb_comp [comp]="ctrl.comp"></jb_comp>
+          <jb_comp [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+        </div>
+      </div>
+      </div>
+    `,
+    css: `.property { margin-bottom: %$vSpacing%px; display: flex; position: relative; height: 20px }
+      .focused .input-and-toolbar { zoom: 150%; position: absolute; z-index: 500; transition: zoom 2s}
+      .input-and-toolbar { display: flex;margin-right:0;  }
+      .property:last-child { margin-bottom:0px }
+      .property>.property-title {
+        width: %$titleWidth%px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        vertical-align:top;
+        margin-top:2px;
+        font-size:14px;
+        margin-right: %$hSpacing%px;`
+  }
+})
+
 
 // Seems that ng.md is not too flexible and dynamic.
 // Needs to build the template with the input fields before loading the comp.

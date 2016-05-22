@@ -103,6 +103,8 @@ export function enrichComp(comp,ctrl_ctx) {
 		if (options.observable) comp.jbObservableFuncs.push(options.observable);
 		if (options.ctrlsEmFunc) comp.prototype.ctrlsEmFunc=options.ctrlsEmFunc;
 		if (options.extendCtx) comp.prototype.extendCtx=options.extendCtx;
+		
+		if (options.extendComp) jb.extend(this,options.extendComp);
 
 		if (options.input)
 			Reflect.decorate([Input(), Reflect.metadata('design:type', Object)], comp.prototype, options.input, void 0);
@@ -266,7 +268,7 @@ export class jbComp {
   constructor(private componentResolver:ComponentResolver) {}
 
   ngOnChanges() {
-    this.componentResolver.resolveComponent(this.comp).then(componentFactory => {
+    this.comp && this.componentResolver.resolveComponent(this.comp).then(componentFactory => {
         this.flattenjBComp(this.childView.createComponent(componentFactory))
     });
   }
@@ -276,6 +278,7 @@ export class jbComp {
   	var cmp = this;
   	if (!cmp.flatten) 
   		return;
+  	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
 	var parentView = this.childView.parentInjector._view;
 	var parentCmp = parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
   	if (cmp._deleted_parent)

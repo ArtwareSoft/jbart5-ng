@@ -7,7 +7,7 @@ jb.component('wait', {
   params: { 
     for: { essential: true },
     loadingControl: { type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
-    error: { type: 'control', defaultValue: { $:'label', title: 'error: %$error%', styles: ['* {color: red; font-weight: bold}']} , dynamic: true },
+    error: { type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
   },
   impl: function(context,waitFor,loading,error) { 
     return {
@@ -57,8 +57,7 @@ jb.component('group.watch', {
   params: {
     data: { essential: true, dynamic: true },
   },
-  impl: function(context, data,emptyGroupWhenDataEmpty) {
-    return {
+  impl: (context, data) => ({
       ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
         return cmp.jbEmitter
           .map(()=> 
@@ -69,7 +68,7 @@ jb.component('group.watch', {
           );
       },
       observable: () => {} // to create jbEmitter
-  }}
+  })
 })
 
 jb.component('feature.init', {
@@ -154,6 +153,16 @@ jb.component('field.onChange', {
             .subscribe(x=>
               action(context.setData(x)));
     }
+  })
+})
+
+jb.component('field.toolbar', {
+  type: 'feature',
+  params: {
+    toolbar: { type: 'control', essential: true, dynamic: true },
+  },
+  impl: (context,toolbar) => ({
+    extendComp: { jb_toolbar: toolbar() }
   })
 })
 

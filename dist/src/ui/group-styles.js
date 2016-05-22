@@ -97,7 +97,29 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <jb_comp [comp]=\"ctrl.comp\" class=\"property-ctrl\"></jb_comp>\n      </div>\n    </div>",
-                    styles: ".property { margin-bottom: %$vSpacing%px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;\n      }\n      .property>*:last-child { margin-right:0 }"
+                    css: ".property { margin-bottom: %$vSpacing%px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;\n      }\n      .property>*:last-child { margin-right:0 }"
+                }
+            });
+            jb_core_1.jb.component('property-sheet.growing', {
+                type: 'group.style',
+                params: {
+                    vSpacing: { as: 'number', defaultValue: 20 },
+                    hSpacing: { as: 'number', defaultValue: 20 },
+                    titleWidth: { as: 'number', defaultValue: 100 },
+                },
+                impl: { $: 'customStyle',
+                    features: { $: 'group.initGroup' },
+                    methods: {
+                        afterViewInit: function (ctx) { return function (cmp) {
+                            return jb_core_1.jb.delay(1).then(function () {
+                                return $(cmp.elementRef.nativeElement).find('input,select')
+                                    .focus(function (e) { return $(e.target).parents().filter('.property').addClass('focused'); })
+                                    .blur(function (e) { return $(e.target).parents().filter('.property').removeClass('focused'); });
+                            });
+                        }; }
+                    },
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    css: ".property { margin-bottom: %$vSpacing%px; display: flex; position: relative; height: 20px }\n      .focused .input-and-toolbar { zoom: 150%; position: absolute; z-index: 500; transition: zoom 2s}\n      .input-and-toolbar { display: flex;margin-right:0;  }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;"
                 }
             });
             // Seems that ng.md is not too flexible and dynamic.

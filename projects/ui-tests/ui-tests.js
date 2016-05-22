@@ -355,6 +355,27 @@ ngIf :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer'] },
 },
 
+'property-sheet.growing' :{$: 'ng2-ui-test',  
+  control :{$: 'group',
+          style :{$: 'property-sheet.growing'},
+          controls: [
+              { $: 'editable-text', 
+                title: 'name', 
+                databind: '%$person/name%',
+                features :{$: 'field.toolbar', 
+                  toolbar :{$: 'button',
+                      title: 'more',
+                      style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                    }
+                }
+              },
+              { $: 'editable-text', title: 'age', databind: '%$person/age%' },
+          ]
+  },
+  expectedHtmlResult: { $: 'contains', text: ['Homer'] },
+},
+
+
 'property-sheet.titles-above' :{$: 'ng2-ui-test',  
   control :{$: 'group',
     controls : [

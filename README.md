@@ -1,11 +1,12 @@
-#Visual Development with angular2
-
-![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
+#Visual Development with Angular2
 
 Visual development was broken in the world of web development, mostly because pre-defined visual components could not be re-used anymore.
 The industry accepts the fact that complex web apps can be developed only textually.
 
-However, jBart suggests a revolutionary approach for visual development of complex apps that actually works.
+jBart suggests a revolutionary approach for visual development of complex apps that actually works.
+
+![](https://storage.googleapis.com/jbartcommunity/jbart5-material.png)
+
 
 ##Visual Development Concepts
 - pick & edit (like in Chrome debugger)

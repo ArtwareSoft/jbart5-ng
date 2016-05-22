@@ -111,6 +111,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                 comp.prototype.ctrlsEmFunc = options.ctrlsEmFunc;
             if (options.extendCtx)
                 comp.prototype.extendCtx = options.extendCtx;
+            if (options.extendComp)
+                jb_core_1.jb.extend(this, options.extendComp);
             if (options.input)
                 Reflect.decorate([core_1.Input(), Reflect.metadata('design:type', Object)], comp.prototype, options.input, void 0);
             options.template = options.template && context.exp(options.template);
@@ -405,7 +407,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                 }
                 jbComp.prototype.ngOnChanges = function () {
                     var _this = this;
-                    this.componentResolver.resolveComponent(this.comp).then(function (componentFactory) {
+                    this.comp && this.componentResolver.resolveComponent(this.comp).then(function (componentFactory) {
                         _this.flattenjBComp(_this.childView.createComponent(componentFactory));
                     });
                 };
@@ -414,6 +416,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                     var cmp = this;
                     if (!cmp.flatten)
                         return;
+                    // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
                     var parentView = this.childView.parentInjector._view;
                     var parentCmp = parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
                     if (cmp._deleted_parent)

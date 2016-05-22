@@ -88,22 +88,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     }
                 }
             });
-            jb_core_1.jb.component('editable-boolean.expand-collapse-plus', {
-                type: 'editable-boolean.style',
-                impl: function (context) {
-                    return {
-                        template: "<button><span class=\"frame\"></span><span class=\"line1\"></span><span [ngClass]=\"{line2: !yesNo}\"></span></button>",
-                        host: { '(click)': 'toggle()' },
-                        styles: [
-                            'button { margin-left: 3px; border: none; background: none; width: 11px; height: 11px; position: relative; padding: 0;}',
-                            'button .frame { background: #F8FFF9; border-radius: 3px;  border: 1px solid #91B193;  position: absolute;  top: 0px;  left: 0px;  right: 0px;  bottom: 0px; }',
-                            'button .line1 { position: absolute; background: #91B193; top: 5px; left: 3px; width: 5px; height: 1px; box-shadow: 1px 1px 1px -1px #89A385; }',
-                            'button .line2 { position: absolute; background: #91B193; left: 5px; top: 3px; height: 5px; width: 1px; box-shadow: 1px 1px 1px -1px #89A385; }',
-                        ],
-                        afterViewInit: function (cmp) { return cmp.bindViaSettings(); }
-                    };
-                }
-            });
         }
     }
 });

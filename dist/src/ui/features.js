@@ -19,7 +19,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 params: {
                     for: { essential: true },
                     loadingControl: { type: 'control', defaultValue: { $: 'label', title: 'loading ...' }, dynamic: true },
-                    error: { type: 'control', defaultValue: { $: 'label', title: 'error: %$error%', styles: ['* {color: red; font-weight: bold}'] }, dynamic: true },
+                    error: { type: 'control', defaultValue: { $: 'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}' }, dynamic: true },
                 },
                 impl: function (context, waitFor, loading, error) {
                     return {
@@ -65,21 +65,19 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 params: {
                     data: { essential: true, dynamic: true },
                 },
-                impl: function (context, data, emptyGroupWhenDataEmpty) {
-                    return {
-                        ctrlsEmFunc: function (originalCtrlsEmFunc, ctx, cmp) {
-                            return cmp.jbEmitter
-                                .map(function () {
-                                return jb_core_1.jb.val(data());
-                            })
-                                .distinctUntilChanged()
-                                .flatMap(function (x) {
-                                return originalCtrlsEmFunc(ctx);
-                            });
-                        },
-                        observable: function () { } // to create jbEmitter
-                    };
-                }
+                impl: function (context, data) { return ({
+                    ctrlsEmFunc: function (originalCtrlsEmFunc, ctx, cmp) {
+                        return cmp.jbEmitter
+                            .map(function () {
+                            return jb_core_1.jb.val(data());
+                        })
+                            .distinctUntilChanged()
+                            .flatMap(function (x) {
+                            return originalCtrlsEmFunc(ctx);
+                        });
+                    },
+                    observable: function () { } // to create jbEmitter
+                }); }
             });
             jb_core_1.jb.component('feature.init', {
                 type: 'feature',
@@ -169,6 +167,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             return action(context.setData(x));
                         });
                     }
+                }); }
+            });
+            jb_core_1.jb.component('field.toolbar', {
+                type: 'feature',
+                params: {
+                    toolbar: { type: 'control', essential: true, dynamic: true },
+                },
+                impl: function (context, toolbar) { return ({
+                    extendComp: { jb_toolbar: toolbar() }
                 }); }
             });
             jb_core_1.jb.component('css', {

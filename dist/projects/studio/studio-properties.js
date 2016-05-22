@@ -100,23 +100,20 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             jb_core_1.jb.component('studio.property-primitive', {
                 type: 'control',
                 params: { path: { as: 'string' } },
-                impl: { $: 'group',
-                    style: { $: 'layout.horizontal', spacing: 2 },
+                impl: { $: 'editable-text',
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    controls: [
-                        { $: 'editable-text',
-                            features: [
-                                { $: 'css', css: 'input { font-size: 12px; padding-left: 2px; width: 145px;}' },
-                                { $: 'studio.undo-support', path: '%$path%' }
-                            ],
-                            databind: { $: 'studio.ref', path: '%$path%' }
-                        },
-                        { $: 'button',
-                            title: 'more',
-                            style: { $: 'button.studio-properties-toolbar', icon: 'more_vert' },
-                            action: { $: 'studio.open-property-menu', path: '%$path%' },
+                    databind: { $: 'studio.ref', path: '%$path%' },
+                    features: [
+                        { $: 'css', css: "input { font-size: 12px; padding-left: 2px; width: 145px;} input.focused {width: 300px; transition: width: 1s}" },
+                        { $: 'studio.undo-support', path: '%$path%' },
+                        { $: 'field.toolbar',
+                            toolbar: { $: 'button',
+                                title: 'more',
+                                style: { $: 'button.md-icon-12', icon: 'more_vert' },
+                                action: { $: 'studio.open-property-menu', path: '%$path%' },
+                            }
                         }
-                    ]
+                    ],
                 }
             });
             jb_core_1.jb.component('studio.property-enum', {
@@ -165,7 +162,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 },
                                 { $: 'button',
                                     title: 'more',
-                                    style: { $: 'button.studio-properties-toolbar', icon: 'more_vert' },
+                                    style: { $: 'button.md-icon-12', icon: 'more_vert' },
                                     action: { $: 'studio.open-property-menu', path: '%$path%' },
                                 },
                             ]
@@ -206,7 +203,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 },
                                 { $: 'button',
                                     title: 'add',
-                                    style: { $: 'button.studio-properties-toolbar', icon: 'add' },
+                                    style: { $: 'button.md-icon-12', icon: 'add' },
                                     action: { $: 'studio.newArrayItem', path: '%$path%' },
                                     features: { $: 'css', css: '.material-icons { font-size: 16px }' },
                                 },
@@ -424,20 +421,35 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <jb_comp [comp]=\"ctrl.comp\" class=\"property-ctrl\"></jb_comp>\n      </div>\n      </div>\n    ",
-                    css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n      },\n      .property>*:last-child { margin-right:0 }"
+                    methods: {
+                        afterViewInit: function (ctx) { return function (cmp) {
+                            return jb_core_1.jb.delay(1).then(function () {
+                                return $(cmp.elementRef.nativeElement).find('input,select')
+                                    .focus(function (e) {
+                                    $(e.target).parents().filter('.property').siblings().find('input').removeClass('focused');
+                                    $(e.target).addClass('focused');
+                                });
+                            });
+                        }; }
+                    },
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; margin-right:0;  }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
-            jb_core_1.jb.component('button.studio-properties-toolbar', {
-                type: 'button.style',
-                params: {
-                    icon: { as: 'string', default: 'code' },
-                },
-                impl: { $: 'customStyle',
-                    template: "<span><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\">\n                <i class=\"material-icons\">%$icon%</i>\n              </button></span>",
-                    css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      "
-                }
-            });
+            // jb.component('button.studio-properties-toolbar', {
+            //   type: 'button.style',
+            //   params: {
+            //     icon: { as: 'string', default: 'code' },
+            //   },
+            //   impl :{$: 'customStyle', 
+            //       template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
+            //                 <i class="material-icons">%$icon%</i>
+            //               </button></span>`,
+            //       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
+            //      	.material-icons { font-size:12px;  }
+            //       `
+            //   }
+            // })
             jb_core_1.jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
