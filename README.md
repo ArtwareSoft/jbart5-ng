@@ -26,7 +26,7 @@ jBart suggests a revolutionary approach for visual development of complex apps t
 - core is written in angular2
 - studio is written by itself (like the C compiler written in C)
 
-##Who Use jBart?
+##Who Uses jBart?
 - large teams
 - hybrid teams: architects build the components, implementers build the applications
 
