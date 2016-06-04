@@ -59,7 +59,79 @@ jb_component('inner-label3-tst', {
 })
 
 
-jb_tests('ng-ui-tests', {
+jb_tests('md-ui-tests', {
+  'md-button' :{$: 'ng2-ui-test',  
+    control :{$: 'button', title: 'ccc', 
+        style :{$: 'button.md-raised' }
+    },
+    expectedHtmlResult: { $: 'contains', text: 'cc' }
+  },
+
+  'button.md-icon' :{$: 'ng2-ui-test',  
+    control :{$: 'button', 
+      title: 'ccc',
+      style :{$: 'button.md-icon', icon: 'save' }, 
+    },
+    expectedHtmlResult: { $: 'contains', text: 'cc' }
+  },
+
+  'md-expandable-group' :{$: 'ng2-ui-test',  
+    control :{$: 'group', title: 'test1',
+      style :{$: 'group.md-expandable'}, 
+      controls: 
+        [ 
+          { $: 'button', title: 'button1' } ,
+          { $: 'label' , title: 'label1' } ,
+        ]
+    },
+    expectedHtmlResult: { $: 'contains', text: ['test1','button1','label1'] }
+  },
+  'editable-text-in-md-property-sheet' :{$: 'ng2-ui-test',  
+    control :{$: 'group',
+      controls : [
+        {$: 'group',
+              controls: [
+                { $: 'editable-text', title: 'name', databind: '%$person/name%', style :{$: 'editable-text.md-input'} },
+                { $: 'editable-text', title: 'name', databind: '%$person/name%', style :{$: 'editable-text.md-input'} },
+              ]
+        },
+        { $: 'label', title: '%$person/name%' }
+      ]
+    },
+    expectedHtmlResult: { $: 'contains', text: ['Homer'] },
+  },
+  'dialog-md-alert' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+    control :{$: 'button', title: 'Open Dialog', $click: true,
+        action :{$: 'openDialog', 
+          style :{$: 'dialog.md-dialog-ok-cancel'},
+          title: 'Hello' , 
+          content :{$: 'label', title: 'Hello Dialog' },      
+        } 
+    },
+    expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
+  },
+
+  'md-dialog-modal' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+    control :{$: 'button', title: 'Open Dialog', $click: true,
+        action :{$: 'openDialog', 
+          modal: true,
+          style :{$: 'dialog.md-dialog-ok-cancel' },
+          title: 'Hello' , 
+          content :{$: 'label', title: 'Hello Dialog' },      
+        } 
+    },
+    expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
+  },
+'md-tabs' :{$: 'ng2-ui-test', 
+  control :{$: 'tabs',
+      style :{$: 'tabs.md' },
+      tabs:[
+        {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
+        {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
+    ]
+  },
+  expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
+},
 
 })
 
@@ -75,14 +147,6 @@ button :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: 'cc' }
 },
 
-'button.md-icon' :{$: 'ng2-ui-test',  
-  control :{$: 'button', 
-    title: 'ccc',
-    style :{$: 'button.md-icon', icon: 'save' }, 
-  },
-  expectedHtmlResult: { $: 'contains', text: 'cc' }
-},
-
 group :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [ 
@@ -91,18 +155,6 @@ group :{$: 'ng2-ui-test',
     ]
   },
   expectedHtmlResult: { $: 'contains', text: ['button1','label1'] }
-},
-
-'md-expandable-group' :{$: 'ng2-ui-test',  
-  control :{$: 'group', title: 'test1',
-    style :{$: 'group.md-expandable'}, 
-    controls: 
-      [ 
-        { $: 'button', title: 'button1' } ,
-        { $: 'label' , title: 'label1' } ,
-      ]
-  },
-  expectedHtmlResult: { $: 'contains', text: ['test1','button1','label1'] }
 },
 
 buttonClick :{$: 'ng2-ui-test',  
@@ -128,7 +180,7 @@ resource :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer'] },
 },
 
-styles :{$: 'ng2-ui-test',  
+'features-css' :{$: 'ng2-ui-test',  
   control :{$: 'label', 
     title: 'Hello World2', 
     features :{ $css: '{color: cyan; font-weight: bold}' },
@@ -175,7 +227,7 @@ itemlist :{$: 'ng2-ui-test',
       controls :{$: 'label', title: '%name%' } 
     },
   ]},
-  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson - Homer Simpson', 'Bart Simpson - Bart Simpson'] },
+  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', 'Bart Simpson'] },
 },
 
 tree :{$: 'ng2-ui-test',  
@@ -340,21 +392,6 @@ ngIf :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer'] },
 },
 
-'editable-text-in-md-property-sheet' :{$: 'ng2-ui-test',  
-  control :{$: 'group',
-    controls : [
-      {$: 'group',
-            controls: [
-              { $: 'editable-text', title: 'name', databind: '%$person/name%', style :{$: 'editable-text.md-input'} },
-              { $: 'editable-text', title: 'name', databind: '%$person/name%', style :{$: 'editable-text.md-input'} },
-            ]
-      },
-      { $: 'label', title: '%$person/name%' }
-    ]
-  },
-  expectedHtmlResult: { $: 'contains', text: ['Homer'] },
-},
-
 'property-sheet.growing' :{$: 'ng2-ui-test',  
   control :{$: 'group',
           style :{$: 'property-sheet.growing'},
@@ -372,7 +409,32 @@ ngIf :{$: 'ng2-ui-test',
               { $: 'editable-text', title: 'age', databind: '%$person/age%' },
           ]
   },
-  expectedHtmlResult: { $: 'contains', text: ['Homer'] },
+  expectedHtmlResult: { $: 'contains', text: ['name'] },
+},
+
+'property-sheet.style-on-focus' :{$: 'ng2-ui-test',  
+  control :{$: 'group',
+          style :{$: 'property-sheet.style-on-focus'},
+          controls: [
+              { $: 'editable-text', 
+                title: 'name', 
+                databind: '%$person/name%',
+                features : [
+                  {$: 'field.toolbar', 
+                    toolbar :{$: 'button',
+                        title: 'more',
+                        style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                      }
+                  },
+                  {$: 'field.style-on-focus', 
+                    style :{$: 'editable-text.codemirror', mode: 'javascript', css: '{margin-left: 30px; z-index: 200; position: relative; width: 300px; height: 200px }'}
+                  },
+                ]
+              },
+              { $: 'editable-text', title: 'age', databind: '%$person/age%' },
+          ]
+  },
+  expectedHtmlResult: { $: 'contains', text: ['name'] },
 },
 
 
@@ -475,7 +537,7 @@ ngIf :{$: 'ng2-ui-test',
       }
     ]
   },
-  expectedHtmlResult: { $: 'contains', text: ['frame'] },
+  expectedHtmlResult: { $: 'contains', text: ['inner text'] },
 },
 
 'code-mirror' :{$: 'ng2-ui-test',  
@@ -538,30 +600,6 @@ dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},
   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
 },
 
-'dialog-md-alert' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-  control :{$: 'button', title: 'Open Dialog', $click: true,
-      action :{$: 'openDialog', 
-        style :{$: 'dialog.md-dialog-with-close'},
-        title: 'Hello' , 
-        content :{$: 'label', title: 'Hello Dialog' },      
-      } 
-  },
-  expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
-},
-
-'md-dialog-modal' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-  control :{$: 'button', title: 'Open Dialog', $click: true,
-      action :{$: 'openDialog', 
-        modal: true,
-        style :{$: 'dialog.md-dialog-ok-cancel' },
-        title: 'Hello' , 
-        content :{$: 'label', title: 'Hello Dialog' },      
-      } 
-  },
-  expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
-},
-
-
 'popup-menu' :{$: 'ng2-ui-test', 
   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
       controls: 
@@ -584,8 +622,8 @@ dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},
   expectedHtmlResult :{$: 'contains', text: ['name','age'] },
 },
 
-'tab-control' :{$: 'ng2-ui-test', 
-  control :{$: 'tab-control',
+'tabs' :{$: 'ng2-ui-test', 
+  control :{$: 'tabs',
       tabs:[
         {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
@@ -594,9 +632,9 @@ dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},
   expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
 },
 
-// 'tab-control.accordion' :{$: 'ng2-ui-test', 
-//   control :{$: 'tab-control',
-//       style :{$: 'tab-control.accordion'},
+// 'tabs.accordion' :{$: 'ng2-ui-test', 
+//   control :{$: 'tabs',
+//       style :{$: 'tabs.accordion'},
 //       tabs:[
 //         {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
 //         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},

@@ -87,7 +87,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     }
     function evalProfile(prof_str) {
         try {
-            return eval("(" + prof_str + ")");
+            return eval(prof_str);
         }
         catch (e) {
             jb_core_1.jb.logException(e, 'eval profile:' + prof_str);

@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import {NodeModel,jbTree} from 'jb-ui/tree/tree';
+
 import {Directive, Component, View, ElementRef, Injector, Input} from '@angular/core';
 import {Observable,Subject} from 'rxjs/Rx';
 

@@ -31,19 +31,6 @@ jb.component('editable-text.input',{
 	}
 })
 
-jb.component('editable-text.md-input',{
-  type: 'editable-text.style',
-  impl :{$: 'customStyle', 
-      features :{$: 'editable-text.bindField' },
-      template: `<span><md-input %$field.modelExp% placeholder="{{title}}"></md-input></span>`,
-      methods: {
-      	init: ctx => cmp => {
-      		cmp.title = ctx.vars.$model.title();
-      	}
-      }
-	}
-})
-
 jb.component('editable-text.textarea', {
 	type: 'editable-text.style',
 	impl :{$: 'customStyle', 
@@ -68,7 +55,7 @@ jb.component('editable-text.codemirror', {
 			init: function(cmp) {
 				mode = mode || 'javascript';
 				var field = context.vars.field;
-				cm_settings = { 
+				cm_settings = jb.extend(cm_settings||{}, { 
 					mode: mode, 
 					lineWrapping: lineWrapping,
 					theme: 'solarized light', 
@@ -77,7 +64,7 @@ jb.component('editable-text.codemirror', {
 						'Ctrl-Space': 'autocomplete',
 						'Ctrl-Enter': () => {}
 					},
-				};
+				});
 				var $el = $(cmp.elementRef.nativeElement);
 				var $textarea = $el.findIncludeSelf('textarea');
 				$textarea.val(field.getValue());

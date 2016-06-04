@@ -1,18 +1,18 @@
-System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
+System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var rxjs_1, jb_1, jb_ui;
+    var Subject_1, Observable_1, jb_1, jb_ui;
     function tap(label) { return function (ctx) { console.log('tap' + label || '', ctx.data); return ctx.data; }; }
     exports_1("tap", tap);
     function concat(obs_array) {
-        return rxjs_1.Observable.concat.apply(rxjs_1.Observable.of(), obs_array)
+        return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), obs_array)
             .map(function (x) { return (x instanceof jb_1.jb.Ctx) ? x.data : x; });
     }
     exports_1("concat", concat);
     function refObservable(ref, ctx) {
         if (!ctx.vars.ngZone) {
             console.log('no ngZone in context');
-            return rxjs_1.Observable.of();
+            return Observable_1.Observable.of();
         }
         return ctx.vars.ngZone.onUnstable
             .map(function () { return jb_1.jb.val(ref); })
@@ -22,17 +22,17 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
     function observableFromCtx(ctx) {
         var res, obj = ctx.data;
         if (!obj)
-            return rxjs_1.Observable.of(ctx.setData('starter'));
+            return Observable_1.Observable.of(ctx.setData('starter'));
         else if (obj.$pipe)
-            return obj.$pipe(rxjs_1.Observable.of(ctx.setData('starter')));
+            return obj.$pipe(Observable_1.Observable.of(ctx.setData('starter')));
         else if (obj.subscribe)
             return mapToCtx(obj);
         else if (obj.then)
-            return mapToCtx(rxjs_1.Observable.fromPromise(obj));
+            return mapToCtx(Observable_1.Observable.fromPromise(obj));
         else if (Array.isArray(obj))
-            return mapToCtx(rxjs_1.Observable.fromArray(obj));
+            return mapToCtx(Observable_1.Observable.fromArray(obj));
         else
-            return rxjs_1.Observable.of(ctx);
+            return Observable_1.Observable.of(ctx);
         function mapToCtx(obs) {
             return obs.map(function (x) { return (x instanceof jb_1.jb.Ctx) ? x : ctx.setData(x); });
         }
@@ -45,7 +45,7 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
             return aggregated.concatMap(function (ctx) {
                 //var ctx = context.setData(ctx.data);
                 var res = jb_1.jb.toarray(ctx.run(prof)).map(function (data) { return ctxWithVar(ctx.setData(data), prof); });
-                return rxjs_1.Observable.concat.apply(rxjs_1.Observable.of(), res.map(function (ctx2) { return observableFromCtx(ctx2).catch(function (e) { debugger; }); }));
+                return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) { return observableFromCtx(ctx2).catch(function (e) { debugger; }); }));
             });
         }, observable);
         function ctxWithVar(ctx, prof) {
@@ -58,7 +58,7 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
     function extendSubject(observable, subject, pipe, context) {
         if (pipe) {
             ret = toRxElem(pipe, context)(observable);
-            if (rxjs_1.Observable.isObservable(ret))
+            if (Observable_1.Observable.isObservable(ret))
                 observable = ret;
         }
         observable.subscribe(function (x) { return subject.next(x); });
@@ -79,11 +79,16 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
     exports_1("toRxElem", toRxElem);
     return {
         setters:[
-            function (rxjs_1_1) {
-                rxjs_1 = rxjs_1_1;
+            function (Subject_1_1) {
+                Subject_1 = Subject_1_1;
                 exports_1({
-                    "Observable": rxjs_1_1["Observable"],
-                    "Subject": rxjs_1_1["Subject"]
+                    "Subject": Subject_1_1["Subject"]
+                });
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
+                exports_1({
+                    "Observable": Observable_1_1["Observable"]
                 });
             },
             function (jb_1_1) {
@@ -141,7 +146,7 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
                 impl: function (context, item, keepOrder) {
                     return { $pipe: function (obs) {
                             return obs.flatMap(function (ctx) {
-                                return rxjs_1.Observable.merge.apply(rxjs_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) { return observableFromCtx(ctx.setData(data)); }));
+                                return Observable_1.Observable.merge.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) { return observableFromCtx(ctx.setData(data)); }));
                             });
                         }
                     };
@@ -155,9 +160,9 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
                 impl: function (context, item, keepOrder) {
                     return { $pipe: function (obs) {
                             var parallel_results = [], emitted = 0;
-                            var out = new rxjs_1.Subject();
+                            var out = new Subject_1.Subject();
                             obs.flatMap(function (ctx, i) {
-                                return rxjs_1.Observable.concat.apply(rxjs_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) {
+                                return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) {
                                     var res = observableFromCtx(ctx.setData(data));
                                     res.subscribe(function (x) {
                                         parallel_results[i] = parallel_results[i] || [];
@@ -196,8 +201,8 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
                     pipe: { type: 'rx.elem', dynamic: true, defaultValue: { $: 'rx.distinctUntilChanged' } },
                 },
                 impl: function (context, pipe) {
-                    var subject = new rxjs_1.Subject();
-                    return rxjs_1.Subject.create(function (x) { return subject.next(x); }, pipe().$pipe(subject));
+                    var subject = new Subject_1.Subject();
+                    return Subject_1.Subject.create(function (x) { return subject.next(x); }, pipe().$pipe(subject));
                 }
             });
             jb_1.jb.component('rx.emit', {
@@ -224,7 +229,7 @@ System.register(['rxjs', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, conte
                     var dataParent = jb_1.jb.val(databind);
                     if (!dataParent || typeof dataParent != 'object')
                         return console.log('no databind for rx.urlPath');
-                    var subject = new rxjs_1.Subject();
+                    var subject = new Subject_1.Subject();
                     if (jb_ui.injector) {
                         jbart.location = jbart.location || jb_ui.injector.get(Location);
                     }

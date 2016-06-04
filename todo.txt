@@ -1,4 +1,4 @@
-property-sheet.md
+build the jbart.io site like https://material.angular.io/
 
 wrap as group should open group and select inner
 	control-tree context menu as tree aspect
@@ -6,9 +6,9 @@ wrap as group should open group and select inner
 			control-tree-expand(path)
 			control-tree-select(path,focus)
 
-features.var
+feature.var
 animation in expand/collapse
-select2
+select with groups (look at select2 for css)
 
 fix theme var name
  editable-text.default-style-profile => them.editable-text

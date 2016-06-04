@@ -4,6 +4,8 @@ if (!window.jbPackaged) {
   window.jbart_widgets = {};
 
   [
+    'bower_components/jquery/dist/jquery.js',
+
     'src/core/core.js',
     'src/core/data-binding.js',
     'src/core/utils.js',
@@ -11,26 +13,38 @@ if (!window.jbPackaged) {
     'src/core/functions.js',
 
      // code mirror
-    "bower_components/codemirror/lib/codemirror.js",
-    "bower_components/codemirror/mode/xml/xml.js",
-    "bower_components/codemirror/mode/javascript/javascript.js",
-    "bower_components/codemirror/mode/css/css.js",
-    "bower_components/codemirror/mode/htmlmixed/htmlmixed.js",
-    "bower_components/codemirror/addon/hint/show-hint.js",
-    "bower_components/codemirror/addon/hint/javascript-hint.js",
-    "bower_components/codemirror/addon/hint/xml-hint.js",
-    "bower_components/codemirror/addon/hint/html-hint.js",
-    "bower_components/codemirror/addon/fold/foldgutter.js",
-    "bower_components/codemirror/addon/selection/active-line.js",
-    "bower_components/codemirror/lib/codemirror.css",
-    "bower_components/codemirror/theme/solarized.css",
 
-    "bower_components/dragula.js/dist/dragula.js",
-    "bower_components/dragula.js/dist/dragula.css",
+    'bower_components/codemirror/lib/codemirror.js',
+    'bower_components/codemirror/mode/xml/xml.js',
+    'bower_components/codemirror/mode/javascript/javascript.js',
+    'bower_components/codemirror/mode/css/css.js',
+    'bower_components/codemirror/mode/htmlmixed/htmlmixed.js',
+    'bower_components/codemirror/addon/hint/show-hint.js',
+    'bower_components/codemirror/addon/hint/javascript-hint.js',
+    'bower_components/codemirror/addon/hint/xml-hint.js',
+    'bower_components/codemirror/addon/hint/html-hint.js',
+    'bower_components/codemirror/addon/fold/foldgutter.js',
+    'bower_components/codemirror/addon/selection/active-line.js',
+    'bower_components/codemirror/lib/codemirror.css',
+    'bower_components/codemirror/theme/solarized.css',
 
-    "css/font.css", // material fonts
+    'node_modules/es6-shim/es6-shim.min.js',
+    'node_modules/zone.js/dist/zone.js',
+    'node_modules/reflect-metadata/Reflect.js',
+    'node_modules/systemjs/dist/system.src.js',
+    'node_modules/rxjs/bundles/Rx.js',
 
-    "node_modules/history/umd/history.js"
+//    'node_modules/@angular/core/core.umd.js',
+//    'node_modules/@angular/common/common.umd.js',
+//    'node_modules/@angular/compiler/compiler.umd.js',
+//    'node_modules/@angular/platform-browser/platform-browser.umd.js',
+
+    'bower_components/dragula.js/dist/dragula.js',
+    'bower_components/dragula.js/dist/dragula.css',
+
+    'css/font.css', // material fonts
+
+    'node_modules/history/umd/history.js'
 
   ].
   forEach(function(file) {
@@ -68,20 +82,28 @@ jb_modules =
 'jb-ui/picklist',
 'jb-ui/features',
 'jb-ui/group',
-'jb-ui/group-styles',
-'jb-ui/md-layout',
 'jb-ui/button',
-'jb-ui/button-md-styles',
 'jb-ui/itemlist',
 'jb-ui/ui-common',
 'jb-ui/image',
 'jb-ui/pulldown-menu',
 'jb-ui/itemlog',
-'jb-ui/tab',
+'jb-ui/tabs',
 'jb-ui/slider',
 'jb-ui/sidenav',
 'jb-ui/divider',
 'jb-ui/theme',
+
+'jb-ui/styles/group-styles',
+'jb-ui/styles/property-sheet-styles',
+'jb-ui/styles/layout-styles',
+
+'jb-ui/md-styles/button-md',
+'jb-ui/md-styles/dialog-md',
+'jb-ui/md-styles/input-md',
+'jb-ui/md-styles/group-md',
+'jb-ui/md-styles/tabs-md',
+
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
@@ -95,7 +117,7 @@ jb_system_config = {
         'testing': '/dist/src/testing',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
-        'rxjs' : '/node_modules/rxjs',
+//        'rxjs' : '/node_modules/rxjs',
         '@angular2-material': '/node_modules/@angular2-material',
         '@angular':  '/node_modules/@angular'
       },
@@ -118,14 +140,17 @@ jb_system_config = {
           format: 'cjs',
           defaultExtension: 'js',
         },
-        'rxjs': { main: 'Rx.js', defaultExtension: 'js' },
-        '@angular/core': { main: 'index.js', defaultExtension: 'js' },
-        '@angular/common': { main: 'index.js', defaultExtension: 'js' },
-        '@angular/compiler': { main: 'index.js', defaultExtension: 'js' },
-        '@angular/platform-browser': { main: 'index.js', defaultExtension: 'js' },
-        '@angular/platform-browser-dynamic': { main: 'index.js', defaultExtension: 'js' },
+//        'rxjs': { main: 'Rx.js', defaultExtension: 'js' },
+        '@angular/core': { main: 'core.umd.js', defaultExtension: 'js' },
+        '@angular/common': { main: 'common.umd.js', defaultExtension: 'js' },
+        '@angular/compiler': { main: 'compiler.umd.js', defaultExtension: 'js' },
+        '@angular/platform-browser': { main: 'platform-browser.umd.js', defaultExtension: 'js' },
+        '@angular/platform-browser-dynamic': { main: 'platform-browser-dynamic.umd.js', defaultExtension: 'js' },
       }
 }
+
+
+
 
 
 function jbLoadModules(modules) { 

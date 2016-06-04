@@ -2,18 +2,18 @@
 <html>
 
   <head>
-    <title>Material2 Demo with jBart</title>
+    <title>Studio Helper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
   <script type="text/javascript" src="/src/loader/load-jbart.js"></script>
   </head>
 
 
 <body>
-  <jbart compID="material-demo.main">loading ...</jbart>
+  <jbart compID="studio-helper.edit-style">loading ...</jbart>
 
 <script>
 
-jbLoadModules(jb_modules.concat(['projects/material-demo/material-demo']))
+jbLoadModules(jb_modules.concat(['projects/studio-helper/studio-helper']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

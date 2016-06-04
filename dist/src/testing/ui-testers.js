@@ -57,8 +57,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
             }],
         execute: function() {
             ;
-            testModules = ['ng-ui-tests'];
-            allTestModules = ['ng-ui-tests', 'studio-tests', 'rx-tests'];
+            testModules = ['ng-ui-tests', 'md-ui-tests'];
+            allTestModules = ['ng-ui-tests', 'md-ui-tests', 'studio-tests', 'rx-tests'];
             jBartSingleTest = (function () {
                 function jBartSingleTest(componentResolver, ngZone, elementRef) {
                     this.componentResolver = componentResolver;

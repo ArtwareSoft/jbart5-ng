@@ -1,4 +1,4 @@
-System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-material/button/button.js', '@angular2-material/input/input.js', '@angular2-material/card/card.js', 'jb-ui/jb-rx', 'jb-ui/dialog'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', 'jb-ui/dialog'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, core_1, common_1, button_js_1, input_js_1, card_js_1, jb_rx, jb_dialog;
-    var MATERIAL_DIRECTIVES, jbComp, jBartWidget;
+    var jb_core_1, core_1, common_1, jb_rx, jb_dialog;
+    var jbComp, jBartWidget;
     function apply(ctx) {
         //	console.log('apply');
         jb_core_1.jb.delay(1);
@@ -19,7 +19,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
     }
     exports_1("apply", apply);
     function ctrl(context) {
-        var ctx = (ctx || context).setVars({ $model: context.params });
+        var ctx = context.setVars({ $model: context.params });
         var comp = defaultStyle(ctx);
         if (!comp) {
             console.log('style returned null', ctx);
@@ -43,7 +43,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
             core_1.Component({
                 selector: 'div',
                 template: options.template || '',
-                directives: [MATERIAL_DIRECTIVES, common_1.FORM_DIRECTIVES, common_1.NgClass]
+                directives: [common_1.NgClass],
             }),
             Reflect.metadata('design:paramtypes', [core_1.ComponentResolver, core_1.ElementRef])
         ], Cmp);
@@ -56,6 +56,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
         if (comp.jbInitFuncs)
             return comp;
         comp.prototype.ctx = ctrl_ctx;
+        comp.jb_profile = ctrl_ctx.profile;
         jb_core_1.jb.extend(comp, { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [] });
         comp.prototype.ngOnInit = function () {
             var _this = this;
@@ -382,15 +383,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
             function (common_1_1) {
                 common_1 = common_1_1;
             },
-            function (button_js_1_1) {
-                button_js_1 = button_js_1_1;
-            },
-            function (input_js_1_1) {
-                input_js_1 = input_js_1_1;
-            },
-            function (card_js_1_1) {
-                card_js_1 = card_js_1_1;
-            },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
             },
@@ -398,15 +390,18 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                 jb_dialog = jb_dialog_1;
             }],
         execute: function() {
-            MATERIAL_DIRECTIVES = [button_js_1.MdButton, button_js_1.MdAnchor, input_js_1.MdInput, card_js_1.MdCard];
             core_1.enableProdMode();
             jbart.zones = jbart.zones || {};
             jbComp = (function () {
                 function jbComp(componentResolver) {
                     this.componentResolver = componentResolver;
                 }
-                jbComp.prototype.ngOnChanges = function () {
+                jbComp.prototype.ngOnChanges = function (changes) {
                     var _this = this;
+                    if (this.prev && !this.flatten) {
+                        this.prev.destroy();
+                        console.log('jb_comp: dynamically changing the component');
+                    }
                     this.comp && this.componentResolver.resolveComponent(this.comp).then(function (componentFactory) {
                         _this.flattenjBComp(_this.childView.createComponent(componentFactory));
                     });
@@ -414,6 +409,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                 // very ugly: flatten the structure and pushing the dispose function to the group parent.
                 jbComp.prototype.flattenjBComp = function (cmp_ref) {
                     var cmp = this;
+                    cmp.prev = cmp_ref;
                     if (!cmp.flatten)
                         return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
@@ -442,7 +438,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', '@angular2-mater
                         }
                         catch (e) { }
                         cmp._deleted_parent = null;
-                        cmp_ref.dispose();
+                        cmp_ref.destroy();
                     });
                 };
                 __decorate([

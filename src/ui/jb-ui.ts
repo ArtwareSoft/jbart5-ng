@@ -1,16 +1,14 @@
 import {jb} from 'jb-core';
-import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
+import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation} from '@angular/core';
 import {NgForm,FORM_DIRECTIVES,NgClass} from '@angular/common';
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
-//import {MdInput} from '/node_modules/@angular2-material/core/input.js';
-import {MdButton, MdAnchor} from '@angular2-material/button/button.js';
-import {MdInput} from '@angular2-material/input/input.js';
-import {MdCard} from '@angular2-material/card/card.js';
+
+//import {MdInput} from '@angular2-material/input/input.js';
+//import {MdCard} from '@angular2-material/card/card.js';
+
 
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as jb_dialog from 'jb-ui/dialog';
-
-var MATERIAL_DIRECTIVES = [MdButton, MdAnchor,MdInput,MdCard];
 
 enableProdMode();
 jbart.zones = jbart.zones || {}
@@ -22,7 +20,7 @@ export function apply(ctx) {
 }
 
 export function ctrl(context) {
-	var ctx = (ctx || context).setVars({ $model: context.params });
+	var ctx = context.setVars({ $model: context.params });
 	var comp = defaultStyle(ctx);
 	if (!comp) {
 		console.log('style returned null',ctx)
@@ -47,7 +45,8 @@ export function Comp(options,context) {
 		Component({
 			selector: 'div',
 			template: options.template || '',
-			directives: [MATERIAL_DIRECTIVES,FORM_DIRECTIVES, NgClass] 
+			directives: [NgClass], // maybe to take it out...
+//			encapsulation: ViewEncapsulation.None 
 		}),
 		Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
 	], Cmp);
@@ -58,6 +57,7 @@ export function enrichComp(comp,ctrl_ctx) {
 	if  (!comp) debugger;
 	if (comp.jbInitFuncs) return comp;
 	comp.prototype.ctx = ctrl_ctx;
+	comp.jb_profile = ctrl_ctx.profile;
 	jb.extend(comp,{jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: []  });
 	comp.prototype.ngOnInit = function() {
 		try {
@@ -103,7 +103,7 @@ export function enrichComp(comp,ctrl_ctx) {
 		if (options.observable) comp.jbObservableFuncs.push(options.observable);
 		if (options.ctrlsEmFunc) comp.prototype.ctrlsEmFunc=options.ctrlsEmFunc;
 		if (options.extendCtx) comp.prototype.extendCtx=options.extendCtx;
-		
+
 		if (options.extendComp) jb.extend(this,options.extendComp);
 
 		if (options.input)
@@ -267,7 +267,12 @@ export class jbComp {
   @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
   constructor(private componentResolver:ComponentResolver) {}
 
-  ngOnChanges() {
+  ngOnChanges(changes) {
+  	if (this.prev && !this.flatten) { // very rear dynamically changing the component via user interaction
+  		this.prev.destroy();
+  		console.log('jb_comp: dynamically changing the component');
+  	}
+
     this.comp && this.componentResolver.resolveComponent(this.comp).then(componentFactory => {
         this.flattenjBComp(this.childView.createComponent(componentFactory))
     });
@@ -276,6 +281,7 @@ export class jbComp {
 // very ugly: flatten the structure and pushing the dispose function to the group parent.
   flattenjBComp(cmp_ref) {
   	var cmp = this;
+  	cmp.prev = cmp_ref;
   	if (!cmp.flatten) 
   		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
@@ -304,7 +310,7 @@ export class jbComp {
 			cmp._deleted_parent.appendChild(to_keep);
 		} catch(e) {}
 		cmp._deleted_parent = null;
-		cmp_ref.dispose();
+		cmp_ref.destroy();
 	})
   }
 }

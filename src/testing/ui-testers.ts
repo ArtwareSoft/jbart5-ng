@@ -5,8 +5,8 @@ import {Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolv
 import {jb_dialogs} from 'jb-ui/dialog';
 import {Observable,Subject} from 'rxjs/Rx';
 
-var testModules = ['ng-ui-tests']
-var allTestModules = ['ng-ui-tests','studio-tests','rx-tests'];
+var testModules = ['ng-ui-tests','md-ui-tests']
+var allTestModules = ['ng-ui-tests','md-ui-tests','studio-tests','rx-tests'];
 //var testModules = ['ng-ui-tests','rx-tests'];
 //testModules = allTestModules;
 //testModules = ['studio-tests'];

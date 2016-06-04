@@ -112,6 +112,18 @@ jb.component('feature.emitter',{
   }}
 })
 
+jb.component('var',{
+  type: 'feature',
+  params: {
+    name: { as: 'string'},
+    value: { dynamic: true },
+  },
+  impl: (context,name,value) => ({
+    extendCtx: ctx => 
+      ctx.setVars(jb.obj(name,value(ctx))),
+  })
+})
+
 jb.component('hidden', {
   type: 'feature',
   params: {
@@ -165,6 +177,19 @@ jb.component('field.toolbar', {
     extendComp: { jb_toolbar: toolbar() }
   })
 })
+
+jb.component('field.style-on-focus', {
+  type: 'feature',
+  params: {
+    style: { type: 'style', essential: true, dynamic: true },
+  },
+  impl: ctx => ({
+    extendComp: { jb_styleOnFocus: ctx.profile.style }
+  })
+})
+
+'field.style-on-focus'
+
 
 jb.component('css', {
   type: 'feature',

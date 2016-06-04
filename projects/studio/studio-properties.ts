@@ -246,7 +246,7 @@ jb.component('studio.open-property-menu',{
 				    action :{$: 'studio.openSublime', path: '%$path%' }
 	 		    },
 	 		    { $: 'pulldown.menu-item', title: 'Customize Style', icon: 'build',
-				    action :{$: 'studio.openStyleEditor', path: '%$path%' },
+				    action : {$: 'studio.makeLocal', path: '%$path%' },
 				    features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' } }
 	 		    },
 			]

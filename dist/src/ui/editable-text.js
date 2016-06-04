@@ -41,18 +41,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     css: 'input {height: 16px}'
                 }
             });
-            jb_core_1.jb.component('editable-text.md-input', {
-                type: 'editable-text.style',
-                impl: { $: 'customStyle',
-                    features: { $: 'editable-text.bindField' },
-                    template: "<span><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></span>",
-                    methods: {
-                        init: function (ctx) { return function (cmp) {
-                            cmp.title = ctx.vars.$model.title();
-                        }; }
-                    }
-                }
-            });
             jb_core_1.jb.component('editable-text.textarea', {
                 type: 'editable-text.style',
                 impl: { $: 'customStyle',
@@ -76,7 +64,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                         init: function (cmp) {
                             mode = mode || 'javascript';
                             var field = context.vars.field;
-                            cm_settings = {
+                            cm_settings = jb_core_1.jb.extend(cm_settings || {}, {
                                 mode: mode,
                                 lineWrapping: lineWrapping,
                                 theme: 'solarized light',
@@ -85,7 +73,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                     'Ctrl-Space': 'autocomplete',
                                     'Ctrl-Enter': function () { }
                                 },
-                            };
+                            });
                             var $el = $(cmp.elementRef.nativeElement);
                             var $textarea = $el.findIncludeSelf('textarea');
                             $textarea.val(field.getValue());

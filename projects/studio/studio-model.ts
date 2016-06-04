@@ -94,7 +94,7 @@ function findjBartToLook(path) {
 
 export function evalProfile(prof_str) {
 	try {
-		return eval(`(${prof_str})`)
+		return eval(prof_str)
 	} catch (e) {
 		jb.logException(e,'eval profile:'+prof_str);
 	}

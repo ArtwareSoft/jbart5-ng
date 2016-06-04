@@ -5,7 +5,11 @@
   "license": "MIT for RT. Freeware for studio",
   "keywords": [
     "angular2",
-    "jbart", "visual", "RAD", "angular", "studio"
+    "jbart",
+    "visual",
+    "RAD",
+    "angular",
+    "studio"
   ],
   "homepage": "https://github.com/ArtwareSoft/jbart5-ng",
   "moduleType": [

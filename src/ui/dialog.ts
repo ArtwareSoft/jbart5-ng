@@ -2,7 +2,6 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive, Component, View, ElementRef, Injector, Input, NgZone, EventEmitter} from '@angular/core';
-//import {bootstrap} from 'angular2/platform/browser';
 
 jb.component('openDialog', {
 	type: 'action',
@@ -60,34 +59,6 @@ jb.component('dialog.default', {
 	}
 })
 
-jb.component('dialog.md-dialog-ok-cancel', {
-	type: 'dialog.style',
-	params: {
-		okLabel: { as: 'string', defaultValue: 'OK' },
-		cancelLabel: { as: 'string', defaultValue: 'Cancel' },
-	},
-	impl :{$: 'customStyle',
-		template: `
-				<div class="jb-dialog jb-default-dialog">
-				      <div class="dialog-title">{{title}}</div>
-				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
-				      <jb_comp [comp]="contentComp"></jb_comp>
-					  <div>
-							<button md-button="" type="button" (click)="dialogClose({OK:false})">
-							  	<span class="md-button-wrapper">
-								      <span>%$cancelLabel%</span>
-    							</span>
-    						</button>
-							<button class="md-primary" md-button="" (click)="dialogClose({OK:true})" type="button">
-									<span class="md-button-wrapper">
-							      		<span>%$okLabel%</span>
-							    	</span>
-							</button>
-						</div>
-				</div>		
-		`
-	}
-})
 
 jb.component('dialogFeature.uniqueDialog', {
 	type: 'dialogFeature',

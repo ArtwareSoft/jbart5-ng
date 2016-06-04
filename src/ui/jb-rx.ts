@@ -1,8 +1,10 @@
-import {Observable,Subject} from 'rxjs';
+import {Subject} from 'rxjs/Subject';
+import {Observable} from 'rxjs/Observable';
 import {jb} from 'jb-core/jb';;
 import * as jb_ui from 'jb-ui/jb-ui';
 
-export {Observable,Subject} from 'rxjs';
+export {Subject} from 'rxjs/Subject';
+export {Observable} from 'rxjs/Observable';
 
 jb_initJstypes();
 jbart.jstypes.observable = (obj,ctx) => 

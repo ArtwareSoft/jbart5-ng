@@ -5,17 +5,19 @@ jb.component('customStyle', {
 	typePattern: /.*-style/,
 	params: {
 		template: { as: 'string', essential: true},
-		isInnerTemplate: { type: 'boolean', as: 'boolean'},
 		css: { as: 'string'},
-		atts: { as: 'object'},
-		methods: { as: 'object'},
     	features: { type: 'feature[]', dynamic: true },
+		methods: { as: 'object'},
+		atts: { as: 'object'},
+		directives: { type: 'data[]', ignore: true },
+		isInnerTemplate: { type: 'boolean', as: 'boolean'},
 	},
-	impl: function (context,template,isInner,css,atts,methods,features) {
+	impl: function (context,template,css,features,methods,atts,directives,isInner) {
 		var options = jb.extend(
 			jb.obj(isInner ? 'template' : 'jbTemplate',template), {
 				css: css,
 				atts: atts,
+				directives: context.profile.directives,
 				featuresOptions: features()
 			},methods)
 		return options;

@@ -123,6 +123,18 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     };
                 }
             });
+            jb_core_1.jb.component('var', {
+                type: 'feature',
+                params: {
+                    name: { as: 'string' },
+                    value: { dynamic: true },
+                },
+                impl: function (context, name, value) { return ({
+                    extendCtx: function (ctx) {
+                        return ctx.setVars(jb_core_1.jb.obj(name, value(ctx)));
+                    },
+                }); }
+            });
             jb_core_1.jb.component('hidden', {
                 type: 'feature',
                 params: {
@@ -178,6 +190,16 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     extendComp: { jb_toolbar: toolbar() }
                 }); }
             });
+            jb_core_1.jb.component('field.style-on-focus', {
+                type: 'feature',
+                params: {
+                    style: { type: 'style', essential: true, dynamic: true },
+                },
+                impl: function (ctx) { return ({
+                    extendComp: { jb_styleOnFocus: ctx.profile.style }
+                }); }
+            });
+            'field.style-on-focus';
             jb_core_1.jb.component('css', {
                 type: 'feature',
                 params: {
