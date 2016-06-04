@@ -3,10 +3,6 @@ import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild,
 import {NgForm,FORM_DIRECTIVES,NgClass} from '@angular/common';
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 
-//import {MdInput} from '@angular2-material/input/input.js';
-//import {MdCard} from '@angular2-material/card/card.js';
-
-
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as jb_dialog from 'jb-ui/dialog';
 
