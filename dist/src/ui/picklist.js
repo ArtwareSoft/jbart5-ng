@@ -2,6 +2,11 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui;
+    function groupOfOpt(opt) {
+        if (!opt.group && opt.text.indexOf('.') == -1)
+            return '';
+        return opt.group || opt.text.split('.').shift();
+    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -25,19 +30,25 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 impl: function (ctx) {
                     ctx = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
                     return jb_ui.ctrl(ctx).jbExtend({
-                        init: function (cmp) {
+                        beforeInit: function (cmp) {
                             ctx.vars.field.bindToCmp(cmp, ctx);
-                            cmp.options = ctx.params.options(ctx);
+                            cmp.recalcOptions = function () {
+                                cmp.options = ctx.params.options(ctx);
+                                var groupsHash = {};
+                                cmp.groups = [];
+                                cmp.options.forEach(function (o) {
+                                    var groupId = groupOfOpt(o);
+                                    var group = groupsHash[groupId] || { options: [], text: groupId };
+                                    if (!groupsHash[groupId]) {
+                                        cmp.groups.push(group);
+                                        groupsHash[groupId] = group;
+                                    }
+                                    group.options.push({ text: o.text.split('.').pop(), code: o.code });
+                                });
+                            };
+                            cmp.recalcOptions();
                         }
                     }, ctx);
-                }
-            });
-            // ********* styles
-            jb_core_1.jb.component('picklist.native', {
-                type: 'picklist.style',
-                impl: { $: 'customStyle',
-                    template: "<div><select %$field.modelExp%>\n                    <option *ngFor=\"let option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
-                    css: 'select {height: 23px}'
                 }
             });
             // ********* options

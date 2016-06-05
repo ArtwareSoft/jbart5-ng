@@ -16,26 +16,34 @@ jb.component('picklist', {
   impl: ctx => {
     ctx = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
     return jb_ui.ctrl(ctx).jbExtend({
-      init: function(cmp) {
+      beforeInit: function(cmp) {
         ctx.vars.field.bindToCmp(cmp, ctx);
-        cmp.options = ctx.params.options(ctx);
+
+        cmp.recalcOptions = function() {
+          cmp.options = ctx.params.options(ctx);
+          var groupsHash = {};
+          cmp.groups = [];
+          cmp.options.forEach(o=>{
+            var groupId = groupOfOpt(o);
+            var group = groupsHash[groupId] || { options: [], text: groupId};
+            if (!groupsHash[groupId]) {
+              cmp.groups.push(group);
+              groupsHash[groupId] = group;
+            }
+            group.options.push({text: o.text.split('.').pop(), code: o.code });
+          })
+        }
+        cmp.recalcOptions();
       }
     },ctx);
   }
 })
 
-
-// ********* styles
-
-jb.component('picklist.native', {
-  type: 'picklist.style',
-  impl :{$: 'customStyle', 
-    template: `<div><select %$field.modelExp%>
-                    <option *ngFor="let option of options" [value]="option.code">{{option.text}}</option>
-                 </select></div>`,
-    css: 'select {height: 23px}'
-  }
-})
+function groupOfOpt(opt) {
+  if (!opt.group && opt.text.indexOf('.') == -1)
+    return '';
+  return opt.group || opt.text.split('.').shift();
+}
 
 // ********* options
 
@@ -63,7 +71,7 @@ jb.component('picklist.options',{
     var emptyValue = allowEmptyValue ? [{code:'',value:''}] : [];
     return emptyValue.concat(options.map(function(code) { return { code: code, text: code } } ));
   }
-});
+})
 
 jb.component('picklist.coded-options',{
   type: 'picklist.options',
@@ -81,5 +89,5 @@ jb.component('picklist.coded-options',{
       }
     }))
   }
-});
+})
 

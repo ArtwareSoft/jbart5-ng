@@ -589,6 +589,26 @@ picklist :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Springfield', 'New York'] },
 },
 
+'picklist-groups' :{$: 'ng2-ui-test',  
+  control :{$: 'group', controls: 
+      [
+        { $: 'group', 
+            style :{$: 'property-sheet.titles-left' },
+            controls :{$: 'picklist',
+                    style :{$: 'picklist.groups'}, 
+                    title: 'city', 
+                    databind: '%$personWithAddress/address/city%', 
+                    options :{$: 'picklist.optionsByComma', 
+                      options: 'US.Springfield,US.New York,Israel.Tel Aviv,UK.London,mooncity' 
+                    } 
+            }
+        },
+        { $: 'label',  title: '%$personWithAddress/address/city%' }
+      ]
+  },
+  expectedHtmlResult: { $: 'contains', text: ['Springfield', 'New York'] },
+},
+
 dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
   control :{$: 'button', title: 'Open Dialog', $click: true,
       action :{$: 'openDialog', 

@@ -97,6 +97,7 @@ jb_modules =
 'jb-ui/styles/group-styles',
 'jb-ui/styles/property-sheet-styles',
 'jb-ui/styles/layout-styles',
+'jb-ui/styles/picklist-styles',
 
 'jb-ui/md-styles/button-md',
 'jb-ui/md-styles/dialog-md',
