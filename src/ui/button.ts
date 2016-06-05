@@ -51,3 +51,16 @@ jb.component('button.x', {
   }
 })
 
+jb.component('button.popup-menu', {
+  type: 'button.style',
+  impl :{$: 'customStyle',  
+      template: '<span><button (click)="clicked()" [title]="title"></button></span>',
+      css: `
+    button { border: none; cursor: pointer;  width: 0px;  height: 0px;  
+      margin: 8px 0 0 6px;  border-top: 5px solid #91B193;  border-bottom: 3px solid transparent;  border-right: 4px solid transparent;  border-left: 4px solid transparent;
+      display: inline-block;  vertical-align: top; padding: 0; background: transparent;}
+    button:hover { border-top: 5px solid #6A886C; }
+    button:focus { outline: none; }
+    `
+  }
+})

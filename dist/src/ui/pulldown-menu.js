@@ -68,7 +68,6 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     css: ".line { display: flex; user-select: none; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}\n\t\t  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }\n\t\t  span { padding-top: 3px }\n          .title { display: block; text-align: left; } \n\t\t  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }\n\t\t  .line:hover { background: #eee; }\n\t\t"
                 }
             });
-            // 		  button span { width: 16px; height: 16px; display: block; position: absolute; top: 5px; left: 6px;}
             jb_core_1.jb.component('pulldown.topMenuItem', {
                 type: 'control',
                 params: {

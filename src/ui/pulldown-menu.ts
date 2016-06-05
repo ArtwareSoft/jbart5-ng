@@ -71,7 +71,6 @@ jb.component('pulldown-menu-item.default', {
 		`
 	}
 })
-// 		  button span { width: 16px; height: 16px; display: block; position: absolute; top: 5px; left: 6px;}
 
 jb.component('pulldown.topMenuItem', {
 	type: 'control',

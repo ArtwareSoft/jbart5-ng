@@ -2,16 +2,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio;
-    function jb_studioCopyDefaultValue(profile, param) {
-        if (profile[param])
-            return;
-        var comp = jb_compName(profile);
-        if (!comp)
-            return;
-        var params = ((jb_jbart().comps[comp] || {}).params || {});
-        if (params[param] && typeof params[param].defaultValue != 'undefined')
-            profile[param] = jb_cloneData(params[param].defaultValue);
-    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -101,10 +91,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'editable-text',
+                    style: { $: 'editable-text.studio-primitive-text' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [
-                        { $: 'css', css: "input { font-size: 12px; padding-left: 2px; width: 145px;} input.focused {width: 300px; transition: width: 1s}" },
                         { $: 'studio.undo-support', path: '%$path%' },
                         { $: 'field.toolbar',
                             toolbar: { $: 'button',
@@ -156,7 +146,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     databind: '%$tgpCtrl/expanded%',
                                 },
                                 { $: 'picklist',
-                                    features: { $: 'css', css: 'select { width: 150px; font-size: 12px; height: 23px;}' },
+                                    style: { $: 'picklist.groups' },
+                                    features: { $: 'css', css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}' },
                                     databind: { $: 'studio.compName-ref', path: '%$path%' },
                                     options: { $: 'studio.tgp-path-options', path: '%$path%' },
                                 },
@@ -392,125 +383,18 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             // 		}
             // 	}
             // })
-            // ********************* styles **********************
-            jb_core_1.jb.component('tabControl.studioPropertiesAccordion', {
-                type: 'tabControl.style',
-                impl: function () {
-                    return {
-                        jbTemplate: '<div><div class="panel"><div class="panel-heading"><div class="panel-title"><div class="panel-toggle"/><a href="javascript:()"/></div></div><div class="panel-collapse"><div class="panel-body"></div></div></div>',
-                        cssClass: "jb-studio-accordion",
-                        init: function (cmp) {
-                            control.$('.panel-body').css('max-height', $(window).height() - 250);
-                            jb_accordion(cmp);
-                        }
-                    };
-                }
-            });
-            jb_core_1.jb.component('expandableSection.studioExpandableInArray', {
-                type: 'expandableSection.style',
-                impl: function () {
-                    return {
-                        jbTemplate: '<div class="panel"><div class="panel-heading"><div class="panel-title"><div class="panel-toggle"/><a href="javascript:()"/></div></div><div class="panel-collapse"><div class="panel-body"></div></div>',
-                        cssClass: "jb-studio-array-expandable",
-                        init: function (cmp) {
-                            jb_expandableSection(cmp);
-                        }
-                    };
-                } });
-            jb_core_1.jb.component('property-sheet.studio-properties', {
-                type: 'group.style',
-                impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
-                    methods: {
-                        afterViewInit: function (ctx) { return function (cmp) {
-                            return jb_core_1.jb.delay(1).then(function () {
-                                return $(cmp.elementRef.nativeElement).find('input,select')
-                                    .focus(function (e) {
-                                    $(e.target).parents().filter('.property').siblings().find('input').removeClass('focused');
-                                    $(e.target).addClass('focused');
-                                });
-                            });
-                        }; }
-                    },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
-                    css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; margin-right:0;  }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n      },\n      .property>*:last-child { margin-right:0 }"
-                }
-            });
-            // jb.component('button.studio-properties-toolbar', {
-            //   type: 'button.style',
-            //   params: {
-            //     icon: { as: 'string', default: 'code' },
-            //   },
-            //   impl :{$: 'customStyle', 
-            //       template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
-            //                 <i class="material-icons">%$icon%</i>
-            //               </button></span>`,
-            //       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
-            //      	.material-icons { font-size:12px;  }
-            //       `
-            //   }
-            // })
-            jb_core_1.jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
-                type: 'editable-boolean.style',
-                impl: { $: 'customStyle',
-                    template: "<span><button md-icon-button md-button (click)=\"toggle()\" title=\"{{yesNo ? 'collapse' : 'expand'}}\">\n      \t<i class=\"material-icons\">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      \t</button></span>",
-                    css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      ",
-                    methods: {
-                        afterViewInit: function (ctx) { return function (cmp) { return cmp.bindViaSettings(); }; }
-                    }
-                }
-            });
-            // jb.component('button.studio-edit-js', {
-            //   type: 'button.style',
-            //   impl :{$: 'customStyle',  
-            //   	template: '<span><button (click)="clicked()" [title]="title">{}</button></span>',
-            //   	css: `{ margin-top: -2px; margin-left: -3px; margin-right: -5px;}
-            //   		 button { cursor: pointer; 
-            //             font: 12px sans-serif; 
-            //             border: none; 
-            //             background: transparent; 
-            //             color: #91B193; 
-            //             text-shadow: 0 1px 0 #fff; 
-            //             font-weight: 700; 
-            //             opacity: .8;
-            //         }
-            //         button:hover { opacity: 1 }`
-            //   }
-            // })
-            // jb.component('button.studio-delete', {
-            //   type: 'button.style',
-            //   impl :{$: 'customStyle',  
-            //       template: '<span><button (click)="clicked()" [title]="title">&#215;</button></span>',
-            //       css: `{ margin-left: -4px; margin-top: -1px }
-            //       button {
-            //             cursor: pointer; 
-            //             font: 16px sans-serif; 
-            //             border: none; 
-            //             background: transparent; 
-            //             color: #000; 
-            //             text-shadow: 0 1px 0 #fff; 
-            //             font-weight: 700; 
-            //             opacity: .2;
-            //         }
-            //         button:hover { opacity: .5 }`
-            //   }
-            // })
-            jb_core_1.jb.component('button.popup-menu', {
-                type: 'button.style',
-                impl: { $: 'customStyle',
-                    template: '<span><button (click)="clicked()" [title]="title"></button></span>',
-                    css: "\n\t\tbutton { border: none; cursor: pointer;  width: 0px;  height: 0px;  \n\t\t\tmargin: 8px 0 0 6px;  border-top: 5px solid #91B193;  border-bottom: 3px solid transparent;  border-right: 4px solid transparent;  border-left: 4px solid transparent;\n\t\t  display: inline-block;  vertical-align: top; padding: 0; background: transparent;}\n\t\tbutton:hover { border-top: 5px solid #6A886C; }\n\t\tbutton:focus { outline: none; }\n\t\t"
-                }
-            });
             jb_core_1.jb.component('studio.tgp-path-options', {
                 type: 'picklist.options',
                 params: {
                     path: { as: 'string' },
                 },
-                impl: function (context, path) { return studio.model.PTsOfPath(path).map(function (op) { return { code: op, text: op }; }); }
+                impl: function (context, path) {
+                    return [{ code: '', text: '' }]
+                        .concat(studio.model.PTsOfPath(path).map(function (op) { return ({ code: op, text: op }); }));
+                }
             });
             jb_core_1.jb.component('studio.tgp-type-options', {
-                type: 'picklist.oopions',
+                type: 'picklist.options',
                 params: {
                     type: { as: 'string' }
                 },
@@ -569,3 +453,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
         }
     }
 });
+// function jb_studioCopyDefaultValue(profile,param) {
+// 	if (profile[param]) return;
+// 	var comp = jb_compName(profile);
+// 	if (!comp) return;
+// 	var params = ((jb_jbart().comps[comp] || {}).params || {});
+// 	if (params[param] && typeof params[param].defaultValue != 'undefined')
+// 		profile[param] = jb_cloneData(params[param].defaultValue)
+// }
