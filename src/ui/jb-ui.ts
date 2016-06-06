@@ -46,6 +46,7 @@ export function Comp(options,context) {
 		}),
 		Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
 	], Cmp);
+
 	return enrichComp(Cmp,context).jbExtend(options,context);
 }
 
@@ -72,7 +73,9 @@ export function enrichComp(comp,ctrl_ctx) {
 		this.jbEmitter && this.jbEmitter.next('after-init');
 	}
 	comp.prototype.ngDoCheck = function() {
-		comp.jbCheckFuncs.forEach(f=> f(this));
+		comp.jbCheckFuncs.forEach(f=> 
+			f(this));
+		this.refreshModel && this.refreshModel();
 		this.jbEmitter && this.jbEmitter.next('check');
 	}
 
@@ -331,26 +334,21 @@ export function twoWayBind(ref) {
 		getValue: () => null,
 		writeValue: val => {}
 	}
-	if (ref.$jb_parent) {
-	  var fieldName = ref.$jb_property;
-	  var parentName = ref.$jb_parent.$jb_property || 'model';
-	  var modelPath = parentName + '.' + fieldName;
-	  var bindToCmp = cmp => 
-	  	cmp[parentName] = ref.$jb_parent;
-	  var modelExp = `[(ngModel)] = "${modelPath}"`;
-	} else if (ref.$jb_val) {
-	  var modelPath = '$jbModel';
-	  var bindToCmp = cmp => {
-	  	  cmp.writeValue = val => 
-	  	  	jb.writeValue(ref,val);
-	  	  cmp.$jbModel = jb.val(ref);
-		  jb_rx.refObservable(ref,cmp.ctx).subscribe(()=>
-		  	cmp.$jbModel = jb.val(ref)
-		  )
-		}
-	  // keyup for input change for select
-	  var modelExp = `[(ngModel)] = "${modelPath}" (keyup)="writeValue($event.target.value)" (change)="writeValue($event.target.value)"`;
+
+	var modelPath = 'jbModel';
+	var bindToCmp = cmp => {
+	  	  cmp.jbOnChange = ev => {
+	  	  	if (ev.checked !== undefined)
+	  	  		var val = ev.checked;
+	  	  	else if (ev.target)
+	  	  		var val = ev.target.type != 'checkbox' ? ev.target.value : ev.target.checked;
+	  	   	jb.writeValue(ref,val);
+	  	  }
+		  cmp.refreshModel = () =>
+		  		cmp[modelPath] = jb.val(ref);
 	}
+	// keyup for input change for select & checkbox
+	var modelExp = `[(ngModel)] = "${modelPath}" (change)="jbOnChange($event)" (keyup)="jbOnChange($event)"`; // (keyup)="writeValue($event.target.value)" (change)="writeValue($event.target.value)`;
 
 	return {
 		bindToCmp: bindToCmp,

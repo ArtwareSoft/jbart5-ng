@@ -95,6 +95,7 @@ jb_modules =
 'jb-ui/theme',
 
 'jb-ui/styles/group-styles',
+'jb-ui/styles/editable-boolean-styles',
 'jb-ui/styles/property-sheet-styles',
 'jb-ui/styles/layout-styles',
 'jb-ui/styles/picklist-styles',
@@ -102,6 +103,7 @@ jb_modules =
 'jb-ui/md-styles/button-md',
 'jb-ui/md-styles/dialog-md',
 'jb-ui/md-styles/input-md',
+'jb-ui/md-styles/editable-boolean-md',
 'jb-ui/md-styles/group-md',
 'jb-ui/md-styles/tabs-md',
 

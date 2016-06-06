@@ -54,9 +54,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: "<span><button md-icon-button md-button (click)=\"toggle()\" title=\"{{yesNo ? 'collapse' : 'expand'}}\">\n      \t<i class=\"material-icons\">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      \t</button></span>",
                     css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      ",
-                    methods: {
-                        afterViewInit: function (ctx) { return function (cmp) { return cmp.bindViaSettings(); }; }
-                    }
+                    features: { $: 'editable-boolean.bindYesNoMappings' }
                 }
             });
         }

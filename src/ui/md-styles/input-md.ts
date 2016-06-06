@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import {MdInput} from '@angular2-material/input/input.js';
 
+import {MdSlideToggle} from '@angular2-material/input/input.js';
 
 jb.component('editable-text.md-input',{
   type: 'editable-text.style',

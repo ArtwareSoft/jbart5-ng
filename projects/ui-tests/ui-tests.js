@@ -487,13 +487,25 @@ ngIf :{$: 'ng2-ui-test',
 },
 
 
-'editable-boolean' :{$: 'ng2-ui-test',  
+'editable-boolean.all-styles' :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [
       {$: 'editable-boolean',
           title: 'male',
           databind: '%$person/male%',
-          style :{$: 'editable-boolean.md-switch'},
+          style :{$: 'editable-boolean.checkbox'},
+      },
+      {$: 'editable-boolean',
+          title: 'gender',
+          databind: '%$person/male%',
+          textForTrue: 'male',
+          textForFalse: 'female',
+          style :{$: 'editable-boolean.checkbox-with-title'},
+      },
+      {$: 'editable-boolean',
+          title: 'male',
+          databind: '%$person/male%',
+          style :{$: 'editable-boolean.md-slide-toggle'},
       },
       { $: 'label', title: '%$person/male%' }
     ]

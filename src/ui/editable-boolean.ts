@@ -9,79 +9,28 @@ jb.component('editable-boolean',{
   type: 'control',
   params: {
     databind: { as: 'ref'},
-    style: { type: 'editable-boolean.style', defaultValue: { $: 'editable-boolean.switch' }, dynamic: true },
+    style: { type: 'editable-boolean.style', defaultValue: { $: 'editable-boolean.checkbox' }, dynamic: true },
     title: { as: 'string' , dynamic: true },
-    yesNoSettings: { type: 'editable-boolean.yes-no-settings', defaultValue :{ $: 'editable-boolean.yes-no-settings'}, dynamic: true },
+    textForTrue: { as: 'string', defaultValue: 'yes' },
+    textForFalse: { as: 'string', defaultValue: 'no' },
     features: { type: 'feature[]', dynamic: true },
   },
-  impl: (ctx,databind) => {
-  	return jb_ui.ctrl(ctx).jbExtend({
-  		init: function(cmp) {
-  			var setting = ctx.params.yesNoSettings() || {};
-  			databind = jb_ui.ngRef(databind,cmp);
+  impl: (ctx) => {
+    var ctx2 = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
+  	return jb_ui.ctrl(ctx2).jbExtend({
+  		beforeInit: function(cmp) {
+        ctx2.vars.field.bindToCmp(cmp, ctx2);
 
-  			cmp.bindViaSettings = () => {
-  				jb_rx.refObservable(databind,ctx)
-  					.map(setting.toBool||(x=>x))
-  					.subscribe(x=>{
-              cmp.yesNo=x;
-              jb_ui.apply(ctx)
-            });
+        cmp.toggle = () =>  {
+          cmp.jbModel = !cmp.jbModel; 
+          ctx2.vars.field.writeValue(cmp.jbModel);
+        }
 
-  				jb_rx.refObservable(jb_ui.ngRef('{{yesNo}}',cmp),ctx)
-  					.map(setting.fromBool||(x=>x))
-  					.subscribe(x=>{
-              jb.writeValue(databind,x);jb_ui.apply(ctx)}
-            );
-  			}
-			   
-        cmp.toggle = () => { 
-          cmp.yesNo = !cmp.yesNo; 
-          jb_ui.apply(ctx);
-        };
-  			cmp.text = () => (setting.textFromBool || (x=>x))(cmp.yesNo);
+  			cmp.text = () => 
+          cmp.jbModel ? ctx.params.textForTrue : ctx.params.textForFalse;
   		}
-  	},ctx);
+  	});
   }
-})
-
-jb.component('editable-boolean.yes-no-settings',{
-  type: 'editable-boolean.yes-no-settings',
-  params: {
-  	textForTrue: { as: 'string'},
-  	textForFalse: { as: 'string'},
-  	codeForTrue: { as: 'string', defaultValue: true},
-  	codeForFalse: { as: 'string', defaultValue: false},
-  },
-  impl: function(context,textForTrue,textForFalse,codeForTrue,codeForFalse) {
-  	return {
-  		toBool: val => val == codeForTrue,
-  		fromBool: yesNo => yesNo ? codeForTrue : codeForFalse,
-  		textFromBool: yesNo => yesNo ? textForTrue : textForFalse,
-  	}
-  }
-})
-
-jb.component('editable-boolean.md-switch', {
-  type: 'editable-boolean.style',
-  impl: function(context) {
-	  return { 
-	  	template: '<md-switch [(checked)]="yesNo">{{text()}}</md-switch>',
-	  	afterViewInit: cmp => cmp.bindViaSettings()
-	  }
-	}
-})
-
-
-jb.component('editable-boolean.expand-collapse', {
-  type: 'editable-boolean.style',
-  impl :{$: 'customStyle',
-      template: `<div><i class="material-icons" style="font-size:16px;" (click)="toggle()">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i></div>`,
-      css: '{ cursor: pointer; user-select: none }',
-      methods: {
-        afterViewInit: ctx => cmp => cmp.bindViaSettings()
-      }
-   }
 })
 
 

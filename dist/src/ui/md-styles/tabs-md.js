@@ -17,7 +17,7 @@ System.register(['jb-core', '@angular2-material/tabs/tabs.js', '@angular2-materi
             jb_core_1.jb.component('tabs.md', {
                 type: 'tabs.style',
                 impl: { $: 'customStyle',
-                    template: "<md-tab-group>\n  <md-tab *ngFor=\"let tab of comps\">\n    <template md-tab-label>aa{{tab.jb_title()}}</template>\n    <template md-tab-content>\n      <jb_comp [comp]=\"tab\"></jb_comp>\n    </template>\n  </md-tab>\n</md-tab-group>",
+                    template: "<div><md-tab-group>\n  <md-tab *ngFor=\"let tab of comps\">\n    <template md-tab-label>aa{{tab.jb_title()}}</template>\n    <template md-tab-content>\n      <jb_comp [comp]=\"tab\"></jb_comp>\n    </template>\n  </md-tab>\n</md-tab-group></div>",
                     features: { $: 'tabs.initTabs' },
                     directives: [tabs_js_1.MD_TABS_DIRECTIVES, toolbar_1.MdToolbar]
                 }

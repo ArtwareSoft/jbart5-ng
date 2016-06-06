@@ -81,7 +81,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         };
         comp.prototype.ngDoCheck = function () {
             var _this = this;
-            comp.jbCheckFuncs.forEach(function (f) { return f(_this); });
+            comp.jbCheckFuncs.forEach(function (f) {
+                return f(_this);
+            });
+            this.refreshModel && this.refreshModel();
             this.jbEmitter && this.jbEmitter.next('check');
         };
         var annotations = Reflect.getMetadata('annotations', comp)[0];
@@ -282,29 +285,21 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 getValue: function () { return null; },
                 writeValue: function (val) { }
             };
-        if (ref.$jb_parent) {
-            var fieldName = ref.$jb_property;
-            var parentName = ref.$jb_parent.$jb_property || 'model';
-            var modelPath = parentName + '.' + fieldName;
-            var bindToCmp = function (cmp) {
-                return cmp[parentName] = ref.$jb_parent;
+        var modelPath = 'jbModel';
+        var bindToCmp = function (cmp) {
+            cmp.jbOnChange = function (ev) {
+                if (ev.checked !== undefined)
+                    var val = ev.checked;
+                else if (ev.target)
+                    var val = ev.target.type != 'checkbox' ? ev.target.value : ev.target.checked;
+                jb_core_1.jb.writeValue(ref, val);
             };
-            var modelExp = "[(ngModel)] = \"" + modelPath + "\"";
-        }
-        else if (ref.$jb_val) {
-            var modelPath = '$jbModel';
-            var bindToCmp = function (cmp) {
-                cmp.writeValue = function (val) {
-                    return jb_core_1.jb.writeValue(ref, val);
-                };
-                cmp.$jbModel = jb_core_1.jb.val(ref);
-                jb_rx.refObservable(ref, cmp.ctx).subscribe(function () {
-                    return cmp.$jbModel = jb_core_1.jb.val(ref);
-                });
+            cmp.refreshModel = function () {
+                return cmp[modelPath] = jb_core_1.jb.val(ref);
             };
-            // keyup for input change for select
-            var modelExp = "[(ngModel)] = \"" + modelPath + "\" (keyup)=\"writeValue($event.target.value)\" (change)=\"writeValue($event.target.value)\"";
-        }
+        };
+        // keyup for input change for select & checkbox
+        var modelExp = "[(ngModel)] = \"" + modelPath + "\" (change)=\"jbOnChange($event)\" (keyup)=\"jbOnChange($event)\""; // (keyup)="writeValue($event.target.value)" (change)="writeValue($event.target.value)`;
         return {
             bindToCmp: bindToCmp,
             valueExp: modelPath,

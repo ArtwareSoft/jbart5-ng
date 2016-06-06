@@ -18,9 +18,10 @@ jb.component('editable-text',{
 
 jb.component('editable-text.bindField', {
   type: 'feature',
-  impl: ctx => 
-  	jb.obj('init', cmp => 
-  		ctx.vars.field.bindToCmp(cmp, ctx))
+  impl: ctx => ({
+  	init: cmp => 
+  		ctx.vars.field.bindToCmp(cmp, ctx)
+  })
 })
 
 jb.component('editable-text.input',{

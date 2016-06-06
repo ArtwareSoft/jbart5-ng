@@ -19,11 +19,10 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     features: { type: 'feature[]', dynamic: true },
                     methods: { as: 'object' },
                     atts: { as: 'object' },
-                    directives: { type: 'data[]', ignore: true },
-                    isInnerTemplate: { type: 'boolean', as: 'boolean' },
                 },
-                impl: function (context, template, css, features, methods, atts, directives, isInner) {
-                    var options = jb_core_1.jb.extend(jb_core_1.jb.obj(isInner ? 'template' : 'jbTemplate', template), {
+                impl: function (context, template, css, features, methods, atts, directives) {
+                    var options = jb_core_1.jb.extend({
+                        jbTemplate: template,
                         css: css,
                         atts: atts,
                         directives: context.profile.directives,
@@ -57,23 +56,3 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
         }
     }
 });
-// jb.component('custom-control', {
-// 	type: 'control',
-// 	params: {
-// 		title: { as: 'string', dynamic: true },
-// 		template: { as: 'string', essential: true},
-// 		isInnerTemplate: { type: 'boolean', as: 'boolean'},
-// 		css: { as: 'string'},
-// 		atts: { as: 'object'},
-// 		methods: { as: 'object'},
-//     	features: { type: 'feature[]', dynamic: true },
-// 	},
-// 	impl: function (context,title,template,isInner,css,atts,methods,features) {
-// 		return jb_ui.Comp({},context).jbExtend(jb.extend(
-// 			jb.obj(isInner ? 'template' : 'jbTemplate',template), {
-// 				styles: css.split(/}$/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'),
-// 				atts: atts,
-// 				featuresOptions: features()
-// 			},methods))
-// 	}
-// })

@@ -29,11 +29,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             });
             jb_core_1.jb.component('editable-text.bindField', {
                 type: 'feature',
-                impl: function (ctx) {
-                    return jb_core_1.jb.obj('init', function (cmp) {
+                impl: function (ctx) { return ({
+                    init: function (cmp) {
                         return ctx.vars.field.bindToCmp(cmp, ctx);
-                    });
-                }
+                    }
+                }); }
             });
             jb_core_1.jb.component('editable-text.input', {
                 type: 'editable-text.style',

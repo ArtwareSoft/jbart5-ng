@@ -87,9 +87,7 @@ jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
      	.material-icons { font-size:12px;  }
       `,
-      methods: {
-        afterViewInit: ctx => cmp => cmp.bindViaSettings()
-      }
+      features :{ $: 'editable-boolean.bindYesNoMappings' }
    }
 })
 
