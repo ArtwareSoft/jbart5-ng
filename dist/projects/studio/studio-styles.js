@@ -1,11 +1,14 @@
-System.register(['jb-core'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular2-material/slide-toggle/slide-toggle.js'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1;
+    var jb_core_1, slide_toggle_js_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
+            },
+            function (slide_toggle_js_1_1) {
+                slide_toggle_js_1 = slide_toggle_js_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('editable-text.studio-primitive-text', {
@@ -13,7 +16,16 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     features: { $: 'editable-text.bindField' },
                     template: "<div><input %$field.modelExp%></div>",
-                    css: "\ninput { display: block; width: 145px; height: 16px; padding-left: 2px;\n\tfont-size: 12px; color: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\ninput:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\ninput::placeholder { color: #999; opacity: 1; }\ninput[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }\n\t  \tinput.focused {width: 300px; transition: width: 1s}"
+                    css: "\ninput { display: block; width: 149px; height: 16px; padding-left: 2px;\n\tfont-size: 12px; color: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\ninput:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\ninput::placeholder { color: #999; opacity: 1; }\ninput[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }\n\t  \tinput.focused {width: 300px; transition: width: 1s}"
+                }
+            });
+            jb_core_1.jb.component('editable-boolean.studio-slide-toggle', {
+                type: 'editable-boolean.style',
+                impl: { $: 'customStyle',
+                    template: "<span><md-slide-toggle color=\"primary\" class=\"studio-slide-toggle\" %$field.modelExp% >{{text()}}</md-slide-toggle></span>",
+                    css: "\n      .studio-slide-toggle { margin: 0 !important; width: 153px; }\n  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {\n    background-color: #1f1f1f !important}\n  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {\n    background-color: #858585 !important; opacity: 0.5 }\n  .studio-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {\n    opacity: 1; background-color: #858585 !important; \n    background-color-old: rgba(0, 150, 136, 0.26); }\n      ",
+                    noViewEncapsulation: true,
+                    directives: [slide_toggle_js_1.MdSlideToggle]
                 }
             });
             jb_core_1.jb.component('property-sheet.studio-properties', {
@@ -53,8 +65,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
                     template: "<span><button md-icon-button md-button (click)=\"toggle()\" title=\"{{yesNo ? 'collapse' : 'expand'}}\">\n      \t<i class=\"material-icons\">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      \t</button></span>",
-                    css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      ",
-                    features: { $: 'editable-boolean.bindYesNoMappings' }
+                    css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      "
                 }
             });
         }

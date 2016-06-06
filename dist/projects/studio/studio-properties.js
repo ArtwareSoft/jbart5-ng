@@ -71,7 +71,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         if (studio.model.compName(path))
                             fieldPT = 'studio.property-JBEditor';
                         else
-                            fieldPT = 'studio.property-primitive';
+                            fieldPT = paramDef.type == 'boolean' ? 'studio.property-boolean' : 'studio.property-primitive';
                     }
                     else if ((paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
                         fieldPT = 'studio.property-array';
@@ -92,6 +92,25 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 params: { path: { as: 'string' } },
                 impl: { $: 'editable-text',
                     style: { $: 'editable-text.studio-primitive-text' },
+                    title: { $: 'studio.prop-name', path: '%$path%' },
+                    databind: { $: 'studio.ref', path: '%$path%' },
+                    features: [
+                        { $: 'studio.undo-support', path: '%$path%' },
+                        { $: 'field.toolbar',
+                            toolbar: { $: 'button',
+                                title: 'more',
+                                style: { $: 'button.md-icon-12', icon: 'more_vert' },
+                                action: { $: 'studio.open-property-menu', path: '%$path%' },
+                            }
+                        }
+                    ],
+                }
+            });
+            jb_core_1.jb.component('studio.property-boolean', {
+                type: 'control',
+                params: { path: { as: 'string' } },
+                impl: { $: 'editable-boolean',
+                    style: { $: 'editable-boolean.studio-slide-toggle' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [

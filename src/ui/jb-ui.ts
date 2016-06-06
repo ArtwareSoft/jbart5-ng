@@ -80,7 +80,7 @@ export function enrichComp(comp,ctrl_ctx) {
 	}
 
 	var annotations = Reflect.getMetadata('annotations', comp)[0];
-	var overridable_props = ['selector', 'template'];
+	var overridable_props = ['selector', 'template','encapsulation'];
 	var extendable_array_props = ['directives', 'styles'];
 
 	var title = jb_tosingle(jb.val(ctrl_ctx.params.title)) || (() => ''); 
@@ -118,8 +118,12 @@ export function enrichComp(comp,ctrl_ctx) {
     		.filter(x=>x.match(/^{([^]*)}$/m))
     		.forEach(x=>jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]))
 
-		overridable_props.forEach(prop => annotations[prop] = options[prop] || annotations[prop]);
-		extendable_array_props.forEach(prop => annotations[prop] = (annotations[prop] || []).concat(jb.toarray(options[prop])) );
+		overridable_props.forEach(prop => 
+			if (options[prop] !== undefined || annotations[prop] != undefined)
+				annotations[prop] = options[prop] || annotations[prop]);
+		extendable_array_props.forEach(prop => 
+			if (options[prop] !== undefined || annotations[prop] != undefined)
+				annotations[prop] = (annotations[prop] || []).concat(jb.toarray(options[prop])) );
 
 		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
 		if (options.cssClass) jb.path(options, ['atts', 'class'], options.cssClass);

@@ -1,5 +1,7 @@
 *:focus { outline: none }
 
+.hide-md-ink-ripple .md-ink-ripple { display: none !important }
+
 /* section: .jb-label */
 .jb-label { font-size: 14px; }
 

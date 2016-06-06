@@ -66,7 +66,7 @@ jb.component('studio.property-field',{
 			if ( studio.model.compName(path))
 				fieldPT = 'studio.property-JBEditor';
 			else
-				fieldPT = 'studio.property-primitive';
+				fieldPT = paramDef.type == 'boolean' ? 'studio.property-boolean' : 'studio.property-primitive';
 		}
 		else if ( (paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
 			fieldPT = 'studio.property-array';
@@ -107,6 +107,25 @@ jb.component('studio.property-primitive',{
 	}
 })
 
+jb.component('studio.property-boolean',{
+	type: 'control',
+	params: { path: { as: 'string'} },
+	impl :{$: 'editable-boolean',
+		style: {$: 'editable-boolean.studio-slide-toggle'},
+		title :{$: 'studio.prop-name', path: '%$path%' },
+		databind :{$: 'studio.ref', path: '%$path%' },
+		features : [
+			{$: 'studio.undo-support', path: '%$path%' },
+			{$: 'field.toolbar', 
+				toolbar :{$: 'button' ,
+					title: 'more',
+					style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+					action :{$: 'studio.open-property-menu', path: '%$path%' },
+				}
+			}
+		],
+	}
+})
 jb.component('studio.property-enum',{
 	type: 'control',
 	params: { path: { as: 'string'} },

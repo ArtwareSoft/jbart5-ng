@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui;
+    var jb_core_1, jb_ui, core_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,6 +9,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
+            },
+            function (core_1_1) {
+                core_1 = core_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('customStyle', {
@@ -19,8 +22,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     features: { type: 'feature[]', dynamic: true },
                     methods: { as: 'object' },
                     atts: { as: 'object' },
+                    noViewEncapsulation: { as: 'boolean', type: 'boolean' }
                 },
-                impl: function (context, template, css, features, methods, atts, directives) {
+                impl: function (context, template, css, features, methods, atts, noViewEncapsulation) {
                     var options = jb_core_1.jb.extend({
                         jbTemplate: template,
                         css: css,
@@ -28,6 +32,8 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         directives: context.profile.directives,
                         featuresOptions: features()
                     }, methods);
+                    if (noViewEncapsulation)
+                        jb_core_1.jb.extend(options, { encapsulation: core_1.ViewEncapsulation.None });
                     return options;
                 }
             });

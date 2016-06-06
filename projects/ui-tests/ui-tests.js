@@ -510,7 +510,7 @@ ngIf :{$: 'ng2-ui-test',
       { $: 'label', title: '%$person/male%' }
     ]
   },
-  expectedHtmlResult: { $: 'contains', text: ['switch'] },
+  expectedHtmlResult: { $: 'contains', text: ['male'] },
 },
 
 'editable-boolean-settings' :{$: 'ng2-ui-test',  
@@ -518,14 +518,10 @@ ngIf :{$: 'ng2-ui-test',
     [
       {$: 'editable-boolean',
           title: 'male',
-          databind: '%$person/isMale%',
-          style :{$: 'editable-boolean.md-switch'},
-          yesNoSettings :{$: 'editable-boolean.yes-no-settings',
-            textForTrue: 'male',
-            textForFalse: 'female',
-            codeForTrue: 'yes',
-            codeForFalse: 'no',
-          }
+          style :{$: 'editable-boolean.checkbox-with-title'},
+          databind: '%$person/male%',
+          textForTrue: 'male',
+          textForFalse: 'female',
       },
       { $: 'label', title: '%$person/isMale%' }
     ]

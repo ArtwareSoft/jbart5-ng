@@ -19,7 +19,7 @@ jb.component('editable-boolean.expand-collapse', {
   impl :{$: 'customStyle',
       template: `<span><input type="checkbox" %$field.modelExp%>
       	<i class="material-icons" (click)="toggle()">{{jbModel ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>
-      </span>`
+      </span>`,
       css: `i { font-size:16px; cursor: pointer; user-select: none }
       		input { display: none }`
    }

@@ -88,7 +88,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             this.jbEmitter && this.jbEmitter.next('check');
         };
         var annotations = Reflect.getMetadata('annotations', comp)[0];
-        var overridable_props = ['selector', 'template'];
+        var overridable_props = ['selector', 'template', 'encapsulation'];
         var extendable_array_props = ['directives', 'styles'];
         var title = jb_tosingle(jb_core_1.jb.val(ctrl_ctx.params.title)) || (function () { return ''; });
         comp.jb_title = (typeof title == 'function') ? title : function () { return '' + title; };
@@ -126,8 +126,14 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             (options.styles || [])
                 .filter(function (x) { return x.match(/^{([^]*)}$/m); })
                 .forEach(function (x) { return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]); });
-            overridable_props.forEach(function (prop) { return annotations[prop] = options[prop] || annotations[prop]; });
-            extendable_array_props.forEach(function (prop) { return annotations[prop] = (annotations[prop] || []).concat(jb_core_1.jb.toarray(options[prop])); });
+            overridable_props.forEach(function (prop) {
+                if (options[prop] !== undefined || annotations[prop] != undefined)
+                    annotations[prop] = options[prop] || annotations[prop];
+            });
+            extendable_array_props.forEach(function (prop) {
+                if (options[prop] !== undefined || annotations[prop] != undefined)
+                    annotations[prop] = (annotations[prop] || []).concat(jb_core_1.jb.toarray(options[prop]));
+            });
             options.atts = jb_core_1.jb.extend({}, options.atts, options.host); // atts is equvivalent to host
             if (options.cssClass)
                 jb_core_1.jb.path(options, ['atts', 'class'], options.cssClass);

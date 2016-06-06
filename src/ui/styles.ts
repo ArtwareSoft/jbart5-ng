@@ -1,5 +1,6 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
+import {ViewEncapsulation} from '@angular/core';
 
 jb.component('customStyle', {
 	typePattern: /.*-style/,
@@ -9,15 +10,19 @@ jb.component('customStyle', {
     	features: { type: 'feature[]', dynamic: true },
 		methods: { as: 'object'},
 		atts: { as: 'object'},
+		noViewEncapsulation: { as: 'boolean', type: 'boolean'}
 	},
-	impl: function (context,template,css,features,methods,atts,directives) {
+	impl: function (context,template,css,features,methods,atts,noViewEncapsulation) {
 		var options = jb.extend({
 				jbTemplate: template,
 				css: css,
 				atts: atts,
 				directives: context.profile.directives,
 				featuresOptions: features()
-			},methods)
+			},methods);
+		if (noViewEncapsulation)
+			jb.extend(options,{encapsulation: ViewEncapsulation.None})
+
 		return options;
 	}
 })

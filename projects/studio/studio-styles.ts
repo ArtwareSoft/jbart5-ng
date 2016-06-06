@@ -1,4 +1,6 @@
 import {jb} from 'jb-core';
+import {MdSlideToggle} from '@angular2-material/slide-toggle/slide-toggle.js';
+
 
 jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
@@ -6,7 +8,7 @@ jb.component('editable-text.studio-primitive-text',{
       features :{$: 'editable-text.bindField' },
       template: `<div><input %$field.modelExp%></div>`,
 	  css: `
-input { display: block; width: 145px; height: 16px; padding-left: 2px;
+input { display: block; width: 149px; height: 16px; padding-left: 2px;
 	font-size: 12px; color: #555555; background-color: #fff; 
 	border: 1px solid #ccc; border-radius: 4px;
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
@@ -20,6 +22,24 @@ input[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }
 	}
 })
 
+jb.component('editable-boolean.studio-slide-toggle', {
+  type: 'editable-boolean.style',
+  impl :{$: 'customStyle', 
+      template: `<span><md-slide-toggle color="primary" class="studio-slide-toggle" %$field.modelExp% >{{text()}}</md-slide-toggle></span>`,
+      css: `
+      .studio-slide-toggle { margin: 0 !important; width: 153px; }
+  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {
+    background-color: #1f1f1f !important}
+  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {
+    background-color: #858585 !important; opacity: 0.5 }
+  .studio-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {
+    opacity: 1; background-color: #858585 !important; 
+    background-color-old: rgba(0, 150, 136, 0.26); }
+      `,
+      noViewEncapsulation: true,
+      directives: [MdSlideToggle]
+  }
+})
 
 jb.component('property-sheet.studio-properties', {
   type: 'group.style',
@@ -86,8 +106,7 @@ jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
       	</button></span>`,
       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
      	.material-icons { font-size:12px;  }
-      `,
-      features :{ $: 'editable-boolean.bindYesNoMappings' }
+      `
    }
 })
 
