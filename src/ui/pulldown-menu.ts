@@ -59,10 +59,10 @@ jb.component('pulldown-menu-item.default', {
 	  icon: { as: 'string' }
   },
   impl :{$: 'customStyle',
-  	template: `<div><div class="line" (click)="clicked()">
+  	template: `<div><div class="line noselect" (click)="clicked()">
   		<i class="material-icons">{{icon}}</i><span class="title">{{title}}</span><span class="shortcut">{{shortcut}}</span>
   		</div></div>`,
-	css: `.line { display: flex; user-select: none; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}
+	css: `.line { display: flex; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}
 		  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }
 		  span { padding-top: 3px }
           .title { display: block; text-align: left; } 

@@ -55,11 +55,31 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             jb_core_1.jb.component('studio.openModifiedPath', {
                 type: 'action',
                 impl: { $runActions: [
-                        { $: 'writeValue',
-                            to: '%$globals/profile_path%', value: '%$modifiedPath%'
-                        },
-                        { $: 'studio.openProperties' }
+                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%$modifiedPath%' }
                     ] }
+            });
+            jb_core_1.jb.component('studio.openNewPage', {
+                type: 'action',
+                impl: { $: 'openDialog',
+                    modal: true,
+                    title: 'New Page',
+                    style: { $: 'dialog.md-dialog-ok-cancel',
+                        features: { $: 'dialogFeature.autoFocusOnFirstInput' }
+                    },
+                    content: { $: 'editable-text',
+                        databind: '%$dialogData/name%',
+                        features: { $: 'onEnter', action: { $: 'closeContainingPopup' } }
+                    },
+                    onOK: function (ctx) {
+                        var id = ctx.exp('%$globals/project%.%$dialogData/name%');
+                        jbart.previewjbart.comps[id] = jbart.previewjbart.comps[id] || {
+                            type: 'control',
+                            impl: { $: 'group', title: ctx.exp('%$dialogData/name%') }
+                        };
+                        ctx.run({ $: 'writeValue', to: '%$globals/page%', value: '%$dialogData/name%' });
+                        ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
+                    }
+                }
             });
         }
     }

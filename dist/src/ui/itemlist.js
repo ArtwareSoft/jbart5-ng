@@ -136,7 +136,12 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                         init: function (cmp) {
                             cmp.click = new jb_rx.Subject();
                             var itemlist = cmp.itemlist;
-                            itemlist.selectionEmitter.distinctUntilChanged().subscribe(function (selected) {
+                            jb_rx.refObservable(context.params.databind, context).distinctUntilChanged()
+                                .subscribe(function (selected) {
+                                return itemlist.selected = selected;
+                            });
+                            itemlist.selectionEmitter
+                                .distinctUntilChanged().subscribe(function (selected) {
                                 itemlist.selected = selected;
                                 if (context.params.databind)
                                     jb_1.jb.writeValue(context.params.databind, selected);

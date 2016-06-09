@@ -190,10 +190,9 @@ jb.component('dialogFeature.dragTitle', {
 		var dialog = context.vars.$dialog;
 		return {
 		      innerhost: { '.dialog-title' : {
-		      	'(mouseup)': 'mouseup.next($event)', 
 		      	'(mousedown)': 'mousedown.next($event)', 
 		       }},
-		       css: '.dialog-title { cursor: pointer; user-select: none }',
+		       css: '.dialog-title { cursor: pointer }',
 		       init: function(cmp) {
 				  if (id && sessionStorage.getItem(id)) {
 						var pos = JSON.parse(sessionStorage.getItem(id));
@@ -203,6 +202,13 @@ jb.component('dialogFeature.dragTitle', {
 
 				  cmp.mouseup   = new EventEmitter();
 				  cmp.mousedown = new EventEmitter();
+				  var mouseMoveEm = jb_rx.Observable.fromEvent(document, 'mousemove')
+				      			.merge(jb_rx.Observable.fromEvent(
+				      				(window.jb_studio_window || window).document, 'mousemove'));
+				  var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
+				      			.merge(jb_rx.Observable.fromEvent(
+				      				(window.jb_studio_window || window).document, 'mouseup'));
+
 				  var storedPos = new EventEmitter();
 				  var mousedrag = cmp.mousedown.map(event => {
 				        event.preventDefault();
@@ -211,11 +217,13 @@ jb.component('dialogFeature.dragTitle', {
 				          top:  event.clientY - dialog.$el[0].getBoundingClientRect().top
 				        };
 				      })
-				      .flatMap(imageOffset => jb_rx.Observable.fromEvent(document, 'mousemove').map(pos => ({
-				        top:  pos.clientY - imageOffset.top,
-				        left: pos.clientX - imageOffset.left
-				      }))
-				      .takeUntil(cmp.mouseup));
+				      .flatMap(imageOffset => 
+				      			 mouseMoveEm.takeUntil(mouseUpEm)
+				      			 	.map(pos => ({
+							        top:  pos.clientY - imageOffset.top,
+							        left: pos.clientX - imageOffset.left
+							     }))
+				      	);
 
 				  mousedrag.merge(storedPos).debounceTime(3).distinctUntilChanged().subscribe(pos => {
 			        dialog.$el[0].style.top  = pos.top  + 'px';

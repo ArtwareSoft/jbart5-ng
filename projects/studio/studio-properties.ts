@@ -198,49 +198,50 @@ jb.component('studio.property-tgp',{
 	}
 })
 
-jb.component('studio.property-array',{
-	type: 'control',
-	params: { path: { as: 'string'} },
-	impl :{$: 'group',
-		$vars: {
-			'arrayCtrl' : {$: 'object' , expanded: true }
-		},
-		title :{$: 'studio.prop-name', path: '%$path%' },
-		controls: [
-			{ $: 'group',
-			  style :{$: 'layout.horizontal' },
-			  features :{$: 'css', css: '{ height: 28px; margin-left: 174px; }' },
-			  controls: [
-					{ 	$: 'editable-boolean',
-						style :{$: 'editable-boolean.studio-expand-collapse-in-toolbar'},
-						features :{$: 'css', css: '.material-icons { font-size: 16px }' },
-						databind: '%$arrayCtrl/expanded%',
-					},
-			      { $: 'button', 
-			        title: 'add', 
-			        style :{$: 'button.md-icon-12', icon: 'add' },
-			        action :{$: 'studio.newArrayItem', path: '%$path%' },
-					features :{$: 'css', css: '.material-icons { font-size: 16px }' },
-			      },
-			  ]
-			},
-
-		  {$: 'itemlist',
-				items :{$: 'studio.array-children', path: '%$path%' },
-				itemVariable: 'arrayItem',
-				controls :{$:'group',
-					style :{$: 'property-sheet.studio-properties'},
-					controls :{$: 'studio.property-tgp', path: '%$arrayItem%', inArray: true },
-				},
-				features : [
-					{$: 'hidden', showCondition: '%$arrayCtrl.expanded%' },
-					{$: 'css', css: `{ margin-left: -80px}` },
-					{$: 'itemlist.divider'},
-					{$: 'itemlist.drag-and-drop'},
-				]
-		  }
-		],
-	}
+jb.component('studio.property-array', {
+  type: 'control', 
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl :{$: 'group', 
+    $vars: {
+      arrayCtrl :{$: 'object', expanded: true }
+    }, 
+    title :{$: 'studio.prop-name', path: '%$path%' }, 
+    controls: [
+      {$: 'group', 
+        style :{$: 'layout.horizontal' }, 
+        controls: [
+          {$: 'editable-boolean', 
+            databind: '%$arrayCtrl/expanded%', 
+            style :{$: 'editable-boolean.expand-collapse' }
+          }, 
+          {$: 'button', 
+            title: 'add', 
+            action :{$: 'studio.newArrayItem', path: '%$path%' }, 
+            style :{$: 'button.md-icon-12', icon: 'add' }, 
+            features :{$: 'css', css: 'button { margin-top: -5px }' }
+          }
+        ], 
+        features :{$: 'css', css: '{ height: 28px; margin-left: 174px; }' }
+      }, 
+      {$: 'itemlist', 
+        items :{$: 'studio.array-children', path: '%$path%' }, 
+        controls :{$: 'group', 
+          style :{$: 'property-sheet.studio-properties' }, 
+          controls :{$: 'studio.property-tgp', path: '%$arrayItem%', inArray: true }
+        }, 
+        itemVariable: 'arrayItem', 
+        features: [
+          {$: 'hidden', showCondition: '%$arrayCtrl.expanded%' }, 
+          {$: 'css', css: '{ margin-left: -80px}' }, 
+          {$: 'itemlist.divider' }, 
+          {$: 'itemlist.drag-and-drop' }
+        ]
+      }
+    ], 
+    features: {  }
+  }
 })
 
 

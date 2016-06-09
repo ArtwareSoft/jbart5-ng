@@ -64,8 +64,8 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     icon: { as: 'string' }
                 },
                 impl: { $: 'customStyle',
-                    template: "<div><div class=\"line\" (click)=\"clicked()\">\n  \t\t<i class=\"material-icons\">{{icon}}</i><span class=\"title\">{{title}}</span><span class=\"shortcut\">{{shortcut}}</span>\n  \t\t</div></div>",
-                    css: ".line { display: flex; user-select: none; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}\n\t\t  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }\n\t\t  span { padding-top: 3px }\n          .title { display: block; text-align: left; } \n\t\t  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }\n\t\t  .line:hover { background: #eee; }\n\t\t"
+                    template: "<div><div class=\"line noselect\" (click)=\"clicked()\">\n  \t\t<i class=\"material-icons\">{{icon}}</i><span class=\"title\">{{title}}</span><span class=\"shortcut\">{{shortcut}}</span>\n  \t\t</div></div>",
+                    css: ".line { display: flex; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}\n\t\t  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }\n\t\t  span { padding-top: 3px }\n          .title { display: block; text-align: left; } \n\t\t  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }\n\t\t  .line:hover { background: #eee; }\n\t\t"
                 }
             });
             jb_core_1.jb.component('pulldown.topMenuItem', {

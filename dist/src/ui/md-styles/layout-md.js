@@ -2,7 +2,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1;
-    var flexOptions, offsetOptions, responsiveSelectors, responsive_dictionary, persentage_dictionary;
+    var flexOptions, offsetOptions, responsiveSelectors, responsive_dictionary, percentage_dictionary;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -64,9 +64,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: function (ctx) {
                     var responsiveSelector = ctx.vars.responsiveSelector || '';
                     var atts = {};
-                    atts['flex' + responsiveSelector] = persentage_dictionary[ctx.params.flex] || ctx.params.flex || '';
-                    if (ctx.params.marginLeft && persentage_dictionary[ctx.params.marginLeft])
-                        atts['flex-offset' + responsiveSelector] = persentage_dictionary[ctx.params.marginLeft];
+                    atts['flex' + responsiveSelector] = percentage_dictionary[ctx.params.flex] || ctx.params.flex || '';
+                    if (ctx.params.marginLeft && percentage_dictionary[ctx.params.marginLeft])
+                        atts['flex-offset' + responsiveSelector] = percentage_dictionary[ctx.params.marginLeft];
                     if (ctx.params.order)
                         atts['flex-order' + responsiveSelector] = ctx.params.order;
                     if (ctx.params.show)
@@ -107,7 +107,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 '1280-1920': 'lg',
                 '>1920': 'gt-lg',
             };
-            persentage_dictionary = {
+            percentage_dictionary = {
                 '0': '0', '1': '100', '1/2': '50', '1/3': '33', '2/3': '63', '1/4': '25', '3/4': '75', '1/5': '20', '2/5': '40',
                 '3/5': '60', '4/5': '80', '1/10': '10', '3/10': '30', '7/10': '70', '9/10': '90', '1/20': '5', '3/20': '15', '7/20': '35', '9/20': '45', '11/20': '55', '13/20': '65', '17/20': '85', '19/20': '95'
             };

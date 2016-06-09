@@ -68,6 +68,13 @@ System.register(['jb-core', '@angular2-material/slide-toggle/slide-toggle.js'], 
                     css: "button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}\n     \t.material-icons { font-size:12px;  }\n      "
                 }
             });
+            jb_core_1.jb.component('editable-boolean.studio-expand-collapse-in-array', {
+                type: 'editable-boolean.style',
+                impl: { $: 'customStyle',
+                    template: "<span><button md-icon-button md-button (click)=\"toggle()\" title=\"{{yesNo ? 'collapse' : 'expand'}}\">\n      \t<i class=\"material-icons\">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      \t</button></span>",
+                    css: "button { width: 24px; height: 24px; padding: 0; }\n     \t.material-icons { font-size:12px;  }\n      "
+                }
+            });
         }
     }
 });

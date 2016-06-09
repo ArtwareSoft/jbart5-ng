@@ -396,13 +396,11 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var prop = this.controlParam(path);
                     if (!prop)
                         return console.log('pushing to non array');
-                    if (val[prop] == undefined)
+                    if (val[prop] === undefined)
                         val[prop] = [];
-                    var arr = val[prop];
-                    if (!Array.isArray(val[prop])) {
-                        arr = [arr];
-                    }
-                    return arr;
+                    if (!Array.isArray(val[prop]))
+                        val[prop] = [val[prop]];
+                    return val[prop];
                 };
                 ControlModel.prototype.addArrayItem = function (path) {
                     var val = profileValFromPath(path);

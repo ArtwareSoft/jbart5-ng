@@ -195,45 +195,47 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.property-array', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: {
+                    path: { as: 'string' }
+                },
                 impl: { $: 'group',
                     $vars: {
-                        'arrayCtrl': { $: 'object', expanded: true }
+                        arrayCtrl: { $: 'object', expanded: true }
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
-                            features: { $: 'css', css: '{ height: 28px; margin-left: 174px; }' },
                             controls: [
                                 { $: 'editable-boolean',
-                                    style: { $: 'editable-boolean.studio-expand-collapse-in-toolbar' },
-                                    features: { $: 'css', css: '.material-icons { font-size: 16px }' },
                                     databind: '%$arrayCtrl/expanded%',
+                                    style: { $: 'editable-boolean.expand-collapse' }
                                 },
                                 { $: 'button',
                                     title: 'add',
-                                    style: { $: 'button.md-icon-12', icon: 'add' },
                                     action: { $: 'studio.newArrayItem', path: '%$path%' },
-                                    features: { $: 'css', css: '.material-icons { font-size: 16px }' },
-                                },
-                            ]
+                                    style: { $: 'button.md-icon-12', icon: 'add' },
+                                    features: { $: 'css', css: 'button { margin-top: -5px }' }
+                                }
+                            ],
+                            features: { $: 'css', css: '{ height: 28px; margin-left: 174px; }' }
                         },
                         { $: 'itemlist',
                             items: { $: 'studio.array-children', path: '%$path%' },
-                            itemVariable: 'arrayItem',
                             controls: { $: 'group',
                                 style: { $: 'property-sheet.studio-properties' },
-                                controls: { $: 'studio.property-tgp', path: '%$arrayItem%', inArray: true },
+                                controls: { $: 'studio.property-tgp', path: '%$arrayItem%', inArray: true }
                             },
+                            itemVariable: 'arrayItem',
                             features: [
                                 { $: 'hidden', showCondition: '%$arrayCtrl.expanded%' },
-                                { $: 'css', css: "{ margin-left: -80px}" },
+                                { $: 'css', css: '{ margin-left: -80px}' },
                                 { $: 'itemlist.divider' },
-                                { $: 'itemlist.drag-and-drop' },
+                                { $: 'itemlist.drag-and-drop' }
                             ]
                         }
                     ],
+                    features: {}
                 }
             });
             jb_core_1.jb.component('studio.open-property-menu', {

@@ -101,16 +101,11 @@ export function restoreWindowEvent(events) {
 }
 
 export function disableSelection(elem) {
-	if (!jbart.disableSelectionCssAppended) {
-		jbart.disableSelectionCssAppended = true;
-		var style = $('<style/>').html('.jb_unselected { webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}');
-		style.appendTo('head');
-	}
-	$(elem).addClass('jb_unselected');
+	$(elem).addClass('noselect');
 }
 
 export function undisableSelection(elem) {
-	$(elem).removeClass('jb_unselected');
+	$(elem).removeClass('noselect');
 }
 
 export function findControlElement(baseElem, controlID) {

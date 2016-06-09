@@ -116,10 +116,15 @@ jb.component('itemlist.selection', {
       init: function(cmp) {
         cmp.click = new jb_rx.Subject();
         var itemlist = cmp.itemlist;
-        itemlist.selectionEmitter.distinctUntilChanged().subscribe(selected=>{
-          itemlist.selected = selected;
-          if (context.params.databind)
-            jb.writeValue(context.params.databind,selected);
+        jb_rx.refObservable(context.params.databind,context).distinctUntilChanged()
+          .subscribe(selected=>
+            itemlist.selected = selected
+        );
+        itemlist.selectionEmitter
+          .distinctUntilChanged().subscribe(selected=>{
+            itemlist.selected = selected;
+            if (context.params.databind)
+              jb.writeValue(context.params.databind,selected);
         });
         // first auto selection selection
         if (jb.val(context.params.databind))

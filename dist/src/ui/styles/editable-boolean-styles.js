@@ -23,8 +23,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('editable-boolean.expand-collapse', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<span><input type=\"checkbox\" %$field.modelExp%>\n      \t<i class=\"material-icons\" (click)=\"toggle()\">{{jbModel ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      </span>",
-                    css: "i { font-size:16px; cursor: pointer; user-select: none }\n      \t\tinput { display: none }"
+                    template: "<span><input type=\"checkbox\" %$field.modelExp%>\n      \t<i class=\"material-icons noselect\" (click)=\"toggle()\">{{jbModel ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      </span>",
+                    css: "i { font-size:16px; cursor: pointer; }\n      \t\tinput { display: none }"
                 }
             });
         }

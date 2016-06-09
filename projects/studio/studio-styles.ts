@@ -110,6 +110,18 @@ jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
    }
 })
 
+jb.component('editable-boolean.studio-expand-collapse-in-array', {
+  type: 'editable-boolean.style',
+  impl :{$: 'customStyle',
+      template: `<span><button md-icon-button md-button (click)="toggle()" title="{{yesNo ? 'collapse' : 'expand'}}">
+      	<i class="material-icons">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>
+      	</button></span>`,
+      css: `button { width: 24px; height: 24px; padding: 0; }
+     	.material-icons { font-size:12px;  }
+      `
+   }
+})
+
 // jb.component('button.studio-edit-js', {
 //   type: 'button.style',
 //   impl :{$: 'customStyle',  

@@ -104,16 +104,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
     }
     exports_1("restoreWindowEvent", restoreWindowEvent);
     function disableSelection(elem) {
-        if (!jbart.disableSelectionCssAppended) {
-            jbart.disableSelectionCssAppended = true;
-            var style = $('<style/>').html('.jb_unselected { webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}');
-            style.appendTo('head');
-        }
-        $(elem).addClass('jb_unselected');
+        $(elem).addClass('noselect');
     }
     exports_1("disableSelection", disableSelection);
     function undisableSelection(elem) {
-        $(elem).removeClass('jb_unselected');
+        $(elem).removeClass('noselect');
     }
     exports_1("undisableSelection", undisableSelection);
     function findControlElement(baseElem, controlID) {

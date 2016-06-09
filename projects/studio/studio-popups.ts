@@ -36,7 +36,7 @@ jb.component('dialog.studioFloating', {
 	impl :{$: 'customStyle',
 			$vars: { dialogID: '%$id%' },
 			template: `<div class="jb-dialog jb-default-dialog">
-				      		  <div class="dialog-title">{{title}}</div>
+				      		  <div class="dialog-title noselect">{{title}}</div>
 							  <button class="dialog-close" (click)="dialogClose()">&#215;</button>
 							  <div class="jb-dialog-content-parent">
  								<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>

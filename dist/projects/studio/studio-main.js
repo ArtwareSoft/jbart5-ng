@@ -51,8 +51,8 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                 },
                                 { $: 'group',
                                     url: '/projects/studio/css/logo470x200.png',
-                                    title: 'title and menu',
-                                    style: { $: 'layout.vertical', spacing: '12' },
+                                    title: 'title and menu ',
+                                    style: { $: 'layout.vertical', spacing: '14' },
                                     controls: [
                                         { $: 'label',
                                             title: [
@@ -85,28 +85,37 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                         { $: 'group',
                             cssClass: 'studio-footer',
                             title: 'pages',
-                            controls: { $: 'itemlist',
-                                items: { $: 'studio.projectPages' },
-                                controls: { $: 'label',
-                                    cssClass: 'studio-page',
-                                    title: { $: 'extractSuffix', separator: '.' }
+                            style: { $: 'layout.horizontal' },
+                            controls: [
+                                { $: 'button',
+                                    title: 'new page',
+                                    style: { $: 'button.md-icon-12', icon: 'add' },
+                                    features: { $: 'css', css: 'button {margin-top: 3px}' },
+                                    action: { $: 'studio.openNewPage' }
                                 },
-                                features: [
-                                    { $: 'itemlist.selection',
-                                        databind: '%$globals/page%',
-                                        onSelection: { $: 'onNextTimer',
-                                            action: { $: 'writeValue',
-                                                to: '%$globals/profile_path%',
-                                                value: '{%$globals/project%}.{%$globals/page%}'
-                                            }
-                                        },
-                                        autoSelectFirst: true
+                                { $: 'itemlist',
+                                    items: { $: 'studio.projectPages' },
+                                    controls: { $: 'label',
+                                        cssClass: 'studio-page',
+                                        title: { $: 'extractSuffix', separator: '.' }
                                     },
-                                    { $: 'css',
-                                        css: "{ list-style: none; padding: 0; margin: 0; margin-left: 20px; font-family: \"Arial\"}\n                li { list-style: none; display: inline-block; padding: 6px 10px; font-size: 12px; border: 1px solid transparent; cursor: pointer;}\n                li label { cursor: inherit; }\n                li.selected { background: #fff;  border: 1px solid #ccc;  border-top: 1px solid transparent; color: inherit;  }"
-                                    }
-                                ]
-                            },
+                                    features: [
+                                        { $: 'itemlist.selection',
+                                            databind: '%$globals/page%',
+                                            onSelection: { $: 'onNextTimer',
+                                                action: { $: 'writeValue',
+                                                    to: '%$globals/profile_path%',
+                                                    value: '{%$globals/project%}.{%$globals/page%}'
+                                                }
+                                            },
+                                            autoSelectFirst: true
+                                        },
+                                        { $: 'css',
+                                            css: "{ list-style: none; padding: 0; margin: 0; margin-left: 20px; font-family: \"Arial\"}\n                  li { list-style: none; display: inline-block; padding: 6px 10px; font-size: 12px; border: 1px solid transparent; cursor: pointer;}\n                  li label { cursor: inherit; }\n                  li.selected { background: #fff;  border: 1px solid #ccc;  border-top: 1px solid transparent; color: inherit;  }"
+                                        }
+                                    ]
+                                }
+                            ],
                             features: [
                                 { $: 'wait',
                                     for: { $: 'studio.waitForPreviewIframe' },
@@ -127,10 +136,10 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                         { $: 'group.watch', data: '%$globals/project%' },
                         { $: 'feature.init',
                             action: { $: 'rx.urlPath',
-                                base: 'studio',
-                                zoneId: 'studio.all',
                                 params: ['project', 'page', 'profile_path'],
-                                databind: '{%$globals%}'
+                                databind: '{%$globals%}',
+                                base: 'studio',
+                                zoneId: 'studio.all'
                             }
                         }
                     ]
