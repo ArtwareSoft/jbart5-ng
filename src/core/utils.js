@@ -345,8 +345,9 @@ function jb_compareArrays(arr1, arr2) {
 }
 
 function jb_prettyPrintComp(compId,comp) {
-  return "jb.component('" + compId + "', "
-    + jb_prettyPrintWithPositions(comp).result + ')'
+  if (comp)
+    return "jb.component('" + compId + "', "
+      + jb_prettyPrintWithPositions(comp).result + ')'
 }
 
 function jb_prettyPrint(profile,colWidth,tabSize,initialPath) {

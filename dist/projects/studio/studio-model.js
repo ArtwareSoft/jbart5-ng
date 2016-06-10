@@ -276,6 +276,9 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 ControlModel.prototype.writeValue = function (path, args) {
                     jb_core_1.jb.writeValue(profileRefFromPath(path), args.value);
                 };
+                ControlModel.prototype.newComp = function (path, args) {
+                    jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
+                };
                 ControlModel.prototype.wrapWithGroup = function (path) {
                     var result = { $: 'group', controls: [profileValFromPath(path)] };
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);

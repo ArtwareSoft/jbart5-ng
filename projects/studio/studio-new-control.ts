@@ -65,10 +65,12 @@ jb.component('studio.openNewPage', {
     }, 
     onOK: ctx => {
         var id = ctx.exp('%$globals/project%.%$dialogData/name%'); 
-        jbart.previewjbart.comps[id] = jbart.previewjbart.comps[id] || {
+        var profile = {
           type: 'control', 
           impl :{$: 'group', title: ctx.exp('%$dialogData/name%') }
-        };
+        }
+        studio.model.modify(studio.model.newComp,id,{profile:profile},ctx);
+
         ctx.run({ $: 'writeValue', to: '%$globals/page%', value: '%$dialogData/name%' });
         ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
     }

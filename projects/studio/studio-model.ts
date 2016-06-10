@@ -224,6 +224,10 @@ export class ControlModel {
 		jb.writeValue(profileRefFromPath(path),args.value);
 	}
 
+	newComp(path,args) {
+        jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
+	}
+
 	wrapWithGroup(path) {
 		var result = { $: 'group', controls: [ profileValFromPath(path) ] };
 		jb.writeValue(profileRefFromPath(path),result);

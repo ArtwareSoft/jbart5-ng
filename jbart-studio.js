@@ -107,7 +107,7 @@ extend(op_post_handlers, {
         } catch(e) {}
         if (!clientReq)
            return endWithFailure(res,'Can not parse json request');
-        if (!clientReq.original) return endWithFailure(res,'missing original in request');
+        //if (!clientReq.original) return endWithFailure(res,'missing original in request');
         if (!clientReq.toSave) return endWithFailure(res,'missing toSave in request');
 
         var project = getURLParam(req,'project');
@@ -119,8 +119,18 @@ extend(op_post_handlers, {
         if (comp.indexOf('studio.') == 0)
           projDirs.push('projects/studio');
 
+        if (!clientReq.original) { // new comp
+          var srcPath = `projects/${project}/${project}.ts`;
+          var res = ('' + fs.readFileSync(srcPath)) + '\n\n' + clientReq.toSave;
+          var cleanNL = res.replace(/\r/g,'');
+          if (_iswin)
+            cleanNL = cleanNL.replace(/\n/g,'\r\n');
+          fs.writeFileSync(srcPath,cleanNL);
+          return endWithSuccess(res,`component ${comp} added to ${srcPath}`);
+        }
+
         var comp_found = false;
-        console.log(clientReq.original);
+//        console.log(clientReq.original);
         projDirs.forEach(projDir=>
           fs.readdirSync(projDir)
             .filter(x=>x.match(/\.js$/) || x.match(/\.ts$/))
@@ -136,13 +146,13 @@ extend(op_post_handlers, {
                   source.splice.apply(source, [found.index, found.length].concat(replaceWith));
                   var newContent = source.join(_iswin ? '\r\n' : '\n');
                   fs.writeFileSync(srcPath,newContent);
-                  endWithSuccess(res,`component ${comp} saved to ${srcPath} at ${JSON.stringify(found)}`);
+                  return endWithSuccess(res,`component ${comp} saved to ${srcPath} at ${JSON.stringify(found)}`);
                 }
             })
-          )
+        )
 
         if (!comp_found)
-          endWithFailure(res,`Can not find component ${comp} in project`)
+          endWithFailure(res,`Can not find component ${comp} in project`);
 
         function findSection(source,toFind) {
           var index = source.indexOf(toFind[0]);
