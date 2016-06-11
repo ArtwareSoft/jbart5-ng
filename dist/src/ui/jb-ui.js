@@ -100,6 +100,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 console.log('no context provided for jbExtend');
             if (!options)
                 return comp;
+            if (typeof options != 'object')
+                debugger;
             jbTemplate(options);
             if (options.beforeInit)
                 comp.jbBeforeInitFuncs.push(options.beforeInit);

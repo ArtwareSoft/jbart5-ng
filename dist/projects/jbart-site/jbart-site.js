@@ -14,6 +14,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     title: 'main',
                     controls: [
                         { $: 'group',
+                            title: 'site header',
                             style: { $: 'layout.horizontal' },
                             controls: [
                                 { $: 'image',
@@ -21,11 +22,32 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     imageHeight: '74',
                                     units: 'px',
                                     style: { $: 'image.default' }
+                                },
+                                { $: 'button',
+                                    title: 'preview in github',
+                                    style: { $: 'button.md-raised' }
+                                }
+                            ]
+                        },
+                        { $: 'group',
+                            title: 'jbart header',
+                            style: { $: 'layout.horizontal' },
+                            controls: [
+                                { $: 'image',
+                                    url: 'https://storage.googleapis.com/jbartcommunity/jbart5-material.png',
+                                    imageWidth: '500',
+                                    imageHeight: '',
+                                    units: 'px',
+                                    style: { $: 'image.default' }
                                 }
                             ]
                         }
                     ]
                 }
+            });
+            jb_core_1.jb.component('jbart-site.bb', {
+                type: 'control',
+                impl: { $: 'group', title: 'bb' }
             });
         }
     }

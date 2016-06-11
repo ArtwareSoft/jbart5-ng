@@ -1,7 +1,8 @@
 build the jbart.io site like https://material.angular.io/
 
-make the materual tabs work
-slide-toggle for studio booleans
+file-save indication
+
+make the material tabs work
 
 wrap as group should open group and select inner
 	control-tree context menu as tree aspect

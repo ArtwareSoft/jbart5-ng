@@ -1,11 +1,13 @@
 function jb_run(context,parentParam) {
   try {
-    if (context.profile === null) return;
-    if (context.profile.$debugger == 0) debugger;
-    if (context.profile.$asIs) return context.profile.$asIs;
+    var profile = context.profile;
+    if (profile === null) return;
+    if (profile.$debugger == 0) debugger;
+    if (profile.$asIs) return profile.$asIs;
+    if (typeof profile === 'object' && Object.getOwnPropertyNames(profile).length == 0)
+      return;
     var run = prepare();
     var jstype = parentParam && parentParam.as;
-    var profile = context.profile;
     switch (run.type) {
       case 'booleanExp': return jb_bool_expression(profile, context);
       case 'expression': return jb_tojstype(jb_expression(profile, context), jstype, context);

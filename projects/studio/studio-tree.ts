@@ -18,53 +18,76 @@ jb.component('studio.openControlTree', {
 	}
 })
 
-jb.component('studio.open-tree-menu',{
-	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
-	impl :{$: 'openDialog',
-		style :{$: 'pulldownPopup.contextMenuPopup' },
-		content :{$: 'group',
-			controls: [
-	 		    { $: 'pulldown.menu-item', title: 'Wrap with group',
-				    action :{$: 'studio.wrapWithGroup', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Duplicate',
-				    action :{$: 'studio.duplicate', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item-separator' },
-	 		    { $: 'pulldown.menu-item', title: 'javascript editor',
-				    action :{$: 'studio.editSource', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Goto sublime',
-				    action :{$: 'studio.openSublime', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item-separator' },
-	 		    { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
-					action : [ 
-						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
-						{$: 'studio.delete', path: '%$path%' },
-					],
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Copy', icon: 'copy', shortcut: 'Ctrl+C',
-				    action :{$: 'studio.copy', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Paste', icon: 'paste', shortcut: 'Ctrl+V',
-				    action :{$: 'studio.paste', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z',
-				    action :{$: 'studio.undo' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y',
-				    action :{$: 'studio.redo' }
-	 		    },
-			]
-		}
-	}
+jb.component('studio.open-tree-menu', {
+  type: 'action', 
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl :{$: 'openDialog', 
+    style :{$: 'pulldownPopup.contextMenuPopup' }, 
+    content :{$: 'group', 
+      controls: [
+        {$: 'pulldown.menu-item', 
+          title: 'Insert', 
+          action :{$: 'studio.openNewCtrlDialog' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Wrap with group', 
+          action :{$: 'studio.wrapWithGroup', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Duplicate', 
+          action :{$: 'studio.duplicate', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item-separator' }, 
+        {$: 'pulldown.menu-item', 
+          title: 'javascript editor', 
+          action :{$: 'studio.editSource', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Goto sublime', 
+          action :{$: 'studio.openSublime', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item-separator' }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Delete', 
+          icon: 'delete', 
+          shortcut: 'Delete', 
+          action: [
+            {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
+            {$: 'studio.delete', path: '%$path%' }
+          ]
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Copy', 
+          icon: 'copy', 
+          shortcut: 'Ctrl+C', 
+          action :{$: 'studio.copy', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Paste', 
+          icon: 'paste', 
+          shortcut: 'Ctrl+V', 
+          action :{$: 'studio.paste', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Undo', 
+          icon: 'undo', 
+          shortcut: 'Ctrl+Z', 
+          action :{$: 'studio.undo' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Redo', 
+          icon: 'redo', 
+          shortcut: 'Ctrl+Y', 
+          action :{$: 'studio.redo' }
+        }
+      ]
+    }
+  }
 })
 
-jb.component('studio.controlTree',{
+jb.component('studio.controlTree', {
 	type: 'control',
 	impl: {
 		$: 'tree', cssClass: 'jb-control-tree studio-control-tree',

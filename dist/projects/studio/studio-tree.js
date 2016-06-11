@@ -29,44 +29,67 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             jb_core_1.jb.component('studio.open-tree-menu', {
                 type: 'action',
                 params: {
-                    path: { as: 'string' },
+                    path: { as: 'string' }
                 },
                 impl: { $: 'openDialog',
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',
                         controls: [
-                            { $: 'pulldown.menu-item', title: 'Wrap with group',
+                            { $: 'pulldown.menu-item',
+                                title: 'Insert',
+                                action: { $: 'studio.openNewCtrlDialog' }
+                            },
+                            { $: 'pulldown.menu-item',
+                                title: 'Wrap with group',
                                 action: { $: 'studio.wrapWithGroup', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item', title: 'Duplicate',
+                            { $: 'pulldown.menu-item',
+                                title: 'Duplicate',
                                 action: { $: 'studio.duplicate', path: '%$path%' }
                             },
                             { $: 'pulldown.menu-item-separator' },
-                            { $: 'pulldown.menu-item', title: 'javascript editor',
+                            { $: 'pulldown.menu-item',
+                                title: 'javascript editor',
                                 action: { $: 'studio.editSource', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item', title: 'Goto sublime',
+                            { $: 'pulldown.menu-item',
+                                title: 'Goto sublime',
                                 action: { $: 'studio.openSublime', path: '%$path%' }
                             },
                             { $: 'pulldown.menu-item-separator' },
-                            { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
+                            { $: 'pulldown.menu-item',
+                                title: 'Delete',
+                                icon: 'delete',
+                                shortcut: 'Delete',
                                 action: [
-                                    { $: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%' },
-                                    { $: 'studio.delete', path: '%$path%' },
-                                ],
+                                    { $: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false },
+                                    { $: 'studio.delete', path: '%$path%' }
+                                ]
                             },
-                            { $: 'pulldown.menu-item', title: 'Copy', icon: 'copy', shortcut: 'Ctrl+C',
+                            { $: 'pulldown.menu-item',
+                                title: 'Copy',
+                                icon: 'copy',
+                                shortcut: 'Ctrl+C',
                                 action: { $: 'studio.copy', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item', title: 'Paste', icon: 'paste', shortcut: 'Ctrl+V',
+                            { $: 'pulldown.menu-item',
+                                title: 'Paste',
+                                icon: 'paste',
+                                shortcut: 'Ctrl+V',
                                 action: { $: 'studio.paste', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item', title: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z',
+                            { $: 'pulldown.menu-item',
+                                title: 'Undo',
+                                icon: 'undo',
+                                shortcut: 'Ctrl+Z',
                                 action: { $: 'studio.undo' }
                             },
-                            { $: 'pulldown.menu-item', title: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y',
+                            { $: 'pulldown.menu-item',
+                                title: 'Redo',
+                                icon: 'redo',
+                                shortcut: 'Ctrl+Y',
                                 action: { $: 'studio.redo' }
-                            },
+                            }
                         ]
                     }
                 }

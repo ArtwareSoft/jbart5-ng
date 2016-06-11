@@ -94,6 +94,8 @@ export function enrichComp(comp,ctrl_ctx) {
     	if (!context)
     		console.log('no context provided for jbExtend');
     	if (!options) return comp;
+    	if (typeof options != 'object')
+    		debugger;
     	jbTemplate(options);
 		if (options.beforeInit) comp.jbBeforeInitFuncs.push(options.beforeInit);
 		if (options.init) comp.jbInitFuncs.push(options.init);
