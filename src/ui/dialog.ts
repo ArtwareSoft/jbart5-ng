@@ -26,6 +26,7 @@ jb.component('openDialog', {
 
 				cmp.dialogClose = dialog.close;
 				cmp.contentComp = ctx.params.content(ctx);
+				jb.trigger(cmp.dialog, 'attach');
 //				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
 				// jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
 				// 	$(ref.location.nativeElement).addClass('dialog-content');
@@ -122,41 +123,45 @@ jb.component('dialogFeature.closeWhenClickingOutside', {
 	type: 'dialogFeature',
 	impl: function(context) { 
 		var dialog = context.vars.$dialog;
-		jb.delay(10).then(() => // close older before
-			window.onmousedown = function(e) {
-				if ($(e.target).closest(dialog.$el[0]).length) return;
+		function clickOutHandler(e) {
+			if ($(e.target).closest(dialog.$el[0]).length == 0)
 				dialog.close();
-			})
+		}
+		jb.delay(10).then( function() { // delay - close older before
+			window.onmousedown = clickOutHandler;
+			if (jbart.previewWindow)
+				jbart.previewWindow.onmousedown = clickOutHandler;
+		})
 		jb.bind(dialog, 'close', function() {
 			window.onmousedown = null;
+			if (jbart.previewWindow) 
+				jbart.previewWindow.onmousedown = null;
 		});
 	}
 })
 
 jb.component('dialogFeature.autoFocusOnFirstInput', {
 	type: 'dialogFeature',
-	impl: function(context) {
-		var dialog = context.vars.$dialog;
-		return { 
-			afterViewInit: function(cmp) {
-				jb.delay(1).then(()=>dialog.$el.find('input,textarea,select').first().focus());
-			}
-		}
-	}
+	impl: context => ({ 
+			afterViewInit: cmp =>
+				jb.delay(1).then(()=>
+					context.vars.$dialog.$el.find('input,textarea,select').first().focus())
+	})
 })
 
 jb.component('dialogFeature.cssClassOnLaunchingControl', {
 	type: 'dialogFeature',
-	impl: function(context) {
-		var dialog = context.vars.$dialog;
-		var $control = context.vars.$launchingElement.$el;
-		jb.bind(dialog,'attach',function() {
-			$control.addClass('dialog-open');
-		});
-		jb.bind(dialog,'close',function() {
-			$control.removeClass('dialog-open');
-		});
-	}
+	impl: context => ({ 
+			afterViewInit: cmp => {
+				var dialog = context.vars.$dialog;
+				var $control = context.vars.$launchingElement.$el;
+				$control.addClass('dialog-open');
+
+				jb.bind(dialog,'close',function() {
+					$control.removeClass('dialog-open');
+				});
+			}
+	})
 })
 
 jb.component('dialogFeature.maxZIndexOnClick', {
@@ -166,10 +171,13 @@ jb.component('dialogFeature.maxZIndexOnClick', {
 	},
 	impl: function(context,minZIndex) {
 		var dialog = context.vars.$dialog;
-		jb.bind(dialog, 'attach', function() {
-			setAsMaxZIndex();
-			dialog.$el.mousedown(setAsMaxZIndex);
-		});
+
+		return ({
+			afterViewInit: cmp => {
+				setAsMaxZIndex();
+				dialog.$el.mousedown(setAsMaxZIndex);
+			}
+		})
 
 		function setAsMaxZIndex() {
 			var maxIndex = jb_dialogs.dialogs.reduce(function(max,d) { 
@@ -204,10 +212,10 @@ jb.component('dialogFeature.dragTitle', {
 				  cmp.mousedown = new EventEmitter();
 				  var mouseMoveEm = jb_rx.Observable.fromEvent(document, 'mousemove')
 				      			.merge(jb_rx.Observable.fromEvent(
-				      				(window.jb_studio_window || window).document, 'mousemove'));
+				      				(jbart.previewWindow || {}).document, 'mousemove'));
 				  var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
 				      			.merge(jb_rx.Observable.fromEvent(
-				      				(window.jb_studio_window || window).document, 'mouseup'));
+				      				(jbart.previewWindow || {}).document, 'mouseup'));
 
 				  var storedPos = new EventEmitter();
 				  var mousedrag = cmp.mousedown.map(event => {

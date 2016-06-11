@@ -1,36 +1,25 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
-            },
-            function (studio_1) {
-                studio = studio_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('studio.showNgComponent', {
+            jb_core_1.jb.component('studio.open-multiline-edit', {
                 type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
                 impl: {
                     $: 'openDialog',
-                    title: 'angular component - %$globals/profile_path%',
-                    style: { $: 'dialog.studioFloating', id: 'angular component', width: 600 },
-                    features: { $: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}' },
+                    style: { $: 'dialog.studio-multiline-edit' },
                     content: { $: 'editable-text',
-                        databind: { $: 'studio.ngComponent' },
-                        style: { $: 'editable-text.codemirror', mode1: 'javascript' },
+                        databind: { $: 'studio.ref', path: '%$path%' },
+                        style: { $: 'editable-text.codemirror', mode: 'javascript' },
                     }
-                }
-            });
-            jb_core_1.jb.component('studio.ngComponent', {
-                type: 'data',
-                params: {
-                    path: { as: 'string', defaultValue: '{%$globals/project%}.{%$globals/page%}' }
-                },
-                impl: function (context, path) {
-                    return { $jb_val: function () { return studio.ngComponent(path); } };
                 }
             });
             jb_core_1.jb.component('dialog.studioFloating', {

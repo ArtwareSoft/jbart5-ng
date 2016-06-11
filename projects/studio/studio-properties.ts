@@ -245,34 +245,62 @@ jb.component('studio.property-array', {
 })
 
 
-jb.component('studio.open-property-menu',{
-	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
-	impl :{$: 'openDialog',
-		style :{$: 'pulldownPopup.contextMenuPopup' },
-		content :{$: 'group',
-			controls: [
-	 		    { $: 'pulldown.menu-item', title: 'Delete', icon: 'delete', shortcut: 'Delete',
-					action : [ 
-						{$: 'writeValue', value: false, to: '%$TgpTypeCtrl.expanded%'},
-						{$: 'studio.delete', path: '%$path%' },
-					],
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'javascript editor', icon: 'code',
-				    action :{$: 'studio.editSource', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Goto sublime',
-				    action :{$: 'studio.openSublime', path: '%$path%' }
-	 		    },
-	 		    { $: 'pulldown.menu-item', title: 'Customize Style', icon: 'build',
-				    action : {$: 'studio.makeLocal', path: '%$path%' },
-				    features :{$: 'hidden', showCondition :{$: 'endsWith', text: '%$path%', endsWith: '~style' } }
-	 		    },
-			]
-		}
-	}
+jb.component('studio.open-property-menu', {
+  type: 'action', 
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl :{$: 'openDialog', 
+    style :{$: 'pulldownPopup.contextMenuPopup' }, 
+    content :{$: 'group', 
+      controls: [
+        {$: 'pulldown.menu-item', 
+          title: 'Multiline edit', 
+          features :{$: 'hidden', 
+          	showCondition: {$: 'equals', 
+          		item1: [ {$: 'studio.paramDef', path: '%$path%' }, '%as%'],
+          		item2: 'string'
+          	}
+          },
+          action :{$: 'studio.open-multiline-edit', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          $vars: {
+          	compName: {$: 'studio.compName', path : '%$path%'}
+          },
+          title: 'Goto %$compName%', 
+          features :{$: 'hidden', showCondition: '%$compName%' },
+          action :{$: 'studio.goto-component', comp: '%$compName%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Javascript editor', 
+          icon: 'code', 
+          action :{$: 'studio.editSource', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Open sublime', 
+          action :{$: 'studio.openSublime', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Customize Style', 
+          icon: 'build', 
+          action :{$: 'studio.makeLocal', path: '%$path%' }, 
+          features :{$: 'hidden', 
+            showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
+          }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Delete', 
+          icon: 'delete', 
+          shortcut: 'Delete', 
+          action: [
+            {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
+            {$: 'studio.delete', path: '%$path%' }
+          ]
+        }
+      ]
+    }
+  }
 })
 
 // jb.component('studio.property-Style',{

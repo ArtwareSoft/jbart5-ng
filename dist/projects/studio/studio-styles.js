@@ -75,41 +75,71 @@ System.register(['jb-core', '@angular2-material/slide-toggle/slide-toggle.js'], 
                     css: "button { width: 24px; height: 24px; padding: 0; }\n     \t.material-icons { font-size:12px;  }\n      "
                 }
             });
+            // jb.component('button.studio-edit-js', {
+            //   type: 'button.style',
+            //   impl :{$: 'customStyle',  
+            //   	template: '<span><button (click)="clicked()" [title]="title">{}</button></span>',
+            //   	css: `{ margin-top: -2px; margin-left: -3px; margin-right: -5px;}
+            //   		 button { cursor: pointer; 
+            //             font: 12px sans-serif; 
+            //             border: none; 
+            //             background: transparent; 
+            //             color: #91B193; 
+            //             text-shadow: 0 1px 0 #fff; 
+            //             font-weight: 700; 
+            //             opacity: .8;
+            //         }
+            //         button:hover { opacity: 1 }`
+            //   }
+            // })
+            // jb.component('button.studio-delete', {
+            //   type: 'button.style',
+            //   impl :{$: 'customStyle',  
+            //       template: '<span><button (click)="clicked()" [title]="title">&#215;</button></span>',
+            //       css: `{ margin-left: -4px; margin-top: -1px }
+            //       button {
+            //             cursor: pointer; 
+            //             font: 16px sans-serif; 
+            //             border: none; 
+            //             background: transparent; 
+            //             color: #000; 
+            //             text-shadow: 0 1px 0 #fff; 
+            //             font-weight: 700; 
+            //             opacity: .2;
+            //         }
+            //         button:hover { opacity: .5 }`
+            //   }
+            // })
+            jb_core_1.jb.component('dialog.studio-multiline-edit', {
+                type: 'dialog.style',
+                impl: { $: 'customStyle',
+                    template: "<div class=\"jb-dialog jb-popup\">\n\t\t\t\t\t\t\t<button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t</div>",
+                    css: "{ background: #fff; position: absolute; min-width: 280px; min-height: 200px;\n\t\t\t\t\tbox-shadow: 2px 2px 3px #d5d5d5; padding: 3px; border: 1px solid rgb(213, 213, 213)\n\t\t\t\t  }\n\t\t\t\t.dialog-close {\n\t\t\t\t\t\tposition: absolute; \n\t\t\t\t\t\tcursor: pointer; \n\t\t\t\t\t\tright: -7px; top: -22px; \n\t\t\t\t\t\tfont: 21px sans-serif; \n\t\t\t\t\t\tborder: none; \n\t\t\t\t\t\tbackground: transparent; \n\t\t\t\t\t\tcolor: #000; \n\t\t\t\t\t\ttext-shadow: 0 1px 0 #fff; \n\t\t\t\t\t\tfont-weight: 700; \n\t\t\t\t\t\topacity: .2;\n\t\t\t\t}\n\t\t\t\t.dialog-close:hover { opacity: .5 }\n\t\t\t\t",
+                    features: [
+                        { $: 'dialogFeature.maxZIndexOnClick' },
+                        { $: 'dialogFeature.closeWhenClickingOutside' },
+                        { $: 'dialogFeature.cssClassOnLaunchingControl' },
+                        { $: 'dialogFeature.studio-under-property' }
+                    ]
+                }
+            });
+            jb_core_1.jb.component('dialogFeature.studio-under-property', {
+                type: 'dialogFeature',
+                impl: function (context, offsetLeft, offsetTop) {
+                    return {
+                        afterViewInit: function (cmp) {
+                            if (!context.vars.$launchingElement)
+                                return console.log('no launcher for dialog');
+                            var $control = context.vars.$launchingElement.$el.parents('.input-and-toolbar');
+                            var pos = $control.offset();
+                            var $jbDialog = $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-dialog');
+                            $jbDialog.css('left', pos.left + "px")
+                                .css('top', pos.top + "px")
+                                .css('display', 'block');
+                        }
+                    };
+                }
+            });
         }
     }
 });
-// jb.component('button.studio-edit-js', {
-//   type: 'button.style',
-//   impl :{$: 'customStyle',  
-//   	template: '<span><button (click)="clicked()" [title]="title">{}</button></span>',
-//   	css: `{ margin-top: -2px; margin-left: -3px; margin-right: -5px;}
-//   		 button { cursor: pointer; 
-//             font: 12px sans-serif; 
-//             border: none; 
-//             background: transparent; 
-//             color: #91B193; 
-//             text-shadow: 0 1px 0 #fff; 
-//             font-weight: 700; 
-//             opacity: .8;
-//         }
-//         button:hover { opacity: 1 }`
-//   }
-// })
-// jb.component('button.studio-delete', {
-//   type: 'button.style',
-//   impl :{$: 'customStyle',  
-//       template: '<span><button (click)="clicked()" [title]="title">&#215;</button></span>',
-//       css: `{ margin-left: -4px; margin-top: -1px }
-//       button {
-//             cursor: pointer; 
-//             font: 16px sans-serif; 
-//             border: none; 
-//             background: transparent; 
-//             color: #000; 
-//             text-shadow: 0 1px 0 #fff; 
-//             font-weight: 700; 
-//             opacity: .2;
-//         }
-//         button:hover { opacity: .5 }`
-//   }
-// })

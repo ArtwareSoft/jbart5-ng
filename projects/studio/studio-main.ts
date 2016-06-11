@@ -258,6 +258,11 @@ jb.component('studio.compName',{
 	impl: (context,path) => studio.model.compName(path) || ''
 })
 
+jb.component('studio.paramDef',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => studio.model.paramDef(path)
+})
+
 jb.component('studio.enum-options',{
 	params: { path: { as: 'string' } },
 	impl: (context,path) => 

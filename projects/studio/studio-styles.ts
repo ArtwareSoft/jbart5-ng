@@ -158,3 +158,54 @@ jb.component('editable-boolean.studio-expand-collapse-in-array', {
 //         button:hover { opacity: .5 }`
 //   }
 // })
+
+jb.component('dialog.studio-multiline-edit',{
+	type: 'dialog.style',
+	impl: {$: 'customStyle',
+			template: `<div class="jb-dialog jb-popup">
+							<button class="dialog-close" (click)="dialogClose()">&#215;</button>
+							<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
+						</div>`, 
+			css: `{ background: #fff; position: absolute; min-width: 280px; min-height: 200px;
+					box-shadow: 2px 2px 3px #d5d5d5; padding: 3px; border: 1px solid rgb(213, 213, 213)
+				  }
+				.dialog-close {
+						position: absolute; 
+						cursor: pointer; 
+						right: -7px; top: -22px; 
+						font: 21px sans-serif; 
+						border: none; 
+						background: transparent; 
+						color: #000; 
+						text-shadow: 0 1px 0 #fff; 
+						font-weight: 700; 
+						opacity: .2;
+				}
+				.dialog-close:hover { opacity: .5 }
+				`,
+			features: [
+				{ $: 'dialogFeature.maxZIndexOnClick' },
+				{ $: 'dialogFeature.closeWhenClickingOutside' },
+				{ $: 'dialogFeature.cssClassOnLaunchingControl' },
+				{ $: 'dialogFeature.studio-under-property' }
+			]
+	}
+})
+
+jb.component('dialogFeature.studio-under-property', {
+	type: 'dialogFeature',
+	impl: function(context,offsetLeft,offsetTop) {
+		return {
+			afterViewInit: function(cmp) {
+				if (!context.vars.$launchingElement)
+					return console.log('no launcher for dialog');
+				var $control = context.vars.$launchingElement.$el.parents('.input-and-toolbar');
+				var pos = $control.offset();
+				var $jbDialog = $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-dialog');
+				$jbDialog.css('left', `${pos.left}px`)
+					.css('top', `${pos.top}px`)
+					.css('display','block');
+			}
+		}
+	}
+})

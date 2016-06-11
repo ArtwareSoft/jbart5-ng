@@ -30,7 +30,11 @@ jb.component('jbart-site.main', {
             imageWidth: '500', 
             imageHeight: '', 
             units: 'px', 
-            style :{$: 'image.default' }
+            style :{$: 'customStyle', 
+              template: `<div [style.width]="width" [style.height]="height">
+                <img [style.width]="imageWidth" [style.height]="imageHeight" src="{{url}}"/>
+                </div>`
+            }
           }
         ]
       }

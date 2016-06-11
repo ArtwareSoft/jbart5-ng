@@ -2,29 +2,21 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
-jb.component('studio.showNgComponent', {
+jb.component('studio.open-multiline-edit', {
 	type: 'action',
+	params: {
+	    path: { as: 'string' }
+	}, 
 	impl: {
 		$: 'openDialog',
-		title: 'angular component - %$globals/profile_path%',
-		style :{$: 'dialog.studioFloating', id: 'angular component', width: 600 },
-		features :{$: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}'},
+		style :{$: 'dialog.studio-multiline-edit' },
 		content :{$: 'editable-text', 
-			databind :{$: 'studio.ngComponent' },
-			style :{$: 'editable-text.codemirror', mode1: 'javascript'},
+			databind :{$: 'studio.ref', path: '%$path%' },
+			style :{$: 'editable-text.codemirror', mode: 'javascript'},
 		}
 	}
 })
 
-jb.component('studio.ngComponent', {
-	type: 'data',
-	params: {
-		path: { as: 'string', defaultValue: '{%$globals/project%}.{%$globals/page%}' }
-	},
-	impl: function(context,path) {
-		return { $jb_val: () => studio.ngComponent(path) }
-	}
-})
 
 jb.component('dialog.studioFloating', {
 	type: 'dialog.style',

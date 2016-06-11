@@ -40,6 +40,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             cmp.dialog.$el.css('z-index', 100);
                             cmp.dialogClose = dialog.close;
                             cmp.contentComp = ctx.params.content(ctx);
+                            jb_core_1.jb.trigger(cmp.dialog, 'attach');
                             //				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
                             // jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
                             // 	$(ref.location.nativeElement).addClass('dialog-content');
@@ -126,41 +127,44 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 type: 'dialogFeature',
                 impl: function (context) {
                     var dialog = context.vars.$dialog;
-                    jb_core_1.jb.delay(10).then(function () {
-                        return window.onmousedown = function (e) {
-                            if ($(e.target).closest(dialog.$el[0]).length)
-                                return;
+                    function clickOutHandler(e) {
+                        if ($(e.target).closest(dialog.$el[0]).length == 0)
                             dialog.close();
-                        };
+                    }
+                    jb_core_1.jb.delay(10).then(function () {
+                        window.onmousedown = clickOutHandler;
+                        if (jbart.previewWindow)
+                            jbart.previewWindow.onmousedown = clickOutHandler;
                     });
                     jb_core_1.jb.bind(dialog, 'close', function () {
                         window.onmousedown = null;
+                        if (jbart.previewWindow)
+                            jbart.previewWindow.onmousedown = null;
                     });
                 }
             });
             jb_core_1.jb.component('dialogFeature.autoFocusOnFirstInput', {
                 type: 'dialogFeature',
-                impl: function (context) {
-                    var dialog = context.vars.$dialog;
-                    return {
-                        afterViewInit: function (cmp) {
-                            jb_core_1.jb.delay(1).then(function () { return dialog.$el.find('input,textarea,select').first().focus(); });
-                        }
-                    };
-                }
+                impl: function (context) { return ({
+                    afterViewInit: function (cmp) {
+                        return jb_core_1.jb.delay(1).then(function () {
+                            return context.vars.$dialog.$el.find('input,textarea,select').first().focus();
+                        });
+                    }
+                }); }
             });
             jb_core_1.jb.component('dialogFeature.cssClassOnLaunchingControl', {
                 type: 'dialogFeature',
-                impl: function (context) {
-                    var dialog = context.vars.$dialog;
-                    var $control = context.vars.$launchingElement.$el;
-                    jb_core_1.jb.bind(dialog, 'attach', function () {
+                impl: function (context) { return ({
+                    afterViewInit: function (cmp) {
+                        var dialog = context.vars.$dialog;
+                        var $control = context.vars.$launchingElement.$el;
                         $control.addClass('dialog-open');
-                    });
-                    jb_core_1.jb.bind(dialog, 'close', function () {
-                        $control.removeClass('dialog-open');
-                    });
-                }
+                        jb_core_1.jb.bind(dialog, 'close', function () {
+                            $control.removeClass('dialog-open');
+                        });
+                    }
+                }); }
             });
             jb_core_1.jb.component('dialogFeature.maxZIndexOnClick', {
                 type: 'dialogFeature',
@@ -169,9 +173,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 },
                 impl: function (context, minZIndex) {
                     var dialog = context.vars.$dialog;
-                    jb_core_1.jb.bind(dialog, 'attach', function () {
-                        setAsMaxZIndex();
-                        dialog.$el.mousedown(setAsMaxZIndex);
+                    return ({
+                        afterViewInit: function (cmp) {
+                            setAsMaxZIndex();
+                            dialog.$el.mousedown(setAsMaxZIndex);
+                        }
                     });
                     function setAsMaxZIndex() {
                         var maxIndex = jb_dialogs.dialogs.reduce(function (max, d) {
@@ -202,9 +208,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             cmp.mouseup = new core_1.EventEmitter();
                             cmp.mousedown = new core_1.EventEmitter();
                             var mouseMoveEm = jb_rx.Observable.fromEvent(document, 'mousemove')
-                                .merge(jb_rx.Observable.fromEvent((window.jb_studio_window || window).document, 'mousemove'));
+                                .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'mousemove'));
                             var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
-                                .merge(jb_rx.Observable.fromEvent((window.jb_studio_window || window).document, 'mouseup'));
+                                .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'mouseup'));
                             var storedPos = new core_1.EventEmitter();
                             var mousedrag = cmp.mousedown.map(function (event) {
                                 event.preventDefault();

@@ -255,6 +255,10 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 params: { path: { as: 'string' } },
                 impl: function (context, path) { return studio.model.compName(path) || ''; }
             });
+            jb_core_1.jb.component('studio.paramDef', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) { return studio.model.paramDef(path); }
+            });
             jb_core_1.jb.component('studio.enum-options', {
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
