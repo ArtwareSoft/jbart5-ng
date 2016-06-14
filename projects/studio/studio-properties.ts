@@ -12,7 +12,7 @@ jb.component('studio.openProperties', {
 			},
 			'Properties of %comp% %title%'
 		],
-		style :{$: 'dialog.studioFloating', id: 'studio properties' },
+		style :{$: 'dialog.studio-floating', id: 'studio properties' },
 		content :{$: 'studio.properties', path: { $: 'studio.currentProfilePath' } }
 	}
 })
@@ -255,6 +255,28 @@ jb.component('studio.open-property-menu', {
     content :{$: 'group', 
       controls: [
         {$: 'pulldown.menu-item', 
+          title: 'Style Editor', 
+          icon: 'build', 
+          action :{$: 'studio.open-style-editor', path: '%$path%' }, 
+          features :{$: 'hidden', 
+            showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
+          }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Customize style', 
+          icon: 'build', 
+          action :{$: 'studio.makeLocal', path: '%$path%' }, 
+          features :{$: 'hidden', 
+            showCondition :{ $and: [ 
+            		{$: 'endsWith', endsWith: '~style', text: '%$path%' },
+            		{$: 'notEquals', 
+            			item1 :{$: 'studio.compName', path : '%$path%'},
+            			item2: 'customStyle' 
+            		}
+            ]}
+          }
+        }, 
+        {$: 'pulldown.menu-item', 
           title: 'Multiline edit', 
           features :{$: 'hidden', 
           	showCondition: {$: 'equals', 
@@ -270,7 +292,7 @@ jb.component('studio.open-property-menu', {
           },
           title: 'Goto %$compName%', 
           features :{$: 'hidden', showCondition: '%$compName%' },
-          action :{$: 'studio.goto-component', comp: '%$compName%' }
+          action :{$: 'studio.goto-path', path: '%$compName%' }
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Javascript editor', 
@@ -280,14 +302,6 @@ jb.component('studio.open-property-menu', {
         {$: 'pulldown.menu-item', 
           title: 'Open sublime', 
           action :{$: 'studio.openSublime', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Customize Style', 
-          icon: 'build', 
-          action :{$: 'studio.makeLocal', path: '%$path%' }, 
-          features :{$: 'hidden', 
-            showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
-          }
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Delete', 

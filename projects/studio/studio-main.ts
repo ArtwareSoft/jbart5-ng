@@ -28,6 +28,14 @@ jb.component('studio.all', {
             style :{$: 'layout.vertical', spacing: '14' }, 
             controls: [
               {$: 'label', 
+                title: 'message', 
+                style :{$: 'customStyle', 
+                  template: '<span class="studio-message">{{title}}</span> ', 
+                  css: '{ position: absolute; left: 500px }', 
+                  features :{$: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
+                }
+              }, 
+              {$: 'label', 
                 title: [
                   '{%$globals/project%}', 
                   {$: 'replace', find: '_', replace: ' ' }
@@ -62,9 +70,9 @@ jb.component('studio.all', {
         controls: [
           {$: 'button', 
             title: 'new page', 
-            style :{$: 'button.md-icon-12', icon: 'add' },
-            features :{$: 'css', css: 'button {margin-top: 3px}'},
-            action :{$: 'studio.openNewPage'}
+            action :{$: 'studio.openNewPage' }, 
+            style :{$: 'button.md-icon-12', icon: 'add' }, 
+            features :{$: 'css', css: 'button {margin-top: 3px}' }
           }, 
           {$: 'itemlist', 
             items :{$: 'studio.projectPages' }, 
@@ -113,7 +121,7 @@ jb.component('studio.all', {
       {$: 'feature.init', 
         action :{$: 'rx.urlPath', 
           params: ['project', 'page', 'profile_path'], 
-          databind: '{%$globals%}', 
+          databind: '%$globals%', 
           base: 'studio', 
           zoneId: 'studio.all'
         }
@@ -144,7 +152,8 @@ jb.component('studio.projectPages',{
 
 jb.component('studio.renderWidget',{
 	type: 'control',
-	impl: ctx => jb_ui.Comp({
+	impl: ctx => 
+		jb_ui.Comp({
 			template: `<iframe id="jb-preview" frameborder="0" src="/project/{{project}}"></iframe>`,
 			init: function(cmp) {
 				cmp.project = ctx.str('%$globals/project%');
@@ -362,4 +371,18 @@ jb.component('studio.isCustomStyle',{
 	}
 })
 
+jb.component('studio.message',{
+	type: 'action',
+	params: { message: { as: 'string' } },
+	impl: (ctx,message) => 
+		studio.message(message)
+})
 
+jb.component('studio.goto-path',{
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl :{$runActions: [ 
+		{$: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' }, 
+		{$: 'studio.openProperties'}
+	]}
+})

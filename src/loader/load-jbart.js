@@ -1,60 +1,53 @@
 if (!window.jbPackaged) {
+  if (window.parent.jbart1) {
+    ['jQuery','$','jbart','System','SystemJS','CodeMirror','Reflect','dragula','history'].forEach(x=>
+        window[x] = window.parent[x])
+  } else {
+    window.jbart = {comps: {}, classes: {}};
+    window.jbart_widgets = {};
+    [
+      'bower_components/jquery/dist/jquery.js',
+      'src/core/core.js',
+      'src/core/data-binding.js',
+      'src/core/utils.js',
+      'src/core/components.js',
+      'src/core/functions.js',
 
-  window.jbart = {comps: {}, classes: {}};
-  window.jbart_widgets = {};
+      'bower_components/codemirror/lib/codemirror.js',
+      'bower_components/codemirror/mode/xml/xml.js',
+      'bower_components/codemirror/mode/javascript/javascript.js',
+      'bower_components/codemirror/mode/htmlmixed/htmlmixed.js',
+      'bower_components/codemirror/addon/hint/show-hint.js',
+      'bower_components/codemirror/addon/hint/javascript-hint.js',
+      'bower_components/codemirror/addon/hint/xml-hint.js',
+      'bower_components/codemirror/addon/hint/html-hint.js',
+      'bower_components/codemirror/addon/fold/foldgutter.js',
+      'bower_components/codemirror/addon/selection/active-line.js',
+
+      'node_modules/es6-shim/es6-shim.min.js',
+      'node_modules/zone.js/dist/zone.js',
+      'node_modules/reflect-metadata/Reflect.js',
+      'node_modules/systemjs/dist/system.src.js',
+      'node_modules/rxjs/bundles/Rx.js',
+
+      'bower_components/dragula.js/dist/dragula.js',
+      'node_modules/history/umd/history.js'
+    ].forEach(file =>
+      {
+        document.write('<script>jbart.currentFileName = "' + file + '";</script>');
+        document.write('<script src="' + (window.jbDevBase || '/') + file + '"></script>');
+      }
+    );
+  }
 
   [
-    'bower_components/jquery/dist/jquery.js',
-
-    'src/core/core.js',
-    'src/core/data-binding.js',
-    'src/core/utils.js',
-    'src/core/components.js',
-    'src/core/functions.js',
-
-     // code mirror
-
-    'bower_components/codemirror/lib/codemirror.js',
-    'bower_components/codemirror/mode/xml/xml.js',
-    'bower_components/codemirror/mode/javascript/javascript.js',
-    'bower_components/codemirror/mode/css/css.js',
-    'bower_components/codemirror/mode/htmlmixed/htmlmixed.js',
-    'bower_components/codemirror/addon/hint/show-hint.js',
-    'bower_components/codemirror/addon/hint/javascript-hint.js',
-    'bower_components/codemirror/addon/hint/xml-hint.js',
-    'bower_components/codemirror/addon/hint/html-hint.js',
-    'bower_components/codemirror/addon/fold/foldgutter.js',
-    'bower_components/codemirror/addon/selection/active-line.js',
-    'bower_components/codemirror/lib/codemirror.css',
-    'bower_components/codemirror/theme/solarized.css',
-
-    'node_modules/es6-shim/es6-shim.min.js',
-    'node_modules/zone.js/dist/zone.js',
-    'node_modules/reflect-metadata/Reflect.js',
-    'node_modules/systemjs/dist/system.src.js',
-    'node_modules/rxjs/bundles/Rx.js',
-
-//    'node_modules/@angular/core/core.umd.js',
-//    'node_modules/@angular/common/common.umd.js',
-//    'node_modules/@angular/compiler/compiler.umd.js',
-//    'node_modules/@angular/platform-browser/platform-browser.umd.js',
-
-    'bower_components/dragula.js/dist/dragula.js',
-    'bower_components/dragula.js/dist/dragula.css',
-
-    'css/font.css', // material fonts
-
-    'node_modules/history/umd/history.js'
-
-  ].
-  forEach(function(file) {
-    if (file.substring(file.length-4) == '.css') {
-      document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/') + file + '" />'); 
-    } else {
-      document.write('<script>jbart.currentFileName = "' + file + '";</script>');
-      document.write('<script src="' + (window.jbDevBase || '/') + file + '"></script>');
-    }
-  });
+      'bower_components/codemirror/mode/css/css.js',
+      'bower_components/codemirror/lib/codemirror.css',
+      'bower_components/codemirror/theme/solarized.css',
+      'bower_components/dragula.js/dist/dragula.css',
+      'css/font.css', // material fonts
+  ].forEach( file =>
+        document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/') + file + '" />')); 
 }
 
 function jb_loadEditableFile(file) {
@@ -111,7 +104,7 @@ jb_modules =
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
 ,'tree','properties','pick','save','probe','edit-source','new-control'
-,'undo','styles']
+,'undo','styles','style-editor']
   .map(x=>'studio/studio-' + x)
 
 jb_system_config = {
@@ -152,10 +145,6 @@ jb_system_config = {
         '@angular/platform-browser-dynamic': { main: 'platform-browser-dynamic.umd.js', defaultExtension: 'js' },
       }
 }
-
-
-
-
 
 function jbLoadModules(modules) { 
   System.config(jb_system_config);

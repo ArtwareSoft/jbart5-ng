@@ -208,62 +208,55 @@ jb.component('rx.emit',{
 })
 
 jb.component('rx.urlPath',{
-	type: 'rx.subject',
+	type: 'application-feature',
 	params: {
 		params: { type: 'data[]', as: 'array'},
-		databind: { as: 'ref' , essential: true },
+		databind: { as: 'single' , essential: true },
 		base: { as: 'string'},
 		zoneId: { as: 'string'},
 	},
 	impl: function(context,params,databind,base,zoneId) {
-	    if (!jb.val(databind)) 
-	    	jb.writeValue(databind,{});
-	    var dataParent = jb.val(databind);
-	    if (!dataParent || typeof dataParent != 'object')
+		if (jbart.location) return;
+
+	    if (!databind || typeof databind != 'object')
 	    	return console.log('no databind for rx.urlPath')
 
-	    var subject = new Subject();
+	    var browserUrlEm = new Subject();
+		jbart.location = History.createHistory();
+		jbart.location.path = () => location.pathname;
+		jbart.location.listen(x=>
+			browserUrlEm.next(x.pathname))
 
-		if (jb_ui.injector) {
-			jbart.location = jbart.location || jb_ui.injector.get(Location);
-		} else if (!jbart.location) {
-			jbart.location = History.createHistory();
-			jbart.location.path = () => location.pathname;
-			jbart.location.listen(x=>subject.next(urlToObj(x.pathname)))
-		}
-
-
-	    function urlToObj() {
-	    	var path = jbart.location.path();
-	    	var vals = path.substring(path.indexOf(base) + base.length).split('/').map(x=>decodeURIComponent(x))
+	    function urlToObj(path) {
+	    	var vals = path.substring(path.indexOf(base) + base.length).split('/')
+	    			.map(x=>decodeURIComponent(x))
 	    	var res = {};
-	    	params.forEach(function(p,i){
-    			dataParent[p] = res[p] = (vals[i+1] || '');
-	    	});
+	    	params.forEach((p,i) =>
+    			res[p] = (vals[i+1] || ''));
 	    	return res;
 	    }
-
-	    subject.subscribe(function(newVal) {
-	    	if (JSON.stringify(newVal) == subject.__oldVal) return;
-	    	subject.__oldVal = JSON.stringify(newVal);
-
-	    	params.forEach(p=>dataParent[p] = newVal[p]);
+	    function objToUrl(obj) {
 	    	var split_base = jbart.location.path().split(`/${base}`);
-	    	var vals = split_base[1].split('/').map(x=>decodeURIComponent(x));
-	    	params.forEach((p,i) => 
-	    		vals[i+1] = p == '*' ? vals[i+1] : newVal[p]);
-	    	var url = split_base[0] + `/${base}` + vals.join('/');
-	    	jbart.location.push(url.replace(/\/*$/,''));
-	    })
-	    if (jbart.location.subscribe)
-	    	jbart.location.subscribe(()=>
-	    		subject.next(urlToObj()));
-	    subject.next(urlToObj());
+	    	var url = split_base[0] + `/${base}/` + 
+	    		params.map(p=>obj[p]||'')
+	    		.join('/');
+	    	return url.replace(/\/*$/,'');
+		}
 
-	    jb_ui.getZone(zoneId).then(zone=> 
-	    	zone.onStable.subscribe(()=>
-	    		subject.next(jb.val(databind))) )
-   	    return subject;
+		var databindEm = context.vars.ngZone.onUnstable
+			.map(()=>databind)
+	    	.filter(obj=>
+	    		obj.project)
+	    	.map(obj=>
+	    		objToUrl(obj));
+
+	    browserUrlEm.merge(databindEm)
+	    	.startWith(jbart.location.path())
+	    	.distinctUntilChanged()
+	    	.subscribe(url => {
+		    	jbart.location.push(url);
+		    	jb.extend(databind,urlToObj(url));
+	    	})
 	}
 })
 

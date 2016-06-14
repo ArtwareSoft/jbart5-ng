@@ -6,7 +6,7 @@ jb.component('studio.editSource', {
 	impl: {
 		$: 'openDialog',
 		title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
-		style :{$: 'dialog.studioFloating', id: 'edit source', width: 600 },
+		style :{$: 'dialog.studio-floating', id: 'edit source', width: 600 },
 		features :{$: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}'},
 		content :{$: 'editable-text', 
 			databind :{$: 'studio.currentProfileAsScript' },

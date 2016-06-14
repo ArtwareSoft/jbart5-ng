@@ -1,7 +1,7 @@
-System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
+System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var Subject_1, Observable_1, jb_1, jb_ui;
+    var Subject_1, Observable_1, jb_1;
     function tap(label) { return function (ctx) { console.log('tap' + label || '', ctx.data); return ctx.data; }; }
     exports_1("tap", tap);
     function concat(obs_array) {
@@ -93,9 +93,6 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb', 'jb-ui/jb-ui']
             },
             function (jb_1_1) {
                 jb_1 = jb_1_1;
-            },
-            function (jb_ui_1) {
-                jb_ui = jb_ui_1;
             }],
         execute: function() {
             ;
@@ -216,61 +213,55 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb', 'jb-ui/jb-ui']
                 }
             });
             jb_1.jb.component('rx.urlPath', {
-                type: 'rx.subject',
+                type: 'application-feature',
                 params: {
                     params: { type: 'data[]', as: 'array' },
-                    databind: { as: 'ref', essential: true },
+                    databind: { as: 'single', essential: true },
                     base: { as: 'string' },
                     zoneId: { as: 'string' },
                 },
                 impl: function (context, params, databind, base, zoneId) {
-                    if (!jb_1.jb.val(databind))
-                        jb_1.jb.writeValue(databind, {});
-                    var dataParent = jb_1.jb.val(databind);
-                    if (!dataParent || typeof dataParent != 'object')
+                    if (jbart.location)
+                        return;
+                    if (!databind || typeof databind != 'object')
                         return console.log('no databind for rx.urlPath');
-                    var subject = new Subject_1.Subject();
-                    if (jb_ui.injector) {
-                        jbart.location = jbart.location || jb_ui.injector.get(Location);
-                    }
-                    else if (!jbart.location) {
-                        jbart.location = History.createHistory();
-                        jbart.location.path = function () { return location.pathname; };
-                        jbart.location.listen(function (x) { return subject.next(urlToObj(x.pathname)); });
-                    }
-                    function urlToObj() {
-                        var path = jbart.location.path();
-                        var vals = path.substring(path.indexOf(base) + base.length).split('/').map(function (x) { return decodeURIComponent(x); });
+                    var browserUrlEm = new Subject_1.Subject();
+                    jbart.location = History.createHistory();
+                    jbart.location.path = function () { return location.pathname; };
+                    jbart.location.listen(function (x) {
+                        return browserUrlEm.next(x.pathname);
+                    });
+                    function urlToObj(path) {
+                        var vals = path.substring(path.indexOf(base) + base.length).split('/')
+                            .map(function (x) { return decodeURIComponent(x); });
                         var res = {};
                         params.forEach(function (p, i) {
-                            dataParent[p] = res[p] = (vals[i + 1] || '');
+                            return res[p] = (vals[i + 1] || '');
                         });
                         return res;
                     }
-                    subject.subscribe(function (newVal) {
-                        if (JSON.stringify(newVal) == subject.__oldVal)
-                            return;
-                        subject.__oldVal = JSON.stringify(newVal);
-                        params.forEach(function (p) { return dataParent[p] = newVal[p]; });
+                    function objToUrl(obj) {
                         var split_base = jbart.location.path().split("/" + base);
-                        var vals = split_base[1].split('/').map(function (x) { return decodeURIComponent(x); });
-                        params.forEach(function (p, i) {
-                            return vals[i + 1] = p == '*' ? vals[i + 1] : newVal[p];
-                        });
-                        var url = split_base[0] + ("/" + base) + vals.join('/');
-                        jbart.location.push(url.replace(/\/*$/, ''));
+                        var url = split_base[0] + ("/" + base + "/") +
+                            params.map(function (p) { return obj[p] || ''; })
+                                .join('/');
+                        return url.replace(/\/*$/, '');
+                    }
+                    var databindEm = context.vars.ngZone.onUnstable
+                        .map(function () { return databind; })
+                        .filter(function (obj) {
+                        return obj.project;
+                    })
+                        .map(function (obj) {
+                        return objToUrl(obj);
                     });
-                    if (jbart.location.subscribe)
-                        jbart.location.subscribe(function () {
-                            return subject.next(urlToObj());
-                        });
-                    subject.next(urlToObj());
-                    jb_ui.getZone(zoneId).then(function (zone) {
-                        return zone.onStable.subscribe(function () {
-                            return subject.next(jb_1.jb.val(databind));
-                        });
+                    browserUrlEm.merge(databindEm)
+                        .startWith(jbart.location.path())
+                        .distinctUntilChanged()
+                        .subscribe(function (url) {
+                        jbart.location.push(url);
+                        jb_1.jb.extend(databind, urlToObj(url));
                     });
-                    return subject;
                 }
             });
             // ************** tests ******************

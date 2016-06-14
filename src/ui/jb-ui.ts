@@ -380,13 +380,6 @@ export function insertComponent(comp, resolver, parentView) {
       )
 }
 
-// export function loadIntoLocation(comp, parentCmp, id,context) {
-// 	debugger;
-// 	try {
-//     	return parentCmp.dcl.loadIntoLocation(comp, parentCmp.elementRef, id);
-//     } catch(e) { debugger; jb.logException(e,'') }
-// }
-
 export function parseHTML(text) {
 	var res = document.createElement('div');
 	res.innerHTML = text;
@@ -419,7 +412,7 @@ export class jBartWidget {
 		this.initRedrawEm();
 	}
 	ngAfterViewInit() {
-		jbart.widgetLoaded = true; // for studio
+		jbart.widgetLoaded = true; // indication for waitForIframeLoad
 	}
 	ngDoCheck() {
 		if (this.compId == 'studio.all' && !jbart.redrawStudio) // put the redrawStudio function ob jbart
@@ -445,6 +438,7 @@ export class jBartWidget {
 	private initRedrawEm() {
 		var cmp = this;
 		this.redrawEm = new jb_rx.Subject();
+
 		this.redrawEm // source change - wait 1 sec
 		  .debounceTime(300)
 		  .map(id=>
@@ -472,17 +466,11 @@ export class jBartWidget {
     	var ns = this.compId.split('.')[0];
 		var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 		var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
-		jb.extend(resources, { window: window, globals: {} });
-		// Object.getOwnPropertyNames(resources).forEach(id=>{
-		// 	var r = resources[id];
-		// 	if (r && r.$) resources[id] = ctx.run(r);
-		// })
+		jb.extend(resources, { window: window, globals: { } });
 		this.$jbInitialCtx = ctx;
 		return ctx;
     }
 }
-
-// export var jBart = jBartWidget; //(window.parent != window && window.parent.jb_studio_window) ? jBartInStudio : jBartPlain;
 
 export function wrapWithLauchingElement(f,context,elem) {
 	var native = elem.nodeType ? elem : elem.nativeElement;
@@ -507,6 +495,4 @@ export function getZone(zoneId) {
 	})
 }
 
-//export var injector = Injector.resolveAndCreate([Location]);
-//export var ngZone = injector.get(NgZone);
 

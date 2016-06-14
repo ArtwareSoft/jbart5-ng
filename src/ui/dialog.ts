@@ -10,6 +10,7 @@ jb.component('openDialog', {
 		modal: { as: 'boolean' },
 		style: { type: 'dialog.style', dynamic: true, defaultValue: { $:'dialog.default' }	},
 		content: { type: 'control', dynamic: true },
+		menu: { type: 'control', dynamic: true },
 		title: { as: 'string', dynamic: true  },
 		onOK: { type: 'action', dynamic: true },
 		features: { type: 'dialogFeature[]', dynamic: true }
@@ -26,6 +27,8 @@ jb.component('openDialog', {
 
 				cmp.dialogClose = dialog.close;
 				cmp.contentComp = ctx.params.content(ctx);
+				cmp.menuComp = ctx.params.menu(ctx);
+				cmp.hasMenu = !!ctx.params.menu.profile;
 				jb.trigger(cmp.dialog, 'attach');
 //				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
 				// jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents

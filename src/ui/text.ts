@@ -5,7 +5,7 @@ import * as jb_rx from 'jb-ui/jb-rx';
 jb.type('text.style');
 
 jb.component('text', {
-    type: "control",
+    type: 'control',
     params: {
         text: { essential: true, as: 'ref' },
         style: { type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
@@ -71,5 +71,34 @@ jb.component('text.codemirror', {
                 })
             }
         }
+    }
+})
+
+jb.component('rich-text', {
+    type: 'control',
+    params: {
+        text: { essential: true, as: 'string', dynamic: true },
+        title: { as: 'string', defaultValue: 'rich-text', dynamic: true },
+        style: { type: 'rich-text.style', defaultValue: { $: 'rich-text.html' }, dynamic: true },
+        features: { type: 'feature[]', dynamic: true },
+    },
+    impl: (ctx,text,title) => 
+        jb_ui.ctrl(ctx.setVars({text: text(), title: title() }))
+})
+
+jb.component('rich-text.html', {
+    type: 'rich-text.style',
+    impl :{$: 'customStyle', 
+        template: '%$text%',
+    }
+})
+
+jb.component('rich-text.html-in-section', {
+    type: 'rich-text.style',
+    impl :{$: 'customStyle', 
+        template: `<section>
+                    <div class="title">%$title%</div>
+                    %$text%
+                </section>`,
     }
 })

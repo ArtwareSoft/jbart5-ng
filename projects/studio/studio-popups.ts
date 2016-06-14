@@ -17,8 +17,7 @@ jb.component('studio.open-multiline-edit', {
 	}
 })
 
-
-jb.component('dialog.studioFloating', {
+jb.component('dialog.studio-floating', {
 	type: 'dialog.style',
 	params: {
 		id: { as: 'string' },
@@ -29,6 +28,7 @@ jb.component('dialog.studioFloating', {
 			$vars: { dialogID: '%$id%' },
 			template: `<div class="jb-dialog jb-default-dialog">
 				      		  <div class="dialog-title noselect">{{title}}</div>
+				      		  <jb_comp *ngIf="hasMenu" class="dialog-menu" [comp]="menuComp"></jb_comp>
 							  <button class="dialog-close" (click)="dialogClose()">&#215;</button>
 							  <div class="jb-dialog-content-parent">
  								<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
@@ -40,9 +40,10 @@ jb.component('dialog.studioFloating', {
 					{$: 'dialogFeature.maxZIndexOnClick', minZIndex: 5000 },
 					{$: 'studio-dialogFeature.studioPopupLocation' },
 			],
-			css: `{ position: fixed; 
+			css: `{ position: fixed;
 						background: #F9F9F9; 
 						width: %$width%px; 
+						max-width: 800px;
 						min-height: %$height%px; 
 						overflow: auto;
 						border-radius: 4px; 
@@ -55,6 +56,18 @@ jb.component('dialog.studioFloating', {
 						position: absolute; 
 						cursor: pointer; 
 						right: 4px; top: 4px; 
+						font: 21px sans-serif; 
+						border: none; 
+						background: transparent; 
+						color: #000; 
+						text-shadow: 0 1px 0 #fff; 
+						font-weight: 700; 
+						opacity: .2;
+				}
+				.dialog-menu {
+						position: absolute; 
+						cursor: pointer; 
+						right: 24px; top: 0; 
 						font: 21px sans-serif; 
 						border: none; 
 						background: transparent; 

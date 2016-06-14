@@ -11,7 +11,7 @@ jb.component('studio.pickAndOpen', {
 	  	onSelect: [
 			{$: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
 			{$: 'studio.openProperties'},
-			{$: 'studio.openControlTree'},
+			{$: 'studio.open-control-tree'},
  		],
 	} 
 })
@@ -81,7 +81,7 @@ jb.component('studio.toolbar', {
       {$: 'button', 
         title: 'Outline', 
         style :{$: 'button.md-icon', icon: 'format_align_left' }, 
-        action :{$: 'studio.openControlTree' }
+        action :{$: 'studio.open-control-tree' }
       }, 
       {$: 'button', 
         title: 'Properties', 

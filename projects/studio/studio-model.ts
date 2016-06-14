@@ -30,6 +30,10 @@ export function notifyModifcation(path,before,ctx) {
 	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
 }
 
+export function message(message) {
+	$('.studio-message').text(message); // add animation
+}
+
 export function profileRefFromPath(path) {
 	if (path.indexOf('~') == -1) return {
 		$jb_val: function(value) {

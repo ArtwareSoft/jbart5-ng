@@ -18,6 +18,7 @@ jb.component('studio.saveComponents', {
 				({key:x[0],val:x[1]})),
 			ctx => {
 				var comp = ctx.data.key;
+				studio.message('saving ' + comp);
 				if (ctx.exp('%$force%') && !ctx.data.val.original)
 					ctx.data.val.original = `jb.component('${comp}', {`;
 
@@ -27,10 +28,15 @@ jb.component('studio.saveComponents', {
 					data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.compAsStr(comp) }),
 					headers: { 'Content-Type': 'text/plain' } 
 				}).then(
-					()=>
-						delete modified[comp],
-					(e)=>
+					result => {
+						studio.message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''));
+						if (result.type == 'success')
+							delete modified[comp];
+					},
+					e=> {
+						studio.message('error saving: ' + e);
 						jb.logException(e,'error while saving ' + comp)
+					}
 				)
 			}
 		], 

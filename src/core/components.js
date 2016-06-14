@@ -582,6 +582,15 @@ jb_component('equals',{
 	}
 });
 
+jb_component('notEquals',{
+	type: 'boolean',
+	params: {
+		item1: { as: 'single'},
+		item2: { defaultValue: '{%%}', as: 'single' }
+	},
+	impl: { $not: { $: 'equals', item1: '%$item1%', item2: '%$item2%'} }
+});
+
 jb_component('parent',{
 	type: "data",
 	impl: function(context) {

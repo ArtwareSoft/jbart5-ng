@@ -11,18 +11,18 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 studio = studio_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('studio.openControlTree', {
+            jb_core_1.jb.component('studio.open-control-tree', {
                 type: 'action',
                 impl: { $: 'openDialog',
                     title: 'Outline',
-                    style: { $: 'dialog.studioFloating', id: 'studio outline', width: 300 },
+                    style: { $: 'dialog.studio-floating', id: 'studio outline', width: 300 },
                     content: { $: 'group',
                         controls: [
                             { $: 'button',
                                 style: { $: 'button.md-icon', icon: 'menu', css: '{position: fixed; margin-top: -10px; margin-left: 230px; }' },
                                 action: { $: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
                             },
-                            { $: 'studio.controlTree' },
+                            { $: 'studio.control-tree' },
                         ] }
                 }
             });
@@ -94,11 +94,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     }
                 }
             });
-            jb_core_1.jb.component('studio.controlTree', {
+            jb_core_1.jb.component('studio.control-tree', {
                 type: 'control',
                 impl: {
                     $: 'tree', cssClass: 'jb-control-tree studio-control-tree',
-                    nodeModel: { $: 'studio.controlTree.nodes' },
+                    nodeModel: { $: 'studio.control-tree.nodes' },
                     features: [
                         { $: 'tree.selection',
                             autoSelectFirst: true,
@@ -118,11 +118,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         { $: 'tree.keyboard-shortcut', key: 'Ctrl-Z', action: { $: 'studio.undo', path: '%%' } },
                         { $: 'tree.keyboard-shortcut', key: 'Ctrl-Y', action: { $: 'studio.redo', path: '%%' } },
                         { $: 'tree.keyboard-shortcut', key: 'Delete', action: { $: 'studio.delete', path: '%%' } },
-                        { $: 'studio.controlTree.refreshPathChanges' },
+                        { $: 'studio.control-tree.refreshPathChanges' },
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.controlTree.nodes', {
+            jb_core_1.jb.component('studio.control-tree.nodes', {
                 type: 'tree.nodeModel',
                 params: {},
                 impl: function (context) {
@@ -132,7 +132,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 }
             });
             // after model modifications the paths of the selected and expanded nodes may change and the tree should fix it.
-            jb_core_1.jb.component('studio.controlTree.refreshPathChanges', {
+            jb_core_1.jb.component('studio.control-tree.refreshPathChanges', {
                 type: 'feature',
                 impl: function (context) {
                     var tree = context.vars.$tree;

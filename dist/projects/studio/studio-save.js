@@ -28,6 +28,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         }); },
                         function (ctx) {
                             var comp = ctx.data.key;
+                            studio.message('saving ' + comp);
                             if (ctx.exp('%$force%') && !ctx.data.val.original)
                                 ctx.data.val.original = "jb.component('" + comp + "', {";
                             return $.ajax({
@@ -35,10 +36,13 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 type: 'POST',
                                 data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.compAsStr(comp) }),
                                 headers: { 'Content-Type': 'text/plain' }
-                            }).then(function () {
-                                return delete modified[comp];
+                            }).then(function (result) {
+                                studio.message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''));
+                                if (result.type == 'success')
+                                    delete modified[comp];
                             }, function (e) {
-                                return jb_core_1.jb.logException(e, 'error while saving ' + comp);
+                                studio.message('error saving: ' + e);
+                                jb_core_1.jb.logException(e, 'error while saving ' + comp);
                             });
                         }
                     ],

@@ -16,7 +16,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
         execute: function() {
             jb_core_1.jb.type('text.style');
             jb_core_1.jb.component('text', {
-                type: "control",
+                type: 'control',
                 params: {
                     text: { essential: true, as: 'ref' },
                     style: { type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
@@ -80,6 +80,30 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             });
                         }
                     };
+                }
+            });
+            jb_core_1.jb.component('rich-text', {
+                type: 'control',
+                params: {
+                    text: { essential: true, as: 'string', dynamic: true },
+                    title: { as: 'string', defaultValue: 'rich-text', dynamic: true },
+                    style: { type: 'rich-text.style', defaultValue: { $: 'rich-text.html' }, dynamic: true },
+                    features: { type: 'feature[]', dynamic: true },
+                },
+                impl: function (ctx, text, title) {
+                    return jb_ui.ctrl(ctx.setVars({ text: text(), title: title() }));
+                }
+            });
+            jb_core_1.jb.component('rich-text.html', {
+                type: 'rich-text.style',
+                impl: { $: 'customStyle',
+                    template: '%$text%',
+                }
+            });
+            jb_core_1.jb.component('rich-text.html-in-section', {
+                type: 'rich-text.style',
+                impl: { $: 'customStyle',
+                    template: "<section>\n                    <div class=\"title\">%$title%</div>\n                    %$text%\n                </section>",
                 }
             });
         }

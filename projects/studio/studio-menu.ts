@@ -46,7 +46,7 @@ jb.component('studio.main-menu', {
           {$: 'pulldown.menu-item', 
             title: 'Outline', 
             spritePosition: '5,0', 
-            action :{$: 'studio.openControlTree' }
+            action :{$: 'studio.open-control-tree' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'jbEditor', 
@@ -68,18 +68,18 @@ jb.component('studio.main-menu', {
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Group', 
-            action :{$: 'studio.openControlTree' }
+            action :{$: 'studio.open-control-tree' }
           }
         ]
       }, 
       {$: 'pulldown.topMenuItem', 
         title: 'Data', 
         controls: [
-          {$: 'dynamic-fields', 
-            fieldItems :{$: 'studio.dataResources' }, 
-            genericField :{$: 'pulldown.menu-item', 
-              title: '%$fieldItem.name%', 
-              action :{ "$studio.showDataResource": '%$fieldItem%' }
+          {$: 'dynamic-controls', 
+            controlItems : ctx => Object.getOwnPropertyNames(ctx.resources), 
+            genericControl :{$: 'pulldown.menu-item', 
+              title: '%$controlItem%', 
+              action :{ $: 'studio.showDataResource', resource: '%$controlItem%' }
             }
           }, 
           {$: 'pulldown.menu-item-separator' }, 

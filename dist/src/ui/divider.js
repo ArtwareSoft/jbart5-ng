@@ -16,7 +16,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 type: 'control',
                 params: {
                     style: { type: 'divider.style', defaultValue: { $: 'divider.br' }, dynamic: true },
-                    title: { as: 'string', defaultValue: 'text' },
+                    title: { as: 'string', defaultValue: 'divider' },
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (ctx) {
@@ -29,6 +29,13 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: '<div></div>',
                     css: "{ border-top-color: rgba(0,0,0,0.12); display: block; border-top-width: 1px; border-top-style: solid;margin-top: 10px; margin-bottom: 10px;} "
+                }
+            });
+            jb_core_1.jb.component('divider.flex-auto-grow', {
+                type: 'divider.style',
+                impl: { $: 'customStyle',
+                    template: '<div></div>',
+                    css: "{ flex-grow: 10 } "
                 }
             });
         }

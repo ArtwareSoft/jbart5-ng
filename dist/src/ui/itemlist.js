@@ -146,12 +146,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                                 if (context.params.databind)
                                     jb_1.jb.writeValue(context.params.databind, selected);
                             });
-                            // first auto selection selection
+                            // first auto selection
                             if (jb_1.jb.val(context.params.databind))
                                 itemlist.selectionEmitter.next(jb_1.jb.val(context.params.databind));
                             else if (context.params.autoSelectFirst && itemlist.items[0])
                                 itemlist.selectionEmitter.next(itemlist.items[0]);
-                            cmp.click.map(function (event) { return itemlist.elemToItem(event.target); })
+                            cmp.click.map(function (event) {
+                                return itemlist.elemToItem(event.target);
+                            })
                                 .do(function (selected) {
                                 context.params.onSelection(context.setData(selected));
                             })

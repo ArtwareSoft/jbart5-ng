@@ -39,15 +39,6 @@ jb.component('editable-number.slider', {
 			.slider_thumb.aa_disabled { opacity: 0.5 }
 			.slider_text.aa_disabled { opacity: 0.5 }
 			.slider_scale.aa_disabled { opacity: 0.5 }
-
-			.noselect {
-			    -webkit-touch-callout: none;
-			    -webkit-user-select: none;
-			    -khtml-user-select: none;
-			    -moz-user-select: none;
-			    -ms-user-select: none;
-			    user-select: none;
-			}		
 `,
 		methods: {
 			init: ctx => cmp =>

@@ -26,7 +26,7 @@ jb_tests('studio-tests', {
 'studio-control-tree' :{$: 'studio-test', 
   page: 'group1', 
   profile_path: 'hello-world.group1', 
- 	control :{$: 'studio.controlTree' }, 
+ 	control :{$: 'studio.control-tree' }, 
   expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 

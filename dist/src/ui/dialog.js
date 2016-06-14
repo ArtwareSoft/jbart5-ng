@@ -25,6 +25,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                     modal: { as: 'boolean' },
                     style: { type: 'dialog.style', dynamic: true, defaultValue: { $: 'dialog.default' } },
                     content: { type: 'control', dynamic: true },
+                    menu: { type: 'control', dynamic: true },
                     title: { as: 'string', dynamic: true },
                     onOK: { type: 'action', dynamic: true },
                     features: { type: 'dialogFeature[]', dynamic: true }
@@ -40,6 +41,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             cmp.dialog.$el.css('z-index', 100);
                             cmp.dialogClose = dialog.close;
                             cmp.contentComp = ctx.params.content(ctx);
+                            cmp.menuComp = ctx.params.menu(ctx);
+                            cmp.hasMenu = !!ctx.params.menu.profile;
                             jb_core_1.jb.trigger(cmp.dialog, 'attach');
                             //				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
                             // jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents

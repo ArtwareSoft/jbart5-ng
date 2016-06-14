@@ -25,7 +25,7 @@ jb.component('studio.showProbeData', {
   impl: {
     $: 'openDialog',
       title: 'probe - %$globals/profile_path%',
-      style :{$: 'dialog.studioFloating', id: 'probe', width: 600 },
+      style :{$: 'dialog.studio-floating', id: 'probe', width: 600 },
       features :{$: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}'},
       content :{$: 'group', 
         $vars: { selected : {$: 'object' } },

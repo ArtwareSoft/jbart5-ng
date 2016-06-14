@@ -46,11 +46,12 @@ jb.component('editable-text.codemirror', {
 	params: {
 		cm_settings: { as: 'single' },
 		resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
+		height: { as: 'number' },
 		mode: { as: 'string' },
 		debounceTime: { as: 'number', defaultValue: 1000 },
 		lineWrapping: { as: 'boolean' },
 	},
-	impl: function(context, cm_settings, resizer, mode, debounceTime, lineWrapping) {
+	impl: function(context, cm_settings, resizer, height, mode, debounceTime, lineWrapping) {
 		return {
 			template: '<textarea></textarea>',
 			cssClass: 'jb-codemirror',
@@ -74,23 +75,28 @@ jb.component('editable-text.codemirror', {
 
 				context.vars.ngZone.runOutsideAngular(() => {
 					var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
-					$(editor.getWrapperElement()).css('box-shadow', 'none'); //.css('height', '200px');
+					$(editor.getWrapperElement()).css('box-shadow', 'none');
+					if (height)
+						$(editor.getWrapperElement()).css('height', height + 'px');
 					field.observable(context)
-						.filter(x => x != editor.getValue())
-						.subscribe(x=>editor.setValue(x));
+						.filter(x => 
+							x != editor.getValue())
+						.subscribe(x=>
+							editor.setValue(x||''));
 
 					var editorTextChange = new jb_rx.Subject();
 					editorTextChange.distinctUntilChanged()
 						.debounceTime(debounceTime)
-						.filter(x => x != field.getValue())
+						.filter(x => 
+							x != field.getValue())
 						.subscribe(x=>{ 
 							field.writeValue(x); 
 							jb_ui.apply(context)
 						})
 
-					editor.on('change', () => { 
+					editor.on('change', () => 
 						editorTextChange.next(editor.getValue())
-					} );
+					);
 				})
 			}
 		}

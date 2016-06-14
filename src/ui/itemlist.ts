@@ -126,17 +126,18 @@ jb.component('itemlist.selection', {
             if (context.params.databind)
               jb.writeValue(context.params.databind,selected);
         });
-        // first auto selection selection
+        // first auto selection
         if (jb.val(context.params.databind))
          itemlist.selectionEmitter.next(jb.val(context.params.databind));
         else if (context.params.autoSelectFirst && itemlist.items[0])
           itemlist.selectionEmitter.next(itemlist.items[0]);
 
-        cmp.click.map(event => itemlist.elemToItem(event.target))
-          .do(function(selected) {
-            context.params.onSelection(context.setData(selected))
-          })
-          .subscribe(x=>itemlist.selectionEmitter.next(x))
+        cmp.click.map(event => 
+          itemlist.elemToItem(event.target))
+            .do(function(selected) {
+              context.params.onSelection(context.setData(selected))
+            })
+            .subscribe(x=>itemlist.selectionEmitter.next(x))
       },
       host: {
         '(click)': 'click.next($event)',

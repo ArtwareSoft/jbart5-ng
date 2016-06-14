@@ -18,7 +18,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     onSelect: [
                         { $: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
                         { $: 'studio.openProperties' },
-                        { $: 'studio.openControlTree' },
+                        { $: 'studio.open-control-tree' },
                     ],
                 }
             });
@@ -87,7 +87,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'button',
                             title: 'Outline',
                             style: { $: 'button.md-icon', icon: 'format_align_left' },
-                            action: { $: 'studio.openControlTree' }
+                            action: { $: 'studio.open-control-tree' }
                         },
                         { $: 'button',
                             title: 'Properties',

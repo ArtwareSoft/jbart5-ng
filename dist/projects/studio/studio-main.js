@@ -55,6 +55,14 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                     style: { $: 'layout.vertical', spacing: '14' },
                                     controls: [
                                         { $: 'label',
+                                            title: 'message',
+                                            style: { $: 'customStyle',
+                                                template: '<span class="studio-message">{{title}}</span> ',
+                                                css: '{ position: absolute; left: 500px }',
+                                                features: { $: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
+                                            }
+                                        },
+                                        { $: 'label',
                                             title: [
                                                 '{%$globals/project%}',
                                                 { $: 'replace', find: '_', replace: ' ' }
@@ -89,9 +97,9 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                             controls: [
                                 { $: 'button',
                                     title: 'new page',
+                                    action: { $: 'studio.openNewPage' },
                                     style: { $: 'button.md-icon-12', icon: 'add' },
-                                    features: { $: 'css', css: 'button {margin-top: 3px}' },
-                                    action: { $: 'studio.openNewPage' }
+                                    features: { $: 'css', css: 'button {margin-top: 3px}' }
                                 },
                                 { $: 'itemlist',
                                     items: { $: 'studio.projectPages' },
@@ -137,7 +145,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                         { $: 'feature.init',
                             action: { $: 'rx.urlPath',
                                 params: ['project', 'page', 'profile_path'],
-                                databind: '{%$globals%}',
+                                databind: '%$globals%',
                                 base: 'studio',
                                 zoneId: 'studio.all'
                             }
@@ -166,34 +174,36 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             });
             jb_core_1.jb.component('studio.renderWidget', {
                 type: 'control',
-                impl: function (ctx) { return jb_ui.Comp({
-                    template: "<iframe id=\"jb-preview\" frameborder=\"0\" src=\"/project/{{project}}\"></iframe>",
-                    init: function (cmp) {
-                        cmp.project = ctx.str('%$globals/project%');
-                        if (!cmp.project)
-                            debugger;
-                        var iframe = cmp.elementRef.nativeElement.firstElementChild;
-                        window.jb_studio_window = true; // let studio widgets run in a special mode
-                        waitForIframeLoad(iframe).then(function () {
-                            var w = iframe.contentWindow;
-                            w.jbart.studioGlobals = ctx.run('{%$globals%}');
-                            jbart.previewWindow = w;
-                            jbart.previewjbart = w.jbart;
-                            jbart.preview_jbart_widgets = w.jbart_widgets;
-                            document.title = cmp.project + ' with jBart';
-                            // forward the studio zone to the preview widget so it will be updated
-                            jb_ui.getZone('studio.all').then(function (zone) {
-                                zone.onStable.subscribe(function () {
-                                    w.jbart.studioGlobals = ctx.run('{%$globals%}');
-                                    // refresh preview
-                                    jb_core_1.jb.entries(w.jbart.zones).forEach(function (x) { return x[1].run(function () { }); });
-                                    //w.setTimeout(()=>{},1); 
+                impl: function (ctx) {
+                    return jb_ui.Comp({
+                        template: "<iframe id=\"jb-preview\" frameborder=\"0\" src=\"/project/{{project}}\"></iframe>",
+                        init: function (cmp) {
+                            cmp.project = ctx.str('%$globals/project%');
+                            if (!cmp.project)
+                                debugger;
+                            var iframe = cmp.elementRef.nativeElement.firstElementChild;
+                            window.jb_studio_window = true; // let studio widgets run in a special mode
+                            waitForIframeLoad(iframe).then(function () {
+                                var w = iframe.contentWindow;
+                                w.jbart.studioGlobals = ctx.run('{%$globals%}');
+                                jbart.previewWindow = w;
+                                jbart.previewjbart = w.jbart;
+                                jbart.preview_jbart_widgets = w.jbart_widgets;
+                                document.title = cmp.project + ' with jBart';
+                                // forward the studio zone to the preview widget so it will be updated
+                                jb_ui.getZone('studio.all').then(function (zone) {
+                                    zone.onStable.subscribe(function () {
+                                        w.jbart.studioGlobals = ctx.run('{%$globals%}');
+                                        // refresh preview
+                                        jb_core_1.jb.entries(w.jbart.zones).forEach(function (x) { return x[1].run(function () { }); });
+                                        //w.setTimeout(()=>{},1); 
+                                    });
                                 });
+                                jb_core_1.jb.trigger(jbart, 'preview_loaded');
                             });
-                            jb_core_1.jb.trigger(jbart, 'preview_loaded');
-                        });
-                    }
-                }, ctx); }
+                        }
+                    }, ctx);
+                }
             });
             jb_core_1.jb.component('studio.waitForPreviewIframe', {
                 type: 'action',
@@ -353,6 +363,21 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 impl: function (context, path) {
                     return (studio.model.compName(path) || '').indexOf('custom') == 0;
                 }
+            });
+            jb_core_1.jb.component('studio.message', {
+                type: 'action',
+                params: { message: { as: 'string' } },
+                impl: function (ctx, message) {
+                    return studio.message(message);
+                }
+            });
+            jb_core_1.jb.component('studio.goto-path', {
+                type: 'action',
+                params: { path: { as: 'string' } },
+                impl: { $runActions: [
+                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' },
+                        { $: 'studio.openProperties' }
+                    ] }
             });
         }
     }

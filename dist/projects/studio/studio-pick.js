@@ -31,7 +31,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     _window.onmousedown = mousedown;
                     _window.onkeyup = keyup;
                     $('.studio-widget-placeholder').addClass('shadow');
-                    if (!_$('#jbs-rect').length) {
+                    if (!$(_body).find('#jbs-rect').length) {
                         $('<div id="jbs-rect"/>').appendTo(_body);
                         $('<div id="jbs-title"><div class="text" /><div class="triangle"/></div>').appendTo(_body);
                         $('<div class="jbs-shadow top"/>').appendTo(_body);
@@ -50,7 +50,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         var $el1 = $(_window.document.elementFromPoint(e.pageX - _$window.scrollLeft(), e.pageY - _$window.scrollTop()));
                         if (!$el1[0])
                             return;
-                        var $el = $($el1.get().concat($el1.parents().get())).filter(function (i, e) { return $(e).attr('jb-path'); }).first();
+                        var $el = $($el1.get().concat($el1.parents().get()))
+                            .filter(function (i, e) { return $(e).attr('jb-path'); }).first();
                         _$('.jbs-shadow').show().css({ zIndex: 6000 });
                         if (!$el.length) {
                             clearSelection();
@@ -104,6 +105,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         return Math.max($(_window).outerHeight(), $(_window.document).outerHeight());
                     }
                     function clearSelection() {
+                        _$('#jbs-title,#jbs-rect,.jbs-shadow').css({ zIndex: -1 });
                         _$('#jbs-title').hide();
                         _$('.jbs-shadow.top').css({ height: 0 });
                         _$('.jbs-shadow.bottom').css({ top: 0, height: docHeight() });

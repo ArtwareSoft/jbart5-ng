@@ -332,12 +332,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         });
     }
     exports_1("insertComponent", insertComponent);
-    // export function loadIntoLocation(comp, parentCmp, id,context) {
-    // 	debugger;
-    // 	try {
-    //     	return parentCmp.dcl.loadIntoLocation(comp, parentCmp.elementRef, id);
-    //     } catch(e) { debugger; jb.logException(e,'') }
-    // }
     function parseHTML(text) {
         var res = document.createElement('div');
         res.innerHTML = text;
@@ -351,7 +345,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         element.setAttributeNode(newAttr);
     }
     exports_1("addAttribute", addAttribute);
-    // export var jBart = jBartWidget; //(window.parent != window && window.parent.jb_studio_window) ? jBartInStudio : jBartPlain;
     function wrapWithLauchingElement(f, context, elem) {
         var native = elem.nodeType ? elem : elem.nativeElement;
         return function () {
@@ -480,7 +473,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     this.initRedrawEm();
                 };
                 jBartWidget.prototype.ngAfterViewInit = function () {
-                    jbart.widgetLoaded = true; // for studio
+                    jbart.widgetLoaded = true; // indication for waitForIframeLoad
                 };
                 jBartWidget.prototype.ngDoCheck = function () {
                     var _this = this;
@@ -534,10 +527,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
                     var ctx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
                     jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                    // Object.getOwnPropertyNames(resources).forEach(id=>{
-                    // 	var r = resources[id];
-                    // 	if (r && r.$) resources[id] = ctx.run(r);
-                    // })
                     this.$jbInitialCtx = ctx;
                     return ctx;
                 };
@@ -555,5 +544,3 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         }
     }
 });
-//export var injector = Injector.resolveAndCreate([Location]);
-//export var ngZone = injector.get(NgZone);

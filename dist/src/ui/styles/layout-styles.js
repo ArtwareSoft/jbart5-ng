@@ -30,6 +30,50 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: { $: 'group.initGroup' }
                 }
             });
+            jb_core_1.jb.component('layout.flex', {
+                type: 'group.style',
+                impl: { $: 'customStyle',
+                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
+                    css: "{display: flex }",
+                    features: { $: 'group.initGroup' }
+                }
+            });
+            jb_core_1.jb.component('flex-layout-container.align-main-axis', {
+                type: 'feature',
+                params: {
+                    align: { as: 'string', options: 'flex-start,flex-end,center,space-between,space-around', defaultValue: 'flex-start' }
+                },
+                impl: function (ctx, factor) { return ({
+                    css: "{ justify-content: " + align + " }"
+                }); }
+            });
+            jb_core_1.jb.component('flex-layout-item.grow', {
+                type: 'feature',
+                params: {
+                    factor: { as: 'number', defaultValue: '1' }
+                },
+                impl: function (ctx, factor) { return ({
+                    css: "{ flex-grow: " + factor + " }"
+                }); }
+            });
+            jb_core_1.jb.component('flex-layout-item.basis', {
+                type: 'feature',
+                params: {
+                    factor: { as: 'number', defaultValue: '1' }
+                },
+                impl: function (ctx, factor) { return ({
+                    css: "{ flex-basis: " + factor + " }"
+                }); }
+            });
+            jb_core_1.jb.component('flex-layout-item.align-self', {
+                type: 'feature',
+                params: {
+                    align: { as: 'string', options: 'auto,flex-start,flex-end,center,baseline,stretch', defaultValue: 'auto' }
+                },
+                impl: function (ctx, align) { return ({
+                    css: "{ align-self: " + align + " }"
+                }); }
+            });
         }
     }
 });

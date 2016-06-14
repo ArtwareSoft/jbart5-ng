@@ -28,6 +28,10 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
     }
     exports_1("notifyModifcation", notifyModifcation);
+    function message(message) {
+        $('.studio-message').text(message); // add animation
+    }
+    exports_1("message", message);
     function profileRefFromPath(path) {
         if (path.indexOf('~') == -1)
             return {
