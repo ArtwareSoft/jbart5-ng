@@ -29,7 +29,7 @@ jb.component('studio.saveComponents', {
 					headers: { 'Content-Type': 'text/plain' } 
 				}).then(
 					result => {
-						studio.message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''));
+						studio.message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''), result.type != 'success');
 						if (result.type == 'success')
 							delete modified[comp];
 					},

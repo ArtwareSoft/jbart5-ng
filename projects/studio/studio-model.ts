@@ -30,8 +30,14 @@ export function notifyModifcation(path,before,ctx) {
 	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
 }
 
-export function message(message) {
+export function message(message,error) {
 	$('.studio-message').text(message); // add animation
+	$('.studio-message').css('background', error ? 'red' : '#327DC8');
+	$('.studio-message').css('animation','');
+	jb.delay(1).then(()=>
+		$('.studio-message').css('animation','slide_from_top 5s ease')
+	)
+
 }
 
 export function profileRefFromPath(path) {

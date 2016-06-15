@@ -55,10 +55,10 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                     style: { $: 'layout.vertical', spacing: '14' },
                                     controls: [
                                         { $: 'label',
-                                            title: 'message',
+                                            title: 'message ',
                                             style: { $: 'customStyle',
                                                 template: '<span class="studio-message">{{title}}</span> ',
-                                                css: '{ position: absolute; left: 500px }',
+                                                css: "{ position: absolute;\n                    color: white;  padding: 20px;  background: #327DC8;\n                    width: 1000px;\n                    margin-top: -100px;\n                    }\n                    \n                    \n                    ",
                                                 features: { $: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
                                             }
                                         },

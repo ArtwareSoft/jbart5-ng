@@ -28,8 +28,13 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
     }
     exports_1("notifyModifcation", notifyModifcation);
-    function message(message) {
+    function message(message, error) {
         $('.studio-message').text(message); // add animation
+        $('.studio-message').css('background', error ? 'red' : '#327DC8');
+        $('.studio-message').css('animation', '');
+        jb_core_1.jb.delay(1).then(function () {
+            return $('.studio-message').css('animation', 'slide_from_top 5s ease');
+        });
     }
     exports_1("message", message);
     function profileRefFromPath(path) {

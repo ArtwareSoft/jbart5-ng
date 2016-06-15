@@ -28,10 +28,17 @@ jb.component('studio.all', {
             style :{$: 'layout.vertical', spacing: '14' }, 
             controls: [
               {$: 'label', 
-                title: 'message', 
+                title: 'message ', 
                 style :{$: 'customStyle', 
                   template: '<span class="studio-message">{{title}}</span> ', 
-                  css: '{ position: absolute; left: 500px }', 
+                  css: `{ position: absolute;
+                    color: white;  padding: 20px;  background: #327DC8;
+                    width: 1000px;
+                    margin-top: -100px;
+                    }
+                    
+                    
+                    `, 
                   features :{$: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
                 }
               }, 

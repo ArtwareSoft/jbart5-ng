@@ -37,7 +37,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: studio.compAsStr(comp) }),
                                 headers: { 'Content-Type': 'text/plain' }
                             }).then(function (result) {
-                                studio.message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''));
+                                studio.message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''), result.type != 'success');
                                 if (result.type == 'success')
                                     delete modified[comp];
                             }, function (e) {
