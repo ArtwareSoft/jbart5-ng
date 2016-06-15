@@ -16,14 +16,12 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: { $: 'openDialog',
                     title: 'Outline',
                     style: { $: 'dialog.studio-floating', id: 'studio outline', width: 300 },
-                    content: { $: 'group',
-                        controls: [
-                            { $: 'button',
-                                style: { $: 'button.md-icon', icon: 'menu', css: '{position: fixed; margin-top: -10px; margin-left: 230px; }' },
-                                action: { $: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
-                            },
-                            { $: 'studio.control-tree' },
-                        ] }
+                    content: { $: 'studio.control-tree' },
+                    menu: { $: 'button',
+                        style: { $: 'button.md-icon', icon: 'menu',
+                            css1: '{position: fixed; margin-top: -10px; margin-left: 230px; }' },
+                        action: { $: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
+                    }
                 }
             });
             jb_core_1.jb.component('studio.open-tree-menu', {

@@ -107,7 +107,9 @@ jb.component('jbart-site.main', {
                 <div class="title">%$title%</div>
                 %$text%
                 </section>`, 
-              css: '.title {  color: #37474F;                font-size: 28px;                font-weight: 500;                line-height: 32px;                margin-top: 10px;                margin: 0 0 16px 0;                opacity: .87;}                {                font-size: 16px;                line-height: 30px;                opacity: .87;                }'
+              css: `.title {  color: #37474F;                font-size: 28px;                font-weight: 500;
+                line-height: 32px;                margin-top: 10px;                margin: 0 0 16px 0;                opacity: .87;}
+                {                font-size: 16px;                line-height: 30px;                opacity: .87;                }`
             }
           }
         ]

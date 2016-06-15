@@ -1,4 +1,5 @@
 import {jb} from 'jb-core';
+import * as studio from './studio-model';
 
 jb.component('studio.open-style-editor', {
 	type: 'action',
@@ -31,13 +32,15 @@ jb.component('studio.open-style-menu', {
           icon: 'build', 
           action :{$: 'studio.makeLocal', path: '%$path%' }, 
           features :{$: 'hidden', 
-            showCondition :{ $and: [ 
-            		{$: 'endsWith', endsWith: '~style', text: '%$path%' },
-            		{$: 'notEquals', 
-            			item1 :{$: 'studio.compName', path : '%$path%'},
-            			item2: 'customStyle' 
-            		}
-            ]}
+            showCondition :{
+              $and: [
+                {$: 'endsWith', endsWith: '~style', text: '%$path%' }, 
+                {$: 'notEquals', 
+                  item1 :{$: 'studio.compName', path: '%$path%' }, 
+                  item2: 'customStyle'
+                }
+              ]
+            }
           }
         }, 
         {$: 'pulldown.menu-item', 
@@ -45,12 +48,20 @@ jb.component('studio.open-style-menu', {
           icon: 'build', 
           action :{$: 'studio.open-save-style', path: '%$path%' }, 
           features :{$: 'hidden', 
-            showCondition :{ $: 'equals', 
-            		item1 :{$: 'studio.compName', path : '%$path%'},
-            		item2: 'customStyle' 
-            	}
+            showCondition :{$: 'equals', 
+              item1 :{$: 'studio.compName', path: '%$path%' }, 
+              item2: 'customStyle'
             }
+          }
         }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Format css', 
+          icon: '', 
+          action :{$: 'writeValue', 
+            to :{$: 'studio.ref', path: '%$path%~css' }, 
+            value :{$: 'studio.format-css', path: '%$path%~css' }
+          }
+        }
       ]
     }
   }
@@ -70,14 +81,31 @@ jb.component('studio.style-editor', {
 			{$: 'editable-text', 
 				title: 'css',
 				databind : '%$source/css%',
+				features: {$: 'studio.undo-support', path: '%$path%' },
 				style :{$: 'editable-text.codemirror', mode: 'css', height: 300},
 			},	
 			{$: 'editable-text', 
 				title: 'template',
 				databind : '%$source/template%',
 				style :{$: 'editable-text.codemirror', mode: 'html', height: 100},
+				features: {$: 'studio.undo-support', path: '%$path%' },
 			},	
 		]
 	}
 })
 
+jb.component('studio.format-css', {
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl: (ctx,path) => {
+    var css = studio.profileValFromPath(path);
+    if (!typeof css == 'string') 
+      return css;
+    return css
+      .replace(/{\s*/g,'{ ')
+      .replace(/;\s*/g,';\n')
+      .replace(/}[^$]/mg,'}\n\n')
+      .replace(/^\s*/mg,'')
+  }
+})

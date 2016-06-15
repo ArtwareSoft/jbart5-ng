@@ -101,7 +101,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     title: 'Visual Development Concepts',
                                     style: { $: 'customStyle',
                                         template: "<section>\n                <div class=\"title\">%$title%</div>\n                %$text%\n                </section>",
-                                        css: '.title {  color: #37474F;                font-size: 28px;                font-weight: 500;                line-height: 32px;                margin-top: 10px;                margin: 0 0 16px 0;                opacity: .87;}                {                font-size: 16px;                line-height: 30px;                opacity: .87;                }'
+                                        css: ".title {  color: #37474F;                font-size: 28px;                font-weight: 500;\n                line-height: 32px;                margin-top: 10px;                margin: 0 0 16px 0;                opacity: .87;}\n                {                font-size: 16px;                line-height: 30px;                opacity: .87;                }"
                                     }
                                 }
                             ]

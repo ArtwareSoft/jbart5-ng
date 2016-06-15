@@ -75,6 +75,7 @@ jb.component('editable-text.codemirror', {
 
 				context.vars.ngZone.runOutsideAngular(() => {
 					var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+					cmp.codeMirror = editor;
 					$(editor.getWrapperElement()).css('box-shadow', 'none');
 					if (height)
 						$(editor.getWrapperElement()).css('height', height + 'px');

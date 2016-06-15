@@ -12,7 +12,10 @@ jb.component('studio.open-multiline-edit', {
 		style :{$: 'dialog.studio-multiline-edit' },
 		content :{$: 'editable-text', 
 			databind :{$: 'studio.ref', path: '%$path%' },
-			style :{$: 'editable-text.codemirror', mode: 'javascript'},
+			style :{$: 'editable-text.codemirror', 
+				mode :{$: 'studio.code-mirror-mode', path: '%$path%'} 
+			},
+			features: {$: 'studio.undo-support', path: '%$path%' },
 		}
 	}
 })
@@ -103,5 +106,16 @@ jb.component('studio-dialogFeature.studioPopupLocation',{
 				dialog.$el.css('top','0px').css('left','0px');
 			dialog.$el.addClass('default-location');
 		});
+	}
+})
+
+jb.component('studio.code-mirror-mode',{
+	params: { path: { as: 'string' }},
+	impl: (ctx,path) {
+		if (path.match(/css/))
+			return 'css';
+		if (path.match(/template/) || path.match(/html/))
+			return 'htmlmixed';
+		return 'javascript'
 	}
 })

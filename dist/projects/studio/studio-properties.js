@@ -465,6 +465,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     return studio.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
                 }
             });
+            // jb.component('studio.editable-text-support', {
+            //   type: 'feature',
+            //   params: {
+            //     path: { essential: true, as: 'string' },
+            //   },
+            //   impl :{$features: [
+            //   	{$: 'studio.undo-support', path: '%$path%' }
+            //   	]} 
+            // })
             jb_core_1.jb.component('studio.undo-support', {
                 type: 'feature',
                 params: {
@@ -475,14 +484,25 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         // saving state on focus and setting the change on blur
                         init: function (cmp) {
                             var before = studio.compAsStrFromPath(path);
-                            $(cmp.elementRef.nativeElement).findIncludeSelf('input')
-                                .focus(function (e) {
-                                before = studio.compAsStrFromPath(path);
-                            })
-                                .blur(function (e) {
-                                if (before != studio.compAsStrFromPath(path))
-                                    studio.notifyModifcation(path, before, ctx);
-                            });
+                            if (cmp.codeMirror) {
+                                cmp.codeMirror.on('focus', function () {
+                                    return before = studio.compAsStrFromPath(path);
+                                });
+                                cmp.codeMirror.on('blur', function () {
+                                    if (before != studio.compAsStrFromPath(path))
+                                        studio.notifyModifcation(path, before, ctx);
+                                });
+                            }
+                            else {
+                                $(cmp.elementRef.nativeElement).findIncludeSelf('input')
+                                    .focus(function (e) {
+                                    before = studio.compAsStrFromPath(path);
+                                })
+                                    .blur(function (e) {
+                                    if (before != studio.compAsStrFromPath(path))
+                                        studio.notifyModifcation(path, before, ctx);
+                                });
+                            }
                         }
                     });
                 }

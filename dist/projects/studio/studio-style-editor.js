@@ -1,11 +1,14 @@
-System.register(['jb-core'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1;
+    var jb_core_1, studio;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
+            },
+            function (studio_1) {
+                studio = studio_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-style-editor', {
@@ -38,13 +41,15 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 icon: 'build',
                                 action: { $: 'studio.makeLocal', path: '%$path%' },
                                 features: { $: 'hidden',
-                                    showCondition: { $and: [
+                                    showCondition: {
+                                        $and: [
                                             { $: 'endsWith', endsWith: '~style', text: '%$path%' },
                                             { $: 'notEquals',
                                                 item1: { $: 'studio.compName', path: '%$path%' },
                                                 item2: 'customStyle'
                                             }
-                                        ] }
+                                        ]
+                                    }
                                 }
                             },
                             { $: 'pulldown.menu-item',
@@ -58,6 +63,14 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     }
                                 }
                             },
+                            { $: 'pulldown.menu-item',
+                                title: 'Format css',
+                                icon: '',
+                                action: { $: 'writeValue',
+                                    to: { $: 'studio.ref', path: '%$path%~css' },
+                                    value: { $: 'studio.format-css', path: '%$path%~css' }
+                                }
+                            }
                         ]
                     }
                 }
@@ -76,14 +89,31 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'editable-text',
                             title: 'css',
                             databind: '%$source/css%',
+                            features: { $: 'studio.undo-support', path: '%$path%' },
                             style: { $: 'editable-text.codemirror', mode: 'css', height: 300 },
                         },
                         { $: 'editable-text',
                             title: 'template',
                             databind: '%$source/template%',
                             style: { $: 'editable-text.codemirror', mode: 'html', height: 100 },
+                            features: { $: 'studio.undo-support', path: '%$path%' },
                         },
                     ]
+                }
+            });
+            jb_core_1.jb.component('studio.format-css', {
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: function (ctx, path) {
+                    var css = studio.profileValFromPath(path);
+                    if (!typeof css == 'string')
+                        return css;
+                    return css
+                        .replace(/{\s*/g, '{ ')
+                        .replace(/;\s*/g, ';\n')
+                        .replace(/}[^$]/mg, '}\n\n')
+                        .replace(/^\s*/mg, '');
                 }
             });
         }

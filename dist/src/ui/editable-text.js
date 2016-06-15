@@ -83,6 +83,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             //if (resizer) jb_codemirrorResizer(editor, $el);
                             context.vars.ngZone.runOutsideAngular(function () {
                                 var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                                cmp.codeMirror = editor;
                                 $(editor.getWrapperElement()).css('box-shadow', 'none');
                                 if (height)
                                     $(editor.getWrapperElement()).css('height', height + 'px');

@@ -550,14 +550,26 @@ ngIf :{$: 'ng2-ui-test',
 
 'code-mirror' :{$: 'ng2-ui-test',  
   control :{$: 'group', 
-    $vars: {code: { $: 'object', text: 'function f1() { return 15 }'}},
+    $vars: {
+      js: { $: 'object', text: 'function f1() { return 15 }'},
+      css: { $: 'object', text: '{ width: 15px; }' },
+      html: { $: 'object', text: '<div><span>hello</span></div>' },
+    },
     controls: 
     [
       { $: 'editable-text', 
-          databind: '%$code/text%',
+          databind: '%$js/text%',
           style :{$: 'editable-text.codemirror', mode: 'javascript'}
       },
-      { $: 'label',  title: '%$code/text%' }
+      { $: 'editable-text', 
+          databind: '%$css/text%',
+          style :{$: 'editable-text.codemirror', mode: 'css'}
+      },
+      { $: 'editable-text', 
+          databind: '%$html/text%',
+          style :{$: 'editable-text.codemirror', mode: 'htmlmixed'}
+      },
+      { $: 'label',  title: '%$js/text%' }
     ]
  },
   expectedHtmlResult: { $: 'contains', text: ['function'] },

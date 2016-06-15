@@ -478,6 +478,16 @@ jb.component('studio.tgp-type-options',{
 			studio.model.PTsOfType(type).map(op=>({ code: op, text: op}))
 })
 
+// jb.component('studio.editable-text-support', {
+//   type: 'feature',
+//   params: {
+//     path: { essential: true, as: 'string' },
+//   },
+//   impl :{$features: [
+//   	{$: 'studio.undo-support', path: '%$path%' }
+//   	]} 
+// })
+
 jb.component('studio.undo-support', {
   type: 'feature',
   params: {
@@ -488,6 +498,15 @@ jb.component('studio.undo-support', {
   		// saving state on focus and setting the change on blur
   		init: cmp => {
   			var before = studio.compAsStrFromPath(path);
+  			if (cmp.codeMirror) {
+  				cmp.codeMirror.on('focus',()=>
+  					before = studio.compAsStrFromPath(path)
+  				);
+  				cmp.codeMirror.on('blur',()=>
+  					if (before != studio.compAsStrFromPath(path))
+						studio.notifyModifcation(path,before,ctx)
+ 				);
+  			} else {
   			$(cmp.elementRef.nativeElement).findIncludeSelf('input')
   				.focus(e=> {
   					before = studio.compAsStrFromPath(path)
@@ -496,6 +515,7 @@ jb.component('studio.undo-support', {
   					if (before != studio.compAsStrFromPath(path))
 						studio.notifyModifcation(path,before,ctx)
   				})
+  			}
   		}
   })
 })

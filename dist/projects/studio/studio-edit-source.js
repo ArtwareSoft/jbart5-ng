@@ -21,6 +21,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     content: { $: 'editable-text',
                         databind: { $: 'studio.currentProfileAsScript' },
                         style: { $: 'editable-text.codemirror', mode: 'javascript' },
+                        features: { $: 'studio.undo-support', path: '%$path%' },
                     }
                 }
             });

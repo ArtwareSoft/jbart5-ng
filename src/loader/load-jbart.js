@@ -16,6 +16,7 @@ if (!window.jbPackaged) {
       'bower_components/codemirror/lib/codemirror.js',
       'bower_components/codemirror/mode/xml/xml.js',
       'bower_components/codemirror/mode/javascript/javascript.js',
+      'bower_components/codemirror/mode/css/css.js',
       'bower_components/codemirror/mode/htmlmixed/htmlmixed.js',
       'bower_components/codemirror/addon/hint/show-hint.js',
       'bower_components/codemirror/addon/hint/javascript-hint.js',
