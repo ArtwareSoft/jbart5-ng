@@ -368,7 +368,12 @@ function jb_compName(profile) {
 
 // give a name to the impl function. Used for tgp debugging
 function jb_func(name, fn) {
+  Object.defineProperty(fn, "name", { value: name });
+  return fn;
   if (name == 'call') return fn;
-    return (new Function("return function (call) { return function " + name +
-        " () { return call(this, arguments) }; };")())(Function.apply.bind(fn));
+  jbart._funcs = jbart._funcs || {};
+  jbart._funcs[name] = jbart._funcs[name] || 
+    (new Function("return function (call) { return function " + name +
+         " () { return call(this, arguments) }; };")())(Function.apply.bind(fn));
+  return jbart._funcs[name];
 } 

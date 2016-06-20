@@ -165,31 +165,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     };
                 }
             });
-            jb_core_1.jb.component('field.onChange', {
-                type: 'feature',
-                params: {
-                    action: { type: 'action', essential: true, dynamic: true },
-                },
-                impl: function (context, action) { return ({
-                    init: function (cmp) {
-                        var field = context.vars.field;
-                        field && field.observable(context)
-                            .filter(function (x) { return x; })
-                            .subscribe(function (x) {
-                            return action(context.setData(x));
-                        });
-                    }
-                }); }
-            });
-            jb_core_1.jb.component('field.toolbar', {
-                type: 'feature',
-                params: {
-                    toolbar: { type: 'control', essential: true, dynamic: true },
-                },
-                impl: function (context, toolbar) { return ({
-                    extendComp: { jb_toolbar: toolbar() }
-                }); }
-            });
             jb_core_1.jb.component('field.style-on-focus', {
                 type: 'feature',
                 params: {
@@ -199,7 +174,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     extendComp: { jb_styleOnFocus: ctx.profile.style }
                 }); }
             });
-            'field.style-on-focus';
             jb_core_1.jb.component('css', {
                 type: 'feature',
                 params: {

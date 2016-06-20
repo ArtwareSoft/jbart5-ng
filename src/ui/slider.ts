@@ -6,7 +6,7 @@ import * as jb_rx from 'jb-ui/jb-rx';
 jb.component('editable-number.slider', {
 	type: 'editable-number.style',
 	params: {
-		width: { as: 'string', defaultValue: '200px' }
+		width: { as: 'string', defaultValue: '200px' },
 	},
 	impl :{$:'customStyle',
 		template: `<div class="jb-slider">
@@ -41,8 +41,9 @@ jb.component('editable-number.slider', {
 			.slider_scale.aa_disabled { opacity: 0.5 }
 `,
 		methods: {
-			init: ctx => cmp =>
-				cmp.slider = new Slider(ctx,cmp,$(cmp.elementRef.nativeElement)),
+			init: ctx => cmp => {
+				cmp.slider = new Slider(ctx,cmp,$(cmp.elementRef.nativeElement));
+			},
 			afterViewInit: ctx => cmp => {
 				cmp.slider.initSizes();
 				cmp.slider.adjustScale();
@@ -173,7 +174,9 @@ class Slider {
 	// scale, thumb and auto scaling
 	initSizes() {
 		var editableNumber = this.editableNumber;
-		this.from = this.to = NaN;
+		this.from = editableNumber.min;
+		this.to = editableNumber.max;
+//		this.from = this.to = NaN;
 		this.scaleWidth = $(this.scaleElement).width();
 		this.fromPixel = utils.absLeft(this.scaleElement);
 		this.toPixel = this.fromPixel + this.scaleWidth;

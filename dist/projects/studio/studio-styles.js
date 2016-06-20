@@ -28,6 +28,13 @@ System.register(['jb-core', '@angular2-material/slide-toggle/slide-toggle.js'], 
                     directives: [slide_toggle_js_1.MdSlideToggle]
                 }
             });
+            jb_core_1.jb.component('picklist.studio-enum', {
+                type: 'picklist.style',
+                impl: { $: 'customStyle',
+                    template: "<div><select %$field.modelExp%>\n                    <option *ngFor=\"let option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
+                    css: "\nselect { display: block; padding: 0; width: 150px; font-size: 12px; height: 23px;\n\tcolor: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\nselect:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\nselect::placeholder { color: #999; opacity: 1; }\nselect[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }\n    "
+                }
+            });
             jb_core_1.jb.component('property-sheet.studio-properties', {
                 type: 'group.style',
                 impl: { $: 'customStyle',

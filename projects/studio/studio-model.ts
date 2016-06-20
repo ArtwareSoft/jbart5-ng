@@ -205,14 +205,19 @@ export class ControlModel {
 
 	_delete(path) {
 		var prop = path.split('~').pop();
-		var arr = profileValFromPath(parentPath(path))
-		if (Array.isArray(arr)) {
+		var parent = profileValFromPath(parentPath(path))
+		if (Array.isArray(parent)) {
 			var index = Number(prop);
-			arr.splice(index, 1);
+			parent.splice(index, 1);
 			// fixIndexPath(path,-1);
 			// this.fixArray(path.split('~').slice(0,-2).join('~'));
-		} else {
-			delete arr[prop]
+		} else { 
+			if (parent[prop] === undefined) { // array type with one element
+				var pathToDelete = parentPath(path);
+				var parent = profileValFromPath(parentPath(pathToDelete));
+				var prop = pathToDelete.split('~').pop();
+			}
+			delete parent[prop]
 		}
 	}
 	// modify operations - must have same interface: path,args

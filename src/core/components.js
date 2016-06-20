@@ -86,7 +86,7 @@ jb_component('firstSucceeding',{
 jb_component('jsonPath',{
 	type: "data",
 	params: {
-		parent: { defaultValue: '{%%}', as: 'single' },
+		parent: { defaultValue: '%%', as: 'single' },
 		path: { as: 'string' }
 	},
 	impl: function(context,parent,path) {
@@ -97,7 +97,7 @@ jb_component('jsonPath',{
 jb_component('objectProperties',{
 	type: "data",
 	params: {
-		object: { defaultValue: '{%%}', as: 'single' }
+		object: { defaultValue: '%%', as: 'single' }
 	},
 	impl: function(context,object) {
 		return jb_ownPropertyNames(object); // object && jb_evalExpressionPart('*',jb_ctx(context,{data:object}));
@@ -108,7 +108,7 @@ jb_component('extend',{
 	type: "data",
 	params: {
 		with: { as: 'single' },
-		object: { defaultValue: '{%%}', as: 'single' }
+		object: { defaultValue: '%%', as: 'single' }
 	},
 	impl: function(context,_with,object) {
 		return jb_extend({},object,_with);
@@ -118,7 +118,7 @@ jb_component('extend',{
 jb_component('objectToArray',{
 	type: "data",
 	params: {
-		object: { defaultValue: '{%%}', as: 'single' }
+		object: { defaultValue: '%%', as: 'single' }
 	},
 	impl: (context,object) =>
 		jb_ownPropertyNames(object).map((id,index) => 
@@ -128,7 +128,7 @@ jb_component('objectToArray',{
 jb_component('objectMap',{
 	type: "data",
 	params: {
-		object: { defaultValue: '{%%}', as: 'single' },
+		object: { defaultValue: '%%', as: 'single' },
 		map: { dynamic: true }
 	},
 	impl: function(context,object,map) {
@@ -149,7 +149,7 @@ jb_component('prefix', {
 	type: 'data',
 	params: {
 		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 	},
 	impl: function(context,separator,text) {
 		return (text||'').substring(0,text.indexOf(separator))
@@ -160,7 +160,7 @@ jb_component('suffix', {
 	type: 'data',
 	params: {
 		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 	},
 	impl: function(context,separator,text) {
 		return (text||'').substring(text.lastIndexOf(separator)+separator.length)
@@ -171,7 +171,7 @@ jb_component('removePrefix',{
 	type: 'data',
 	params: {
 		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 	},
 	impl: function(context,separator,text) {
 		return (text||'').substring(text.indexOf(separator)+separator.length)
@@ -182,7 +182,7 @@ jb_component('removePrefixRegex',{
 	type: 'data',
 	params: {
 		prefix: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 	},
 	impl: function(context,prefix,text) {
 		context.profile.prefixRegexp = context.profile.prefixRegexp || new RegExp('^'+prefix);
@@ -195,7 +195,7 @@ jb_component('removeSuffix',{
 	type: 'data',
 	params: {
 		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 	},
 	impl: function(context,separator,text) {
 		return (text||'').substring(0,text.lastIndexOf(separator))
@@ -206,7 +206,7 @@ jb_component('removeSuffixRegex',{
 	type: 'data',
 	params: {
 		suffix: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 	},
 	impl: function(context,suffix,text) {
 		context.profile.prefixRegexp = context.profile.prefixRegexp || new RegExp(suffix+'$');
@@ -229,7 +229,7 @@ jb_component('writeValue',{
 jb_component('assign',{
 	type: 'action',
 	params: {
-		parent: { as:'single', defaultValue: '{%%}'},
+		parent: { as:'single', defaultValue: '%%'},
 		property: { as:'string'},
 		value: { }
 	},
@@ -333,7 +333,7 @@ jb_component('contains',{
 	type: 'boolean',
 	params: {
 		text: { type: 'data[]', as: 'array' },
-		allText: { defaultValue: '{%%}', as:'array'}
+		allText: { defaultValue: '%%', as:'array'}
 	},
 	impl: function(context,text,allText) {
       var all = "";
@@ -355,7 +355,7 @@ jb_component('startsWith',{
 	type: 'boolean',
 	params: {
 		startsWith: { as: 'string' },
-		text: { defaultValue: '{%%}', as:'string'}
+		text: { defaultValue: '%%', as:'string'}
 	},
 	impl: function(context,startsWith,text) {
 		return text.lastIndexOf(startsWith,0) == 0;
@@ -366,7 +366,7 @@ jb_component('endsWith',{
 	type: 'boolean',
 	params: {
 		endsWith: { as: 'string' },
-		text: { defaultValue: '{%%}', as:'string'}
+		text: { defaultValue: '%%', as:'string'}
 	},
 	impl: function(context,endsWith,text) {
 		return text.indexOf(endsWith,text.length-endsWith.length) !== -1;
@@ -388,7 +388,7 @@ jb_component('filter',{
 jb_component('count',{
 	type: 'aggregator',
 	params: {
-		items: { as:'array', defaultValue: '{%%}'}
+		items: { as:'array', defaultValue: '%%'}
 	},
 	impl: function(context,items) {
 		return items.length;
@@ -406,9 +406,9 @@ jb_component('join',{
 		separator: { as: 'string', defaultValue:',' },
 		prefix: { as: 'string' },
 		suffix: { as: 'string' },
-		items: { as: 'array', defaultValue: '{%%}'},
+		items: { as: 'array', defaultValue: '%%'},
 		itemName: { as: 'string', defaultValue: 'item'},
-		itemText: { as: 'string', dynamic:true, defaultValue: '{%%}'}
+		itemText: { as: 'string', dynamic:true, defaultValue: '%%'}
 	},
 	type: 'aggregator',
 	impl: function(context,separator,prefix,suffix,items,itemName,itemText) {
@@ -422,8 +422,8 @@ jb_component('join',{
 
 jb_component('unique',{
 	params: {
-		id: { as: 'string', dynamic: true, defaultValue: '{%%}' },
-		items: { as:'array', defaultValue: '{%%}'}
+		id: { as: 'string', dynamic: true, defaultValue: '%%' },
+		items: { as:'array', defaultValue: '%%'}
 	},
 	type: 'aggregator',
 	impl: function(context,id,items) {
@@ -441,7 +441,7 @@ jb_component('unique',{
 
 jb_component('log',{
 	params: {
-		obj: { as: 'single', defaultValue: '{%%}'}
+		obj: { as: 'single', defaultValue: '%%'}
 	},
 	impl: function(context,obj) {
 		var out = obj;
@@ -476,7 +476,7 @@ jb_component('object',{
 
 jb_component('stringify',{
 	params: {
-		value: { defaultValue: '{%%}', as:'single'},
+		value: { defaultValue: '%%', as:'single'},
 		space: { as: 'string', description: 'use space or tab to make pretty output' }
 	},
 	impl: function(context,value,space) {		
@@ -498,7 +498,7 @@ jb_component('split',{
 	type: 'data',
 	params: {
 		separator: { as: 'string', defaultValue: ',' },
-		text : { as: 'string', defaultValue: '{%%}'},
+		text : { as: 'string', defaultValue: '%%'},
 		part: { type:'enum', values: 'first,second,last,but first,but last' }
 	},
 	impl: function(context,separator,text,part) {
@@ -519,7 +519,7 @@ jb_component('replace',{
 	params: {
 		find: { as: 'string' },
 		replace: { as: 'string' },
-		text: { as: 'string', defaultValue: '{%%}' },
+		text: { as: 'string', defaultValue: '%%' },
 		useRegex: { type: 'boolean', as: 'boolean', defaultValue: true},
 		regexFlags: { as: 'string', defaultValue: 'g', description: 'g,i,m' }
 	},
@@ -534,7 +534,7 @@ jb_component('replace',{
 jb_component('foreach', {
 	type: 'action',
 	params: {
-		items: { as: 'array', defaultValue: '{%%}'},
+		items: { as: 'array', defaultValue: '%%'},
 		action: { type:'action', dynamic:true },
 		itemVariable: { as:'string' },
 		inputVariable: { as:'string' }
@@ -549,7 +549,7 @@ jb_component('foreach', {
 jb_component('isNull',{
 	type: 'boolean',
 	params: {
-		item: { as: 'single', defaultValue: '{%%}'}
+		item: { as: 'single', defaultValue: '%%'}
 	},
 	impl: function(context, item) {
 		return (item == null);
@@ -559,10 +559,20 @@ jb_component('isNull',{
 jb_component('isEmpty',{
 	type: 'boolean',
 	params: {
-		item: { as: 'single', defaultValue: '{%%}'}
+		item: { as: 'single', defaultValue: '%%'}
 	},
 	impl: function(context, item) {
 		return (!item || (Array.isArray(item) && item.length == 0));
+	}
+});
+
+jb_component('notEmpty',{
+	type: 'boolean',
+	params: {
+		item: { as: 'single', defaultValue: '%%'}
+	},
+	impl: function(context, item) {
+		return (item && !(Array.isArray(item) && item.length == 0));
 	}
 });
 
@@ -570,7 +580,7 @@ jb_component('equals',{
 	type: 'boolean',
 	params: {
 		item1: { as: 'single'},
-		item2: { defaultValue: '{%%}', as: 'single' }
+		item2: { defaultValue: '%%', as: 'single' }
 	},
 	impl: function(context, item1, item2) {
 		if (!item1 && !item2) return true;
@@ -586,7 +596,7 @@ jb_component('notEquals',{
 	type: 'boolean',
 	params: {
 		item1: { as: 'single'},
-		item2: { defaultValue: '{%%}', as: 'single' }
+		item2: { defaultValue: '%%', as: 'single' }
 	},
 	impl: { $not: { $: 'equals', item1: '%$item1%', item2: '%$item2%'} }
 });
@@ -693,7 +703,7 @@ jb_component('numericFilter',{
 jb_component('pluralize', {
 	type: 'data',
 	params: {
-		count: { as:'number', defaultValue: '{%%}' },
+		count: { as:'number', defaultValue: '%%' },
 		zero: { as:'string', dynamic:true },
 		one: { as:'string', dynamic:true },
 		other: { as:'string', dynamic:true }
@@ -765,7 +775,7 @@ jb_component('extractPrefix',{
 	type: 'data',
 	params: {
 		separator: { as: 'string', description: '/w- alphnumberic, /s- whitespace, ^- beginline, $-endline'},
-		text : { as: 'string', defaultValue: '{%%}'},
+		text : { as: 'string', defaultValue: '%%'},
 		regex: { type: 'boolean', as: 'boolean', description: 'separator is regex' },
 		keepSeparator: { type: 'boolean', as: 'boolean' }
 	},
@@ -784,7 +794,7 @@ jb_component('extractSuffix',{
 	type: 'data',
 	params: {
 		separator: { as: 'string', description: '/w- alphnumberic, /s- whitespace, ^- beginline, $-endline'},
-		text : { as: 'string', defaultValue: '{%%}'},
+		text : { as: 'string', defaultValue: '%%'},
 		regex: { type: 'boolean', as: 'boolean', description: 'separator is regex' },
 		keepSeparator: { type: 'boolean', as: 'boolean' }
 	},

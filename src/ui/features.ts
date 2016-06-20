@@ -152,32 +152,6 @@ jb.component('oneWayBind', {
   } }
 })
 
-jb.component('field.onChange', {
-  type: 'feature',
-  params: {
-    action: { type: 'action', essential: true, dynamic: true },
-  },
-  impl: (context,action) => ({
-    init: cmp => {
-      var field = context.vars.field;
-      field && field.observable(context)
-            .filter(x=>x)
-            .subscribe(x=>
-              action(context.setData(x)));
-    }
-  })
-})
-
-jb.component('field.toolbar', {
-  type: 'feature',
-  params: {
-    toolbar: { type: 'control', essential: true, dynamic: true },
-  },
-  impl: (context,toolbar) => ({
-    extendComp: { jb_toolbar: toolbar() }
-  })
-})
-
 jb.component('field.style-on-focus', {
   type: 'feature',
   params: {
@@ -188,7 +162,6 @@ jb.component('field.style-on-focus', {
   })
 })
 
-'field.style-on-focus'
 
 
 jb.component('css', {

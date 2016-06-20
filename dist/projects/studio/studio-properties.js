@@ -129,6 +129,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'picklist',
+                    style: { $: 'picklist.studio-enum' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     options: { $: 'studio.enum-options', path: '%$path%' },
@@ -151,44 +152,58 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     inArray: { type: 'boolean' }
                 },
                 impl: { $: 'group',
-                    title: { $: 'studio.prop-name', path: '%$path%' },
                     $vars: {
-                        'tgpCtrl': { $: 'object', expanded: true }
+                        tgpCtrl: { $: 'object', expanded: true }
                     },
+                    title: { $: 'studio.prop-name', path: '%$path%' },
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
                             controls: [
                                 { $: 'editable-boolean',
-                                    style: { $: 'editable-boolean.expand-collapse' },
-                                    features: { $: 'css', css: '{ position: absolute; margin-left: -20px; margin-top: 2px }' },
                                     databind: '%$tgpCtrl/expanded%',
+                                    style: { $: 'editable-boolean.expand-collapse' },
+                                    features: [
+                                        { $: 'css',
+                                            css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
+                                        },
+                                        { $: 'hidden',
+                                            showCondition: {
+                                                $notEmpty: { $: 'studio.non-control-children', path: '%$path%' }
+                                            }
+                                        }
+                                    ]
                                 },
                                 { $: 'picklist',
-                                    style: { $: 'picklist.groups' },
-                                    features: { $: 'css', css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}' },
                                     databind: { $: 'studio.compName-ref', path: '%$path%' },
                                     options: { $: 'studio.tgp-path-options', path: '%$path%' },
+                                    style: { $: 'picklist.groups' },
+                                    features: { $: 'css',
+                                        css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
+                                    }
                                 },
                                 { $: 'button',
                                     title: 'more',
-                                    style: { $: 'button.md-icon-12', icon: 'more_vert' },
                                     action: { $: 'studio.open-property-menu', path: '%$path%' },
-                                },
+                                    style: { $: 'button.md-icon-12', icon: 'more_vert' }
+                                }
                             ]
                         },
                         { $: 'group',
                             controls: { $: 'studio.properties', path: '%$path%' },
                             features: [
-                                { $: 'group.watch', data: { $: 'studio.compName', path: '%$path%' } },
+                                { $: 'group.watch',
+                                    data: { $: 'studio.compName', path: '%$path%' }
+                                },
                                 { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
                                 { $: 'css',
-                                    css: { $if: '%$inArray%',
+                                    css: {
+                                        $if: '%$inArray%',
                                         then: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}',
                                         else: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
                                     }
                                 }
-                            ],
+                            ]
                         }
                     ]
                 }
@@ -465,15 +480,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     return studio.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
                 }
             });
-            // jb.component('studio.editable-text-support', {
-            //   type: 'feature',
-            //   params: {
-            //     path: { essential: true, as: 'string' },
-            //   },
-            //   impl :{$features: [
-            //   	{$: 'studio.undo-support', path: '%$path%' }
-            //   	]} 
-            // })
             jb_core_1.jb.component('studio.undo-support', {
                 type: 'feature',
                 params: {

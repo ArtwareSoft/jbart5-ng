@@ -8,7 +8,7 @@ jb.component('jbart-site.main', {
     controls: [
       {$: 'group', 
         title: 'site header', 
-        style :{$: 'layout.flex' }, 
+        style :{$: 'layout.flex', direction: 'row' }, 
         controls: [
           {$: 'image', 
             url: '/projects/studio/css/logo90-green.png', 
@@ -26,7 +26,8 @@ jb.component('jbart-site.main', {
             style :{$: 'button.md-raised' }, 
             features: [
               {$: 'flex-layout-item.align-self', align: 'center' }, 
-              {$: 'css', css: '{ margin-right: 15px }' }
+              {$: 'css', css: '{ margin-right: 15px }' }, 
+              {$: 'responsive.not-for-phone' }
             ]
           }, 
           {$: 'button', 
@@ -35,27 +36,65 @@ jb.component('jbart-site.main', {
             style :{$: 'button.md-raised' }, 
             features: [
               {$: 'flex-layout-item.align-self', align: 'center' }, 
-              {$: 'css', css: '{ margin-right: 15px }' }
+              {$: 'css', css: '{ margin-right: 15px }' }, 
+              {$: 'responsive.not-for-phone' }
             ]
           }
         ], 
         features :{$: 'css', css: '{ background-color: #009688}' }
       }, 
       {$: 'group', 
+        title: 'content', 
+        style :{$: 'layout.flex', align: 'flex-start' }, 
+        controls: [
+          {$: 'rich-text', 
+            text: `<ul>
+              <li>pick &amp; edit (like in Chrome debugger)</li>
+              <li>work by example data</li>
+              <li>smart data/code guidance in context</li>
+              <li>preserve the full power of angular2 &amp; javascript</li>
+              </ul>
+              `, 
+            title: 'Visual Development Concepts', 
+            style :{$: 'customStyle', 
+              template: `<section>
+                <div class="title">%$title%</div>
+                %$text%
+                </section>`, 
+              css: `.title { color: #37474F;
+                font-size: 28px;
+                font-weight: 500;
+                line-height: 32px;
+                margin-top: 10px;
+                margin: 0 0 16px 0;
+                opacity: .87;
+                }
+                { font-size: 16px;
+                line-height: 30px;
+                opacity: .87;
+                padding-top: 20px;
+                padding-left: 20px;
+                }`
+            }
+          }
+        ]
+      }, 
+      {$: 'group', 
         title: 'jbart header', 
-        style :{$: 'layout.horizontal' }, 
+        style :{$: 'layout.flex', align: 'center', direction: undefined, wrap: true }, 
         controls: [
           {$: 'image', 
             url: 'https://storage.googleapis.com/jbartcommunity/jbart5-material.png', 
-            imageWidth: '400', 
+            imageWidth: '330', 
             imageHeight: '', 
             units: 'px', 
             style :{$: 'customStyle', 
               template: `<div [style.width]="width" [style.height]="height">
                 <img [style.width]="imageWidth" [style.height]="imageHeight" src="{{url}}"/>
                 </div>`, 
-              css: '{ padding: 20px }'
-            }
+              css: '{ padding: 20px } '
+            }, 
+            features :{$: 'flex-layout-item.align-self', align: 'center' }
           }, 
           {$: 'group', 
             title: 'header text', 
@@ -88,31 +127,6 @@ jb.component('jbart-site.main', {
           }
         ], 
         features :{$: 'css', css: '{ background: #008577}' }
-      }, 
-      {$: 'group', 
-        title: 'content', 
-        style :{$: 'group.section' }, 
-        controls: [
-          {$: 'rich-text', 
-            text: `<ul>
-              <li>pick &amp; edit (like in Chrome debugger)</li>
-              <li>work by example data</li>
-              <li>smart data/code guidance in context</li>
-              <li>preserve the full power of angular2 &amp; javascript</li>
-              </ul>
-              `, 
-            title: 'Visual Development Concepts', 
-            style :{$: 'customStyle', 
-              template: `<section>
-                <div class="title">%$title%</div>
-                %$text%
-                </section>`, 
-              css: `.title {  color: #37474F;                font-size: 28px;                font-weight: 500;
-                line-height: 32px;                margin-top: 10px;                margin: 0 0 16px 0;                opacity: .87;}
-                {                font-size: 16px;                line-height: 30px;                opacity: .87;                }`
-            }
-          }
-        ]
       }
     ]
   }

@@ -91,11 +91,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             onSelect(context.setData($(jbart.studio.hover).attr('jb-path')));
                         }
                         finish();
-                        $('<div class="jb-noclick-cover" style="z-index:5000;position:absolute;top:0;left:0;right:0;background:transparent;" />').css('height', docHeight() + 'px')
-                            .mouseup(function () {
-                            return $('.jb-noclick-cover').remove();
-                        })
-                            .appendTo(_window.document.body);
+                        // $('<div class="jb-noclick-cover" style="z-index:5000;position:absolute;top:0;left:0;right:0;background:transparent;" />').css('height',docHeight()+'px')
+                        // 	.appendTo(_window.document.body);
+                        // var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
+                        //       			.merge(jb_rx.Observable.fromEvent(
+                        //       				(jbart.previewWindow || {}).document, 'mouseup'));
+                        // mouseUpEm.take(1)
+                        // 	.map(()=>
+                        // 		$('.jb-noclick-cover').remove()
+                        // 	)
                     }
                     function keyup(e) {
                         if (e.keyCode == 27)
@@ -168,7 +172,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     });
                     $(_window.document.body).append($(boxes));
                     $(boxes).css({ opacity: 0.5 }).
-                        fadeTo(500, 0, function () {
+                        fadeTo(1500, 0, function () {
                         $(boxes).remove();
                     });
                 }

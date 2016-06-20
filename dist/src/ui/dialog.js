@@ -22,15 +22,16 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 type: 'action',
                 params: {
                     id: { as: 'string' },
-                    modal: { as: 'boolean' },
                     style: { type: 'dialog.style', dynamic: true, defaultValue: { $: 'dialog.default' } },
                     content: { type: 'control', dynamic: true },
                     menu: { type: 'control', dynamic: true },
                     title: { as: 'string', dynamic: true },
                     onOK: { type: 'action', dynamic: true },
+                    modal: { type: 'boolean', as: 'boolean' },
                     features: { type: 'dialogFeature[]', dynamic: true }
                 },
-                impl: function (context, id, modal) {
+                impl: function (context, id) {
+                    var modal = context.params.modal;
                     var dialog = { id: id, onOK: context.params.onOK, modal: modal, $: $('div') };
                     var ctx = (modal ? context.setVars({ dialogData: {} }) : context).setVars({ $dialog: dialog });
                     dialog.comp = jb_ui.ctrl(ctx).jbExtend({

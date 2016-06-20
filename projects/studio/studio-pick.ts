@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
+import * as jb_rx from 'jb-ui/jb-rx';
 
 jb.component('studio.pick', {
 	type: 'action',
@@ -83,10 +84,15 @@ jb.component('studio.pick', {
 				onSelect(context.setData($(jbart.studio.hover).attr('jb-path')));
 			}
 			finish();
-			$('<div class="jb-noclick-cover" style="z-index:5000;position:absolute;top:0;left:0;right:0;background:transparent;" />').css('height',docHeight()+'px')
-				.mouseup(() => 
-					$('.jb-noclick-cover').remove())
-				.appendTo(_window.document.body);
+			// $('<div class="jb-noclick-cover" style="z-index:5000;position:absolute;top:0;left:0;right:0;background:transparent;" />').css('height',docHeight()+'px')
+			// 	.appendTo(_window.document.body);
+			// var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
+			//       			.merge(jb_rx.Observable.fromEvent(
+			//       				(jbart.previewWindow || {}).document, 'mouseup'));
+			// mouseUpEm.take(1)
+			// 	.map(()=>
+			// 		$('.jb-noclick-cover').remove()
+			// 	)
 		}
 
 		function keyup(e) {
@@ -169,7 +175,7 @@ jb.component('studio.highlight-in-preview',{
 		$(_window.document.body).append($(boxes));	
 
 		$(boxes).css({ opacity: 0.5 }).
-			fadeTo(500,0,function() {
+			fadeTo(1500,0,function() {
 				$(boxes).remove();
 			});
 	}

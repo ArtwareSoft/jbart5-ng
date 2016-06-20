@@ -16,7 +16,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controls: [
                         { $: 'group',
                             title: 'site header',
-                            style: { $: 'layout.flex' },
+                            style: { $: 'layout.flex', direction: 'row' },
                             controls: [
                                 { $: 'image',
                                     url: '/projects/studio/css/logo90-green.png',
@@ -34,7 +34,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     style: { $: 'button.md-raised' },
                                     features: [
                                         { $: 'flex-layout-item.align-self', align: 'center' },
-                                        { $: 'css', css: '{ margin-right: 15px }' }
+                                        { $: 'css', css: '{ margin-right: 15px }' },
+                                        { $: 'responsive.not-for-phone' }
                                     ]
                                 },
                                 { $: 'button',
@@ -43,25 +44,41 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     style: { $: 'button.md-raised' },
                                     features: [
                                         { $: 'flex-layout-item.align-self', align: 'center' },
-                                        { $: 'css', css: '{ margin-right: 15px }' }
+                                        { $: 'css', css: '{ margin-right: 15px }' },
+                                        { $: 'responsive.not-for-phone' }
                                     ]
                                 }
                             ],
                             features: { $: 'css', css: '{ background-color: #009688}' }
                         },
                         { $: 'group',
+                            title: 'content',
+                            style: { $: 'layout.flex', align: 'flex-start' },
+                            controls: [
+                                { $: 'rich-text',
+                                    text: "<ul>\n              <li>pick &amp; edit (like in Chrome debugger)</li>\n              <li>work by example data</li>\n              <li>smart data/code guidance in context</li>\n              <li>preserve the full power of angular2 &amp; javascript</li>\n              </ul>\n              ",
+                                    title: 'Visual Development Concepts',
+                                    style: { $: 'customStyle',
+                                        template: "<section>\n                <div class=\"title\">%$title%</div>\n                %$text%\n                </section>",
+                                        css: ".title { color: #37474F;\n                font-size: 28px;\n                font-weight: 500;\n                line-height: 32px;\n                margin-top: 10px;\n                margin: 0 0 16px 0;\n                opacity: .87;\n                }\n                { font-size: 16px;\n                line-height: 30px;\n                opacity: .87;\n                padding-top: 20px;\n                padding-left: 20px;\n                }"
+                                    }
+                                }
+                            ]
+                        },
+                        { $: 'group',
                             title: 'jbart header',
-                            style: { $: 'layout.horizontal' },
+                            style: { $: 'layout.flex', align: 'center', direction: undefined, wrap: true },
                             controls: [
                                 { $: 'image',
                                     url: 'https://storage.googleapis.com/jbartcommunity/jbart5-material.png',
-                                    imageWidth: '400',
+                                    imageWidth: '330',
                                     imageHeight: '',
                                     units: 'px',
                                     style: { $: 'customStyle',
                                         template: "<div [style.width]=\"width\" [style.height]=\"height\">\n                <img [style.width]=\"imageWidth\" [style.height]=\"imageHeight\" src=\"{{url}}\"/>\n                </div>",
-                                        css: '{ padding: 20px }'
-                                    }
+                                        css: '{ padding: 20px } '
+                                    },
+                                    features: { $: 'flex-layout-item.align-self', align: 'center' }
                                 },
                                 { $: 'group',
                                     title: 'header text',
@@ -91,20 +108,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 }
                             ],
                             features: { $: 'css', css: '{ background: #008577}' }
-                        },
-                        { $: 'group',
-                            title: 'content',
-                            style: { $: 'group.section' },
-                            controls: [
-                                { $: 'rich-text',
-                                    text: "<ul>\n              <li>pick &amp; edit (like in Chrome debugger)</li>\n              <li>work by example data</li>\n              <li>smart data/code guidance in context</li>\n              <li>preserve the full power of angular2 &amp; javascript</li>\n              </ul>\n              ",
-                                    title: 'Visual Development Concepts',
-                                    style: { $: 'customStyle',
-                                        template: "<section>\n                <div class=\"title\">%$title%</div>\n                %$text%\n                </section>",
-                                        css: ".title {  color: #37474F;                font-size: 28px;                font-weight: 500;\n                line-height: 32px;                margin-top: 10px;                margin: 0 0 16px 0;                opacity: .87;}\n                {                font-size: 16px;                line-height: 30px;                opacity: .87;                }"
-                                    }
-                                }
-                            ]
                         }
                     ]
                 }

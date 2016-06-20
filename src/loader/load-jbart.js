@@ -47,6 +47,7 @@ if (!window.jbPackaged) {
       'bower_components/codemirror/theme/solarized.css',
       'bower_components/dragula.js/dist/dragula.css',
       'css/font.css', // material fonts
+      'css/ng2-styles.css'
   ].forEach( file =>
         document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/') + file + '" />')); 
 }
@@ -69,6 +70,7 @@ jb_modules =
 'jb-ui/tree/tree-undo',
 'jb-ui/dialog',
 'jb-ui/label',
+'jb-ui/field',
 'jb-ui/text',
 'jb-ui/editable-text',
 'jb-ui/editable-boolean',

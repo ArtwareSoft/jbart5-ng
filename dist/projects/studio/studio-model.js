@@ -260,13 +260,18 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 };
                 ControlModel.prototype._delete = function (path) {
                     var prop = path.split('~').pop();
-                    var arr = profileValFromPath(parentPath(path));
-                    if (Array.isArray(arr)) {
+                    var parent = profileValFromPath(parentPath(path));
+                    if (Array.isArray(parent)) {
                         var index = Number(prop);
-                        arr.splice(index, 1);
+                        parent.splice(index, 1);
                     }
                     else {
-                        delete arr[prop];
+                        if (parent[prop] === undefined) {
+                            var pathToDelete = parentPath(path);
+                            var parent = profileValFromPath(parentPath(pathToDelete));
+                            var prop = pathToDelete.split('~').pop();
+                        }
+                        delete parent[prop];
                     }
                 };
                 // modify operations - must have same interface: path,args

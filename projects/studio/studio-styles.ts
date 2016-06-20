@@ -41,6 +41,28 @@ jb.component('editable-boolean.studio-slide-toggle', {
   }
 })
 
+jb.component('picklist.studio-enum', {
+  type: 'picklist.style',
+  impl :{$: 'customStyle', 
+    template: `<div><select %$field.modelExp%>
+                    <option *ngFor="let option of options" [value]="option.code">{{option.text}}</option>
+                 </select></div>`,
+    css: `
+select { display: block; padding: 0; width: 150px; font-size: 12px; height: 23px;
+	color: #555555; background-color: #fff; 
+	border: 1px solid #ccc; border-radius: 4px;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; 
+}
+select:focus { border-color: #66afe9; outline: 0; 
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+select::placeholder { color: #999; opacity: 1; }
+select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
+    `
+  }
+})
+
+
 jb.component('property-sheet.studio-properties', {
   type: 'group.style',
   impl :{$: 'customStyle',

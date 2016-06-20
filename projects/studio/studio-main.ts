@@ -36,8 +36,6 @@ jb.component('studio.all', {
                     width: 1000px;
                     margin-top: -100px;
                     }
-                    
-                    
                     `, 
                   features :{$: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
                 }
@@ -68,7 +66,7 @@ jb.component('studio.all', {
       {$: 'group', 
         cssClass: 'studio-widget-placeholder', 
         title: 'preview', 
-        controls :{$: 'studio.renderWidget' }
+        controls :{$: 'studio.renderWidget' }, 
       }, 
       {$: 'group', 
         cssClass: 'studio-footer', 
@@ -79,7 +77,7 @@ jb.component('studio.all', {
             title: 'new page', 
             action :{$: 'studio.openNewPage' }, 
             style :{$: 'button.md-icon-12', icon: 'add' }, 
-            features :{$: 'css', css: 'button {margin-top: 3px}' }
+            features :{$: 'css', css: 'button {margin-top: 2px}' }
           }, 
           {$: 'itemlist', 
             items :{$: 'studio.projectPages' }, 
@@ -161,7 +159,8 @@ jb.component('studio.renderWidget',{
 	type: 'control',
 	impl: ctx => 
 		jb_ui.Comp({
-			template: `<iframe id="jb-preview" frameborder="0" src="/project/{{project}}"></iframe>`,
+			template: `<iframe sandbox="allow-same-origin allow-forms allow-scripts" style="box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px"
+					seamless="" id="jb-preview" frameborder="0" src="/project/{{project}}"></iframe>`,
 			init: function(cmp) {
 				cmp.project = ctx.str('%$globals/project%');
 				if (!cmp.project) debugger;
@@ -190,6 +189,19 @@ jb.component('studio.renderWidget',{
 		},ctx)
 })
 
+jb.component('studio.setPreviewSize', {
+	type: 'action',
+	params: {
+		width: { as: 'number'},
+		height: { as: 'number'},
+	},
+	impl: (ctx,width,height) => {
+		if (width)
+			$('#jb-preview').width(width);
+		if (height)
+			$('#jb-preview').height(height);
+	}
+})
 function waitForIframeLoad(iframe) {
 	if (!iframe)
 		debugger;

@@ -10,6 +10,21 @@
 }   
 
 
+@media only screen and (max-width: 479px) {
+  .not-for-phone {
+    visibility: hidden;
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 480px) {
+  .only-for-phone {
+    visibility: hidden;
+    display: none;
+  }
+}
+
+
 .hide-md-ink-ripple .md-ink-ripple { display: none !important }
 
 /* section: .jb-label */

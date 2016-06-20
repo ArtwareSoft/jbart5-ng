@@ -17,9 +17,68 @@ jb.component('studio.pickAndOpen', {
 })
 
 jb.component('studio.toolbar', {
-  type: 'control', 
+  type: 'control',
   impl :{$: 'group', 
     style :{$: 'studio-toolbar' }, 
+    controls: [
+      {$: 'label', 
+        title: '', 
+        features :{$: 'css', css: '{ width: 170px }' }
+      }, 
+      {$: 'button', 
+        title: 'Select', 
+        action :{$: 'studio.pickAndOpen' }, 
+        style :{$: 'button.md-icon', 
+          css: '{transform: scaleX(-1)}', 
+          icon: 'call_made'
+        }
+      }, 
+      {$: 'button', 
+        title: 'Save', 
+        action :{$: 'studio.saveComponents' }, 
+        style :{$: 'button.md-icon', icon: 'save' }
+      }, 
+      {$: 'button', 
+        title: 'Refresh', 
+        action :{$: 'studio.redraw' }, 
+        style :{$: 'button.md-icon', icon: 'refresh' }
+      }, 
+      {$: 'button', 
+        title: 'Javascript', 
+        action :{$: 'studio.editSource' }, 
+        style :{$: 'button.md-icon', icon: 'code' }
+      }, 
+      {$: 'button', 
+        title: 'Outline', 
+        action :{$: 'studio.open-control-tree' }, 
+        style :{$: 'button.md-icon', icon: 'format_align_left' }
+      }, 
+      {$: 'button', 
+        title: 'Properties', 
+        action :{$: 'studio.openProperties' }, 
+        style :{$: 'button.md-icon', icon: 'storage' }
+      }, 
+      {$: 'button', 
+        title: 'jbEditor', 
+        action :{$: 'studio.openjbEditor' }, 
+        style :{$: 'button.md-icon', icon: 'build' }
+      }, 
+      {$: 'button', 
+        title: 'show data', 
+        action :{$: 'studio.showProbeData' }, 
+        style :{$: 'button.md-icon', icon: 'input' }
+      }, 
+      {$: 'button', 
+        title: 'insert control', 
+        action :{$: 'studio.openNewCtrlDialog' }, 
+        style :{$: 'button.md-icon', icon: 'add' }
+      }, 
+      {$: 'button', 
+        title: 'responsive-phone', 
+        action :{$: 'studio.open-responsive-phone-popup' }, 
+        style :{$: 'button.md-icon', icon: 'tablet_android' }
+      }
+    ], 
     features: [
       {$: 'feature.keyboard-shortcut', 
         key: 'Alt+C', 
@@ -48,60 +107,6 @@ jb.component('studio.toolbar', {
       {$: 'feature.keyboard-shortcut', 
         key: 'Ctrl+Y', 
         action :{$: 'studio.redo' }
-      }
-    ], 
-    controls: [
-      {$: 'label', 
-        title: '', 
-        features :{$: 'css', css: '{ width: 170px }' }
-      }, 
-      {$: 'button', 
-        title: 'Select', 
-        style :{$: 'button.md-icon', 
-          icon: 'call_made', 
-          css: '{transform: scaleX(-1)}'
-        }, 
-        action :{$: 'studio.pickAndOpen' }
-      }, 
-      {$: 'button', 
-        title: 'Save', 
-        style :{$: 'button.md-icon', icon: 'save' }, 
-        action :{$: 'studio.saveComponents' }
-      }, 
-      {$: 'button', 
-        title: 'Refresh', 
-        style :{$: 'button.md-icon', icon: 'refresh' }, 
-        action :{$: 'studio.redraw' }
-      }, 
-      {$: 'button', 
-        title: 'Javascript', 
-        style :{$: 'button.md-icon', icon: 'code' }, 
-        action :{$: 'studio.editSource' }
-      }, 
-      {$: 'button', 
-        title: 'Outline', 
-        style :{$: 'button.md-icon', icon: 'format_align_left' }, 
-        action :{$: 'studio.open-control-tree' }
-      }, 
-      {$: 'button', 
-        title: 'Properties', 
-        style :{$: 'button.md-icon', icon: 'storage' }, 
-        action :{$: 'studio.openProperties' }
-      }, 
-      {$: 'button', 
-        title: 'jbEditor', 
-        style :{$: 'button.md-icon', icon: 'build' }, 
-        action :{$: 'studio.openjbEditor' }
-      }, 
-      {$: 'button', 
-        title: 'show data', 
-        style :{$: 'button.md-icon', icon: 'input' }, 
-        action :{$: 'studio.showProbeData' }
-      }, 
-      {$: 'button', 
-        title: 'insert control', 
-        style :{$: 'button.md-icon', icon: 'add' }, 
-        action :{$: 'studio.openNewCtrlDialog' }
       }
     ]
   }

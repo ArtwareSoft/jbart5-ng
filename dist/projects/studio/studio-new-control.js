@@ -19,13 +19,14 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     style: { $: 'dialog.md-dialog-ok-cancel',
                         features: [
                             { $: 'dialogFeature.autoFocusOnFirstInput' },
+                            { $: 'dialogFeature.maxZIndexOnClick', minZIndex: 5000 },
                             { $: 'dialogFeature.nearLauncherLocation' }
                         ]
                     },
                     content: { $: 'picklist',
                         databind: '%$dialogData/comp%',
                         options: { $: 'studio.tgp-type-options', type: 'control' },
-                        features: { $: 'field.onChange',
+                        features: { $: 'field.subscribe',
                             action: { $: 'closeContainingPopup' }
                         }
                     },

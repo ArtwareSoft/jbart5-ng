@@ -81,7 +81,7 @@ export function enrichComp(comp,ctrl_ctx) {
 
 	var annotations = Reflect.getMetadata('annotations', comp)[0];
 	var overridable_props = ['selector', 'template','encapsulation'];
-	var extendable_array_props = ['directives', 'styles'];
+	var extendable_array_props = ['styles'];
 
 	var title = jb_tosingle(jb.val(ctrl_ctx.params.title)) || (() => ''); 
 	comp.jb_title = (typeof title == 'function') ? title : () => ''+title;
@@ -128,6 +128,12 @@ export function enrichComp(comp,ctrl_ctx) {
 			if (options[prop] !== undefined || annotations[prop] != undefined)
 				annotations[prop] = (annotations[prop] || []).concat(jb.toarray(options[prop]))
 		});
+
+		if (options.directives !== undefined)
+				annotations.directives = (annotations.directives || []).concat(
+					jb.toarray(options.directives).map(x=>
+						typeof x == 'string' ? directivesObj[x] : x)
+					)
 
 		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
 		if (options.cssClass) jb.path(options, ['atts', 'class'], options.cssClass);
@@ -495,4 +501,8 @@ export function getZone(zoneId) {
 	})
 }
 
+var directivesObj = {};
+export function registerDirectives(obj) {
+	jb.extend(directivesObj,obj)
 
+}

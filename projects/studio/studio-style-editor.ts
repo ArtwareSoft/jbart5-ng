@@ -25,7 +25,7 @@ jb.component('studio.open-style-menu', {
   }, 
   impl :{$: 'openDialog', 
     style :{$: 'pulldownPopup.contextMenuPopup' }, 
-    content :{$: 'group', 
+    content :{$: 'group',
       controls: [
         {$: 'pulldown.menu-item', 
           title: 'Customize style', 
@@ -42,7 +42,7 @@ jb.component('studio.open-style-menu', {
               ]
             }
           }
-        }, 
+        },
         {$: 'pulldown.menu-item', 
           title: 'Save style for reuse', 
           icon: 'build', 

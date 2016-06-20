@@ -1,11 +1,14 @@
-System.register(['jb-core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1;
+    var jb_core_1, jb_ui;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
+            },
+            function (jb_ui_1) {
+                jb_ui = jb_ui_1;
             }],
         execute: function() {
             jb_core_1.jb.component('layout.vertical', {
@@ -32,9 +35,29 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('layout.flex', {
                 type: 'group.style',
+                params: {
+                    align: { as: 'string', options: ',flex-start,flex-end,center,space-between,space-around' },
+                    direction: { as: 'string', options: ',row,row-reverse,column,column-reverse' },
+                    wrap: { type: 'boolean', as: 'boolean' },
+                },
                 impl: { $: 'customStyle',
+                    $vars: {
+                        flexProps: function (ctx) {
+                            var params = ctx.componentContext.params;
+                            return [
+                                ['display', 'flex'],
+                                ['justify-content', params.align],
+                                ['flex-direction', params.direction],
+                                ['flex-wrap', params.wrap ? 'wrap' : ''],
+                            ].filter(function (x) {
+                                return x[1] != '';
+                            })
+                                .map(function (x) { return (x[0] + ": " + x[1]); })
+                                .join('; ');
+                        }
+                    },
                     template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
-                    css: "{display: flex }",
+                    css: '{ %$flexProps% }',
                     features: { $: 'group.initGroup' }
                 }
             });
@@ -72,6 +95,35 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
                 impl: function (ctx, align) { return ({
                     css: "{ align-self: " + align + " }"
+                }); }
+            });
+            jb_core_1.jb.component('flex-filler', {
+                type: 'control',
+                params: {
+                    title: { as: 'string', defaultValue: 'flex filler' },
+                    basis: { as: 'number', defaultValue: '1' },
+                    grow: { as: 'number', defaultValue: '1' },
+                    shrink: { as: 'number', defaultValue: '0' },
+                },
+                impl: function (ctx, title, basis, grow, shrink) {
+                    var css = [
+                        ("flex-basis: " + basis),
+                        ("flex-grow: " + grow),
+                        ("flex-shrink: " + shrink),
+                    ].join('; ');
+                    return jb_ui.Comp({ jbTemplate: "<div style=\"" + css + "\"></div>" }, ctx);
+                }
+            });
+            jb_core_1.jb.component('responsive.only-for-phone', {
+                type: 'feature',
+                impl: function () { return ({
+                    cssClass: 'only-for-phone'
+                }); }
+            });
+            jb_core_1.jb.component('responsive.not-for-phone', {
+                type: 'feature',
+                impl: function () { return ({
+                    cssClass: 'not-for-phone'
                 }); }
             });
         }

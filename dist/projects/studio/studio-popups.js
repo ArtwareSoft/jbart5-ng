@@ -79,6 +79,73 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     return 'javascript';
                 }
             });
+            jb_core_1.jb.component('studio.open-responsive-phone-popup', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'openDialog',
+                    style: { $: 'dialog.studio-floating', id: 'responsive' },
+                    content: { $: 'tabs',
+                        tabs: { $: 'dynamic-controls',
+                            controlItems: [
+                                {
+                                    id: 'phone',
+                                    width: { min: 320, max: 479, default: 400 },
+                                    height: { min: 300, max: 700, default: 600 }
+                                },
+                                {
+                                    id: 'tablet',
+                                    width: { min: 480, max: 1024, default: 600 },
+                                    height: { min: 800, max: 1440, default: 1000 }
+                                },
+                                {
+                                    id: 'desktop',
+                                    width: { min: 1024, max: 2048, default: 1280 },
+                                    height: { min: 800, max: 1440, default: 1000 }
+                                }
+                            ],
+                            genericControl: { $: 'group',
+                                title: '%$controlItem/id%',
+                                style: { $: 'property-sheet.titles-above' },
+                                controls: [
+                                    { $: 'editable-number',
+                                        databind: '%$globals/responsive/{%$controlItem/id%}/width%',
+                                        title: 'width',
+                                        style: { $: 'editable-number.slider' },
+                                        min: '%$controlItem/width/min%',
+                                        max: '%$controlItem/width/max%',
+                                        features: [
+                                            { $: 'field.default', value: '%$controlItem/width/default%' },
+                                            { $: 'field.subscribe',
+                                                action: { $: 'studio.setPreviewSize', width: '%%' },
+                                                includeFirst: true
+                                            }
+                                        ]
+                                    },
+                                    { $: 'editable-number',
+                                        databind: '%$globals/responsive/{%$controlItem/id%}/height%',
+                                        title: 'height',
+                                        style: { $: 'editable-number.slider' },
+                                        min: '%$controlItem/height/min%',
+                                        max: '%$controlItem/height/max%',
+                                        features: [
+                                            { $: 'field.default', value: '%$controlItem/height/default%' },
+                                            { $: 'field.subscribe',
+                                                action: { $: 'studio.setPreviewSize', height: '%%' },
+                                                includeFirst: true
+                                            }
+                                        ]
+                                    }
+                                ],
+                                features: [{ $: 'css', css: '{ padding-left: 12px; padding-top: 7px }' }]
+                            }
+                        },
+                        style: { $: 'tabs.simple' }
+                    },
+                    title: 'responsive'
+                }
+            });
         }
     }
 });

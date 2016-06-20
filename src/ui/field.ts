@@ -1,0 +1,43 @@
+import {jb} from 'jb-core';
+import * as jb_rx from 'jb-ui/jb-rx';
+
+jb.component('field.default', {
+  type: 'feature',
+  params: {
+    value: { type: 'data'},
+  },
+  impl: function(context,defaultValue) {
+    var field = context.vars.field;
+    if (field && field.getValue() == null)
+      field.writeValue(defaultValue)
+  }
+})
+
+jb.component('field.subscribe', {
+  type: 'feature',
+  params: {
+    action: { type: 'action', essential: true, dynamic: true },
+    includeFirst: { type: 'boolean', as: 'boolean'},
+  },
+  impl: (context,action,includeFirst) => ({
+    init: cmp => {
+      var field = context.vars.field;
+      var includeFirstEm = includeFirst ? jb_rx.Observable.of(field.getValue()) : jb_rx.Observable.of();
+      field && field.observable(context)
+            .merge(includeFirstEm)
+            .filter(x=>x)
+            .subscribe(x=>
+              action(context.setData(x)));
+    }
+  })
+})
+
+jb.component('field.toolbar', {
+  type: 'feature',
+  params: {
+    toolbar: { type: 'control', essential: true, dynamic: true },
+  },
+  impl: (context,toolbar) => ({
+    extendComp: { jb_toolbar: toolbar() }
+  })
+})

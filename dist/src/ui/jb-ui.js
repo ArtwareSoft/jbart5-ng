@@ -11,7 +11,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_core_1, core_1, common_1, jb_rx, jb_dialog;
-    var jbComp, jBartWidget;
+    var jbComp, jBartWidget, directivesObj;
     function apply(ctx) {
         //	console.log('apply');
         jb_core_1.jb.delay(1);
@@ -89,7 +89,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         };
         var annotations = Reflect.getMetadata('annotations', comp)[0];
         var overridable_props = ['selector', 'template', 'encapsulation'];
-        var extendable_array_props = ['directives', 'styles'];
+        var extendable_array_props = ['styles'];
         var title = jb_tosingle(jb_core_1.jb.val(ctrl_ctx.params.title)) || (function () { return ''; });
         comp.jb_title = (typeof title == 'function') ? title : function () { return '' + title; };
         comp.jb$title = (typeof title == 'function') ? title() : title; // for debug
@@ -136,6 +136,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 if (options[prop] !== undefined || annotations[prop] != undefined)
                     annotations[prop] = (annotations[prop] || []).concat(jb_core_1.jb.toarray(options[prop]));
             });
+            if (options.directives !== undefined)
+                annotations.directives = (annotations.directives || []).concat(jb_core_1.jb.toarray(options.directives).map(function (x) {
+                    return typeof x == 'string' ? directivesObj[x] : x;
+                }));
             options.atts = jb_core_1.jb.extend({}, options.atts, options.host); // atts is equvivalent to host
             if (options.cssClass)
                 jb_core_1.jb.path(options, ['atts', 'class'], options.cssClass);
@@ -368,6 +372,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         });
     }
     exports_1("getZone", getZone);
+    function registerDirectives(obj) {
+        jb_core_1.jb.extend(directivesObj, obj);
+    }
+    exports_1("registerDirectives", registerDirectives);
     return {
         setters:[
             function (jb_core_1_1) {
@@ -541,6 +549,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 return jBartWidget;
             }());
             exports_1("jBartWidget", jBartWidget);
+            directivesObj = {};
         }
     }
 });
