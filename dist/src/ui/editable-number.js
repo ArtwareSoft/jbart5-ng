@@ -31,7 +31,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                 },
                 impl: function (context, databind, title, style, symbol, min, max, displayString, dataString, features, step, initialPixelsPerUnit) {
                     var ctx = context.setVars({
-                        editableNumber: new editableNumber(symbol, min, max, displayString, dataString, step, initialPixelsPerUnit),
+                        editableNumber: new editableNumber(symbol, min, max, displayString, dataString, step || 1, initialPixelsPerUnit),
                         field: jb_ui.twoWayBind(databind)
                     });
                     return jb_ui.ctrl(ctx);

@@ -162,8 +162,6 @@ jb.component('field.style-on-focus', {
   })
 })
 
-
-
 jb.component('css', {
   type: 'feature',
   params: {
@@ -171,6 +169,33 @@ jb.component('css', {
   },
   impl: (context,css) => 
     ({css:css})
+})
+
+jb.component('css.width', {
+  type: 'feature',
+  params: {
+    width: { essential: true, as: 'number' },
+  },
+  impl: (context,width) => 
+    ({css: `{ width: ${width}px}`})
+})
+
+jb.component('css.box-shadow', {
+  type: 'feature',
+  params: {
+    blurRadius: { as: 'number', defaultValue: 5 },
+    spreadRadius: { as: 'number', defaultValue: 0 },
+    shadowColor: { as: 'string', defaultValue: '#000000'},
+    opacity: { as: 'number', min: 0, max: 1, defaultValue: 0.75, step: 0.01 },
+    horizontal: { as: 'number', defaultValue: 10},
+    vertical : { as: 'number', defaultValue: 10},
+    selector: { as: 'string' },
+  },
+  impl: (context,blurRadius,spreadRadius,shadowColor,opacity,horizontal,vertical,selector) => {
+    var color = [parseInt(shadowColor.slice(1,3),16) || 0, parseInt(shadowColor.slice(3,5),16) || 0, parseInt(shadowColor.slice(5,7),16) || 0]
+      .join(',');
+    return ({css: `${selector} { box-shadow: ${horizontal}px ${vertical}px ${blurRadius}px ${spreadRadius}px rgba(${color},${opacity}) }`})
+  }
 })
 
 jb.component('cssClass', {

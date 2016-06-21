@@ -53,14 +53,14 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'group',
                             title: 'content',
-                            style: { $: 'layout.flex', align: 'flex-start' },
+                            style: { $: 'layout.flex', align: 'center' },
                             controls: [
                                 { $: 'rich-text',
                                     text: "<ul>\n              <li>pick &amp; edit (like in Chrome debugger)</li>\n              <li>work by example data</li>\n              <li>smart data/code guidance in context</li>\n              <li>preserve the full power of angular2 &amp; javascript</li>\n              </ul>\n              ",
                                     title: 'Visual Development Concepts',
                                     style: { $: 'customStyle',
                                         template: "<section>\n                <div class=\"title\">%$title%</div>\n                %$text%\n                </section>",
-                                        css: ".title { color: #37474F;\n                font-size: 28px;\n                font-weight: 500;\n                line-height: 32px;\n                margin-top: 10px;\n                margin: 0 0 16px 0;\n                opacity: .87;\n                }\n                { font-size: 16px;\n                line-height: 30px;\n                opacity: .87;\n                padding-top: 20px;\n                padding-left: 20px;\n                }"
+                                        css: ".title { color: #37474F;\n                font-size: 28px;\n                font-weight: 500;\n                line-height: 32px;\n                margin-top: 10px;\n                margin: 0 0 16px 0;\n                opacity: .87;\n                }\n                { font-size: 16px;\n                line-height: 30px;\n                opacity: .87;\n                padding-top: 20px;\n                padding-left: 20px;\n                width: 920px;\n                }"
                                     }
                                 }
                             ]
@@ -78,7 +78,15 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                         template: "<div [style.width]=\"width\" [style.height]=\"height\">\n                <img [style.width]=\"imageWidth\" [style.height]=\"imageHeight\" src=\"{{url}}\"/>\n                </div>",
                                         css: '{ padding: 20px } '
                                     },
-                                    features: { $: 'flex-layout-item.align-self', align: 'center' }
+                                    features: { $: 'css.box-shadow',
+                                        blurRadius: '21',
+                                        spreadRadius: '7',
+                                        shadowColor: '#000000',
+                                        opacity: '0.34',
+                                        horizontal: '',
+                                        vertical: '',
+                                        selector: 'img'
+                                    }
                                 },
                                 { $: 'group',
                                     title: 'header text',

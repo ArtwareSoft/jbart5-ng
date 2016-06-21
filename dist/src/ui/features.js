@@ -183,6 +183,32 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     return ({ css: css });
                 }
             });
+            jb_core_1.jb.component('css.width', {
+                type: 'feature',
+                params: {
+                    width: { essential: true, as: 'number' },
+                },
+                impl: function (context, width) {
+                    return ({ css: "{ width: " + width + "px}" });
+                }
+            });
+            jb_core_1.jb.component('css.box-shadow', {
+                type: 'feature',
+                params: {
+                    blurRadius: { as: 'number', defaultValue: 5 },
+                    spreadRadius: { as: 'number', defaultValue: 0 },
+                    shadowColor: { as: 'string', defaultValue: '#000000' },
+                    opacity: { as: 'number', min: 0, max: 1, defaultValue: 0.75, step: 0.01 },
+                    horizontal: { as: 'number', defaultValue: 10 },
+                    vertical: { as: 'number', defaultValue: 10 },
+                    selector: { as: 'string' },
+                },
+                impl: function (context, blurRadius, spreadRadius, shadowColor, opacity, horizontal, vertical, selector) {
+                    var color = [parseInt(shadowColor.slice(1, 3), 16) || 0, parseInt(shadowColor.slice(3, 5), 16) || 0, parseInt(shadowColor.slice(5, 7), 16) || 0]
+                        .join(',');
+                    return ({ css: selector + " { box-shadow: " + horizontal + "px " + vertical + "px " + blurRadius + "px " + spreadRadius + "px rgba(" + color + "," + opacity + ") }" });
+                }
+            });
             jb_core_1.jb.component('cssClass', {
                 type: 'feature',
                 params: {

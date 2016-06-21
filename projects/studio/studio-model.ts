@@ -269,9 +269,10 @@ export class ControlModel {
 		// copy properties from existing & default values
 		if (existing && typeof existing == 'object')
 			jb.entries(comp.params).forEach(p=>{
-				result[p[0]] = existing[p[0]];
-				// if (p[1].defaultValue)
-				// 	result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
+				if (existing[p[0]])
+					result[p[0]] = existing[p[0]];
+				if (typeof p[1].defaultValue != 'object')
+					result[p[0]] = p[1].defaultValue
 			})
 		jb.writeValue(profileRefFromPath(path),result);
 	}
@@ -327,9 +328,12 @@ export class ControlModel {
 		if (!isNaN(Number(path.split('~').pop()))) // array elements
 			path = parentPath(path);
 		var parent_prof = profileValFromPath(parentPath(path));
-		if (!parent_prof) return;
-		var params = (getComp(jb.compName(parent_prof)) || {}).params;
-		return jb.entries(params).filter(p=>p[0]==path.split('~').pop()).map(p=>p[1])[0] || {};
+		var compDef = parent_prof && getComp(jb.compName(parent_prof));
+		var params = (compDef || {}).params;
+		var paramName = path.split('~').pop();
+		return jb.entries(params)
+			.filter(p=>p[0]==paramName)
+			.map(p=>p[1])[0] || {};
 	}
 
 	PTsOfPath(path) {

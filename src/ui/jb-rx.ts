@@ -6,6 +6,10 @@ import * as jb_ui from 'jb-ui/jb-ui';
 export {Subject} from 'rxjs/Subject';
 export {Observable} from 'rxjs/Observable';
 
+// for debug console
+window.Observable = Observable;
+window.Subject = Subject;
+
 jb_initJstypes();
 jbart.jstypes.observable = (obj,ctx) => 
 	observableFromCtx(ctx.setData(obj));
@@ -289,3 +293,14 @@ jb.component('containsSeq',{
 			.map(x=>context.setData(x))
 	}
 })
+
+function compileRxPipe(context) { 
+	var items = context.profile.items;
+	var code = items.map(item => {
+		var jsType = typeof item;
+		if (jsType == 'string')
+			return `flatMap(ctx => 
+				`
+	})
+}
+

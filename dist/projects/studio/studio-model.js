@@ -318,9 +318,10 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     // copy properties from existing & default values
                     if (existing && typeof existing == 'object')
                         jb_core_1.jb.entries(comp.params).forEach(function (p) {
-                            result[p[0]] = existing[p[0]];
-                            // if (p[1].defaultValue)
-                            // 	result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
+                            if (existing[p[0]])
+                                result[p[0]] = existing[p[0]];
+                            if (typeof p[1].defaultValue != 'object')
+                                result[p[0]] = p[1].defaultValue;
                         });
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);
                 };
@@ -372,10 +373,12 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     if (!isNaN(Number(path.split('~').pop())))
                         path = parentPath(path);
                     var parent_prof = profileValFromPath(parentPath(path));
-                    if (!parent_prof)
-                        return;
-                    var params = (getComp(jb_core_1.jb.compName(parent_prof)) || {}).params;
-                    return jb_core_1.jb.entries(params).filter(function (p) { return p[0] == path.split('~').pop(); }).map(function (p) { return p[1]; })[0] || {};
+                    var compDef = parent_prof && getComp(jb_core_1.jb.compName(parent_prof));
+                    var params = (compDef || {}).params;
+                    var paramName = path.split('~').pop();
+                    return jb_core_1.jb.entries(params)
+                        .filter(function (p) { return p[0] == paramName; })
+                        .map(function (p) { return p[1]; })[0] || {};
                 };
                 ControlModel.prototype.PTsOfPath = function (path) {
                     return this.PTsOfType((this.paramDef(path) || {}).type, findjBartToLook(path));

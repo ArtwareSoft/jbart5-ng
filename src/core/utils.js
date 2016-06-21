@@ -369,8 +369,9 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
 
   function sortedPropertyNames(obj) {
     var props = jb_entries(obj).map(x=>x[0]).filter(p=>p.indexOf('$jb') != 0); // keep the order
-    if (props.indexOf('$') != -1) { // tgp obj
-      var params = jb_entries((jbart.comps[obj.$] || {}).params || {}).map(x=>x[0]);
+    var comp_name = jb_compName(profile);
+    if (comp_name) { // tgp obj
+      var params = jb_entries((jbart.comps[comp_name] || {}).params || {}).map(x=>x[0]);
       props.sort((p1,p2)=>params.indexOf(p1) - params.indexOf(p2));
     }
     if (props.indexOf('$') > 0) { // make the $ first

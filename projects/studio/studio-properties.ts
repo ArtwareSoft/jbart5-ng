@@ -141,9 +141,15 @@ jb.component('studio.property-slider', {
 	type: 'control',
 	params: { path: { as: 'string'} },
 	impl :{$: 'editable-number', 
+		$vars: { 
+			paramDef :{$: 'studio.paramDef', path: '%$path%' } 
+		},
 		title :{$: 'studio.prop-name', path: '%$path%' },
 		databind :{$: 'studio.ref', path: '%$path%' },
 		style :{$: 'editable-number.slider', width: '120px' },
+		min: '%$paramDef/min%',
+		max: '%$paramDef/max%',
+		step: '%$paramDef/step%',
 		features :{$: 'css', css: '{ margin-left: -5px; }' },
 	}
 })

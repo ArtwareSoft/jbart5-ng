@@ -139,9 +139,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'editable-number',
+                    $vars: {
+                        paramDef: { $: 'studio.paramDef', path: '%$path%' }
+                    },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     style: { $: 'editable-number.slider', width: '120px' },
+                    min: '%$paramDef/min%',
+                    max: '%$paramDef/max%',
+                    step: '%$paramDef/step%',
                     features: { $: 'css', css: '{ margin-left: -5px; }' },
                 }
             });

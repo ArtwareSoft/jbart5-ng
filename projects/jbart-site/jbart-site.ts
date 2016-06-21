@@ -45,7 +45,7 @@ jb.component('jbart-site.main', {
       }, 
       {$: 'group', 
         title: 'content', 
-        style :{$: 'layout.flex', align: 'flex-start' }, 
+        style :{$: 'layout.flex', align: 'center' }, 
         controls: [
           {$: 'rich-text', 
             text: `<ul>
@@ -74,6 +74,7 @@ jb.component('jbart-site.main', {
                 opacity: .87;
                 padding-top: 20px;
                 padding-left: 20px;
+                width: 920px;
                 }`
             }
           }
@@ -94,7 +95,15 @@ jb.component('jbart-site.main', {
                 </div>`, 
               css: '{ padding: 20px } '
             }, 
-            features :{$: 'flex-layout-item.align-self', align: 'center' }
+            features :{$: 'css.box-shadow', 
+              blurRadius: '21', 
+              spreadRadius: '7', 
+              shadowColor: '#000000', 
+              opacity: '0.34', 
+              horizontal: '', 
+              vertical: '', 
+              selector: 'img'
+            }
           }, 
           {$: 'group', 
             title: 'header text', 
