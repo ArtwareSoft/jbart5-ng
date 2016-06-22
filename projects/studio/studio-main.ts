@@ -114,7 +114,8 @@ jb.component('studio.all', {
             action :{
               $runActions: [
                 {$: 'studio.waitForPreviewIframe' }, 
-                {$: 'studio.fixProfilePath' }
+                {$: 'studio.fixProfilePath' },
+                {$: 'studio.setPreviewSize', width: 1280, height: 840 }
               ]
             }
           }

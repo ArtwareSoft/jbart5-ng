@@ -43,7 +43,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('image.default', {
                 type: 'image.style',
                 impl: { $: 'customStyle',
-                    template: "<div [style.width]=\"width\" [style.height]=\"height\">\n\t\t\t               <img [style.width]=\"imageWidth\" [style.height]=\"imageHeight\" src=\"{{url}}\"/>\n\t\t\t           </div>",
+                    template: "<div [style.width]=\"width\" [style.height]=\"height\" [style.background-image]=\"\">\n\t\t\t               <img [style.width]=\"imageWidth\" [style.height]=\"imageHeight\" src=\"{{url}}\"/>\n\t\t\t           </div>",
                 }
             });
         }

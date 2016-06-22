@@ -68,30 +68,30 @@ jb.component('studio.open-style-menu', {
 })
 
 jb.component('studio.style-editor', {
-	type: 'control',
+  type: 'control', 
   params: {
     path: { as: 'string' }
   }, 
-	impl :{$: 'group', 
-		$vars: {
-			source :{$: 'studio.val', path: '%$path%' }
-		},
-		style :{$: 'property-sheet.titles-above'},
-		controls: [
-			{$: 'editable-text', 
-				title: 'css',
-				databind : '%$source/css%',
-				features: {$: 'studio.undo-support', path: '%$path%' },
-				style :{$: 'editable-text.codemirror', mode: 'css', height: 300},
-			},	
-			{$: 'editable-text', 
-				title: 'template',
-				databind : '%$source/template%',
-				style :{$: 'editable-text.codemirror', mode: 'html', height: 100},
-				features: {$: 'studio.undo-support', path: '%$path%' },
-			},	
-		]
-	}
+  impl :{$: 'group', 
+    $vars: {
+      source :{$: 'studio.val', path: '%$path%' }
+    }, 
+    style :{$: 'property-sheet.titles-above' }, 
+    controls: [
+      {$: 'editable-text', 
+        title: 'css', 
+        databind: '%$source/css%', 
+        features :{$: 'studio.undo-support', path: '%$path%' }, 
+        style :{$: 'editable-text.codemirror', mode: 'css', height: 300 }
+      }, 
+      {$: 'editable-text', 
+        title: 'template', 
+        databind: '%$source/template%', 
+        style :{$: 'editable-text.codemirror', mode: 'htmlmixed', height: '200' }, 
+        features :{$: 'studio.undo-support', path: '%$path%' }
+      }
+    ]
+  }
 })
 
 jb.component('studio.format-css', {

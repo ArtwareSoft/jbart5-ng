@@ -17,6 +17,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/tabs/tabs.js', '@angula
                 toolbar_1 = toolbar_1_1;
             }],
         execute: function() {
+            jb_ui.registerDirectives({ MD_TABS_DIRECTIVES: tabs_js_1.MD_TABS_DIRECTIVES, MdToolbar: toolbar_1.MdToolbar });
             jb_core_1.jb.component('tabs.md', {
                 type: 'tabs.style',
                 impl: { $: 'customStyle',
@@ -25,7 +26,6 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/tabs/tabs.js', '@angula
                     directives: ['MD_TABS_DIRECTIVES', 'MdToolbar']
                 }
             });
-            jb_ui.registerDirectives({ MD_TABS_DIRECTIVES: tabs_js_1.MD_TABS_DIRECTIVES, MdToolbar: toolbar_1.MdToolbar });
         }
     }
 });

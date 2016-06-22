@@ -31,7 +31,7 @@ jb.component('image',{
 jb.component('image.default', {
 	type: 'image.style',
 	impl: {$: 'customStyle',
-			template: `<div [style.width]="width" [style.height]="height">
+			template: `<div [style.width]="width" [style.height]="height" [style.background-image]="">
 			               <img [style.width]="imageWidth" [style.height]="imageHeight" src="{{url}}"/>
 			           </div>`,
 		}

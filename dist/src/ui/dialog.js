@@ -50,8 +50,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             // 	$(ref.location.nativeElement).addClass('dialog-content');
                             // 	jb.trigger(cmp.dialog, 'attach')
                             // })
-                        },
-                        directives: [jb_ui.jbComp]
+                        }
                     });
                     jb_dialogs.addDialog(dialog, ctx);
                 }

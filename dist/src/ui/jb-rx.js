@@ -77,14 +77,6 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
         };
     }
     exports_1("toRxElem", toRxElem);
-    function compileRxPipe(context) {
-        var items = context.profile.items;
-        var code = items.map(function (item) {
-            var jsType = typeof item;
-            if (jsType == 'string')
-                return "flatMap(ctx => \n\t\t\t\t";
-        });
-    }
     return {
         setters:[
             function (Subject_1_1) {

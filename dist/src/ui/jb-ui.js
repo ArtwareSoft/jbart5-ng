@@ -43,7 +43,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             core_1.Component({
                 selector: 'div',
                 template: options.template || '',
-                directives: [common_1.NgClass],
+                directives: [common_1.NgClass, jbComp],
             }),
             Reflect.metadata('design:paramtypes', [core_1.ComponentResolver, core_1.ElementRef])
         ], Cmp);
@@ -487,8 +487,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     var _this = this;
                     if (this.compId == 'studio.all' && !jbart.redrawStudio)
                         jbart.redrawStudio = function () {
-                            return _this.redrawEm.next(_this.compId);
-                        };
+                            return _this.draw();
+                        }; // this.redrawEm.next(this.compId);
                     if (jbart.studioGlobals) {
                         this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
                         this.redrawEm.next(this.compId);
@@ -505,19 +505,21 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     }
                 };
                 jBartWidget.prototype.initRedrawEm = function () {
+                    var _this = this;
                     var cmp = this;
                     this.redrawEm = new jb_rx.Subject();
-                    this.redrawEm // source change - wait 1 sec
-                        .debounceTime(300)
+                    this.redrawEm
                         .map(function (id) {
                         return relevantSource(id);
                     })
                         .distinctUntilChanged()
+                        .debounceTime(300) // unify fast changes wait before draw
                         .skip(1)
                         .subscribe(function (x) {
                         return cmp.draw();
                     });
-                    this.redrawEm // widget to show changed - no need to wait
+                    this.ngZone.onUnstable
+                        .map(function () { return _this.compId; }) // widget to show changed - no need to wait
                         .distinctUntilChanged()
                         .skip(1)
                         .subscribe(function (x) {

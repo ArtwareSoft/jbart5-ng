@@ -26,18 +26,19 @@ jb.component('tree.json',{
 			val: path => jb.val(ref(path)),
 			subNodes: function(path) { 
 				var val = jb.val(ref(path));
-				if (Array.isArray(val))
-					return jb.range(0,val.length).map(x=>path+'~'+x)
+				var ar = Array.isArray(val) ? jb.range(0,val.length) : [];
 				if (typeof val == 'object')
-					return Object.getOwnPropertyNames(val || {})
-				.map(x=>path+'~'+x);
-				return [];
+					ar = Object.getOwnPropertyNames(val || {});
+				return ar.filter(x=>x)
+						.map(x=>path+'~'+x)
 			},
 			modify: () => {}, // TBD
 			icon: () => '',
 			title: function(path,collapsed) {
 				var _ref = ref(path);
 				var val = jb.val(_ref);
+				if (val == null) 
+					return _ref.$jb_property + ': null';
 				if (!collapsed && typeof val == 'object')
 					return _ref.$jb_property;
 
@@ -56,7 +57,8 @@ jb.component('tree.json',{
 					delete _ref.$jb_parent[_ref.$jb_property];
 			},
 			isArray(path) {
-				return typeof jb.val(ref(path)) == 'object';
+				var val = jb.val(ref(path));
+				return typeof val == 'object' && val !== null;
 			}
 		}
 

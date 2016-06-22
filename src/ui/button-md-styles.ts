@@ -6,7 +6,7 @@ jb.component('button.md-flat', {
   type: 'button.style',
   impl :{$: 'customStyle', 
       template: '<span><button md-button (click)="clicked()">{{title}}</button></span>',
-      directives: [MdButton]
+      directives: 'MdButton'
   }
 })
 
@@ -14,7 +14,7 @@ jb.component('button.md-raised', {
   type: 'button.style',
   impl :{$: 'customStyle', 
       template: '<span><button md-raised-button (click)="clicked()">{{title}}</button></span>',
-      directives: [MdButton]
+      directives: 'MdButton'
   }
 })
 
@@ -30,7 +30,7 @@ jb.component('button.md-icon', {
                 <i class="material-icons" style="font-size:%$size%px;">%$icon%</i>
               </button></span>`,
       css: 'button {min-width: 2px; margin-top: -3px; padding: 4px}',
-      directives: [MdButton]
+      directives: 'MdButton'
   }
 })
 
@@ -47,7 +47,7 @@ jb.component('button.md-icon-12', {
       css: `button { width: 24px; height: 24px; padding: 0; margin-left: 2px; margin-top: -2px;}
       .material-icons { font-size:12px;  }
       `,
-      directives: [MdButton]
+      directives: 'MdButton'
   }
 })
 
@@ -63,7 +63,7 @@ jb.component('button.md-icon-fab', {
       template: `<span><button md-fab aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons md-24">%$icon%</i>
               </button></span>`,
-      directives: [MdButton]
+      directives: 'MdButton'
   }
 })
 
@@ -78,6 +78,6 @@ jb.component('button.md-mini-fab', {
       template: `<span><button md-mini-fab aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons md-24">%$icon%</i>
               </button></span>`,
-      directives: [MdButton]
+      directives: 'MdButton'
   }
 })

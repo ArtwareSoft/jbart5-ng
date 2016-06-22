@@ -40,8 +40,7 @@ jb.component('group',{
             })
           })
         }
-      },
-      directives: [jb_ui.jbComp]
+      }
     })
   }
 })

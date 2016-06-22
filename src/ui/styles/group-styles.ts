@@ -11,35 +11,40 @@ jb.component('group.div', {
   }
 })
 
+jb.component('group.expandable', {
+  type: 'group.style',
+  impl :{$: 'customStyle', 
+      template: `<section class="jb-group">
+       <div class="header">
+        <h3 class="title">{{title}}</h3>
+        <button md-icon-button md-button (click)="toggle()">
+        <i *ngIf="show" class="material-icons">keyboard_arrow_down</i>
+        <i *ngIf="!show" class="material-icons">keyboard_arrow_right</i>
+        </button>
+      </div>
+      <div *ngIf="show">
+          <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp"></jb_comp>
+      </div>
+</section>`, 
+      methods: {
+        init: function (ctx) {
+            return function (cmp) {
+                cmp.show = true;
+                cmp.toggle = function () { cmp.show = !cmp.show; };
+            };
+        }
+      }, 
+      css: `.header { display: flex; flex-direction: row; }
+        button:hover { background: none }
+        button { margin-left: auto }
+        .title { margin: 5px }`, 
+      features :{$: 'group.initGroup' }
+    }, 
+})
 
-// Seems that ng.md is not too flexible and dynamic.
-// Needs to build the template with the input fields before loading the comp.
-// jb.component('property-sheet.md', {
-//   type: 'group.style',
-//   impl: function(context) { 
-//     var comps = (context.vars.$model.controls.profile||[]).map(prof=>context.run(prof));
-//     return {
-//       init: function(cmp) {
-//         comps.forEach(comp=>{
-//          comp.prototype.ngOnInit.call(cmp);
-//         })
-//       },
-//       template: comps.map(comp=>{
-//         if (!Reflect.getMetadata('annotations', comp))
-//           debugger;
-//         var annotations = Reflect.getMetadata('annotations', comp)[0];
-//         var title = comp.jb_title ? jb.val(comp.jb_title(context)) : '';
-//         return `<md-input-container class="md-block" flex-gt-sm>
-//                   <label>${title}</label>
-//                   ${annotations.template}
-//                 </md-input-container>
-//                 `
-//         }).join('')
-//   }}
-// })
 
-jb.component('group-expandable-subgroups', {
-  type: 'group.section_style',
+jb.component('group.expandable-subgroups', {
+  type: 'group.style',
   params: {
     icon: { as: 'string ', defaultValue: 'code' }
   },

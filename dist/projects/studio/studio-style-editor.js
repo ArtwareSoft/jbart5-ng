@@ -90,14 +90,14 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             title: 'css',
                             databind: '%$source/css%',
                             features: { $: 'studio.undo-support', path: '%$path%' },
-                            style: { $: 'editable-text.codemirror', mode: 'css', height: 300 },
+                            style: { $: 'editable-text.codemirror', mode: 'css', height: 300 }
                         },
                         { $: 'editable-text',
                             title: 'template',
                             databind: '%$source/template%',
-                            style: { $: 'editable-text.codemirror', mode: 'html', height: 100 },
-                            features: { $: 'studio.undo-support', path: '%$path%' },
-                        },
+                            style: { $: 'editable-text.codemirror', mode: 'htmlmixed', height: '200' },
+                            features: { $: 'studio.undo-support', path: '%$path%' }
+                        }
                     ]
                 }
             });

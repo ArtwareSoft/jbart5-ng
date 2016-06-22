@@ -35,8 +35,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                     });
                                 });
                             };
-                        },
-                        directives: [jb_ui.jbComp]
+                        }
                     });
                 }
             });

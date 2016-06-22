@@ -15,33 +15,24 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: { $: 'group.initGroup' }
                 }
             });
-            // Seems that ng.md is not too flexible and dynamic.
-            // Needs to build the template with the input fields before loading the comp.
-            // jb.component('property-sheet.md', {
-            //   type: 'group.style',
-            //   impl: function(context) { 
-            //     var comps = (context.vars.$model.controls.profile||[]).map(prof=>context.run(prof));
-            //     return {
-            //       init: function(cmp) {
-            //         comps.forEach(comp=>{
-            //          comp.prototype.ngOnInit.call(cmp);
-            //         })
-            //       },
-            //       template: comps.map(comp=>{
-            //         if (!Reflect.getMetadata('annotations', comp))
-            //           debugger;
-            //         var annotations = Reflect.getMetadata('annotations', comp)[0];
-            //         var title = comp.jb_title ? jb.val(comp.jb_title(context)) : '';
-            //         return `<md-input-container class="md-block" flex-gt-sm>
-            //                   <label>${title}</label>
-            //                   ${annotations.template}
-            //                 </md-input-container>
-            //                 `
-            //         }).join('')
-            //   }}
-            // })
-            jb_core_1.jb.component('group-expandable-subgroups', {
-                type: 'group.section_style',
+            jb_core_1.jb.component('group.expandable', {
+                type: 'group.style',
+                impl: { $: 'customStyle',
+                    template: "<section class=\"jb-group\">\n       <div class=\"header\">\n        <h3 class=\"title\">{{title}}</h3>\n        <button md-icon-button md-button (click)=\"toggle()\">\n        <i *ngIf=\"show\" class=\"material-icons\">keyboard_arrow_down</i>\n        <i *ngIf=\"!show\" class=\"material-icons\">keyboard_arrow_right</i>\n        </button>\n      </div>\n      <div *ngIf=\"show\">\n          <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n</section>",
+                    methods: {
+                        init: function (ctx) {
+                            return function (cmp) {
+                                cmp.show = true;
+                                cmp.toggle = function () { cmp.show = !cmp.show; };
+                            };
+                        }
+                    },
+                    css: ".header { display: flex; flex-direction: row; }\n        button:hover { background: none }\n        button { margin-left: auto }\n        .title { margin: 5px }",
+                    features: { $: 'group.initGroup' }
+                },
+            });
+            jb_core_1.jb.component('group.expandable-subgroups', {
+                type: 'group.style',
                 params: {
                     icon: { as: 'string ', defaultValue: 'code' }
                 },

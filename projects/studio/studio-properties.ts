@@ -230,21 +230,19 @@ jb.component('studio.property-array', {
     }, 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     controls: [
-      {$: 'group', 
-        style :{$: 'layout.horizontal' }, 
-        controls: [
-          {$: 'editable-boolean', 
-            databind: '%$arrayCtrl/expanded%', 
-            style :{$: 'editable-boolean.expand-collapse' }
+      {$: 'button', 
+        title: 'add', 
+        action :{$: 'studio.newArrayItem', path: '%$path%' }, 
+        style :{$: 'button.md-icon', icon: 'add', size: 20, aria: undefined }, 
+        features: [
+          {$: 'css', 
+            css: `{ position: absolute;   top: 0px;   right: 30px }
+
+button:hover {  background: none }`
           }, 
-          {$: 'button', 
-            title: 'add', 
-            action :{$: 'studio.newArrayItem', path: '%$path%' }, 
-            style :{$: 'button.md-icon-12', icon: 'add' }, 
-            features :{$: 'css', css: 'button { margin-top: -5px }' }
-          }
-        ], 
-        features :{$: 'css', css: '{ height: 28px; margin-left: 174px; }' }
+          {$: 'ngAtts', atts: undefined }, 
+          {$: 'css', css: undefined }
+        ]
       }, 
       {$: 'itemlist', 
         items :{$: 'studio.array-children', path: '%$path%' }, 
@@ -254,14 +252,21 @@ jb.component('studio.property-array', {
         }, 
         itemVariable: 'arrayItem', 
         features: [
-          {$: 'hidden', showCondition: '%$arrayCtrl.expanded%' }, 
-          {$: 'css', css: '{ margin-left: -80px}' }, 
+          {$: 'hidden', showCondition: true }, 
+          {$: 'css', css: '{ margin-left: 10px}' }, 
           {$: 'itemlist.divider' }, 
           {$: 'itemlist.drag-and-drop' }
         ]
       }
     ], 
-    features: {  }
+    features: [
+      {$: 'css', 
+        css: `{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }
+.header {  background: white; } `
+      }, 
+      {$: 'cssClass', cssClass: undefined }
+    ], 
+    style :{$: 'group.expandable' }
   }
 })
 

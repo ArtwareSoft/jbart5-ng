@@ -294,13 +294,3 @@ jb.component('containsSeq',{
 	}
 })
 
-function compileRxPipe(context) { 
-	var items = context.profile.items;
-	var code = items.map(item => {
-		var jsType = typeof item;
-		if (jsType == 'string')
-			return `flatMap(ctx => 
-				`
-	})
-}
-

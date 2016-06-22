@@ -1,21 +1,25 @@
-System.register(['jb-core', '@angular2-material/slide-toggle/slide-toggle.js'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', '@angular2-material/slide-toggle/slide-toggle.js'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, slide_toggle_js_1;
+    var jb_core_1, jb_ui, slide_toggle_js_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
+            function (jb_ui_1) {
+                jb_ui = jb_ui_1;
+            },
             function (slide_toggle_js_1_1) {
                 slide_toggle_js_1 = slide_toggle_js_1_1;
             }],
         execute: function() {
+            jb_ui.registerDirectives({ MdSlideToggle: slide_toggle_js_1.MdSlideToggle });
             jb_core_1.jb.component('editable-boolean.md-slide-toggle', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
                     template: "<span><md-slide-toggle %$field.modelExp% >{{text()}}</md-slide-toggle></span>",
-                    directives: [slide_toggle_js_1.MdSlideToggle]
+                    directives: 'MdSlideToggle'
                 }
             });
             jb_core_1.jb.component('editable-boolean.md-slide-toggle-fixed', {
@@ -24,7 +28,7 @@ System.register(['jb-core', '@angular2-material/slide-toggle/slide-toggle.js'], 
                     template: "<span><md-slide-toggle color=\"primary\" class=\"fix-slide-toggle\" %$field.modelExp% >{{text()}}</md-slide-toggle></span>",
                     css: "\n  .fix-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {\n    background-color: #1f1f1f !important}\n  .fix-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {\n    background-color: #858585 !important; opacity: 0.5 }\n  .fix-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {\n    opacity: 1; background-color: #858585 !important; \n    background-color-old: rgba(0, 150, 136, 0.26); }\n      ",
                     noViewEncapsulation: true,
-                    directives: [slide_toggle_js_1.MdSlideToggle]
+                    directives: 'MdSlideToggle'
                 }
             });
         }

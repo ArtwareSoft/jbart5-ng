@@ -76,10 +76,19 @@ jb.component('studio.main-menu', {
         title: 'Data', 
         controls: [
           {$: 'dynamic-controls', 
-            controlItems : ctx => Object.getOwnPropertyNames(ctx.resources), 
+            controlItems: function (ctx) {
+    var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
+    return Object.getOwnPropertyNames(res)
+      .filter(function (x) { return x != 'window'; });
+  }, 
             genericControl :{$: 'pulldown.menu-item', 
               title: '%$controlItem%', 
-              action :{ $: 'studio.showDataResource', resource: '%$controlItem%' }
+              action :{$: 'studio.open-resource', 
+                resource: function(ctx) { 
+                  return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%') ])
+                },
+                id: '%$controlItem%' 
+              }
             }
           }, 
           {$: 'pulldown.menu-item-separator' }, 

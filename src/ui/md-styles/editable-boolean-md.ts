@@ -1,11 +1,15 @@
 import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
+
 import {MdSlideToggle} from '@angular2-material/slide-toggle/slide-toggle.js';
+
+jb_ui.registerDirectives({MdSlideToggle: MdSlideToggle});
 
 jb.component('editable-boolean.md-slide-toggle', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 
       template: `<span><md-slide-toggle %$field.modelExp% >{{text()}}</md-slide-toggle></span>`,
-      directives: [MdSlideToggle]
+      directives: 'MdSlideToggle'
   }
 })
 
@@ -23,7 +27,7 @@ jb.component('editable-boolean.md-slide-toggle-fixed', {
     background-color-old: rgba(0, 150, 136, 0.26); }
       `,
       noViewEncapsulation: true,
-      directives: [MdSlideToggle]
+      directives: 'MdSlideToggle'
   }
 })
 

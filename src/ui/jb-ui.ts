@@ -41,7 +41,7 @@ export function Comp(options,context) {
 		Component({
 			selector: 'div',
 			template: options.template || '',
-			directives: [NgClass], // maybe to take it out...
+			directives: [NgClass,jbComp], // maybe to take it out...
 //			encapsulation: ViewEncapsulation.None 
 		}),
 		Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
@@ -421,9 +421,9 @@ export class jBartWidget {
 		jbart.widgetLoaded = true; // indication for waitForIframeLoad
 	}
 	ngDoCheck() {
-		if (this.compId == 'studio.all' && !jbart.redrawStudio) // put the redrawStudio function ob jbart
+		if (this.compId == 'studio.all' && !jbart.redrawStudio) // assign redrawStudio function
 			jbart.redrawStudio = () => 
-				this.redrawEm.next(this.compId);
+				this.draw(); // this.redrawEm.next(this.compId);
 
 		if (jbart.studioGlobals) { // in studio
 			this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
@@ -445,21 +445,22 @@ export class jBartWidget {
 		var cmp = this;
 		this.redrawEm = new jb_rx.Subject();
 
-		this.redrawEm // source change - wait 1 sec
-		  .debounceTime(300)
+		this.redrawEm 
 		  .map(id=>
 		  	relevantSource(id))
 		  .distinctUntilChanged()
+		  .debounceTime(300) // unify fast changes wait before draw
 		  .skip(1)
 		  .subscribe(x => 
 		  	cmp.draw())
 
-		this.redrawEm // widget to show changed - no need to wait
-		  .distinctUntilChanged()
-		  .skip(1)
-		  .subscribe(
-		  	x => 
-		  	cmp.draw())
+		  this.ngZone.onUnstable
+		  	.map(()=>this.compId) // widget to show changed - no need to wait
+		  	.distinctUntilChanged()
+			.skip(1)
+			.subscribe(
+			  	x => 
+			  	cmp.draw())
 
 		function relevantSource(compID) {
 			var ns = compID.split('.')[0];

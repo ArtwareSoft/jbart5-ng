@@ -393,16 +393,17 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
     else if (typeof val === 'string' && val.indexOf('\n') == -1) 
       result += "'" + val + "'";
     else if (typeof val === 'string' && val.indexOf('\n') != -1) {
-      depth++;
-      result += "`";
-      var lines = val.split('\n');
-      lines.forEach((line,index)=>{
-          result += line.trim(); 
-          if(index<lines.length-1) 
-            newLine();
-      })
-      depth--;
-      result += "`";
+      result += "`" + val + "`"
+      // depth++;
+      // result += "`";
+      // var lines = val.split('\n');
+      // lines.forEach((line,index)=>{
+      //     result += line.trim(); 
+      //     if(index<lines.length-1) 
+      //       newLine();
+      // })
+      // depth--;
+      // result += "`";
     }  else
       result += JSON.stringify(val);
   }

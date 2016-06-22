@@ -97,12 +97,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 {
                                     id: 'tablet',
                                     width: { min: 480, max: 1024, default: 600 },
-                                    height: { min: 800, max: 1440, default: 1000 }
+                                    height: { min: 800, max: 1440, default: 850 }
                                 },
                                 {
                                     id: 'desktop',
                                     width: { min: 1024, max: 2048, default: 1280 },
-                                    height: { min: 800, max: 1440, default: 1000 }
+                                    height: { min: 800, max: 1440, default: 850 }
                                 }
                             ],
                             genericControl: { $: 'group',

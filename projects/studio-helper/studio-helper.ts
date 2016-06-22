@@ -50,3 +50,23 @@ jb.component('studio-helper.edit-style', {
     ]
   }
 })
+
+
+jb.component('studio-helper.expandable', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'expandable', 
+    style :{$: 'group.expandable' }, 
+    controls: [
+      {$: 'label', 
+        title: 'label', 
+        style :{$: 'label.span' }, 
+        features :{$: 'css', css: undefined }
+      }, 
+      {$: 'button', 
+        title: 'Hello', 
+        style :{$: 'button.md-flat' }
+      }
+    ]
+  }
+})

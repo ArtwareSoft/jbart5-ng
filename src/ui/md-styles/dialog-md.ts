@@ -27,6 +27,6 @@ jb.component('dialog.md-dialog-ok-cancel', {
 						</div>
 				</div>		
 		`,
-      directives: [MdButton]
+      directives: 'MdButton'
 	}
 })

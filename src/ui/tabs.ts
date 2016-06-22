@@ -26,8 +26,7 @@ jb.component('tabs', {
             	comp.jb_title ? comp.jb_title() : '')
           })
         }
-      },
-      directives: [jb_ui.jbComp]
+      }
     })
   }
 })

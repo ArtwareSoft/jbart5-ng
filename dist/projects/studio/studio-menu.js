@@ -83,10 +83,19 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             title: 'Data',
                             controls: [
                                 { $: 'dynamic-controls',
-                                    controlItems: function (ctx) { return Object.getOwnPropertyNames(ctx.resources); },
+                                    controlItems: function (ctx) {
+                                        var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
+                                        return Object.getOwnPropertyNames(res)
+                                            .filter(function (x) { return x != 'window'; });
+                                    },
                                     genericControl: { $: 'pulldown.menu-item',
                                         title: '%$controlItem%',
-                                        action: { $: 'studio.showDataResource', resource: '%$controlItem%' }
+                                        action: { $: 'studio.open-resource',
+                                            resource: function (ctx) {
+                                                return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%')]);
+                                            },
+                                            id: '%$controlItem%'
+                                        }
                                     }
                                 },
                                 { $: 'pulldown.menu-item-separator' },

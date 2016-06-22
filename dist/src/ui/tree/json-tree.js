@@ -28,18 +28,19 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         val: function (path) { return jb_core_1.jb.val(ref(path)); },
                         subNodes: function (path) {
                             var val = jb_core_1.jb.val(ref(path));
-                            if (Array.isArray(val))
-                                return jb_core_1.jb.range(0, val.length).map(function (x) { return path + '~' + x; });
+                            var ar = Array.isArray(val) ? jb_core_1.jb.range(0, val.length) : [];
                             if (typeof val == 'object')
-                                return Object.getOwnPropertyNames(val || {})
-                                    .map(function (x) { return path + '~' + x; });
-                            return [];
+                                ar = Object.getOwnPropertyNames(val || {});
+                            return ar.filter(function (x) { return x; })
+                                .map(function (x) { return path + '~' + x; });
                         },
                         modify: function () { },
                         icon: function () { return ''; },
                         title: function (path, collapsed) {
                             var _ref = ref(path);
                             var val = jb_core_1.jb.val(_ref);
+                            if (val == null)
+                                return _ref.$jb_property + ': null';
                             if (!collapsed && typeof val == 'object')
                                 return _ref.$jb_property;
                             if (typeof val != 'object')
@@ -56,7 +57,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 delete _ref.$jb_parent[_ref.$jb_property];
                         },
                         isArray: function (path) {
-                            return typeof jb_core_1.jb.val(ref(path)) == 'object';
+                            var val = jb_core_1.jb.val(ref(path));
+                            return typeof val == 'object' && val !== null;
                         }
                     };
                     model.children = function (path) {

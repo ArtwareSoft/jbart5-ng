@@ -36,8 +36,7 @@ jb.component('openDialog', {
 				// 	$(ref.location.nativeElement).addClass('dialog-content');
 				// 	jb.trigger(cmp.dialog, 'attach')
 				// })
-			},
-			directives: [jb_ui.jbComp]
+			}
 		});
 		jb_dialogs.addDialog(dialog,ctx);
 	}

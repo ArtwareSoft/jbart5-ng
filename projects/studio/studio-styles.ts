@@ -1,6 +1,4 @@
 import {jb} from 'jb-core';
-import {MdSlideToggle} from '@angular2-material/slide-toggle/slide-toggle.js';
-
 
 jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
@@ -37,7 +35,7 @@ jb.component('editable-boolean.studio-slide-toggle', {
     background-color-old: rgba(0, 150, 136, 0.26); }
       `,
       noViewEncapsulation: true,
-      directives: [MdSlideToggle]
+      directives: 'MdSlideToggle'
   }
 })
 

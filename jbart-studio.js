@@ -16,6 +16,11 @@ _iswin = /^win/.test(process.platform);
 
 var settings = JSON.parse(fs.readFileSync('jbart.json'));
 
+// define projects not under /jbart/projects directory
+var external_projects = {
+  mega: '../dropbox'
+}
+
 // Http server
 function serve(req, res) {
    try {
@@ -59,7 +64,12 @@ for(i=0;i<supported_ext.length;i++)
   file_type_handlers[supported_ext[i]] = function(req, res,path) { serveFile(req,res,path); };
 
 function serveFile(req,res,path) {
-  var full_path = settings.http_dir + path;
+  var project = path.match(/^projects\/([^/]*)(.*)/);
+  if (project && external_projects[project[1]])
+    var full_path = settings.http_dir + external_projects[project[1]] + '/' + project[1] + project[2];
+  else
+    var full_path = settings.http_dir + path;
+
   var extension = path.split('.').pop();
 
   fs.readFile(_path(full_path), function (err, content) {
@@ -79,8 +89,8 @@ function serveFile(req,res,path) {
           res.setHeader('Last-Modified', stat.mtime);
 
           if (extension == 'css') res.setHeader('Content-Type', 'text/css');
-          if (extension == 'xml') res.setHeader('Content-Type', 'application/xml');
-          if (extension == 'js') res.setHeader('Content-Type', 'application/javascript');
+          if (extension == 'xml') res.setHeader('Content-Type', 'application/xml;charset=utf8');
+          if (extension == 'js') res.setHeader('Content-Type', 'application/javascript;charset=utf8');
           if (extension == 'woff') res.setHeader('Content-Type', 'application/x-font-woff');
           if (extension == 'woff2') res.setHeader('Content-Type', 'application/x-font-woff2');
 
@@ -115,7 +125,12 @@ extend(op_post_handlers, {
         if (!project) return endWithFailure(res,'missing project param in url');
         var comp = getURLParam(req,'comp');
         if (!comp) return endWithFailure(res,'missing comp param in url');
-        var projDirs = ['projects/' + project];
+
+        if (external_projects[project])
+          var projDirs = [external_projects[project] + '/' + project];
+        else
+          var projDirs = ['projects/' + project];
+
         if (comp.indexOf('studio.') == 0)
           projDirs.push('projects/studio');
 
@@ -142,8 +157,8 @@ extend(op_post_handlers, {
                 var found = findSection(source,toFind);
                 if (found) {
                   comp_found = true;
-                  console.log('splice',source,found.index,found.length,replaceWith);
-                  source.splice.apply(source, [found.index, found.length].concat(replaceWith));
+                  //console.log('splice',source,found.index,found.length,replaceWith);
+                  source.splice.apply(source, [found.index+1, found.length-1].concat(replaceWith.slice(1)));
                   var newContent = source.join(_iswin ? '\r\n' : '\n');
                   fs.writeFileSync(srcPath,newContent);
                   return endWithSuccess(res,`component ${comp} saved to ${srcPath} at ${JSON.stringify(found)}`);
@@ -156,6 +171,8 @@ extend(op_post_handlers, {
 
         function findSection(source,toFind) {
           var index = source.indexOf(toFind[0]);
+          if (index == -1)
+            index = source.indexOf(toFind[0].replace('jb.','jb_'));
           if (index != -1 && force) {// ignore content - just look for the end
             for(end_index=index;end_index<source.length;end_index++)
               if ((source[end_index]||'').match(/^}\)$/m))
@@ -189,6 +206,8 @@ extend(op_post_handlers, {
 extend(base_get_handlers, {   
   'project': function(req,res,path) {
       var project = req.url.split('/')[2];
+      if (external_projects[project])
+        return file_type_handlers.html(req,res, external_projects[project] + `/${project}/${project}.html`);
       return file_type_handlers.html(req,res,`projects/${project}/${project}.html`);
   }
 });
