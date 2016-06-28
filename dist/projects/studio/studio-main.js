@@ -1,7 +1,16 @@
-System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browser', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, studio;
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var jb_core_1, jb_ui, studio, platform_browser_1, core_1;
     function waitForIframeLoad(iframe) {
         if (!iframe)
             debugger;
@@ -29,6 +38,12 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             },
             function (studio_1) {
                 studio = studio_1;
+            },
+            function (platform_browser_1_1) {
+                platform_browser_1 = platform_browser_1_1;
+            },
+            function (core_1_1) {
+                core_1 = core_1_1;
             }],
         execute: function() {
             jbart.studio = jbart.studio || {};
@@ -176,10 +191,15 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             jb_core_1.jb.component('studio.renderWidget', {
                 type: 'control',
                 impl: function (ctx) {
-                    return jb_ui.Comp({
-                        template: "<iframe sandbox=\"allow-same-origin allow-forms allow-scripts\" style=\"box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px\"\n\t\t\t\t\tseamless=\"\" id=\"jb-preview\" frameborder=\"0\" src=\"/project/{{project}}\"></iframe>",
-                        init: function (cmp) {
+                    var previewIframe = (function () {
+                        function previewIframe(sanitizer, elementRef) {
+                            this.sanitizer = sanitizer;
+                            this.elementRef = elementRef;
+                        }
+                        previewIframe.prototype.ngOnInit = function () {
+                            var cmp = this;
                             cmp.project = ctx.str('%$globals/project%');
+                            cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/' + cmp.project);
                             if (!cmp.project)
                                 debugger;
                             var iframe = cmp.elementRef.nativeElement.firstElementChild;
@@ -202,10 +222,51 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                 });
                                 jb_core_1.jb.trigger(jbart, 'preview_loaded');
                             });
-                        }
-                    }, ctx);
+                        };
+                        previewIframe = __decorate([
+                            core_1.Component({
+                                selector: 'previewIframe',
+                                template: "<iframe sandbox=\"allow-same-origin allow-forms allow-scripts\" style=\"box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px\"\n\t\t\t\t\tseamless=\"\" id=\"jb-preview\" frameborder=\"0\" [src]=\"project_url\"></iframe>",
+                            }), 
+                            __metadata('design:paramtypes', [platform_browser_1.DomSanitizationService, core_1.ElementRef])
+                        ], previewIframe);
+                        return previewIframe;
+                    }());
+                    previewIframe.jb_title =
+                        function () { return 'previewIframe'; };
+                    return previewIframe;
                 }
             });
+            // 		jb_ui.Comp({
+            // 			template: `<iframe sandbox="allow-same-origin allow-forms allow-scripts" style="box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px"
+            // 					seamless="" id="jb-preview" frameborder="0" [src]="project_url"></iframe>`,
+            // 			init: function(cmp) {
+            // 				cmp.project = ctx.str('%$globals/project%');
+            // 				cmp.project_url = new DomSanitizationService().bypassSecurityTrustResourceUrl('/project/'+cmp.project);
+            // 				if (!cmp.project) debugger;
+            // 				var iframe = cmp.elementRef.nativeElement.firstElementChild;
+            // 				window.jb_studio_window = true; // let studio widgets run in a special mode
+            // 				waitForIframeLoad(iframe).then(function() {
+            // 					var w = iframe.contentWindow;
+            // 					w.jbart.studioGlobals = ctx.run('{%$globals%}');
+            // 					jbart.previewWindow = w;
+            // 					jbart.previewjbart = w.jbart;
+            // 					jbart.preview_jbart_widgets = w.jbart_widgets;
+            // 					document.title = cmp.project + ' with jBart';
+            // 					// forward the studio zone to the preview widget so it will be updated
+            // 					jb_ui.getZone('studio.all').then(zone=> {
+            // 						zone.onStable.subscribe(function(){
+            // 							w.jbart.studioGlobals = ctx.run('{%$globals%}');
+            // 							// refresh preview
+            // 							jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
+            // 							//w.setTimeout(()=>{},1); 
+            // 						});
+            // 					})
+            // 					jb.trigger(jbart, 'preview_loaded');
+            // 				})
+            // 			}
+            // 		},ctx)
+            // })
             jb_core_1.jb.component('studio.setPreviewSize', {
                 type: 'action',
                 params: {

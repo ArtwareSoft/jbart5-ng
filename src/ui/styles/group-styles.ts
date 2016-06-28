@@ -16,8 +16,8 @@ jb.component('group.expandable', {
   impl :{$: 'customStyle', 
       template: `<section class="jb-group">
        <div class="header">
-        <h3 class="title">{{title}}</h3>
-        <button md-icon-button md-button (click)="toggle()">
+        <div class="title">{{title}}</div>
+        <button md-icon-button md-button (click)="toggle()" title="{{expand_title()}}">
         <i *ngIf="show" class="material-icons">keyboard_arrow_down</i>
         <i *ngIf="!show" class="material-icons">keyboard_arrow_right</i>
         </button>
@@ -30,6 +30,7 @@ jb.component('group.expandable', {
         init: function (ctx) {
             return function (cmp) {
                 cmp.show = true;
+                cmp.expand_title = () => cmp.show ? 'collapse' : 'expand';
                 cmp.toggle = function () { cmp.show = !cmp.show; };
             };
         }

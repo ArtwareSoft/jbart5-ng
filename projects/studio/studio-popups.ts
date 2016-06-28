@@ -182,7 +182,7 @@ jb.component('studio.open-responsive-phone-popup', {
           features: [{$: 'css', css: '{ padding-left: 12px; padding-top: 7px }' }]
         }
       }, 
-      style :{$: 'tabs.simple' }
+      style :{$: 'tabs.md-tabs' }
     }, 
     title: 'responsive'
   }

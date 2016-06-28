@@ -141,7 +141,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 features: [{ $: 'css', css: '{ padding-left: 12px; padding-top: 7px }' }]
                             }
                         },
-                        style: { $: 'tabs.simple' }
+                        style: { $: 'tabs.md-tabs' }
                     },
                     title: 'responsive'
                 }

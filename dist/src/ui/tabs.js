@@ -30,6 +30,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                 var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.tabs, cmp);
                                 cmpEmitterFunc(cmp.ctx).subscribe(function (comps) {
                                     cmp.comps = comps;
+                                    cmp.jb_disposable && cmp.jb_disposable.forEach(function (d) { return d(); });
                                     cmp.titles = comps.map(function (comp) {
                                         return comp.jb_title ? comp.jb_title() : '';
                                     });
@@ -49,7 +50,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('tabs.simple', {
                 type: 'tabs.style',
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-tab\">\n\t    \t<div class=\"tab-titles\">\n\t    \t\t<button *ngFor=\"let title of titles; let i = index\" md-button (click)=\"selectedTab = i\" [ngClass]=\"{'selected': i==selectedTab}\">{{title}}</button>\n\t        </div>\n\t        <jb_comp *ngFor=\"let comp of selectedTabContent()\" [comp]=\"comp\" [flatten]=\"true\"></jb_comp>\n\t      </div>",
+                    template: "<div class=\"jb-tab\">\n\t    \t<div class=\"tab-titles\">\n\t    \t\t<button *ngFor=\"let title of titles; let i = index\" md-button (click)=\"selectedTab = i\" [ngClass]=\"{'selected': i==selectedTab}\">{{title}}</button>\n\t        </div>\n\t        <jb_comp *ngFor=\"let comp of selectedTabContent()\" [comp]=\"comp\"></jb_comp>\n\t      </div>",
                     css: ".selected { border-bottom: 1px solid black }",
                     features: { $: 'tabs.initTabs' },
                 }

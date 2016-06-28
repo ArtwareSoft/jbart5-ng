@@ -18,7 +18,7 @@ System.register(['jb-core', '@angular/http'], function(exports_1, context_1) {
                     mapToResource: { dynamic: true, defaultValue: '%%' },
                 },
                 impl: function (ctx, url, resource) {
-                    return new http_1.Http(new http_1.XHRBackend(new http_1.BrowserXhr()), new http_1.RequestOptions())
+                    return new http_1.Http(new http_1.XHRBackend(new http_1.BrowserXhr(), null, new http_1.CookieXSRFStrategy()), new http_1.RequestOptions())
                         .get(url)
                         .do(function (x) {
                         if (resource)

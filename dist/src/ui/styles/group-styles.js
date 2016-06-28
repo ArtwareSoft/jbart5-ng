@@ -18,11 +18,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('group.expandable', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<section class=\"jb-group\">\n       <div class=\"header\">\n        <h3 class=\"title\">{{title}}</h3>\n        <button md-icon-button md-button (click)=\"toggle()\">\n        <i *ngIf=\"show\" class=\"material-icons\">keyboard_arrow_down</i>\n        <i *ngIf=\"!show\" class=\"material-icons\">keyboard_arrow_right</i>\n        </button>\n      </div>\n      <div *ngIf=\"show\">\n          <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n</section>",
+                    template: "<section class=\"jb-group\">\n       <div class=\"header\">\n        <div class=\"title\">{{title}}</div>\n        <button md-icon-button md-button (click)=\"toggle()\" title=\"{{expand_title()}}\">\n        <i *ngIf=\"show\" class=\"material-icons\">keyboard_arrow_down</i>\n        <i *ngIf=\"!show\" class=\"material-icons\">keyboard_arrow_right</i>\n        </button>\n      </div>\n      <div *ngIf=\"show\">\n          <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n</section>",
                     methods: {
                         init: function (ctx) {
                             return function (cmp) {
                                 cmp.show = true;
+                                cmp.expand_title = function () { return cmp.show ? 'collapse' : 'expand'; };
                                 cmp.toggle = function () { cmp.show = !cmp.show; };
                             };
                         }

@@ -75,9 +75,9 @@ jb_tests('md-ui-tests', {
     expectedHtmlResult: { $: 'contains', text: 'cc' }
   },
 
-  'md-expandable-group' :{$: 'ng2-ui-test',  
+  'expandable-group' :{$: 'ng2-ui-test',  
     control :{$: 'group', title: 'test1',
-      style :{$: 'group.md-expandable'}, 
+      style :{$: 'group.expandable'}, 
       controls: 
         [ 
           { $: 'button', title: 'button1' } ,
@@ -124,7 +124,7 @@ jb_tests('md-ui-tests', {
   },
 'md-tabs' :{$: 'ng2-ui-test', 
   control :{$: 'tabs',
-      style :{$: 'tabs.md' },
+      style :{$: 'tabs.md-tabs' },
       tabs:[
         {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
@@ -217,12 +217,13 @@ itemlist :{$: 'ng2-ui-test',
   control :{$: 'group', 
     controls :{$: 'itemlist', 
         items: '%$peopleFromUrl%',
-        controls :{$:'group',
-          controls: [ 
-            { $: 'label', title: '%name%' }, 
-            { $: 'label', title: '%age%' }, 
-          ]
-        }
+        controls :{ $: 'label', title: '%name%' }
+        // :{$:'group',
+        //   controls: [ 
+        //     { $: 'label', title: '%name%' }, 
+        //     { $: 'label', title: '%age%' }, 
+        //   ]
+        // }
     },
     features :{$: 'group.wait', 
       for :{$: 'http.get', url: '/projects/ui-tests/people.json', resource: 'peopleFromUrl', mapToResource: '%people%'} 
@@ -231,16 +232,16 @@ itemlist :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', '42'] },
 },
 
-'itemlist-table' :{$: 'ng2-ui-test',  
-  control :{$: 'itemlist', items: '%$people%', 
-      style :{$: 'itemlist.table'},
-      controls : [ 
-        { $: 'text', title: 'name', text: '%name%' }, 
-        { $: 'text', title: 'age', text: '%age%' }, 
-      ] 
-  },
-  expectedHtmlResult: { $: 'contains', text: ['name','age','Homer Simpson', '42'] },
-},
+// 'itemlist-table' :{$: 'ng2-ui-test',  
+//   control :{$: 'itemlist', items: '%$people%', 
+//       style :{$: 'itemlist.table'},
+//       controls : [ 
+//         { $: 'text', title: 'name', text: '%name%' }, 
+//         { $: 'text', title: 'age', text: '%age%' }, 
+//       ] 
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['name','age','Homer Simpson', '42'] },
+// },
 
 'itemlist-DD' :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [

@@ -263,7 +263,7 @@ button:hover {  background: none }`
       {$: 'css', 
         css: `{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }
 .header {  background: #F9F9F9; } 
-i { font-size: 20px; margin-right: 20px }`
+i { font-size: 20px; margin-right: 1px }`
       }
     ], 
     style :{$: 'group.expandable' }

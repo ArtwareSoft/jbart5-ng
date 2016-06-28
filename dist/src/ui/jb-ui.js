@@ -419,8 +419,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     if (!cmp.flatten)
                         return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-                    var parentView = this.childView.parentInjector._view;
-                    var parentCmp = parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
+                    //var parentView = this.childView.parentInjector._view;
+                    var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4; // parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
                     if (cmp._deleted_parent)
                         return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
                     if (cmp._deleted_parent || !parentCmp)
@@ -511,6 +511,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     var cmp = this;
                     this.redrawEm = new jb_rx.Subject();
                     this.redrawEm
+                        .debounceTime(500) // fast user reaction
                         .map(function (id) {
                         return relevantSource(id);
                     })

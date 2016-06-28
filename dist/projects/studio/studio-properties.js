@@ -254,7 +254,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ],
                     features: [
                         { $: 'css',
-                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 20px; margin-right: 20px }"
+                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 20px; margin-right: 1px }"
                         }
                     ],
                     style: { $: 'group.expandable' }

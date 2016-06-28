@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation} from '@angular/core';
 import {NgForm,FORM_DIRECTIVES,NgClass} from '@angular/common';
+
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 
 import * as jb_rx from 'jb-ui/jb-rx';
@@ -300,8 +301,8 @@ export class jbComp {
   	if (!cmp.flatten) 
   		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-	var parentView = this.childView.parentInjector._view;
-	var parentCmp = parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
+	//var parentView = this.childView.parentInjector._view;
+	var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4; // parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
   	if (cmp._deleted_parent)
   		return jb.logError('flattenjBComp: can not get parent component');
   	if (cmp._deleted_parent || !parentCmp)
@@ -448,6 +449,7 @@ export class jBartWidget {
 		this.redrawEm = new jb_rx.Subject();
 
 		this.redrawEm 
+		  .debounceTime(500) // fast user reaction
 		  .map(id=>
 		  	relevantSource(id))
 		  .distinctUntilChanged()
@@ -507,5 +509,4 @@ export function getZone(zoneId) {
 var directivesObj = {};
 export function registerDirectives(obj) {
 	jb.extend(directivesObj,obj)
-
 }

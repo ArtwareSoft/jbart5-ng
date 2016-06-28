@@ -22,6 +22,7 @@ jb.component('tabs', {
           var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.tabs,cmp);
           cmpEmitterFunc(cmp.ctx).subscribe(comps=> {
           	cmp.comps = comps;
+            cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
             cmp.titles = comps.map(comp=>
             	comp.jb_title ? comp.jb_title() : '')
           })
@@ -47,7 +48,7 @@ jb.component('tabs.simple', {
 	    	<div class="tab-titles">
 	    		<button *ngFor="let title of titles; let i = index" md-button (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
 	        </div>
-	        <jb_comp *ngFor="let comp of selectedTabContent()" [comp]="comp" [flatten]="true"></jb_comp>
+	        <jb_comp *ngFor="let comp of selectedTabContent()" [comp]="comp"></jb_comp>
 	      </div>`,
 	     css: `.selected { border-bottom: 1px solid black }`,
 	    features :{$: 'tabs.initTabs'},
