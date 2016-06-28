@@ -106,6 +106,8 @@ export function enrichComp(comp,ctrl_ctx) {
 		if (options.extendCtx) comp.prototype.extendCtx=options.extendCtx;
 
 		if (options.extendComp) jb.extend(this,options.extendComp);
+		if (options.invisible) 
+			comp.invisible = true;
 
 		if (options.input)
 			Reflect.decorate([Input(), Reflect.metadata('design:type', Object)], comp.prototype, options.input, void 0);

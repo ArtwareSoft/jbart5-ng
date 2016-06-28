@@ -30,7 +30,7 @@ jb.component('group',{
             cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
             jb.logPerformance('group-change');
             comps.forEach((comp,i)=>{
-              if (!comp)
+              if (!comp || comp.invisible)
                 return;
               if (cmp.jbToExtend[i])
                  comp.jbExtend(cmp.jbToExtend[i]);

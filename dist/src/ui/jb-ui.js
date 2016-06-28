@@ -119,6 +119,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 comp.prototype.extendCtx = options.extendCtx;
             if (options.extendComp)
                 jb_core_1.jb.extend(this, options.extendComp);
+            if (options.invisible)
+                comp.invisible = true;
             if (options.input)
                 Reflect.decorate([core_1.Input(), Reflect.metadata('design:type', Object)], comp.prototype, options.input, void 0);
             options.template = options.template && context.exp(options.template);

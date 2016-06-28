@@ -4,7 +4,6 @@ jb_type('aggregator');
 jb_type('boolean',{description: "Returns true/false"});
 jb_type('action',{description: "Does some action"});
 jb_type('dataResource');
-jb_type('httpFeature');
 jb_type('feature');
 
 jb_component('call',{

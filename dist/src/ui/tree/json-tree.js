@@ -44,10 +44,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             if (!collapsed && typeof val == 'object')
                                 return _ref.$jb_property;
                             if (typeof val != 'object')
-                                return _ref.$jb_property + ': ' + val;
+                                return _ref.$jb_property + ': <span class="treenode-val">' + val + "</span>";
                             return _ref.$jb_property + ': ' + Object.getOwnPropertyNames(val)
                                 .filter(function (p) { return p.indexOf('$jb') != 0; }).filter(function (p) { return typeof val[p] == 'string'; })
-                                .map(function (p) { return p + '= ' + val[p]; }).join(', ');
+                                .map(function (p) { return p + '= ' + '<span class="treenode-val">' + val[p] + "</span>"; }).join(', ');
                         },
                         delete: function (path) {
                             var _ref = ref(path);

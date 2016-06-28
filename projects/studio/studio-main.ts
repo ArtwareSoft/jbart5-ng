@@ -106,7 +106,7 @@ jb.component('studio.all', {
           }
         ], 
         features: [
-          {$: 'wait', 
+          {$: 'group.wait', 
             for :{$: 'studio.waitForPreviewIframe' }, 
             loadingControl :{ $label: '...' }
           }, 

@@ -71,7 +71,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         if (studio.model.compName(path))
                             fieldPT = 'studio.property-JBEditor';
                         else
-                            fieldPT = paramDef.type == 'boolean' ? 'studio.property-boolean' : 'studio.property-primitive';
+                            fieldPT = (paramDef.type == 'boolean' && (valType == 'boolean' || val == null)) ? 'studio.property-boolean' : 'studio.property-primitive';
                     }
                     else if ((paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
                         fieldPT = 'studio.property-array';
@@ -228,7 +228,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         { $: 'button',
                             title: 'add',
                             action: { $: 'studio.newArrayItem', path: '%$path%' },
-                            style: { $: 'button.md-icon', icon: 'add', size: 20, aria: undefined },
+                            style: { $: 'button.md-icon', icon: 'add', size: '12', aria: undefined },
                             features: [
                                 { $: 'css',
                                     css: "{ position: absolute;   top: 0px;   right: 30px }\n\nbutton:hover {  background: none }"
@@ -254,9 +254,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ],
                     features: [
                         { $: 'css',
-                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: white; } "
-                        },
-                        { $: 'cssClass', cssClass: undefined }
+                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 20px; margin-right: 20px }"
+                        }
                     ],
                     style: { $: 'group.expandable' }
                 }

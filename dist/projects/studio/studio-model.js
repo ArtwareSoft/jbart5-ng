@@ -237,7 +237,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 ControlModel.prototype.isOfType = function (path, type) {
                     var val = profileValFromPath(path);
                     var name = val && jb_core_1.jb.compName(val);
-                    if (name)
+                    if (name && jbart.comps[name])
                         return (jbart.comps[name].type || '').indexOf(type) == 0;
                 };
                 ControlModel.prototype.title = function (path, collapsed) {

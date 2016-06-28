@@ -177,7 +177,7 @@ export class ControlModel {
 	isOfType(path,type) {
 		var val = profileValFromPath(path);
 		var name = val && jb.compName(val);
-		if (name)
+		if (name && jbart.comps[name])
 			return (jbart.comps[name].type || '').indexOf(type) == 0;
 	}
 

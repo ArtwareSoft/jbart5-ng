@@ -37,7 +37,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                     cmp.jb_disposable && cmp.jb_disposable.forEach(function (d) { return d(); });
                                     jb_core_1.jb.logPerformance('group-change');
                                     comps.forEach(function (comp, i) {
-                                        if (!comp)
+                                        if (!comp || comp.invisible)
                                             return;
                                         if (cmp.jbToExtend[i])
                                             comp.jbExtend(cmp.jbToExtend[i]);

@@ -192,7 +192,7 @@ waitFor :{$: 'ng2-ui-test',
   waitFor: '%$wait2sec%',
   control :{$: 'group', 
     controls :{$: 'label', title: 'after %$wait2sec% second delay' },
-    features: { $: 'wait', for: '%$wait2sec%' }
+    features: { $: 'group.wait', for: '%$wait2sec%' }
   },
   expectedHtmlResult: { $: 'contains', text: ['after 2'] },
 },
@@ -201,7 +201,7 @@ waitForErrorPromise :{$: 'ng2-ui-test',
   waitFor: '%$err2sec%',
   control :{$: 'group', 
     controls :{$: 'label',  title: 'after %$err2sec% second delay' },
-    features: { $: 'wait', for: '%$err2sec%' }
+    features: { $: 'group.wait', for: '%$err2sec%' }
   },
   expectedHtmlResult: { $: 'contains', text: ['simulate error'] },
 },
@@ -211,6 +211,35 @@ itemlist :{$: 'ng2-ui-test',
       controls :{ $: 'label', title: '%$item.name% - %name%' }, 
   },
   expectedHtmlResult: { $: 'contains', text: ['Homer Simpson - Homer Simpson', 'Bart Simpson - Bart Simpson'] },
+},
+
+'http-get': {$: 'ng2-ui-test',  
+  control :{$: 'group', 
+    controls :{$: 'itemlist', 
+        items: '%$peopleFromUrl%',
+        controls :{$:'group',
+          controls: [ 
+            { $: 'label', title: '%name%' }, 
+            { $: 'label', title: '%age%' }, 
+          ]
+        }
+    },
+    features :{$: 'group.wait', 
+      for :{$: 'http.get', url: '/projects/ui-tests/people.json', resource: 'peopleFromUrl', mapToResource: '%people%'} 
+    }
+  },
+  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', '42'] },
+},
+
+'itemlist-table' :{$: 'ng2-ui-test',  
+  control :{$: 'itemlist', items: '%$people%', 
+      style :{$: 'itemlist.table'},
+      controls : [ 
+        { $: 'text', title: 'name', text: '%name%' }, 
+        { $: 'text', title: 'age', text: '%age%' }, 
+      ] 
+  },
+  expectedHtmlResult: { $: 'contains', text: ['name','age','Homer Simpson', '42'] },
 },
 
 'itemlist-DD' :{$: 'ng2-ui-test', control :{$: 'group', controls: 

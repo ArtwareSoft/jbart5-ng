@@ -77,7 +77,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     features: { $: 'feature.afterLoad', action: { $: 'rx.emit', from: 'ready', to: '%$studioTestEm%' } },
                                     controls: { $call: 'control' }
                                 },
-                                features: { $: 'wait', for: { $: 'studio.waitForPreviewIframe' } }
+                                features: { $: 'group.wait', for: { $: 'studio.waitForPreviewIframe' } }
                             }
                         ]
                     },
@@ -103,7 +103,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'group', controls: { $call: 'control' },
                             atts: { style: 'margin-left: 100px' },
                             features: [
-                                { $: 'wait', for: { $: 'studio.waitForPreviewIframe' } },
+                                { $: 'group.wait', for: { $: 'studio.waitForPreviewIframe' } },
                             ]
                         }
                     ]
@@ -129,7 +129,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
 // 			{ $: 'studio.renderWidget' },
 // 			{ $: 'group', controls: { $call: 'control' },
 // 		    	features : [
-// 		    		{ $: 'wait', for :{$: 'studio.waitForPreviewIframe' }},
+// 		    		{ $: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }},
 // 		    	]
 // 		    }
 // 		]

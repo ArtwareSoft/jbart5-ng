@@ -125,7 +125,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                 }
                             ],
                             features: [
-                                { $: 'wait',
+                                { $: 'group.wait',
                                     for: { $: 'studio.waitForPreviewIframe' },
                                     loadingControl: { $label: '...' }
                                 },

@@ -28,10 +28,10 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             title: 'Name',
                             style: { $: 'layout.horizontal' },
                             controls: [
-                                { $: 'editable-text', title: 'First Name', databind: '%firstName%' },
+                                { $: 'editable-text', databind: '%firstName%', title: 'First Name' },
                                 { $: 'editable-text',
-                                    title: 'Long Last Name That Will Be Truncated',
-                                    databind: '%lastName%'
+                                    databind: '%lastName%',
+                                    title: 'Long Last Name That Will Be Truncated'
                                 }
                             ]
                         },

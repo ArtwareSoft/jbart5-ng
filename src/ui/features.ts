@@ -2,7 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
-jb.component('wait', {
+jb.component('group.wait', {
   type: 'feature',
   params: { 
     for: { essential: true },
@@ -70,6 +70,18 @@ jb.component('group.watch', {
       observable: () => {} // to create jbEmitter
   })
 })
+
+jb.component('group-item.if', {
+  type: 'feature',
+  params: {
+    showCondition: { type: 'boolean', as: 'boolean', essential: true },
+  },
+  impl: (context, condition) => ({
+    invisible: !condition
+  })
+})
+
+
 
 jb.component('feature.init', {
   type: 'feature',

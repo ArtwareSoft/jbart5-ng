@@ -14,7 +14,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 jb_rx = jb_rx_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('wait', {
+            jb_core_1.jb.component('group.wait', {
                 type: 'feature',
                 params: {
                     for: { essential: true },
@@ -77,6 +77,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                         });
                     },
                     observable: function () { } // to create jbEmitter
+                }); }
+            });
+            jb_core_1.jb.component('group-item.if', {
+                type: 'feature',
+                params: {
+                    showCondition: { type: 'boolean', as: 'boolean', essential: true },
+                },
+                impl: function (context, condition) { return ({
+                    invisible: !condition
                 }); }
             });
             jb_core_1.jb.component('feature.init', {

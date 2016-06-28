@@ -88,6 +88,7 @@ jb_modules =
 'jb-ui/slider',
 'jb-ui/sidenav',
 'jb-ui/divider',
+'jb-ui/http',
 'jb-ui/theme',
 
 'jb-ui/styles/group-styles',
@@ -95,6 +96,7 @@ jb_modules =
 'jb-ui/styles/property-sheet-styles',
 'jb-ui/styles/layout-styles',
 'jb-ui/styles/picklist-styles',
+//'jb-ui/styles/itemlist-styles',
 
 'jb-ui/md-styles/button-md',
 'jb-ui/md-styles/dialog-md',
@@ -143,6 +145,7 @@ jb_system_config = {
 //        'rxjs': { main: 'Rx.js', defaultExtension: 'js' },
         '@angular/core': { main: 'core.umd.js', defaultExtension: 'js' },
         '@angular/common': { main: 'common.umd.js', defaultExtension: 'js' },
+        '@angular/http': { main: 'http.umd.js', defaultExtension: 'js' },
         '@angular/compiler': { main: 'compiler.umd.js', defaultExtension: 'js' },
         '@angular/platform-browser': { main: 'platform-browser.umd.js', defaultExtension: 'js' },
         '@angular/platform-browser-dynamic': { main: 'platform-browser-dynamic.umd.js', defaultExtension: 'js' },

@@ -82,8 +82,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                         TreeNodeLine = __decorate([
                             core_1.Component({
                                 selector: 'node_line',
-                                template: "<div class=\"treenode-line\" [ngClass]=\"{collapsed: !tree.expanded[path]}\">\n\t\t\t\t\t\t<button class=\"treenode-expandbox\" (click)=\"flip()\" [ngClass]=\"{nochildren: !model.isArray(path)}\">\n\t\t\t\t\t\t\t<div class=\"frame\"></div><div class=\"line-lr\"></div><div class=\"line-tb\"></div>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<i class=\"material-icons\">{{icon}}</i>\n\t\t\t\t\t\t<span class=\"treenode-label\">{{title}}</span>\n\t\t\t\t\t  </div>",
-                                styles: ['i {font-size: 16px; margin-left: -4px; padding-right:2px }']
+                                template: "<div class=\"treenode-line\" [ngClass]=\"{collapsed: !tree.expanded[path]}\">\n\t\t\t\t\t\t<button class=\"treenode-expandbox\" (click)=\"flip()\" [ngClass]=\"{nochildren: !model.isArray(path)}\">\n\t\t\t\t\t\t\t<div class=\"frame\"></div><div class=\"line-lr\"></div><div class=\"line-tb\"></div>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<i class=\"material-icons\">{{icon}}</i>\n\t\t\t\t\t\t<span class=\"treenode-label\" [innerHTML]=\"title\"></span>\n\t\t\t\t\t  </div>",
+                                styles: ["i {font-size: 16px; margin-left: -4px; padding-right:2px }"]
                             }), 
                             __metadata('design:paramtypes', [])
                         ], TreeNodeLine);

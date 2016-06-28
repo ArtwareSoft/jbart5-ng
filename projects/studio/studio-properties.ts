@@ -66,7 +66,7 @@ jb.component('studio.property-field',{
 			if ( studio.model.compName(path))
 				fieldPT = 'studio.property-JBEditor';
 			else
-				fieldPT = paramDef.type == 'boolean' ? 'studio.property-boolean' : 'studio.property-primitive';
+				fieldPT = (paramDef.type == 'boolean' && (valType == 'boolean' || val == null)) ? 'studio.property-boolean' : 'studio.property-primitive';
 		}
 		else if ( (paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
 			fieldPT = 'studio.property-array';
@@ -233,7 +233,7 @@ jb.component('studio.property-array', {
       {$: 'button', 
         title: 'add', 
         action :{$: 'studio.newArrayItem', path: '%$path%' }, 
-        style :{$: 'button.md-icon', icon: 'add', size: 20, aria: undefined }, 
+        style :{$: 'button.md-icon', icon: 'add', size: '12', aria: undefined }, 
         features: [
           {$: 'css', 
             css: `{ position: absolute;   top: 0px;   right: 30px }
@@ -262,9 +262,9 @@ button:hover {  background: none }`
     features: [
       {$: 'css', 
         css: `{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }
-.header {  background: white; } `
-      }, 
-      {$: 'cssClass', cssClass: undefined }
+.header {  background: #F9F9F9; } 
+i { font-size: 20px; margin-right: 20px }`
+      }
     ], 
     style :{$: 'group.expandable' }
   }

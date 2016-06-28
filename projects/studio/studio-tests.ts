@@ -81,7 +81,7 @@ jb.component('studio-test', {
                 features :{$: 'feature.afterLoad', action :{$: 'rx.emit', from: 'ready', to: '%$studioTestEm%' }},
                 controls :{$call: 'control' } 
             },
-            features :{$: 'wait', for :{$: 'studio.waitForPreviewIframe' }}
+            features :{$: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }}
         }
       ]
     },
@@ -108,7 +108,7 @@ jb.component('run-studio-test', {
       { $: 'group', controls: { $call: 'control' }, 
           atts: {style: 'margin-left: 100px'},
           features : [
-            { $: 'wait', for :{$: 'studio.waitForPreviewIframe' }},
+            { $: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }},
           ]
         }
     ]
@@ -132,7 +132,7 @@ jb.component('run-studio-test', {
 // 			{ $: 'studio.renderWidget' },
 // 			{ $: 'group', controls: { $call: 'control' },
 // 		    	features : [
-// 		    		{ $: 'wait', for :{$: 'studio.waitForPreviewIframe' }},
+// 		    		{ $: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }},
 // 		    	]
 // 		    }
 // 		]

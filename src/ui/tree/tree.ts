@@ -54,9 +54,9 @@ jb.component('tree.ul-li', {
 							<div class="frame"></div><div class="line-lr"></div><div class="line-tb"></div>
 						</button>
 						<i class="material-icons">{{icon}}</i>
-						<span class="treenode-label">{{title}}</span>
+						<span class="treenode-label" [innerHTML]="title"></span>
 					  </div>`,
-			styles: ['i {font-size: 16px; margin-left: -4px; padding-right:2px }']
+			styles: [`i {font-size: 16px; margin-left: -4px; padding-right:2px }`]
 		})
 		class TreeNodeLine {
 			@Input('path') path;

@@ -43,11 +43,11 @@ jb.component('tree.json',{
 					return _ref.$jb_property;
 
 				if (typeof val != 'object')
-					return _ref.$jb_property + ': ' + val;
+					return _ref.$jb_property + ': <span class="treenode-val">' + val + "</span>";
 
 				return _ref.$jb_property + ': ' + Object.getOwnPropertyNames(val)
 					.filter(p=> p.indexOf('$jb') != 0).filter(p=> typeof val[p] == 'string')
-					.map(p=> p + '= ' + val[p]).join(', ')
+					.map(p=> p + '= ' + '<span class="treenode-val">' + val[p] + "</span>" ).join(', ')
 			},
 			delete(path) {
 				var _ref = ref(path);
