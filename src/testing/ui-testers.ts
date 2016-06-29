@@ -55,10 +55,13 @@ export class jBartSingleTest {
   ngOnInit() {
 	this.counter = 0;
   	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
-    this.componentResolver.resolveComponent(comp)
-      .then(componentFactory => {
-        this.childView.createComponent(componentFactory);
-      });
+  	comp.compile(this.componentResolver).then(componentFactory => 
+  		comp.registerMethods(this.childView.createComponent(componentFactory));
+    );
+    // this.componentResolver.resolveComponent(comp)
+    //   .then(componentFactory => {
+    //     this.childView.createComponent(componentFactory);
+    //   });
   }
 }
 
@@ -74,9 +77,8 @@ export class jBartTests {
 //		window.ngZone = this.ngZone;
 	}
 	addComp(comp) {
-	    this.componentResolver.resolveComponent(comp)
-	      .then(componentFactory =>
-	        this.childView.createComponent(componentFactory)
+	  	comp.compile(this.componentResolver).then(componentFactory => 
+	  		comp.registerMethods(this.childView.createComponent(componentFactory));
 	    );
 	}
 }
@@ -92,7 +94,7 @@ jb.component('ng2-ui-test', {
 		waitFor: {},
 	},
 	impl: ctx=> new Promise((resolve,reject)=> {
-//		 console.log('starting ' + ctx.vars.testID);
+		 console.log('starting ' + ctx.vars.testID);
 		 return window.jbartTestsInstance.addComp(
 				ctx.params.control(ctx.setVars({ngZone:window.jbartTestsNgZone})).jbExtend({
 					observable: (observable,cmp) => { 
@@ -115,7 +117,10 @@ jb.component('ng2-ui-test', {
 										id: ctx.vars.testID,
 										success: ctx.params.expectedHtmlResult(ctx.setData(html))
 									});
-									jb_dialogs.dialogs.filter(d=> d.context.vars.testID == ctx.vars.testID).forEach(d=> d.close())
+									jb_dialogs.dialogs
+										.filter(d=> d.context.vars.testID == ctx.vars.testID)
+										.forEach(d=> 
+											d.close())
 								})
 							}
 						})

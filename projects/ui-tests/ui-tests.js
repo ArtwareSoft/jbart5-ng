@@ -122,6 +122,7 @@ jb_tests('md-ui-tests', {
     },
     expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
   },
+  
 'md-tabs' :{$: 'ng2-ui-test', 
   control :{$: 'tabs',
       style :{$: 'tabs.md-tabs' },
@@ -188,23 +189,23 @@ resource :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['cyan'] }
 },
 
-waitFor :{$: 'ng2-ui-test',  
-  waitFor: '%$wait2sec%',
-  control :{$: 'group', 
-    controls :{$: 'label', title: 'after %$wait2sec% second delay' },
-    features: { $: 'group.wait', for: '%$wait2sec%' }
-  },
-  expectedHtmlResult: { $: 'contains', text: ['after 2'] },
-},
+// waitFor :{$: 'ng2-ui-test',  
+//   waitFor: '%$wait2sec%',
+//   control :{$: 'group', 
+//     controls :{$: 'label', title: 'after %$wait2sec% second delay' },
+//     features: { $: 'group.wait', for: '%$wait2sec%' }
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['after 2'] },
+// },
 
-waitForErrorPromise :{$: 'ng2-ui-test',  
-  waitFor: '%$err2sec%',
-  control :{$: 'group', 
-    controls :{$: 'label',  title: 'after %$err2sec% second delay' },
-    features: { $: 'group.wait', for: '%$err2sec%' }
-  },
-  expectedHtmlResult: { $: 'contains', text: ['simulate error'] },
-},
+// waitForErrorPromise :{$: 'ng2-ui-test',  
+//   waitFor: '%$err2sec%',
+//   control :{$: 'group', 
+//     controls :{$: 'label',  title: 'after %$err2sec% second delay' },
+//     features: { $: 'group.wait', for: '%$err2sec%' }
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['simulate error'] },
+// },
 
 itemlist :{$: 'ng2-ui-test',  
   control :{$: 'itemlist', items: '%$people%', 
@@ -217,13 +218,12 @@ itemlist :{$: 'ng2-ui-test',
   control :{$: 'group', 
     controls :{$: 'itemlist', 
         items: '%$peopleFromUrl%',
-        controls :{ $: 'label', title: '%name%' }
-        // :{$:'group',
-        //   controls: [ 
-        //     { $: 'label', title: '%name%' }, 
-        //     { $: 'label', title: '%age%' }, 
-        //   ]
-        // }
+        controls :{$:'group',
+          controls: [ 
+            { $: 'label', title: '%name%' }, 
+            { $: 'label', title: '%age%' }, 
+          ]
+        }
     },
     features :{$: 'group.wait', 
       for :{$: 'http.get', url: '/projects/ui-tests/people.json', resource: 'peopleFromUrl', mapToResource: '%people%'} 

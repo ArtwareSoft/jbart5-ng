@@ -66,11 +66,6 @@ function jb_itemlist_comp(model,context) {
         var ctx = jb.ctx(context,{data: cmp.item, vars: vars});
         model.controls(ctx).forEach(ctrl =>
               jb_ui.insertComponent(ctrl, cmp.componentResolver, cmp.childView)
-            // cmp.componentResolver
-            //   .resolveComponent(ctrl)
-            //   .then(componentFactory => {
-            //     cmp.childView.createComponent(componentFactory)
-            //   });
         )
       }
     }

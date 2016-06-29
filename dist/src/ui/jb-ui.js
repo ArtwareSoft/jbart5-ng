@@ -11,7 +11,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_core_1, core_1, common_1, jb_rx, jb_dialog;
-    var jbComp, jBartWidget, directivesObj;
+    var factory_hash, jbComponent, jbComp, jBartWidget, directivesObj;
     function apply(ctx) {
         //	console.log('apply');
         jb_core_1.jb.delay(1);
@@ -19,6 +19,27 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     }
     exports_1("apply", apply);
     function ctrl(context) {
+        var ctx = context.setVars({ $model: context.params });
+        var comp = defaultStyle(ctx);
+        if (!comp) {
+            console.log('style returned null', ctx);
+            return Comp({}, ctx);
+        }
+        if (typeof comp == 'object')
+            comp = Comp(comp, ctx);
+        comp = enrichComp(comp, ctx).jbCtrl(ctx);
+        var annotations = Reflect.getMetadata('annotations', comp)[0];
+        return new jbComponent(annotations, comp.methodHandler, ctx, comp);
+        function defaultStyle(ctx) {
+            var profile = context.profile;
+            var defaultVar = (profile.$ || '') + '.default-style-profile';
+            if (!profile.style && context.vars[defaultVar])
+                return ctx.run({ $: context.vars[defaultVar] });
+            return context.params.style(ctx);
+        }
+    }
+    exports_1("ctrl", ctrl);
+    function ctrl2(context) {
         var ctx = context.setVars({ $model: context.params });
         var comp = defaultStyle(ctx);
         if (!comp) {
@@ -36,7 +57,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             return context.params.style(ctx);
         }
     }
-    exports_1("ctrl", ctrl);
+    exports_1("ctrl2", ctrl2);
     function Comp(options, context) {
         function Cmp(dcl, elementRef) { this.dcl = dcl; this.elementRef = elementRef; }
         Cmp = Reflect.decorate([
@@ -53,22 +74,25 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     function enrichComp(comp, ctrl_ctx) {
         if (!comp)
             debugger;
-        if (comp.jbInitFuncs)
+        if (comp.methodHandler)
             return comp;
-        comp.prototype.ctx = ctrl_ctx;
+        //	comp.prototype.ctx = ctrl_ctx;
         comp.jb_profile = ctrl_ctx.profile;
-        jb_core_1.jb.extend(comp, { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [] });
+        var methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [], ctx: ctrl_ctx };
+        comp.methodHandler = methodHandler;
         comp.prototype.ngOnInit = function () {
             var _this = this;
+            this.methodHandler = this.methodHandler || methodHandler;
+            this.ctx = this.methodHandler.ctx;
             try {
-                if (comp.jbObservableFuncs.length) {
+                if (this.methodHandler.jbObservableFuncs.length) {
                     this.jbEmitter = new jb_rx.Subject();
-                    comp.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
+                    this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
                 }
-                if (this.extendCtx)
-                    this.ctx = this.extendCtx(comp.prototype.ctx, this);
-                comp.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
-                comp.jbInitFuncs.forEach(function (init) { return init(_this); });
+                if (methodHandler.extendCtx)
+                    this.ctx = methodHandler.extendCtx(this.methodHandler.ctx, this);
+                this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
+                this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
             }
             catch (e) {
                 jb_core_1.jb.logException(e, '');
@@ -76,12 +100,12 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         };
         comp.prototype.ngAfterViewInit = function () {
             var _this = this;
-            comp.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
+            this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
             this.jbEmitter && this.jbEmitter.next('after-init');
         };
         comp.prototype.ngDoCheck = function () {
             var _this = this;
-            comp.jbCheckFuncs.forEach(function (f) {
+            this.methodHandler.jbCheckFuncs.forEach(function (f) {
                 return f(_this);
             });
             this.refreshModel && this.refreshModel();
@@ -104,19 +128,19 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 debugger;
             jbTemplate(options);
             if (options.beforeInit)
-                comp.jbBeforeInitFuncs.push(options.beforeInit);
+                methodHandler.jbBeforeInitFuncs.push(options.beforeInit);
             if (options.init)
-                comp.jbInitFuncs.push(options.init);
+                methodHandler.jbInitFuncs.push(options.init);
             if (options.afterViewInit)
-                comp.jbAfterViewInitFuncs.push(options.afterViewInit);
+                methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
             if (options.doCheck)
-                comp.jbCheckFuncs.push(options.doCheck);
+                methodHandler.jbCheckFuncs.push(options.doCheck);
             if (options.observable)
-                comp.jbObservableFuncs.push(options.observable);
+                methodHandler.jbObservableFuncs.push(options.observable);
             if (options.ctrlsEmFunc)
-                comp.prototype.ctrlsEmFunc = options.ctrlsEmFunc;
+                methodHandler.ctrlsEmFunc = options.ctrlsEmFunc;
             if (options.extendCtx)
-                comp.prototype.extendCtx = options.extendCtx;
+                methodHandler.extendCtx = options.extendCtx;
             if (options.extendComp)
                 jb_core_1.jb.extend(this, options.extendComp);
             if (options.invisible)
@@ -126,7 +150,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             options.template = options.template && context.exp(options.template);
             if (options.css)
                 options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }));
-            options.styles = options.styles && (options.styles || []).map(function (st) { return context.exp(st); });
+            //		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+            // fix ng limit - root style as style attribute at the template
             (options.styles || [])
                 .filter(function (x) { return x.match(/^{([^]*)}$/m); })
                 .forEach(function (x) { return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]); });
@@ -280,7 +305,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     exports_1("enrichComp", enrichComp);
     function controlsToGroupEmitter(controlsFunc, cmp) {
         var controlsFuncAsObservable = function (ctx) { return jb_rx.Observable.of(controlsFunc(ctx)); };
-        return cmp.ctrlsEmFunc ? function (ctx) { return cmp.ctrlsEmFunc(controlsFuncAsObservable, ctx, cmp); } : controlsFuncAsObservable;
+        return cmp.methodHandler.ctrlsEmFunc ? function (ctx) { return cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable, ctx, cmp); } : controlsFuncAsObservable;
     }
     exports_1("controlsToGroupEmitter", controlsToGroupEmitter);
     function ngRef(ref, cmp) {
@@ -331,11 +356,14 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     }
     exports_1("twoWayBind", twoWayBind);
     function insertComponent(comp, resolver, parentView) {
-        return resolver
-            .resolveComponent(comp)
-            .then(function (componentFactory) {
-            return parentView.createComponent(componentFactory);
+        return comp.compile(resolver).then(function (componentFactory) {
+            return comp.registerMethods(parentView.createComponent(componentFactory));
         });
+        // return resolver
+        //   .resolveComponent(comp)
+        //   .then(componentFactory => 
+        //     parentView.createComponent(componentFactory)
+        //   )
     }
     exports_1("insertComponent", insertComponent);
     function parseHTML(text) {
@@ -398,18 +426,60 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         execute: function() {
             core_1.enableProdMode();
             jbart.zones = jbart.zones || {};
+            factory_hash = {};
+            jbComponent = (function () {
+                function jbComponent(annotations, methodHandler, ctx, comp) {
+                    this.annotations = annotations;
+                    this.methodHandler = methodHandler;
+                    this.ctx = ctx;
+                    this.comp = comp;
+                    this.jb_profile = ctx.profile;
+                    var title = jb_tosingle(jb_core_1.jb.val(this.ctx.params.title)) || (function () { return ''; });
+                    this.jb_title = (typeof title == 'function') ? title : function () { return '' + title; };
+                    this.jb$title = (typeof title == 'function') ? title() : title; // for debug
+                }
+                jbComponent.prototype.compile = function (compiler) {
+                    if (this.factory)
+                        return this.factory;
+                    if (factory_hash[this.hashkey()])
+                        this.factory = factory_hash[this.hashkey()];
+                    else
+                        this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp);
+                    this.methodHandler.ctx = this.ctx;
+                    return this.factory;
+                };
+                jbComponent.prototype.registerMethods = function (cmp_ref) {
+                    cmp_ref.hostView._view._Cmp_0_4.methodHandler = this.methodHandler;
+                };
+                jbComponent.prototype.hashkey = function () {
+                    return JSON.stringify(this.annotations);
+                };
+                jbComponent.prototype.jbExtend = function (options) {
+                    this.comp.jbExtend(options);
+                    return this;
+                };
+                return jbComponent;
+            }());
             jbComp = (function () {
                 function jbComp(componentResolver) {
                     this.componentResolver = componentResolver;
                 }
                 jbComp.prototype.ngOnChanges = function (changes) {
                     var _this = this;
+                    if (!this.comp)
+                        return;
                     if (this.prev && !this.flatten) {
                         this.prev.destroy();
                         console.log('jb_comp: dynamically changing the component');
                     }
-                    this.comp && this.componentResolver.resolveComponent(this.comp).then(function (componentFactory) {
-                        _this.flattenjBComp(_this.childView.createComponent(componentFactory));
+                    if (this.comp && this.comp.compile)
+                        var compiled = this.comp.compile(this.componentResolver);
+                    else
+                        var compiled = this.componentResolver.resolveComponent(this.comp);
+                    compiled.then(function (componentFactory) {
+                        var cmp_ref = _this.childView.createComponent(componentFactory);
+                        _this.comp.registerMethods && _this.comp.registerMethods(cmp_ref);
+                        _this.flattenjBComp(cmp_ref);
                     });
                 };
                 // very ugly: flatten the structure and pushing the dispose function to the group parent.
@@ -419,8 +489,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     if (!cmp.flatten)
                         return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-                    //var parentView = this.childView.parentInjector._view;
-                    var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4; // parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
+                    var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4;
                     if (cmp._deleted_parent)
                         return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
                     if (cmp._deleted_parent || !parentCmp)

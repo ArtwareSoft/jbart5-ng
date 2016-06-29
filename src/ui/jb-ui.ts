@@ -16,7 +16,62 @@ export function apply(ctx) {
 	ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{})
 }
 
+var factory_hash = {};
+class jbComponent {
+	constructor(private annotations,private methodHandler,private ctx,private comp) {
+		this.jb_profile = ctx.profile;
+		var title = jb_tosingle(jb.val(this.ctx.params.title)) || (() => ''); 
+		this.jb_title = (typeof title == 'function') ? title : () => ''+title;
+		this.jb$title = (typeof title == 'function') ? title() : title; // for debug
+	}
+	compile(compiler) {
+		if (this.factory)
+			return this.factory;
+		if (factory_hash[this.hashkey()])
+			this.factory = factory_hash[this.hashkey()];
+		else
+			this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp);
+		this.methodHandler.ctx = this.ctx;
+
+		return this.factory;
+	}
+	registerMethods(cmp_ref) { // should be called by the instantiator
+		cmp_ref.hostView._view._Cmp_0_4.methodHandler = this.methodHandler;
+	}
+	hashkey() {
+		return JSON.stringify(this.annotations)
+	}
+	jbExtend(options) {
+		this.comp.jbExtend(options);
+		return this;
+	}
+}
+
+
 export function ctrl(context) {
+	var ctx = context.setVars({ $model: context.params });
+	var comp = defaultStyle(ctx);
+	if (!comp) {
+		console.log('style returned null',ctx)
+		return Comp({},ctx)
+	}
+	if (typeof comp == 'object')
+		comp = Comp(comp,ctx);
+	comp = enrichComp(comp,ctx).jbCtrl(ctx);
+	var annotations = Reflect.getMetadata('annotations', comp)[0];
+
+	return new jbComponent(annotations,comp.methodHandler,ctx,comp);
+
+	function defaultStyle(ctx) {
+		var profile = context.profile;
+		var defaultVar = (profile.$ || '')+'.default-style-profile';
+		if (!profile.style && context.vars[defaultVar])
+			return ctx.run({$:context.vars[defaultVar]})
+		return context.params.style(ctx);
+	}
+}
+
+export function ctrl2(context) {
 	var ctx = context.setVars({ $model: context.params });
 	var comp = defaultStyle(ctx);
 	if (!comp) {
@@ -53,28 +108,32 @@ export function Comp(options,context) {
 
 export function enrichComp(comp,ctrl_ctx) {
 	if  (!comp) debugger;
-	if (comp.jbInitFuncs) return comp;
-	comp.prototype.ctx = ctrl_ctx;
+	if (comp.methodHandler) return comp;
+//	comp.prototype.ctx = ctrl_ctx;
 	comp.jb_profile = ctrl_ctx.profile;
-	jb.extend(comp,{jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: []  });
+	var methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: [], ctx: ctrl_ctx };
+	comp.methodHandler = methodHandler;
+
 	comp.prototype.ngOnInit = function() {
+		this.methodHandler = this.methodHandler || methodHandler;
+		this.ctx = this.methodHandler.ctx;
 		try {
-			if (comp.jbObservableFuncs.length) {
+			if (this.methodHandler.jbObservableFuncs.length) {
 				this.jbEmitter = new jb_rx.Subject();
-				comp.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
+				this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
 			}
-	    	if (this.extendCtx) // on prototype 
-	    		this.ctx = this.extendCtx(comp.prototype.ctx,this);
-			comp.jbBeforeInitFuncs.forEach(init=> init(this));
-			comp.jbInitFuncs.forEach(init=> init(this));
+	    	if (methodHandler.extendCtx)
+	    		this.ctx = methodHandler.extendCtx(this.methodHandler.ctx,this);
+			this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
+			this.methodHandler.jbInitFuncs.forEach(init=> init(this));
 	    } catch(e) { jb.logException(e,'') }
 	}
 	comp.prototype.ngAfterViewInit = function() {
-		comp.jbAfterViewInitFuncs.forEach(init=> init(this));
+		this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
 		this.jbEmitter && this.jbEmitter.next('after-init');
 	}
 	comp.prototype.ngDoCheck = function() {
-		comp.jbCheckFuncs.forEach(f=> 
+		this.methodHandler.jbCheckFuncs.forEach(f=> 
 			f(this));
 		this.refreshModel && this.refreshModel();
 		this.jbEmitter && this.jbEmitter.next('check');
@@ -98,13 +157,13 @@ export function enrichComp(comp,ctrl_ctx) {
     	if (typeof options != 'object')
     		debugger;
     	jbTemplate(options);
-		if (options.beforeInit) comp.jbBeforeInitFuncs.push(options.beforeInit);
-		if (options.init) comp.jbInitFuncs.push(options.init);
-		if (options.afterViewInit) comp.jbAfterViewInitFuncs.push(options.afterViewInit);
-		if (options.doCheck) comp.jbCheckFuncs.push(options.doCheck);
-		if (options.observable) comp.jbObservableFuncs.push(options.observable);
-		if (options.ctrlsEmFunc) comp.prototype.ctrlsEmFunc=options.ctrlsEmFunc;
-		if (options.extendCtx) comp.prototype.extendCtx=options.extendCtx;
+		if (options.beforeInit) methodHandler.jbBeforeInitFuncs.push(options.beforeInit);
+		if (options.init) methodHandler.jbInitFuncs.push(options.init);
+		if (options.afterViewInit) methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
+		if (options.doCheck) methodHandler.jbCheckFuncs.push(options.doCheck);
+		if (options.observable) methodHandler.jbObservableFuncs.push(options.observable);
+		if (options.ctrlsEmFunc) methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
+		if (options.extendCtx) methodHandler.extendCtx=options.extendCtx;
 
 		if (options.extendComp) jb.extend(this,options.extendComp);
 		if (options.invisible) 
@@ -118,7 +177,8 @@ export function enrichComp(comp,ctrl_ctx) {
 	   	if (options.css)
     		options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'));
 
-		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+//		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+		// fix ng limit - root style as style attribute at the template
     	(options.styles || [])
     		.filter(x=>x.match(/^{([^]*)}$/m))
     		.forEach(x=>jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]))
@@ -153,7 +213,7 @@ export function enrichComp(comp,ctrl_ctx) {
 				jb.path(annotations, ['host', att],val)
 			})
 
-		if (annotations.template && typeof annotations.template != 'string') debugger
+		if (annotations.template && typeof annotations.template != 'string') debugger;
 		annotations.template = annotations.template && annotations.template.trim();
 		if (options.innerhost) 
 		 try {
@@ -269,7 +329,6 @@ export function enrichComp(comp,ctrl_ctx) {
 		}
 	}
 
-
     return comp;
 }
 
@@ -284,13 +343,21 @@ export class jbComp {
   constructor(private componentResolver:ComponentResolver) {}
 
   ngOnChanges(changes) {
-  	if (this.prev && !this.flatten) { // very rear dynamically changing the component via user interaction
+  	if (!this.comp) return;
+
+  	if (this.prev && !this.flatten) { // dynamically changing the component via user interaction
   		this.prev.destroy();
   		console.log('jb_comp: dynamically changing the component');
   	}
+  	if (this.comp && this.comp.compile)
+  		var compiled = this.comp.compile(this.componentResolver)
+  	else
+  		var compiled = this.componentResolver.resolveComponent(this.comp);
 
-    this.comp && this.componentResolver.resolveComponent(this.comp).then(componentFactory => {
-        this.flattenjBComp(this.childView.createComponent(componentFactory))
+    compiled.then(componentFactory => {
+    	var cmp_ref = this.childView.createComponent(componentFactory);
+    	_this.comp.registerMethods && this.comp.registerMethods(cmp_ref);
+        this.flattenjBComp(cmp_ref)
     });
   }
 
@@ -301,8 +368,7 @@ export class jbComp {
   	if (!cmp.flatten) 
   		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-	//var parentView = this.childView.parentInjector._view;
-	var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4; // parentView && parentView._jbComp_0_4 && parentView._jbComp_0_4.comp;
+	var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4;
   	if (cmp._deleted_parent)
   		return jb.logError('flattenjBComp: can not get parent component');
   	if (cmp._deleted_parent || !parentCmp)
@@ -333,7 +399,7 @@ export class jbComp {
 
 export function controlsToGroupEmitter(controlsFunc, cmp) { 
 	var controlsFuncAsObservable = ctx=> jb_rx.Observable.of(controlsFunc(ctx));
-	return cmp.ctrlsEmFunc ? ctx => cmp.ctrlsEmFunc(controlsFuncAsObservable,ctx,cmp) : controlsFuncAsObservable;
+	return cmp.methodHandler.ctrlsEmFunc ? ctx => cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable,ctx,cmp) : controlsFuncAsObservable;
 }
 
 export function ngRef(ref,cmp) {
@@ -382,11 +448,14 @@ export function twoWayBind(ref) {
 }
 
 export function insertComponent(comp, resolver, parentView) {
-    return resolver
-      .resolveComponent(comp)
-      .then(componentFactory => 
-        parentView.createComponent(componentFactory)
-      )
+  	return comp.compile(resolver).then(componentFactory => 
+  		comp.registerMethods(parentView.createComponent(componentFactory));
+    )
+    // return resolver
+    //   .resolveComponent(comp)
+    //   .then(componentFactory => 
+    //     parentView.createComponent(componentFactory)
+    //   )
 }
 
 export function parseHTML(text) {

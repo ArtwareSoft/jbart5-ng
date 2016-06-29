@@ -73,10 +73,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                     var _this = this;
                     this.counter = 0;
                     var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'), this.ngZone);
-                    this.componentResolver.resolveComponent(comp)
-                        .then(function (componentFactory) {
-                        _this.childView.createComponent(componentFactory);
+                    comp.compile(this.componentResolver).then(function (componentFactory) {
+                        return comp.registerMethods(_this.childView.createComponent(componentFactory));
                     });
+                    ;
+                    // this.componentResolver.resolveComponent(comp)
+                    //   .then(componentFactory => {
+                    //     this.childView.createComponent(componentFactory);
+                    //   });
                 };
                 __decorate([
                     core_1.ViewChild('single_test', { read: core_1.ViewContainerRef }), 
@@ -102,10 +106,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                 }
                 jBartTests.prototype.addComp = function (comp) {
                     var _this = this;
-                    this.componentResolver.resolveComponent(comp)
-                        .then(function (componentFactory) {
-                        return _this.childView.createComponent(componentFactory);
+                    comp.compile(this.componentResolver).then(function (componentFactory) {
+                        return comp.registerMethods(_this.childView.createComponent(componentFactory));
                     });
+                    ;
                 };
                 __decorate([
                     core_1.ViewChild('tests', { read: core_1.ViewContainerRef }), 
@@ -132,7 +136,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                     waitFor: {},
                 },
                 impl: function (ctx) { return new Promise(function (resolve, reject) {
-                    //		 console.log('starting ' + ctx.vars.testID);
+                    console.log('starting ' + ctx.vars.testID);
                     return window.jbartTestsInstance.addComp(ctx.params.control(ctx.setVars({ ngZone: window.jbartTestsNgZone })).jbExtend({
                         observable: function (observable, cmp) {
                             observable
@@ -155,7 +159,11 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                                             id: ctx.vars.testID,
                                             success: ctx.params.expectedHtmlResult(ctx.setData(html))
                                         });
-                                        dialog_1.jb_dialogs.dialogs.filter(function (d) { return d.context.vars.testID == ctx.vars.testID; }).forEach(function (d) { return d.close(); });
+                                        dialog_1.jb_dialogs.dialogs
+                                            .filter(function (d) { return d.context.vars.testID == ctx.vars.testID; })
+                                            .forEach(function (d) {
+                                            return d.close();
+                                        });
                                     });
                                 }
                             })
