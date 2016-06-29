@@ -20,16 +20,19 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     exports_1("apply", apply);
     function ctrl(context) {
         var ctx = context.setVars({ $model: context.params });
-        var comp = defaultStyle(ctx);
-        if (!comp) {
+        var styleOptions = defaultStyle(ctx);
+        if (!styleOptions) {
             console.log('style returned null', ctx);
             return Comp({}, ctx);
         }
-        if (typeof comp == 'object')
-            comp = Comp(comp, ctx);
-        comp = enrichComp(comp, ctx).jbCtrl(ctx);
-        var annotations = Reflect.getMetadata('annotations', comp)[0];
-        return new jbComponent(annotations, comp.methodHandler, ctx, comp);
+        if (typeof styleOptions == 'object') {
+            return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
+        }
+        else {
+            var comp = Comp(styleOptions, ctx);
+            comp = enrichComp(comp, ctx).jbCtrl(ctx);
+            return new jbComponent(ctx).initFromComp(comp);
+        }
         function defaultStyle(ctx) {
             var profile = context.profile;
             var defaultVar = (profile.$ || '') + '.default-style-profile';
@@ -39,25 +42,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         }
     }
     exports_1("ctrl", ctrl);
-    function ctrl2(context) {
-        var ctx = context.setVars({ $model: context.params });
-        var comp = defaultStyle(ctx);
-        if (!comp) {
-            console.log('style returned null', ctx);
-            return Comp({}, ctx);
-        }
-        if (typeof comp == 'object')
-            comp = Comp(comp, ctx);
-        return enrichComp(comp, ctx).jbCtrl(ctx);
-        function defaultStyle(ctx) {
-            var profile = context.profile;
-            var defaultVar = (profile.$ || '') + '.default-style-profile';
-            if (!profile.style && context.vars[defaultVar])
-                return ctx.run({ $: context.vars[defaultVar] });
-            return context.params.style(ctx);
-        }
-    }
-    exports_1("ctrl2", ctrl2);
     function Comp(options, context) {
         function Cmp(dcl, elementRef) { this.dcl = dcl; this.elementRef = elementRef; }
         Cmp = Reflect.decorate([
@@ -222,87 +206,87 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             }
             return comp.jbExtend(options, context);
         };
-        function optionsOfProfile(profile) {
-            if (!profile)
-                return {};
-            var res = {};
-            ['cssClass', 'css'] // 'atts','styles',
-                .forEach(function (p) { if (profile[p])
-                res[p] = profile[p]; });
-            return res;
-        }
-        function mergeOptions(op1, op2) {
-            var res = {};
-            res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-            //		res.cssStyle = ((op1.cssStyle || '') + ';' + (op2.cssStyle || '')).replace(/^;*/,'').replace(/;*$/,'');
-            if (op1.styles || op2.styles)
-                res.styles = (op1.styles || []).concat(op2.styles || []);
-            return jb_extend({}, op1, op2, res);
-        }
-        function setTemplateAtt(element, att, value) {
-            if (!element.getAttribute)
-                debugger;
-            if (('' + value).indexOf('[object') != -1)
-                return; // avoid bugs - no object host
-            var currentVal = element.getAttribute(att);
-            if (att == 'ngIf')
-                element.setAttribute('template', 'ngIf ' + value);
-            else if (att == 'class')
-                element.setAttribute(att, currentVal ? currentVal + ' ' + value : value);
-            else
-                addAttribute(element, att, value);
-        }
-        function jbTemplate(options) {
-            options.jbTemplate = (options.jbTemplate || '').trim();
-            if (!options.jbTemplate)
-                return;
-            var template = parseHTML(options.jbTemplate);
-            var host = jb_extend({}, options.host);
-            Array.from(template.attributes || [])
-                .filter(function (att) {
-                var ngAtt = att.name.indexOf('*ng') != -1;
-                if (ngAtt)
-                    jb_core_1.jb.logError('ng atts are not allowed in root element of template: ' + att.name, { ctx: ctrl_ctx, att: att });
-                return !ngAtt;
-            })
-                .forEach(function (att) { return host[att.name] = att.value; });
-            jb_core_1.jb.extend(options, {
-                template: template.innerHTML.trim(),
-                selector: template.tagName,
-                host: host
-            });
-        }
-        function profilePath(profile) {
-            // caching last component
-            var lastFound = window.jb_lastFoundAt;
-            if (lastFound && getPath(jb_core_1.jb.comps[lastFound].impl, profile, 0))
-                return lastFound + '~' + getPath(jb_core_1.jb.comps[lastFound].impl, profile, 0).replace(/~*$/g, '');
-            for (var comp in jb_core_1.jb.comps) {
-                var impl = jb_core_1.jb.comps[comp].impl;
-                if (typeof impl == 'function')
-                    continue;
-                var res = getPath(impl, profile, 0, impl);
-                if (res) {
-                    window.jb_lastFoundAt = comp; // a kind of cache
-                    return (comp + '~' + res).replace(/~*$/g, '');
-                }
-            }
-            function getPath(parent, dest, depth, comp) {
-                if (depth > 50)
-                    debugger;
-                if (!parent)
-                    return '';
-                if (parent === dest)
-                    return '~'; // will be removed
-                return Object.getOwnPropertyNames(parent).filter(function (p) { return typeof parent[p] === 'object' && p.indexOf('$jb') != 0; }).map(function (p) {
-                    var path = getPath(parent[p], dest, (depth || 0) + 1, comp);
-                    return path ? (p + '~' + path) : '';
-                }).join(''); // only one will succeed
-            }
-        }
         return comp;
     }
     exports_1("enrichComp", enrichComp);
+    function optionsOfProfile(profile) {
+        if (!profile)
+            return {};
+        var res = {};
+        ['cssClass', 'css'] // 'atts','styles',
+            .forEach(function (p) { if (profile[p])
+            res[p] = profile[p]; });
+        return res;
+    }
+    function mergeOptions(op1, op2) {
+        var res = {};
+        res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
+        //		res.cssStyle = ((op1.cssStyle || '') + ';' + (op2.cssStyle || '')).replace(/^;*/,'').replace(/;*$/,'');
+        if (op1.styles || op2.styles)
+            res.styles = (op1.styles || []).concat(op2.styles || []);
+        return jb_extend({}, op1, op2, res);
+    }
+    function setTemplateAtt(element, att, value) {
+        if (!element.getAttribute)
+            debugger;
+        if (('' + value).indexOf('[object') != -1)
+            return; // avoid bugs - no object host
+        var currentVal = element.getAttribute(att);
+        if (att == 'ngIf')
+            element.setAttribute('template', 'ngIf ' + value);
+        else if (att == 'class')
+            element.setAttribute(att, currentVal ? currentVal + ' ' + value : value);
+        else
+            addAttribute(element, att, value);
+    }
+    function jbTemplate(options) {
+        options.jbTemplate = (options.jbTemplate || '').trim();
+        if (!options.jbTemplate)
+            return;
+        var template = parseHTML(options.jbTemplate);
+        var host = jb_extend({}, options.host);
+        Array.from(template.attributes || [])
+            .filter(function (att) {
+            var ngAtt = att.name.indexOf('*ng') != -1;
+            if (ngAtt)
+                jb_core_1.jb.logError('ng atts are not allowed in root element of template: ' + att.name, { ctx: ctrl_ctx, att: att });
+            return !ngAtt;
+        })
+            .forEach(function (att) { return host[att.name] = att.value; });
+        jb_core_1.jb.extend(options, {
+            template: template.innerHTML.trim(),
+            selector: template.tagName,
+            host: host
+        });
+    }
+    function profilePath(profile) {
+        // caching last component
+        var lastFound = window.jb_lastFoundAt;
+        if (lastFound && getPath(jb_core_1.jb.comps[lastFound].impl, profile, 0))
+            return lastFound + '~' + getPath(jb_core_1.jb.comps[lastFound].impl, profile, 0).replace(/~*$/g, '');
+        for (var comp in jb_core_1.jb.comps) {
+            var impl = jb_core_1.jb.comps[comp].impl;
+            if (typeof impl == 'function')
+                continue;
+            var res = getPath(impl, profile, 0, impl);
+            if (res) {
+                window.jb_lastFoundAt = comp; // a kind of cache
+                return (comp + '~' + res).replace(/~*$/g, '');
+            }
+        }
+        function getPath(parent, dest, depth, comp) {
+            if (depth > 50)
+                debugger;
+            if (!parent)
+                return '';
+            if (parent === dest)
+                return '~'; // will be removed
+            return Object.getOwnPropertyNames(parent).filter(function (p) { return typeof parent[p] === 'object' && p.indexOf('$jb') != 0; }).map(function (p) {
+                var path = getPath(parent[p], dest, (depth || 0) + 1, comp);
+                return path ? (p + '~' + path) : '';
+            }).join(''); // only one will succeed
+        }
+    }
     function controlsToGroupEmitter(controlsFunc, cmp) {
         var controlsFuncAsObservable = function (ctx) { return jb_rx.Observable.of(controlsFunc(ctx)); };
         return cmp.methodHandler.ctrlsEmFunc ? function (ctx) { return cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable, ctx, cmp); } : controlsFuncAsObservable;
@@ -359,11 +343,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         return comp.compile(resolver).then(function (componentFactory) {
             return comp.registerMethods(parentView.createComponent(componentFactory));
         });
-        // return resolver
-        //   .resolveComponent(comp)
-        //   .then(componentFactory => 
-        //     parentView.createComponent(componentFactory)
-        //   )
     }
     exports_1("insertComponent", insertComponent);
     function parseHTML(text) {
@@ -428,34 +407,181 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             jbart.zones = jbart.zones || {};
             factory_hash = {};
             jbComponent = (function () {
-                function jbComponent(annotations, methodHandler, ctx, comp) {
-                    this.annotations = annotations;
-                    this.methodHandler = methodHandler;
+                function jbComponent(ctx) {
                     this.ctx = ctx;
-                    this.comp = comp;
+                    this.annotations = {};
+                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [] };
                     this.jb_profile = ctx.profile;
                     var title = jb_tosingle(jb_core_1.jb.val(this.ctx.params.title)) || (function () { return ''; });
                     this.jb_title = (typeof title == 'function') ? title : function () { return '' + title; };
                     this.jb$title = (typeof title == 'function') ? title() : title; // for debug
                 }
+                jbComponent.prototype.initFromComp = function (comp) {
+                    this.annotations = Reflect.getMetadata('annotations', comp)[0];
+                    this.methodHandler = comp.methodHandler;
+                    this.comp = comp;
+                };
                 jbComponent.prototype.compile = function (compiler) {
                     if (this.factory)
                         return this.factory;
                     if (factory_hash[this.hashkey()])
                         this.factory = factory_hash[this.hashkey()];
                     else
-                        this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp);
-                    this.methodHandler.ctx = this.ctx;
+                        this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
                     return this.factory;
                 };
                 jbComponent.prototype.registerMethods = function (cmp_ref) {
-                    cmp_ref.hostView._view._Cmp_0_4.methodHandler = this.methodHandler;
+                    var cmp = cmp_ref.hostView._view._Cmp_0_4;
+                    cmp.ctx = this.ctx;
+                    cmp.methodHandler = this.methodHandler;
                 };
                 jbComponent.prototype.hashkey = function () {
                     return JSON.stringify(this.annotations);
                 };
-                jbComponent.prototype.jbExtend = function (options) {
-                    this.comp.jbExtend(options);
+                jbComponent.prototype.createComp = function () {
+                    this.jbExtend({ directives: [common_1.NgClass, jbComp] });
+                    if (!this.annotations.selector)
+                        this.annotations.selector = 'div';
+                    var Cmp = function (dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef; };
+                    Cmp = Reflect.decorate([
+                        core_1.Component(this.annotations),
+                        Reflect.metadata('design:paramtypes', [core_1.ComponentResolver, core_1.ElementRef])
+                    ], Cmp);
+                    Cmp.prototype.ngOnInit = function () {
+                        var _this = this;
+                        try {
+                            if (this.methodHandler.jbObservableFuncs.length) {
+                                this.jbEmitter = new jb_rx.Subject();
+                                this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
+                            }
+                            if (this.methodHandler.extendCtx)
+                                this.ctx = this.methodHandler.extendCtx(this.ctx, this);
+                            this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
+                            this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
+                        }
+                        catch (e) {
+                            jb_core_1.jb.logException(e, '');
+                        }
+                    };
+                    Cmp.prototype.ngAfterViewInit = function () {
+                        var _this = this;
+                        this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
+                        this.jbEmitter && this.jbEmitter.next('after-init');
+                    };
+                    Cmp.prototype.ngDoCheck = function () {
+                        var _this = this;
+                        this.methodHandler.jbCheckFuncs.forEach(function (f) {
+                            return f(_this);
+                        });
+                        this.refreshModel && this.refreshModel();
+                        this.jbEmitter && this.jbEmitter.next('check');
+                    };
+                    return Cmp;
+                };
+                jbComponent.prototype.jbCtrl = function (context) {
+                    var _this = this;
+                    var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
+                    jb_core_1.jb.path(options, ['atts', 'jb-path'], profilePath(context.profile) || ''); // for the studio
+                    context.params.features && context.params.features(context).forEach(function (f) { return _this.jbExtend(f, context); });
+                    if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
+                        jb_core_1.jb.toarray(context.params.style.profile.features)
+                            .forEach(function (f) { return _this.jbExtend(context.run(f), context); });
+                    }
+                    return this.jbExtend(options, context);
+                };
+                jbComponent.prototype.jbExtend = function (options, context) {
+                    var _this = this;
+                    context = context || this.ctx;
+                    if (!context)
+                        console.log('no context provided for jbExtend');
+                    if (!options)
+                        return this;
+                    if (typeof options != 'object')
+                        debugger;
+                    jbTemplate(options);
+                    if (options.beforeInit)
+                        this.methodHandler.jbBeforeInitFuncs.push(options.beforeInit);
+                    if (options.init)
+                        this.methodHandler.jbInitFuncs.push(options.init);
+                    if (options.afterViewInit)
+                        this.methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
+                    if (options.doCheck)
+                        this.methodHandler.jbCheckFuncs.push(options.doCheck);
+                    if (options.observable)
+                        this.methodHandler.jbObservableFuncs.push(options.observable);
+                    if (options.ctrlsEmFunc)
+                        this.methodHandler.ctrlsEmFunc = options.ctrlsEmFunc;
+                    if (options.extendCtx)
+                        this.methodHandler.extendCtx = options.extendCtx;
+                    if (options.extendComp)
+                        jb_core_1.jb.extend(this, options.extendComp);
+                    if (options.invisible)
+                        this.invisible = true;
+                    if (options.css)
+                        options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }));
+                    //		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+                    // fix ng limit - root style as style attribute at the template
+                    (options.styles || [])
+                        .filter(function (x) { return x.match(/^{([^]*)}$/m); })
+                        .forEach(function (x) { return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]); });
+                    var annotations = this.annotations;
+                    var overridable_props = ['selector', 'template', 'encapsulation'];
+                    var extendable_array_props = ['styles'];
+                    overridable_props.forEach(function (prop) {
+                        if (options[prop] !== undefined || annotations[prop] != undefined)
+                            annotations[prop] = options[prop] || annotations[prop];
+                    });
+                    extendable_array_props.forEach(function (prop) {
+                        if (options[prop] !== undefined || annotations[prop] != undefined)
+                            annotations[prop] = (annotations[prop] || []).concat(jb_core_1.jb.toarray(options[prop]));
+                    });
+                    if (options.directives !== undefined)
+                        annotations.directives = (annotations.directives || []).concat(jb_core_1.jb.toarray(options.directives).map(function (x) {
+                            return typeof x == 'string' ? directivesObj[x] : x;
+                        }));
+                    options.atts = jb_core_1.jb.extend({}, options.atts, options.host); // atts is equvivalent to host
+                    if (options.cssClass)
+                        jb_core_1.jb.path(options, ['atts', 'class'], options.cssClass);
+                    //		if (options.cssStyle) jb.path(options, ['atts', 'style'], options.cssStyle);
+                    Object.getOwnPropertyNames(options.atts || {})
+                        .forEach(function (att) {
+                        var val = context.exp(options.atts[att]);
+                        if (att == 'ngIf')
+                            return jb_core_1.jb.path(annotations, ['host', 'template'], 'ngIf ' + val);
+                        if (att == 'class' && jb_core_1.jb.path(annotations, ['host', 'class']))
+                            val = jb_core_1.jb.path(annotations, ['host', 'class']) + ' ' + val;
+                        if (att == 'style' && jb_core_1.jb.path(annotations, ['host', 'style']))
+                            val = jb_core_1.jb.path(annotations, ['host', 'style']) + '; ' + val;
+                        jb_core_1.jb.path(annotations, ['host', att], val);
+                    });
+                    if (annotations.template && typeof annotations.template != 'string')
+                        debugger;
+                    annotations.template = annotations.template && annotations.template.trim();
+                    if (options.innerhost)
+                        try {
+                            var template = parseHTML("<div>" + (annotations.template || '') + "</div>");
+                            Object.getOwnPropertyNames(options.innerhost || {}).forEach(function (selector) {
+                                var elems = selector == '*' ? [template] : Array.from(template.querySelectorAll(selector));
+                                elems.forEach(function (element) {
+                                    Object.getOwnPropertyNames(options.innerhost[selector]).forEach(function (att) {
+                                        var value = context.exp(options.innerhost[selector][att]);
+                                        setTemplateAtt(element, att, value);
+                                    });
+                                });
+                            });
+                            annotations.template = template.innerHTML;
+                        }
+                        catch (e) {
+                            jb_core_1.jb.logException(e, '');
+                        }
+                    // ng-model or ngmodel => ngModel
+                    annotations.template = annotations.template.replace(/(\(|\[|\*)ng-?[a-z]/g, function (st) { return st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase(); });
+                    (options.features || []).forEach(function (f) {
+                        return _this.jbExtend(context.run(f), context);
+                    });
+                    (options.featuresOptions || []).forEach(function (f) {
+                        return _this.jbExtend(f, context);
+                    });
                     return this;
                 };
                 return jbComponent;

@@ -76,7 +76,6 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                     comp.compile(this.componentResolver).then(function (componentFactory) {
                         return comp.registerMethods(_this.childView.createComponent(componentFactory));
                     });
-                    ;
                     // this.componentResolver.resolveComponent(comp)
                     //   .then(componentFactory => {
                     //     this.childView.createComponent(componentFactory);
@@ -109,7 +108,6 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                     comp.compile(this.componentResolver).then(function (componentFactory) {
                         return comp.registerMethods(_this.childView.createComponent(componentFactory));
                     });
-                    ;
                 };
                 __decorate([
                     core_1.ViewChild('tests', { read: core_1.ViewContainerRef }), 

@@ -56,7 +56,7 @@ export class jBartSingleTest {
 	this.counter = 0;
   	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
   	comp.compile(this.componentResolver).then(componentFactory => 
-  		comp.registerMethods(this.childView.createComponent(componentFactory));
+  		comp.registerMethods(this.childView.createComponent(componentFactory))
     );
     // this.componentResolver.resolveComponent(comp)
     //   .then(componentFactory => {
@@ -78,7 +78,7 @@ export class jBartTests {
 	}
 	addComp(comp) {
 	  	comp.compile(this.componentResolver).then(componentFactory => 
-	  		comp.registerMethods(this.childView.createComponent(componentFactory));
+	  		comp.registerMethods(this.childView.createComponent(componentFactory))
 	    );
 	}
 }

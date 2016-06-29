@@ -18,11 +18,19 @@ export function apply(ctx) {
 
 var factory_hash = {};
 class jbComponent {
-	constructor(private annotations,private methodHandler,private ctx,private comp) {
+	constructor(private ctx) {
+		this.annotations = {};
+		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: [] };
+
 		this.jb_profile = ctx.profile;
 		var title = jb_tosingle(jb.val(this.ctx.params.title)) || (() => ''); 
 		this.jb_title = (typeof title == 'function') ? title : () => ''+title;
 		this.jb$title = (typeof title == 'function') ? title() : title; // for debug
+	}
+	initFromComp(comp) {
+		this.annotations = Reflect.getMetadata('annotations', comp)[0];
+		this.methodHandler = comp.methodHandler;
+		this.comp = comp;
 	}
 	compile(compiler) {
 		if (this.factory)
@@ -30,37 +38,170 @@ class jbComponent {
 		if (factory_hash[this.hashkey()])
 			this.factory = factory_hash[this.hashkey()];
 		else
-			this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp);
-		this.methodHandler.ctx = this.ctx;
+			this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
 
 		return this.factory;
 	}
 	registerMethods(cmp_ref) { // should be called by the instantiator
-		cmp_ref.hostView._view._Cmp_0_4.methodHandler = this.methodHandler;
+		var cmp = cmp_ref.hostView._view._Cmp_0_4;
+		cmp.ctx = this.ctx;
+		cmp.methodHandler = this.methodHandler;
 	}
 	hashkey() {
 		return JSON.stringify(this.annotations)
 	}
-	jbExtend(options) {
-		this.comp.jbExtend(options);
+	createComp() {
+	    this.jbExtend({directives: [NgClass, jbComp]});
+	    if (!this.annotations.selector)	this.annotations.selector = 'div';
+
+	    var Cmp = function(dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef }
+		Cmp = Reflect.decorate([
+			Component(this.annotations),
+			Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
+		], Cmp);
+		Cmp.prototype.ngOnInit = function() {
+			try {
+				if (this.methodHandler.jbObservableFuncs.length) {
+					this.jbEmitter = new jb_rx.Subject();
+					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
+				}
+		    	if (this.methodHandler.extendCtx)
+		    		this.ctx = this.methodHandler.extendCtx(this.ctx,this);
+				this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
+				this.methodHandler.jbInitFuncs.forEach(init=> init(this));
+		    } catch(e) { jb.logException(e,'') }
+		}
+		Cmp.prototype.ngAfterViewInit = function() {
+			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
+			this.jbEmitter && this.jbEmitter.next('after-init');
+		}
+		Cmp.prototype.ngDoCheck = function() {
+			this.methodHandler.jbCheckFuncs.forEach(f=> 
+				f(this));
+			this.refreshModel && this.refreshModel();
+			this.jbEmitter && this.jbEmitter.next('check');
+		}
+		return Cmp;
+	}
+	jbCtrl(context) {
+		var options = mergeOptions(
+			optionsOfProfile(context.params.style && context.params.style.profile),
+			optionsOfProfile(context.profile));
+
+		jb.path(options, ['atts','jb-path'], profilePath(context.profile)||''); // for the studio
+
+		context.params.features && context.params.features(context).forEach(f => this.jbExtend(f,context))
+		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
+			jb.toarray(context.params.style.profile.features)
+				.forEach(f=>this.jbExtend(context.run(f),context))
+		}
+		return this.jbExtend(options,context);
+	}
+	jbExtend(options,context) {
+    	context = context || this.ctx;
+    	if (!context)
+    		console.log('no context provided for jbExtend');
+    	if (!options) return this;
+    	if (typeof options != 'object')
+    		debugger;
+    	jbTemplate(options);
+		if (options.beforeInit) this.methodHandler.jbBeforeInitFuncs.push(options.beforeInit);
+		if (options.init) this.methodHandler.jbInitFuncs.push(options.init);
+		if (options.afterViewInit) this.methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
+		if (options.doCheck) this.methodHandler.jbCheckFuncs.push(options.doCheck);
+		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
+		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
+		if (options.extendCtx) this.methodHandler.extendCtx=options.extendCtx;
+		if (options.extendComp) jb.extend(this,options.extendComp);
+
+		if (options.invisible) 
+			this.invisible = true;
+
+	   	if (options.css)
+    		options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'));
+
+//		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+		// fix ng limit - root style as style attribute at the template
+    	(options.styles || [])
+    		.filter(x=>x.match(/^{([^]*)}$/m))
+    		.forEach(x=>jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]))
+
+    	var annotations = this.annotations;
+		var overridable_props = ['selector', 'template','encapsulation'];
+		var extendable_array_props = ['styles'];
+
+		overridable_props.forEach(prop => {
+			if (options[prop] !== undefined || annotations[prop] != undefined)
+				annotations[prop] = options[prop] || annotations[prop]
+		});
+		extendable_array_props.forEach(prop => {
+			if (options[prop] !== undefined || annotations[prop] != undefined)
+				annotations[prop] = (annotations[prop] || []).concat(jb.toarray(options[prop]))
+		});
+
+		if (options.directives !== undefined)
+				annotations.directives = (annotations.directives || []).concat(
+					jb.toarray(options.directives).map(x=>
+						typeof x == 'string' ? directivesObj[x] : x)
+					)
+
+		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
+		if (options.cssClass) jb.path(options, ['atts', 'class'], options.cssClass);
+//		if (options.cssStyle) jb.path(options, ['atts', 'style'], options.cssStyle);
+		Object.getOwnPropertyNames(options.atts || {})
+			.forEach(att=>{
+				var val = context.exp(options.atts[att]);
+				if (att == 'ngIf')
+				 	return jb.path(annotations, ['host', 'template'], 'ngIf ' + val);
+				if (att == 'class' && jb.path(annotations, ['host', 'class']))
+					val = jb.path(annotations, ['host', 'class']) + ' ' + val;
+				if (att == 'style' && jb.path(annotations, ['host', 'style']))
+					val = jb.path(annotations, ['host', 'style']) + '; ' + val;
+				jb.path(annotations, ['host', att],val)
+			})
+
+		if (annotations.template && typeof annotations.template != 'string') debugger;
+		annotations.template = annotations.template && annotations.template.trim();
+		if (options.innerhost) 
+		 try {
+			var template = parseHTML(`<div>${annotations.template || ''}</div>`);
+			Object.getOwnPropertyNames(options.innerhost || {}).forEach(function(selector) {
+				var elems = selector == '*' ? [template] : Array.from(template.querySelectorAll(selector));
+				elems.forEach(function(element) {
+					Object.getOwnPropertyNames(options.innerhost[selector]).forEach(function(att) {
+						var value = context.exp(options.innerhost[selector][att]);
+						setTemplateAtt(element, att, value);
+					})
+				})
+			});
+			annotations.template = template.innerHTML;
+	    } catch(e) { jb.logException(e,'') }
+		// ng-model or ngmodel => ngModel
+		annotations.template = annotations.template.replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
+
+		(options.features || []).forEach(f => 
+			this.jbExtend(context.run(f), context));
+		
+		(options.featuresOptions || []).forEach(f => 
+			this.jbExtend(f, context))
 		return this;
 	}
 }
 
-
 export function ctrl(context) {
 	var ctx = context.setVars({ $model: context.params });
-	var comp = defaultStyle(ctx);
-	if (!comp) {
+	var styleOptions = defaultStyle(ctx);
+	if (!styleOptions) {
 		console.log('style returned null',ctx)
 		return Comp({},ctx)
 	}
-	if (typeof comp == 'object')
-		comp = Comp(comp,ctx);
-	comp = enrichComp(comp,ctx).jbCtrl(ctx);
-	var annotations = Reflect.getMetadata('annotations', comp)[0];
-
-	return new jbComponent(annotations,comp.methodHandler,ctx,comp);
+	if (typeof styleOptions == 'object') {
+		return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
+	} else {		
+		var comp = Comp(styleOptions,ctx);
+		comp = enrichComp(comp,ctx).jbCtrl(ctx);
+		return new jbComponent(ctx).initFromComp(comp);
+	}
 
 	function defaultStyle(ctx) {
 		var profile = context.profile;
@@ -71,25 +212,6 @@ export function ctrl(context) {
 	}
 }
 
-export function ctrl2(context) {
-	var ctx = context.setVars({ $model: context.params });
-	var comp = defaultStyle(ctx);
-	if (!comp) {
-		console.log('style returned null',ctx)
-		return Comp({},ctx)
-	}
-	if (typeof comp == 'object')
-		comp = Comp(comp,ctx);
-	return enrichComp(comp,ctx).jbCtrl(ctx);
-
-	function defaultStyle(ctx) {
-		var profile = context.profile;
-		var defaultVar = (profile.$ || '')+'.default-style-profile';
-		if (!profile.style && context.vars[defaultVar])
-			return ctx.run({$:context.vars[defaultVar]})
-		return context.params.style(ctx);
-	}
-}
 
 export function Comp(options,context) {
     function Cmp(dcl, elementRef) { this.dcl = dcl; this.elementRef = elementRef }
@@ -255,82 +377,86 @@ export function enrichComp(comp,ctrl_ctx) {
 
 		return comp.jbExtend(options,context);
     }
-
-  	function optionsOfProfile(profile) {
-    	if (!profile) return {}
-    	var res = {};
-    	['cssClass','css'] // 'atts','styles',
-    		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
-		return res;
-	}
-
-    function mergeOptions(op1,op2) {
-    	var res = {};
-		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-//		res.cssStyle = ((op1.cssStyle || '') + ';' + (op2.cssStyle || '')).replace(/^;*/,'').replace(/;*$/,'');
-		if (op1.styles || op2.styles)
-			res.styles = (op1.styles || []).concat(op2.styles || [])
-		return jb_extend({},op1,op2,res);
-    }
-
-    function setTemplateAtt(element,att,value) {
-    	if (!element.getAttribute) debugger;
-		if (('' + value).indexOf('[object') != -1) return; // avoid bugs - no object host
-		var currentVal = element.getAttribute(att);
-		if (att == 'ngIf')
-		 	element.setAttribute('template', 'ngIf ' + value);
-		else if (att == 'class')
-			element.setAttribute(att, currentVal ? currentVal + ' ' + value : value);
-		else
-			addAttribute(element, att, value);
-    }
-	function jbTemplate(options) {
-		options.jbTemplate = (options.jbTemplate||'').trim();
-    	if (!options.jbTemplate) return
-		var template = parseHTML(options.jbTemplate);
-		var host = jb_extend({},options.host);
-		Array.from(template.attributes||[])
-			.filter(att=> {
-				var ngAtt = att.name.indexOf('*ng') != -1;
-				if (ngAtt)
-					jb.logError('ng atts are not allowed in root element of template: ' + att.name, {ctx:ctrl_ctx,att:att})
-				return !ngAtt;
-			})
-			.forEach(att=>host[att.name]=att.value);
-   		jb.extend(options, {
-			template: template.innerHTML.trim(),
-			selector: template.tagName,
-			host: host
-		})
-	}
-	function profilePath(profile) {
-		// caching last component
-		var lastFound = window.jb_lastFoundAt;
-		if (lastFound && getPath(jb.comps[lastFound].impl, profile,0))
-			return lastFound + '~' + getPath(jb.comps[lastFound].impl, profile,0).replace(/~*$/g,'')
-
-		for(var comp in jb.comps) {
-			var impl = jb.comps[comp].impl;
-			if (typeof impl == 'function') continue;
-			var res = getPath(impl, profile,0,impl);
-			if (res) {
-				window.jb_lastFoundAt = comp; // a kind of cache
-				return (comp +'~'+res).replace(/~*$/g,'');
-			}
-		}
-		function getPath(parent, dest, depth,comp) {
-			if (depth > 50) debugger;
-			if (!parent) return '';
-			if (parent === dest) return '~'; // will be removed
-			return Object.getOwnPropertyNames(parent).filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0).map(function(p) {
-				var path = getPath(parent[p], dest, (depth || 0) + 1,comp);
-				return path ? (p + '~' + path) : '';
-			}).join(''); // only one will succeed
-		}
-	}
-
     return comp;
 }
+
+function optionsOfProfile(profile) {
+	if (!profile) return {}
+	var res = {};
+	['cssClass','css'] // 'atts','styles',
+		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
+	return res;
+}
+
+function mergeOptions(op1,op2) {
+	var res = {};
+	res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
+//		res.cssStyle = ((op1.cssStyle || '') + ';' + (op2.cssStyle || '')).replace(/^;*/,'').replace(/;*$/,'');
+	if (op1.styles || op2.styles)
+		res.styles = (op1.styles || []).concat(op2.styles || [])
+	return jb_extend({},op1,op2,res);
+}
+
+function setTemplateAtt(element,att,value) {
+	if (!element.getAttribute) debugger;
+	if (('' + value).indexOf('[object') != -1) return; // avoid bugs - no object host
+	var currentVal = element.getAttribute(att);
+	if (att == 'ngIf')
+	 	element.setAttribute('template', 'ngIf ' + value);
+	else if (att == 'class')
+		element.setAttribute(att, currentVal ? currentVal + ' ' + value : value);
+	else
+		addAttribute(element, att, value);
+}
+
+function jbTemplate(options) {
+	options.jbTemplate = (options.jbTemplate||'').trim();
+	if (!options.jbTemplate) return
+	var template = parseHTML(options.jbTemplate);
+	var host = jb_extend({},options.host);
+	Array.from(template.attributes||[])
+		.filter(att=> {
+			var ngAtt = att.name.indexOf('*ng') != -1;
+			if (ngAtt)
+				jb.logError('ng atts are not allowed in root element of template: ' + att.name, {ctx:ctrl_ctx,att:att})
+			return !ngAtt;
+		})
+		.forEach(att=>host[att.name]=att.value);
+	
+	jb.extend(options, {
+		template: template.innerHTML.trim(),
+		selector: template.tagName,
+		host: host
+	})
+}
+
+function profilePath(profile) {
+	// caching last component
+	var lastFound = window.jb_lastFoundAt;
+	if (lastFound && getPath(jb.comps[lastFound].impl, profile,0))
+		return lastFound + '~' + getPath(jb.comps[lastFound].impl, profile,0).replace(/~*$/g,'')
+
+	for(var comp in jb.comps) {
+		var impl = jb.comps[comp].impl;
+		if (typeof impl == 'function') continue;
+		var res = getPath(impl, profile,0,impl);
+		if (res) {
+			window.jb_lastFoundAt = comp; // a kind of cache
+			return (comp +'~'+res).replace(/~*$/g,'');
+		}
+	}
+	function getPath(parent, dest, depth,comp) {
+		if (depth > 50) debugger;
+		if (!parent) return '';
+		if (parent === dest) return '~'; // will be removed
+		return Object.getOwnPropertyNames(parent).filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0).map(function(p) {
+			var path = getPath(parent[p], dest, (depth || 0) + 1,comp);
+			return path ? (p + '~' + path) : '';
+		}).join(''); // only one will succeed
+	}
+}
+
+
 
 @Component({
     selector: 'jb_comp',
@@ -449,13 +575,8 @@ export function twoWayBind(ref) {
 
 export function insertComponent(comp, resolver, parentView) {
   	return comp.compile(resolver).then(componentFactory => 
-  		comp.registerMethods(parentView.createComponent(componentFactory));
+  		comp.registerMethods(parentView.createComponent(componentFactory))
     )
-    // return resolver
-    //   .resolveComponent(comp)
-    //   .then(componentFactory => 
-    //     parentView.createComponent(componentFactory)
-    //   )
 }
 
 export function parseHTML(text) {
