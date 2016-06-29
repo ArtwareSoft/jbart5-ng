@@ -1,4 +1,11 @@
-import {jb} from 'jb-core/jb';;
+import {jb} from 'jb-core/jb';
+
+jb.resource('studio-helper','people', { "people": [
+  { "name": "Homer Simpson" ,"age": 42 , "male": true},
+  { "name": "Marge Simpson" ,"age": 38 , "male": false},
+  { "name": "Bart Simpson"  ,"age": 12 , "male": true}
+  ]
+})
 
 jb.resource('studio-helper','group-with-custom-style',
   {$: 'group', 
@@ -66,6 +73,51 @@ jb.component('studio-helper.expandable', {
       {$: 'button', 
         title: 'Hello', 
         style :{$: 'button.md-flat' }
+      }
+    ]
+  }
+})
+
+jb.component('studio-helper.itemlist-with-find', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'itemlist-with-find', 
+    controls: [
+      {$: 'editable-text', 
+        databind: '%$globals/project_pattern%', 
+        style :{$: 'editable-text.input' }
+      }, 
+      {$: 'itemlist', 
+        items: [
+          '%$people/people%', 
+          {
+            $filter: function (ctx) {
+                                        console.log(ctx.exp('%$globals/project_pattern%'));
+                                        return !ctx.exp('%$globals/project_pattern%') || ctx.exp('%name%').toLowerCase().indexOf(ctx.exp('%$globals/project_pattern%').toLowerCase()) != -1;
+                                    }
+          }
+        ], 
+        controls: [
+          {$: 'group', 
+            style :{$: 'layout.flex', align: 'space-between' }, 
+            controls: [
+              {$: 'text', 
+                text: '%name%', 
+                title: 'text', 
+                style :{$: 'text.paragraph' }, 
+                features :{$: 'css', css: '{ padding-left: 10px }' }
+              }
+            ], 
+            features: [
+              {$: 'css.width', width: '200' }, 
+              {$: 'css', 
+                css: ':hover { background: #efefef; cursor: pointer; }'
+              }
+            ], 
+            title: 'item'
+          }
+        ], 
+        style :{$: 'itemlist.ul-li' }
       }
     ]
   }

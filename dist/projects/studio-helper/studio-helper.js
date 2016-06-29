@@ -8,7 +8,12 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 jb_1 = jb_1_1;
             }],
         execute: function() {
-            ;
+            jb_1.jb.resource('studio-helper', 'people', { "people": [
+                    { "name": "Homer Simpson", "age": 42, "male": true },
+                    { "name": "Marge Simpson", "age": 38, "male": false },
+                    { "name": "Bart Simpson", "age": 12, "male": true }
+                ]
+            });
             jb_1.jb.resource('studio-helper', 'group-with-custom-style', { $: 'group',
                 title: 'main',
                 style: { $: 'customStyle',
@@ -66,6 +71,50 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         { $: 'button',
                             title: 'Hello',
                             style: { $: 'button.md-flat' }
+                        }
+                    ]
+                }
+            });
+            jb_1.jb.component('studio-helper.itemlist-with-find', {
+                type: 'control',
+                impl: { $: 'group',
+                    title: 'itemlist-with-find',
+                    controls: [
+                        { $: 'editable-text',
+                            databind: '%$globals/project_pattern%',
+                            style: { $: 'editable-text.input' }
+                        },
+                        { $: 'itemlist',
+                            items: [
+                                '%$people/people%',
+                                {
+                                    $filter: function (ctx) {
+                                        console.log(ctx.exp('%$globals/project_pattern%'));
+                                        return !ctx.exp('%$globals/project_pattern%') || ctx.exp('%name%').toLowerCase().indexOf(ctx.exp('%$globals/project_pattern%').toLowerCase()) != -1;
+                                    }
+                                }
+                            ],
+                            controls: [
+                                { $: 'group',
+                                    style: { $: 'layout.flex', align: 'space-between' },
+                                    controls: [
+                                        { $: 'text',
+                                            text: '%name%',
+                                            title: 'text',
+                                            style: { $: 'text.paragraph' },
+                                            features: { $: 'css', css: '{ padding-left: 10px }' }
+                                        }
+                                    ],
+                                    features: [
+                                        { $: 'css.width', width: '200' },
+                                        { $: 'css',
+                                            css: ':hover { background: #efefef; cursor: pointer; }'
+                                        }
+                                    ],
+                                    title: 'item'
+                                }
+                            ],
+                            style: { $: 'itemlist.ul-li' }
                         }
                     ]
                 }

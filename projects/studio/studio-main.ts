@@ -162,7 +162,6 @@ jb.component('studio.projectPages',{
 jb.component('studio.renderWidget',{
 	type: 'control',
 	impl: function (ctx) {
-
 		@Component({
 			selector: 'previewIframe',
 			template: `<iframe sandbox="allow-same-origin allow-forms allow-scripts" style="box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px"
@@ -186,7 +185,7 @@ jb.component('studio.renderWidget',{
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;
 						document.title = cmp.project + ' with jBart';
-		
+						
 						// forward the studio zone to the preview widget so it will be updated
 						jb_ui.getZone('studio.all').then(zone=> {
 							zone.onStable.subscribe(function(){
@@ -206,37 +205,7 @@ jb.component('studio.renderWidget',{
 	 	return previewIframe;
 	}
 })
-// 		jb_ui.Comp({
-// 			template: `<iframe sandbox="allow-same-origin allow-forms allow-scripts" style="box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px"
-// 					seamless="" id="jb-preview" frameborder="0" [src]="project_url"></iframe>`,
-// 			init: function(cmp) {
-// 				cmp.project = ctx.str('%$globals/project%');
-// 				cmp.project_url = new DomSanitizationService().bypassSecurityTrustResourceUrl('/project/'+cmp.project);
-// 				if (!cmp.project) debugger;
-// 				var iframe = cmp.elementRef.nativeElement.firstElementChild;
-// 				window.jb_studio_window = true; // let studio widgets run in a special mode
-// 				waitForIframeLoad(iframe).then(function() {
-// 					var w = iframe.contentWindow;
-// 					w.jbart.studioGlobals = ctx.run('{%$globals%}');
-// 					jbart.previewWindow = w;
-// 					jbart.previewjbart = w.jbart;
-// 					jbart.preview_jbart_widgets = w.jbart_widgets;
-// 					document.title = cmp.project + ' with jBart';
-	
-// 					// forward the studio zone to the preview widget so it will be updated
-// 					jb_ui.getZone('studio.all').then(zone=> {
-// 						zone.onStable.subscribe(function(){
-// 							w.jbart.studioGlobals = ctx.run('{%$globals%}');
-// 							// refresh preview
-// 							jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
-// 							//w.setTimeout(()=>{},1); 
-// 						});
-// 					})
-// 					jb.trigger(jbart, 'preview_loaded');
-// 				})
-// 			}
-// 		},ctx)
-// })
+
 
 jb.component('studio.setPreviewSize', {
 	type: 'action',

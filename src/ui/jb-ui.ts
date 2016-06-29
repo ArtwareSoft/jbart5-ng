@@ -16,11 +16,12 @@ export function apply(ctx) {
 	ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{})
 }
 
-var factory_hash = {};
+var factory_hash = {}, cssFixes_hash = {};
 class jbComponent {
 	constructor(private ctx) {
 		this.annotations = {};
 		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: [] };
+		this.cssFixes = [];
 
 		this.jb_profile = ctx.profile;
 		var title = jb_tosingle(jb.val(this.ctx.params.title)) || (() => ''); 
@@ -46,6 +47,19 @@ class jbComponent {
 		var cmp = cmp_ref.hostView._view._Cmp_0_4;
 		cmp.ctx = this.ctx;
 		cmp.methodHandler = this.methodHandler;
+		if (this.cssFixes.length > 0) {
+		  	var elem = cmp_ref._hostElement.nativeElement;
+		  	var ngAtt = Array.from(elem.attributes).map(x=>x.name)
+		  		.filter(x=>x.match(/_ng/))[0];
+
+			var css = this.cssFixes
+				.map(x=>`[${ngAtt}]${x}`)
+				.join('\n');
+			if (!cssFixes_hash[css]) {
+				cssFixes_hash[css] = true;
+				$(`<style type="text/css">${css}</style>`).appendTo($('head'));
+			}
+		}
 	}
 	hashkey() {
 		return JSON.stringify(this.annotations)
@@ -124,7 +138,12 @@ class jbComponent {
 		// fix ng limit - root style as style attribute at the template
     	(options.styles || [])
     		.filter(x=>x.match(/^{([^]*)}$/m))
-    		.forEach(x=>jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]))
+    		.forEach(x=>
+    			jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]));
+
+    	(options.styles || [])
+    		.filter(x=>x.match(/^:/m))
+    		.forEach(x=> this.cssFixes.push(x))
 
     	var annotations = this.annotations;
 		var overridable_props = ['selector', 'template','encapsulation'];
@@ -465,23 +484,27 @@ export class jBartWidget {
 		var cmp = this;
 		this.redrawEm = new jb_rx.Subject();
 
-		this.redrawEm 
-		  .debounceTime(500) // fast user reaction
-		  .map(id=>
-		  	relevantSource(id))
-		  .distinctUntilChanged()
-		  .debounceTime(300) // unify fast changes wait before draw
-		  .skip(1)
-		  .subscribe(x => 
-		  	cmp.draw())
-
-		  this.ngZone.onUnstable
-		  	.map(()=>this.compId) // widget to show changed - no need to wait
-		  	.distinctUntilChanged()
-			.skip(1)
-			.subscribe(
-			  	x => 
+		this.ngZone.runOutsideAngular(() => {
+			setInterval(()=>
+				this.redrawEm.next(this.compId),555)
+		})
+			this.redrawEm 
+//			  .debounceTime(600) // fast user reaction - must be run outside angular
+			  .map(id=>
+			  	relevantSource(id))
+			  .distinctUntilChanged()
+			  .debounceTime(300) // unify fast changes wait before draw
+			  .skip(1)
+			  .subscribe(x => 
 			  	cmp.draw())
+
+			this.ngZone.onUnstable
+			  	.map(()=>this.compId) // widget to show changed - no need to wait
+			  	.distinctUntilChanged()
+				.skip(1)
+				.subscribe(
+				  	x => 
+				  	cmp.draw())
 
 		function relevantSource(compID) {
 			var ns = compID.split('.')[0];

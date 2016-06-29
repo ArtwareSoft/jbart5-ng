@@ -11,7 +11,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_core_1, core_1, common_1, jb_rx, jb_dialog;
-    var factory_hash, jbComponent, jbComp, jBartWidget, directivesObj;
+    var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, directivesObj;
     function apply(ctx) {
         //	console.log('apply');
         jb_core_1.jb.delay(1);
@@ -231,12 +231,13 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         execute: function() {
             core_1.enableProdMode();
             jbart.zones = jbart.zones || {};
-            factory_hash = {};
+            factory_hash = {}, cssFixes_hash = {};
             jbComponent = (function () {
                 function jbComponent(ctx) {
                     this.ctx = ctx;
                     this.annotations = {};
                     this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [] };
+                    this.cssFixes = [];
                     this.jb_profile = ctx.profile;
                     var title = jb_tosingle(jb_core_1.jb.val(this.ctx.params.title)) || (function () { return ''; });
                     this.jb_title = (typeof title == 'function') ? title : function () { return '' + title; };
@@ -260,6 +261,18 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     var cmp = cmp_ref.hostView._view._Cmp_0_4;
                     cmp.ctx = this.ctx;
                     cmp.methodHandler = this.methodHandler;
+                    if (this.cssFixes.length > 0) {
+                        var elem = cmp_ref._hostElement.nativeElement;
+                        var ngAtt = Array.from(elem.attributes).map(function (x) { return x.name; })
+                            .filter(function (x) { return x.match(/_ng/); })[0];
+                        var css = this.cssFixes
+                            .map(function (x) { return ("[" + ngAtt + "]" + x); })
+                            .join('\n');
+                        if (!cssFixes_hash[css]) {
+                            cssFixes_hash[css] = true;
+                            $("<style type=\"text/css\">" + css + "</style>").appendTo($('head'));
+                        }
+                    }
                 };
                 jbComponent.prototype.hashkey = function () {
                     return JSON.stringify(this.annotations);
@@ -349,7 +362,12 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     // fix ng limit - root style as style attribute at the template
                     (options.styles || [])
                         .filter(function (x) { return x.match(/^{([^]*)}$/m); })
-                        .forEach(function (x) { return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]); });
+                        .forEach(function (x) {
+                        return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]);
+                    });
+                    (options.styles || [])
+                        .filter(function (x) { return x.match(/^:/m); })
+                        .forEach(function (x) { return _this.cssFixes.push(x); });
                     var annotations = this.annotations;
                     var overridable_props = ['selector', 'template', 'encapsulation'];
                     var extendable_array_props = ['styles'];
@@ -531,8 +549,12 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     var _this = this;
                     var cmp = this;
                     this.redrawEm = new jb_rx.Subject();
+                    this.ngZone.runOutsideAngular(function () {
+                        setInterval(function () {
+                            return _this.redrawEm.next(_this.compId);
+                        }, 555);
+                    });
                     this.redrawEm
-                        .debounceTime(500) // fast user reaction
                         .map(function (id) {
                         return relevantSource(id);
                     })
