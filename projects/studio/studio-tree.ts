@@ -43,6 +43,14 @@ jb.component('studio.open-tree-menu', {
           action :{$: 'studio.editSource', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
+          $vars: {
+            compName: {$: 'studio.compName', path : '%$path%'}
+          },
+          title: 'Goto %$compName%', 
+          features :{$: 'hidden', showCondition: '%$compName%' },
+          action :{$: 'studio.goto-path', path: '%$compName%' }
+        }, 
+        {$: 'pulldown.menu-item', 
           title: 'Goto sublime', 
           action :{$: 'studio.openSublime', path: '%$path%' }
         }, 

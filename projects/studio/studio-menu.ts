@@ -10,8 +10,8 @@ jb.component('studio.main-menu', {
         title: 'File', 
         controls: [
           {$: 'pulldown.menu-item', 
-            title: 'Open ...', 
-            action :{$: 'studio.openWidget' }
+            title: 'Open Project ...', 
+            action :{$: 'studio.open-project' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Save', 
@@ -77,17 +77,17 @@ jb.component('studio.main-menu', {
         controls: [
           {$: 'dynamic-controls', 
             controlItems: function (ctx) {
-    var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
-    return Object.getOwnPropertyNames(res)
-      .filter(function (x) { return x != 'window'; });
-  }, 
+                                        var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
+                                        return Object.getOwnPropertyNames(res)
+                                            .filter(function (x) { return x != 'window'; });
+                                    }, 
             genericControl :{$: 'pulldown.menu-item', 
               title: '%$controlItem%', 
               action :{$: 'studio.open-resource', 
-                resource: function(ctx) { 
-                  return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%') ])
-                },
-                id: '%$controlItem%' 
+                resource: function (ctx) {
+                                                return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%')]);
+                                            }, 
+                id: '%$controlItem%'
               }
             }
           }, 

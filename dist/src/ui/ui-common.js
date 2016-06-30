@@ -134,6 +134,18 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-ui-utils'], function(exports_1, c
                 type: 'action',
                 impl: jb_ui.apply
             });
+            jb_core_1.jb.component('search-filter', {
+                type: 'aggregator',
+                params: {
+                    pattern: { as: 'string' }
+                },
+                impl: function (context, pattern) {
+                    return context.data.filter(function (item) {
+                        var itemText = JSON.stringify(item).toLowerCase();
+                        return !pattern || itemText.indexOf(pattern.toLowerCase()) != -1;
+                    });
+                }
+            });
         }
     }
 });

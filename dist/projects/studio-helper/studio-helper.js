@@ -82,36 +82,22 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     controls: [
                         { $: 'editable-text',
                             databind: '%$globals/project_pattern%',
-                            style: { $: 'editable-text.input' }
+                            style: { $: 'editable-text.md-input' },
+                            title: 'search'
                         },
                         { $: 'itemlist',
                             items: [
                                 '%$people/people%',
-                                {
-                                    $filter: function (ctx) {
-                                        console.log(ctx.exp('%$globals/project_pattern%'));
-                                        return !ctx.exp('%$globals/project_pattern%') || ctx.exp('%name%').toLowerCase().indexOf(ctx.exp('%$globals/project_pattern%').toLowerCase()) != -1;
-                                    }
-                                }
+                                { $: 'search-filter', pattern: '%$globals/project_pattern%' }
                             ],
                             controls: [
-                                { $: 'group',
-                                    style: { $: 'layout.flex', align: 'space-between' },
-                                    controls: [
-                                        { $: 'text',
-                                            text: '%name%',
-                                            title: 'text',
-                                            style: { $: 'text.paragraph' },
-                                            features: { $: 'css', css: '{ padding-left: 10px }' }
-                                        }
-                                    ],
-                                    features: [
-                                        { $: 'css.width', width: '200' },
-                                        { $: 'css',
-                                            css: ':hover { background: #efefef; cursor: pointer; }'
-                                        }
-                                    ],
-                                    title: 'item'
+                                { $: 'button',
+                                    title: '%name%',
+                                    style: { $: 'customStyle',
+                                        template: '<span><button md-button (click)="clicked()">{{title}}</button></span>',
+                                        directives: 'MdButton',
+                                        css: 'button { width: 200px; text-align: left }'
+                                    }
                                 }
                             ],
                             style: { $: 'itemlist.ul-li' }

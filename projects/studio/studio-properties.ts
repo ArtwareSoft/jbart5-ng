@@ -197,7 +197,8 @@ jb.component('studio.property-tgp', {
             action :{$: 'studio.open-property-menu', path: '%$path%' }, 
             style :{$: 'button.md-icon-12', icon: 'more_vert' }
           }
-        ]
+        ],
+        features :{$: 'css', css: '{ position: relative }' }, 
       }, 
       {$: 'group', 
         controls :{$: 'studio.properties', path: '%$path%' }, 
@@ -263,7 +264,7 @@ button:hover {  background: none }`
       {$: 'css', 
         css: `{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }
 .header {  background: #F9F9F9; } 
-i { font-size: 20px; margin-right: 1px }`
+i { font-size: 16px; margin-right: 1px; color: #909090 }`
       }
     ], 
     style :{$: 'group.expandable' }

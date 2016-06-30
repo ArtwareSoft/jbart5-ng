@@ -196,7 +196,7 @@ class jbComponent {
 			annotations.template = template.innerHTML;
 	    } catch(e) { jb.logException(e,'') }
 		// ng-model or ngmodel => ngModel
-		annotations.template = annotations.template.replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
+		annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
 
 		(options.features || []).forEach(f => 
 			this.jbExtend(context.run(f), context));

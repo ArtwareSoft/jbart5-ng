@@ -417,9 +417,12 @@ jb.component('studio.message',{
 
 jb.component('studio.goto-path',{
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: { 
+		path: { as: 'string' },
+	},
 	impl :{$runActions: [ 
 		{$: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' }, 
-		{$: 'studio.openProperties'}
+		{$: 'studio.openProperties'},
+		{$: 'studio.open-control-tree'}
 	]}
 })

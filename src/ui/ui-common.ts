@@ -130,3 +130,15 @@ jb.component('apply', {
 	impl: jb_ui.apply
 })
 
+jb.component('search-filter',{
+	type: 'aggregator',
+	params: {
+		pattern: { as: 'string' }
+	},
+	impl: (context,pattern) =>
+		context.data.filter(item => {
+			var itemText = JSON.stringify(item).toLowerCase();
+			return !pattern || itemText.indexOf(pattern.toLowerCase()) != -1;
+		})
+})
+

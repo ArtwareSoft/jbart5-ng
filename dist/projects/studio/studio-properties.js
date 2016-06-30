@@ -193,7 +193,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     action: { $: 'studio.open-property-menu', path: '%$path%' },
                                     style: { $: 'button.md-icon-12', icon: 'more_vert' }
                                 }
-                            ]
+                            ],
+                            features: { $: 'css', css: '{ position: relative }' },
                         },
                         { $: 'group',
                             controls: { $: 'studio.properties', path: '%$path%' },
@@ -254,7 +255,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ],
                     features: [
                         { $: 'css',
-                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 20px; margin-right: 1px }"
+                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 16px; margin-right: 1px; color: #909090 }"
                         }
                     ],
                     style: { $: 'group.expandable' }

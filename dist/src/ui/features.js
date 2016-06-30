@@ -201,6 +201,40 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     return ({ css: "{ width: " + width + "px}" });
                 }
             });
+            jb_core_1.jb.component('css.padding', {
+                type: 'feature',
+                params: {
+                    top: { as: 'number' },
+                    left: { as: 'number' },
+                    right: { as: 'number' },
+                    bottom: { as: 'number' },
+                    selector: { as: 'string' },
+                },
+                impl: function (ctx) {
+                    var css = ['top', 'left', 'right', 'bottom']
+                        .filter(function (x) { return ctx.params[x] != null; })
+                        .map(function (x) { return ("padding-" + x + ": " + ctx.params[x] + "px"); })
+                        .join('; ');
+                    return { css: ctx.params.selector + " {" + css + "}" };
+                }
+            });
+            jb_core_1.jb.component('css.margin', {
+                type: 'feature',
+                params: {
+                    top: { as: 'number' },
+                    left: { as: 'number' },
+                    right: { as: 'number' },
+                    bottom: { as: 'number' },
+                    selector: { as: 'string' },
+                },
+                impl: function (ctx) {
+                    var css = ['top', 'left', 'right', 'bottom']
+                        .filter(function (x) { return ctx.params[x] != null; })
+                        .map(function (x) { return ("margin-" + x + ": " + ctx.params[x] + "px"); })
+                        .join('; ');
+                    return { css: ctx.params.selector + " {" + css + "}" };
+                }
+            });
             jb_core_1.jb.component('css.box-shadow', {
                 type: 'feature',
                 params: {

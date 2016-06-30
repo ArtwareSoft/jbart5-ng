@@ -418,10 +418,13 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             });
             jb_core_1.jb.component('studio.goto-path', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: {
+                    path: { as: 'string' },
+                },
                 impl: { $runActions: [
                         { $: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' },
-                        { $: 'studio.openProperties' }
+                        { $: 'studio.openProperties' },
+                        { $: 'studio.open-control-tree' }
                     ] }
             });
         }

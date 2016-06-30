@@ -192,6 +192,42 @@ jb.component('css.width', {
     ({css: `{ width: ${width}px}`})
 })
 
+jb.component('css.padding', {
+  type: 'feature',
+  params: {
+    top: { as: 'number' },
+    left: { as: 'number' },
+    right: { as: 'number' },
+    bottom: { as: 'number' },
+    selector: { as: 'string' },
+  },
+  impl: (ctx) => {
+    var css = ['top','left','right','bottom']
+      .filter(x=>ctx.params[x] != null)
+      .map(x=> `padding-${x}: ${ctx.params[x]}px`)
+      .join('; ');
+    return {css: `${ctx.params.selector} {${css}}`};
+  }
+})
+
+jb.component('css.margin', {
+  type: 'feature',
+  params: {
+    top: { as: 'number' },
+    left: { as: 'number' },
+    right: { as: 'number' },
+    bottom: { as: 'number' },
+    selector: { as: 'string' },
+  },
+  impl: (ctx) => {
+    var css = ['top','left','right','bottom']
+      .filter(x=>ctx.params[x] != null)
+      .map(x=> `margin-${x}: ${ctx.params[x]}px`)
+      .join('; ');
+    return {css: `${ctx.params.selector} {${css}}`};
+  }
+})
+
 jb.component('css.box-shadow', {
   type: 'feature',
   params: {

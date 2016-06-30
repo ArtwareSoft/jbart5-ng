@@ -419,7 +419,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                             jb_core_1.jb.logException(e, '');
                         }
                     // ng-model or ngmodel => ngModel
-                    annotations.template = annotations.template.replace(/(\(|\[|\*)ng-?[a-z]/g, function (st) { return st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase(); });
+                    annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, function (st) { return st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase(); });
                     (options.features || []).forEach(function (f) {
                         return _this.jbExtend(context.run(f), context);
                     });

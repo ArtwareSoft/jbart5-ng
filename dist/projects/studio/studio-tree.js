@@ -51,6 +51,14 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 action: { $: 'studio.editSource', path: '%$path%' }
                             },
                             { $: 'pulldown.menu-item',
+                                $vars: {
+                                    compName: { $: 'studio.compName', path: '%$path%' }
+                                },
+                                title: 'Goto %$compName%',
+                                features: { $: 'hidden', showCondition: '%$compName%' },
+                                action: { $: 'studio.goto-path', path: '%$compName%' }
+                            },
+                            { $: 'pulldown.menu-item',
                                 title: 'Goto sublime',
                                 action: { $: 'studio.openSublime', path: '%$path%' }
                             },

@@ -109,7 +109,7 @@ jb_modules =
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
 ,'tree','properties','pick','save','probe','edit-source','new-control'
-,'undo','styles','style-editor','data-browse']
+,'undo','styles','style-editor','data-browse','open-project']
   .map(x=>'studio/studio-' + x)
 
 jb_system_config = {

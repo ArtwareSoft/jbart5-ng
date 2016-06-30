@@ -17,8 +17,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             title: 'File',
                             controls: [
                                 { $: 'pulldown.menu-item',
-                                    title: 'Open ...',
-                                    action: { $: 'studio.openWidget' }
+                                    title: 'Open Project ...',
+                                    action: { $: 'studio.open-project' }
                                 },
                                 { $: 'pulldown.menu-item',
                                     title: 'Save',

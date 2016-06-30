@@ -17,7 +17,15 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
             jb_ui.registerDirectives({ MdInput: input_js_1.MdInput });
             jb_core_1.jb.component('editable-text.md-input', {
                 type: 'editable-text.style',
+                params: {
+                    width: { as: 'number' }
+                },
                 impl: { $: 'customStyle',
+                    $vars: {
+                        widthCss: function (ctx) {
+                            return ctx.componentContext.params.width ? "md-input { width: " + ctx.componentContext.params.width + "px}" : '';
+                        }
+                    },
                     features: { $: 'editable-text.bindField' },
                     template: "<span><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></span>",
                     methods: {
@@ -25,6 +33,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
                             cmp.title = ctx.vars.$model.title();
                         }; }
                     },
+                    css: '%$widthCss%',
                     directives: 'MdInput'
                 }
             });

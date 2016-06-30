@@ -266,12 +266,7 @@ extend(op_get_handlers, {
       res.end(content);
     },
     'projects': function(req,res,path) {
-      var out = [];
-      fs.readdirSync('projects').forEach(function(widgetFile) {
-        if (fs.lstatSync('projects/'+widgetFile).isDirectory())
-          out = out.concat(fs.readdirSync('projects/'+widgetFile).filter(function(file) { return file.indexOf('.html') >= 0; }));
-      });
-      res.end(out.join(','));
+      res.end(JSON.stringify({projects: fs.readdirSync('projects')}));
     },
     'gotoSource': function(req,res,path) {
       var comp = getURLParam(req,'comp');
