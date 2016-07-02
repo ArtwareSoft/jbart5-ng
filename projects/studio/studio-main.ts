@@ -187,7 +187,7 @@ jb.component('studio.renderWidget',{
 					window.jb_studio_window = true; // let studio widgets run in a special mode
 					waitForIframeLoad(iframe).then(function() {
 						var w = iframe.contentWindow;
-						w.jbart.studioGlobals = ctx.run('{%$globals%}');
+						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 						jbart.previewWindow = w;
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;
@@ -196,7 +196,7 @@ jb.component('studio.renderWidget',{
 						// forward the studio zone to the preview widget so it will be updated
 						jb_ui.getZone('studio.all').then(zone=> {
 							zone.onStable.subscribe(function(){
-								w.jbart.studioGlobals = ctx.run('{%$globals%}');
+								w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 								// refresh preview
 								jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
 								//w.setTimeout(()=>{},1); 

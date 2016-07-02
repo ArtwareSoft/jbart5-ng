@@ -51,41 +51,30 @@ function jbCtx(context,ctx2) {
   if (typeof context == 'undefined')
     this.vars = this.params = this.resources = {}
   else {
-    this.profile= (typeof(ctx2.profile) != 'undefined') ?  ctx2.profile : context.profile,
-    this.data= (typeof ctx2.data != 'undefined') ? ctx2.data : context.data,     // allowing setting data:null
-    this.vars= ctx2.vars ? jb_extend({},context.vars,ctx2.vars) : context.vars,
-    this.params= ctx2.params || context.params,
-    this.resources= context.resources,
-    this.componentContext= (typeof ctx2.componentContext != 'undefined') ? ctx2.componentContext : context.componentContext,
-    this.ngMode= context.ngMode
+    if (ctx2.profile && ctx2.path == null)
+      ctx2.path = '?';
+    this.profile = (typeof(ctx2.profile) != 'undefined') ?  ctx2.profile : context.profile;
+    this.fullPath = (context.fullPath || '') + (ctx2.comp ? `[${ctx2.comp}]` : '') + (ctx2.path ? '~' + ctx2.path : '');
+    this.path = (ctx2.comp || context.path || '') + (ctx2.path ? '~' + ctx2.path : '');
+    this.data= (typeof ctx2.data != 'undefined') ? ctx2.data : context.data;     // allowing setting data:null
+    this.vars= ctx2.vars ? jb_extend({},context.vars,ctx2.vars) : context.vars;
+    this.params= ctx2.params || context.params;
+    this.resources= context.resources;
+    this.componentContext= (typeof ctx2.componentContext != 'undefined') ? ctx2.componentContext : context.componentContext;
+    this.ngMode= context.ngMode;
   }
 }
 jbCtx.prototype = {
   exp: function(expression,jstype) { return jb_expression(expression, this, jstype) },
   setVars: function(vars) { return new jbCtx(this,{vars: vars}) },
   setData: function(data) { return new jbCtx(this,{data: data}) },
-  run: function(profile,parentParam) { return jb_run(new jbCtx(this,{profile: profile}), parentParam) },
+  run: function(profile,parentParam, path) { return jb_run(new jbCtx(this,{profile: profile,path: path}), parentParam) },
   str: function(profile) { return this.run(profile, { as: 'string'}) },
   bool: function(profile) { return this.run(profile, { as: 'boolean'}) },
 }
 
 function jb_ctx(context,ctx2) {
   return new jbCtx(context,ctx2);
-}
-
-function jb_ctxOld(context,ctx2) {
-  if (!context)
-    return { vars: {}, params: {}, resources: {} };  // jb_ctx() means create new context
-
-  return {
-    profile: (typeof(ctx2.profile) != 'undefined') ?  ctx2.profile : context.profile,
-    data: (typeof ctx2.data != 'undefined') ? ctx2.data : context.data,     // allowing setting data:null
-    vars: ctx2.vars ? jb_extend({},context.vars,ctx2.vars) : context.vars,
-    params: ctx2.params || context.params,
-    resources: context.resources,
-    componentContext: (typeof ctx2.componentContext != 'undefined') ? ctx2.componentContext : context.componentContext,
-    ngMode: context.ngMode
-  }
 }
 
 // end: context creation functions

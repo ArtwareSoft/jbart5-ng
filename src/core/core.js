@@ -1,6 +1,7 @@
 function jb_run(context,parentParam) {
   try {
     var profile = context.profile;
+    console.log('path:' + context.path + ' , ' + context.fullPath);
     if (profile === null) return;
     if (profile.$debugger == 0) debugger;
     if (profile.$asIs) return profile.$asIs;
@@ -19,18 +20,18 @@ function jb_run(context,parentParam) {
       case 'ignore': return context.data;
       case 'pipeline': return jb_tojstype(jbart.comps.pipeline.impl(jb_ctx(context,{profile: { items : profile }})),jstype, context);
       case 'rx-pipeline': return jb_tojstype(jbart.comps.rxPipe.impl(jb_ctx(context,{profile: { items : profile }})),jstype,context);
-      case 'foreach': return profile.forEach(function(inner) { jb_run(jb_ctx(context,{profile: inner})) });
+      case 'foreach': return profile.forEach(function(inner,i) { jb_run(jb_ctx(context,{profile: inner, path: i})) });
       case 'if': 
 		return jb_run(run.ifContext, run.IfParentParam) ? 
           jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam);      
       case 'profile':
         for(var varname in profile.$vars || {})
-          run.ctx.vars[varname] = jb_run(jb_ctx(run.ctx,{ profile: profile.$vars[varname] }));
+          run.ctx.vars[varname] = jb_run(jb_ctx(run.ctx,{ profile: profile.$vars[varname], path: '$vars~'+varname }));
         run.paramsArray.forEach(function(paramObj) {
           switch (paramObj.type) {
             case 'function': run.ctx.params[paramObj.name] = paramObj.func; break;
             case 'array': run.ctx.params[paramObj.name] = 
-              paramObj.array.map(function(prof) { return jb_run(jb_ctx(run.ctx,{profile: prof}),paramObj.param); } ); break;  // maybe we should [].concat and handle nulls
+              paramObj.array.map(function(prof,i) { return jb_run(jb_ctx(run.ctx,{profile: prof, path: paramObj.name+'~'+i}),paramObj.param); } ); break;  // maybe we should [].concat and handle nulls
             default: run.ctx.params[paramObj.name] = jb_run(paramObj.context, paramObj.param);
           }
         });
@@ -84,11 +85,11 @@ function jb_run(context,parentParam) {
     } else if (profile.$if) 
     return {
         type: 'if',
-        ifContext: jb_ctx(context,{profile: profile.$if}),
+        ifContext: jb_ctx(context,{profile: profile.$if, path: '$if'}),
         IfParentParam: { type: 'boolean', as:'boolean' },
-        thenContext: jb_ctx(context,{profile: profile.then || 0 }),
+        thenContext: jb_ctx(context,{profile: profile.then || 0 , path: '~then'}),
         thenParentParam: { type: parentParam_type, as:jstype },
-        elseContext: jb_ctx(context,{profile: profile['else'] || 0 }),
+        elseContext: jb_ctx(context,{profile: profile['else'] || 0 , path: '~else'}),
         elseParentParam: { type: parentParam_type, as:jstype }
       }
     var comp_name = jb_compName(profile);
@@ -120,7 +121,7 @@ function jb_run(context,parentParam) {
           paramsArray.push( { name: p, type: 'function', func: func } );
         } else if (param.type && param.type.indexOf('[]') > -1 && jb_isArray(valOrDefault)) // array of profiles
           paramsArray.push( { name: p, type: 'array', array: valOrDefault, param: {} } );
-        else paramsArray.push( { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault}), param: param } );
+        else paramsArray.push( { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault, path: p}), param: param } );
       }
       first = false;
     }
@@ -128,7 +129,7 @@ function jb_run(context,parentParam) {
     if (typeof comp.impl === 'function')
       return { type: 'profile', impl: jb_func(comp_name.replace(/[^a-zA-Z0-9]/g,'_'),comp.impl), ctx: ctx, paramsArray: paramsArray }
     else
-      return { type:'profile', ctx: jb_ctx(ctx,{profile: comp.impl }), paramsArray: paramsArray };
+      return { type:'profile', ctx: jb_ctx(ctx,{profile: comp.impl, comp: comp_name, path: ''}), paramsArray: paramsArray };
   }
 
   function prepareGCArgs(ctx) {
@@ -138,9 +139,9 @@ function jb_run(context,parentParam) {
 
 function jb_funcDynamicParam(ctx,profileToRun,param,paramName) {
    if (param && param.type && param.type.indexOf('[') != -1 && jb_isArray(profileToRun)) // array
-    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map(prof=>(ctx2||ctx).setData(data2).run(prof,param))))
+    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map(prof=>(ctx2||ctx).setData(data2).run(prof,param,paramName))))
   else // single
-    var res = jb_func(paramName,(ctx2,data2) => profileToRun && (ctx2||ctx).setData(data2).run(profileToRun,param))
+    var res = jb_func(paramName,(ctx2,data2) => profileToRun && (ctx2||ctx).setData(data2).run(profileToRun,param,paramName))
   return res;
 }
 

@@ -308,7 +308,7 @@ jb_component('and',{
 	impl: function(context) {
 		var items = context.profile.$and || context.profile.items || [];
 		for(var i=0;i<items.length;i++) {
-			if (!jb_run(jb_ctx(context,{ profile: items[i]}),{ type: 'boolean' }))
+			if (!jb_run(jb_ctx(context,{ profile: items[i], path: i}),{ type: 'boolean' }))
 				return false;
 		}
 		return true;
@@ -321,7 +321,7 @@ jb_component('or',{
 	impl: function(context) {
 		var items = context.profile.$or || context.profile.items || [];
 		for(var i=0;i<items.length;i++) {
-			if (jb_run(jb_ctx(context,{ profile: items[i]}),{ type: 'boolean' }))
+			if (jb_run(jb_ctx(context,{ profile: items[i], path: i}),{ type: 'boolean' }))
 				return true;
 		}
 		return false;

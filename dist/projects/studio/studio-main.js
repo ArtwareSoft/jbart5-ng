@@ -213,7 +213,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                             window.jb_studio_window = true; // let studio widgets run in a special mode
                             waitForIframeLoad(iframe).then(function () {
                                 var w = iframe.contentWindow;
-                                w.jbart.studioGlobals = ctx.run('{%$globals%}');
+                                w.jbart.studioGlobals = ctx.exp('{%$globals%}');
                                 jbart.previewWindow = w;
                                 jbart.previewjbart = w.jbart;
                                 jbart.preview_jbart_widgets = w.jbart_widgets;
@@ -221,7 +221,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                 // forward the studio zone to the preview widget so it will be updated
                                 jb_ui.getZone('studio.all').then(function (zone) {
                                     zone.onStable.subscribe(function () {
-                                        w.jbart.studioGlobals = ctx.run('{%$globals%}');
+                                        w.jbart.studioGlobals = ctx.exp('{%$globals%}');
                                         // refresh preview
                                         jb_core_1.jb.entries(w.jbart.zones).forEach(function (x) { return x[1].run(function () { }); });
                                         //w.setTimeout(()=>{},1); 
