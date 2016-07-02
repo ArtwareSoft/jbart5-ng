@@ -223,7 +223,7 @@ export function ctrl(context) {
 
 
 export function Comp(options,ctx) {
-	return new jbComponent(ctx).jbExtend(options).createComp();
+	return new jbComponent(ctx).jbExtend(options); //.createComp();
 }
 
 function optionsOfProfile(profile) {
@@ -437,7 +437,6 @@ export function addAttribute(element, attrName, attrValue) {
 	element.setAttributeNode(newAttr);
 }
 
-
 @Component({
     selector: 'jbart',
 	template:  `<div *ngFor="let comp of comps"><jb_comp [comp]="comp"></jb_comp></div>
@@ -461,10 +460,11 @@ export class jBartWidget {
 	}
 	ngDoCheck() {
 		if (this.compId == 'studio.all' && !jbart.redrawStudio) // assign redrawStudio function
-			jbart.redrawStudio = () => 
+			jbart.redrawStudio = () => {
 				this.draw(); // this.redrawEm.next(this.compId);
+			}
 
-		if (jbart.studioGlobals) { // in studio
+		if (jbart.studioGlobals) { // preview
 			this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
 			this.redrawEm.next(this.compId);
 		}
@@ -507,8 +507,10 @@ export class jBartWidget {
 				  	cmp.draw())
 
 		function relevantSource(compID) {
+			if (compID == 'studio.all') 
+				return '';
 			var ns = compID.split('.')[0];
-			return Object.getOwnPropertyNames(jb.comps).filter(id => id.indexOf(ns + '.') == 0).map(id => jb.prettyPrint(jb.comps[id].impl)).join('');
+			return '' + jbart.previewRefreshCounter + Object.getOwnPropertyNames(jb.comps).filter(id => id.indexOf(ns + '.') == 0).map(id => jb.prettyPrint(jb.comps[id].impl)).join('');
 		}
 	}
 

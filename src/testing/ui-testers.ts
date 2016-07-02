@@ -31,9 +31,11 @@ function testComp(compID,ngZone) {
 	else if (profile.result)
 		return jb_ui.Comp({ 
 			template: '<div>{{result}}</div>',
-			init: function(cmp) {
-				cmp.result = 'start: ';
-				ctx.run(profile.result,{ as: 'observable'}).map(ctx=>ctx.data).subscribe(x=>cmp.result += x + ', ');
+			methods: {
+				init: function(cmp) {
+					cmp.result = 'start: ';
+					ctx.run(profile.result,{ as: 'observable'}).map(ctx=>ctx.data).subscribe(x=>cmp.result += x + ', ');
+				}
 			}
 		},ctx)
 }
@@ -93,10 +95,14 @@ jb.component('ng2-ui-test', {
 		checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init' },
 		waitFor: {},
 	},
-	impl: ctx=> new Promise((resolve,reject)=> {
+	impl: ctx=> 
+		new Promise((resolve,reject)=> {
 		 console.log('starting ' + ctx.vars.testID);
+		 var ctrl = ctx.params.control(ctx.setVars({ngZone:window.jbartTestsNgZone}));
+		 if (!ctrl)
+		 	return resolve({ id: ctx.vars.testID, success:false, reason: ' can not create control' });
 		 return window.jbartTestsInstance.addComp(
-				ctx.params.control(ctx.setVars({ngZone:window.jbartTestsNgZone})).jbExtend({
+				ctrl.jbExtend({
 					observable: (observable,cmp) => { 
 						observable
 						.map(x=>x.data||x) // maybe ctx

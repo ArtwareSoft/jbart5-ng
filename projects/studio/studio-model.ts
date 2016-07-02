@@ -112,7 +112,7 @@ export function evalProfile(prof_str) {
 
 // The jbart control model return string paths and methods to fix them on change
 export class ControlModel {
-	constructor(public rootPath) {}
+	constructor(public rootPath, private childrenType) { }
 
 	val(path) { 
 		return profileValFromPath(path) 
@@ -133,6 +133,26 @@ export class ControlModel {
 				return [path + '~0'];
 			else
 				return val.map((inner, i) => path + '~' + i)
+		} else if (childrenType == 'jb-editor') {
+			var comp = getComp(jb.compName(val||{}));
+			if (Array.isArray(val))
+				return val.map((inner, i) => path + '~' + i)
+			else if (comp)
+				return Array.prototype.concat.apply([], // flatmap
+					jb.entries(comp.params)
+						.map(p=> path + '~' + p[0])
+						.map(p=>({ p: p, val: profileValFromPath(p)}))
+						.filter(x=>x.val != null) // only with values
+						.map(x=> { // flatten array
+							if (Array.isArray(x.val))
+								return Object.getOwnPropertyNames(x.val)
+									.map(x=>x=='length'? '+' : x)
+									.map(k=>
+										x.p +'~'+k) 
+							return [x.p];
+						})
+				)
+
 		}
 
 		function childPath(prop) {
@@ -144,6 +164,8 @@ export class ControlModel {
 	}
 
 	icon(path) {
+		if (path.split('~').pop() == '+')
+			return 'add';
 		if (this.controlParam(path)) {
 			if (this.compName(path+'~style') == 'layout.horizontal')
 				return 'view_column'
@@ -185,6 +207,19 @@ export class ControlModel {
 		var val = profileValFromPath(path);
 		if (path.indexOf('~') == -1)
 			return path;
+
+		if (this.childrenType == 'jb-editor') {
+			var compName = jb.compName(val||{});
+			var prop = path.split('~').pop();
+			if (!isNaN(Number(prop)) || prop == '+')
+				prop = path.split('~').slice(-2).join('[') + ']';
+			if (compName)
+				return prop + ' = ' + compName;
+			if (typeof val == 'string')
+				return prop + ' = ' + val;
+			return prop;
+		}
+
 		return (val && val.title) || (val && jb.compName(val)) || path.split('~').pop();
 	}
 
@@ -193,6 +228,8 @@ export class ControlModel {
 	}
 
 	isArray(path) {
+		if (this.childrenType == 'jb-editor' && path.split('~').pop() == '+')
+			return false;
 		return this.controlParam(path);
 	}
 
@@ -315,7 +352,7 @@ export class ControlModel {
 	}
 
 	children(path,childrenType) {
-		childrenType = childrenType || 'controls';
+		childrenType = childrenType || this.childrenType || 'controls';
 		this.cache = this.cache || {};
 		var res = this.subNodes(path,childrenType);
 		if (!jb.compareArrays(res, this.cache[path]))

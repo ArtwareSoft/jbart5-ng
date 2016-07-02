@@ -2,87 +2,68 @@ System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1;
+    var ROjson;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('json-editable-tree', {
-                type: 'control',
-                params: {
-                    nodeModel: { type: 'tree.nodeModel', dynamic: true },
-                },
-                impl: { $: 'tree', cssClass: 'jb-control-tree', nodeModel: { $call: 'nodeModel' },
-                    features: [{ $: 'tree.selection' }, { $: 'tree.keyboard-selection' }] }
-            });
-            jb_core_1.jb.component('tree.json', {
+            jb_core_1.jb.component('tree.json-read-only', {
                 type: 'tree.nodeModel',
                 params: {
                     object: {},
                     rootPath: { as: 'string' }
                 },
                 impl: function (context, json, rootPath) {
-                    var model = {
-                        rootPath: rootPath,
-                        val: function (path) { return jb_core_1.jb.val(ref(path)); },
-                        subNodes: function (path) {
-                            var val = jb_core_1.jb.val(ref(path));
-                            var ar = Array.isArray(val) ? jb_core_1.jb.range(0, val.length) : [];
-                            if (typeof val == 'object')
-                                ar = Object.getOwnPropertyNames(val || {});
-                            return ar.filter(function (x) { return x; })
-                                .map(function (x) { return path + '~' + x; });
-                        },
-                        modify: function () { },
-                        icon: function () { return ''; },
-                        title: function (path, collapsed) {
-                            var _ref = ref(path);
-                            var val = jb_core_1.jb.val(_ref);
-                            if (val == null)
-                                return _ref.$jb_property + ': null';
-                            if (!collapsed && typeof val == 'object')
-                                return _ref.$jb_property;
-                            if (typeof val != 'object')
-                                return _ref.$jb_property + ': <span class="treenode-val">' + val + "</span>";
-                            return _ref.$jb_property + ': ' + Object.getOwnPropertyNames(val)
-                                .filter(function (p) { return p.indexOf('$jb') != 0; }).filter(function (p) { return typeof val[p] == 'string'; })
-                                .map(function (p) { return p + '= ' + '<span class="treenode-val">' + val[p] + "</span>"; }).join(', ');
-                        },
-                        delete: function (path) {
-                            var _ref = ref(path);
-                            if (Array.isArray(_ref.$jb_parent))
-                                _ref.$jb_parent.splice(_ref.$jb_property, 1);
-                            else
-                                delete _ref.$jb_parent[_ref.$jb_property];
-                        },
-                        isArray: function (path) {
-                            var val = jb_core_1.jb.val(ref(path));
-                            return typeof val == 'object' && val !== null;
-                        }
-                    };
-                    model.children = function (path) {
-                        model.cache = model.cache || {};
-                        var res = model.subNodes(path);
-                        if (!jb_core_1.jb.compareArrays(res, model.cache[path])) {
-                            //				console.log(path,'no cache');
-                            model.cache[path] = res;
-                        }
-                        else {
-                        }
-                        return model.cache[path];
-                    };
-                    model.rootPath = rootPath ? rootPath : 'root';
-                    model.root = jb_core_1.jb.obj(model.rootPath, json);
-                    function ref(path) {
-                        return {
-                            $jb_parent: path.split('~').slice(0, -1).reduce(function (o, p) { return o[p]; }, model.root),
-                            $jb_property: path.split('~').pop()
-                        };
-                    }
-                    return model;
+                    return new ROjson(json, rootPath);
                 }
             });
+            ROjson = (function () {
+                function ROjson(json, rootPath) {
+                    this.json = json;
+                    this.rootPath = rootPath;
+                }
+                ROjson.prototype.children = function (path) {
+                    var val = this.val(path);
+                    var out = [];
+                    if (typeof val == 'object')
+                        out = Object.getOwnPropertyNames(val || {});
+                    if (Array.isArray(val))
+                        out = out.slice(-1);
+                    return out.map(function (x) { return path + '~' + x; });
+                };
+                ROjson.prototype.val = function (path) {
+                    if (path.indexOf('~') == -1)
+                        return this.json;
+                    return path.split('~').slice(1).reduce(function (o, p) { return o[p]; }, this.json);
+                };
+                ROjson.prototype.isArray = function (path) {
+                    var val = this.val(path);
+                    return typeof val == 'object' && val !== null;
+                };
+                ROjson.prototype.icon = function () {
+                    return '';
+                };
+                ROjson.prototype.title = function (path, collapsed) {
+                    var val = this.val(path);
+                    var prop = path.split('~').pop();
+                    if (val == null)
+                        return prop + ': null';
+                    if (!collapsed && typeof val == 'object')
+                        return prop;
+                    if (typeof val != 'object')
+                        return prop + ': <span class="treenode-val">' + val + "</span>";
+                    return prop + ': ' + Object.getOwnPropertyNames(val)
+                        .filter(function (p) { return p.indexOf('$jb') != 0; })
+                        .filter(function (p) { return typeof val[p] == 'string' || typeof val[p] == 'number' || typeof val[p] == 'boolean'; })
+                        .map(function (p) {
+                        return p + '= ' + '<span class="treenode-val">' + val[p] + "</span>";
+                    })
+                        .join(', ');
+                };
+                return ROjson;
+            }());
         }
     }
 });

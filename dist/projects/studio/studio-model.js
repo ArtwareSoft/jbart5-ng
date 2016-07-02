@@ -175,8 +175,9 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
             // The jbart control model return string paths and methods to fix them on change
             ControlModel = (function () {
-                function ControlModel(rootPath) {
+                function ControlModel(rootPath, childrenType) {
                     this.rootPath = rootPath;
+                    this.childrenType = childrenType;
                 }
                 ControlModel.prototype.val = function (path) {
                     return profileValFromPath(path);
@@ -200,6 +201,26 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         else
                             return val.map(function (inner, i) { return path + '~' + i; });
                     }
+                    else if (childrenType == 'jb-editor') {
+                        var comp = getComp(jb_core_1.jb.compName(val || {}));
+                        if (Array.isArray(val))
+                            return val.map(function (inner, i) { return path + '~' + i; });
+                        else if (comp)
+                            return Array.prototype.concat.apply([], // flatmap
+                            jb_core_1.jb.entries(comp.params)
+                                .map(function (p) { return path + '~' + p[0]; })
+                                .map(function (p) { return ({ p: p, val: profileValFromPath(p) }); })
+                                .filter(function (x) { return x.val != null; }) // only with values
+                                .map(function (x) {
+                                if (Array.isArray(x.val))
+                                    return Object.getOwnPropertyNames(x.val)
+                                        .map(function (x) { return x == 'length' ? '+' : x; })
+                                        .map(function (k) {
+                                        return x.p + '~' + k;
+                                    });
+                                return [x.p];
+                            }));
+                    }
                     function childPath(prop) {
                         if (Array.isArray(val[prop]))
                             return val[prop].map(function (inner, i) { return path + '~' + prop + '~' + i; });
@@ -208,6 +229,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     }
                 };
                 ControlModel.prototype.icon = function (path) {
+                    if (path.split('~').pop() == '+')
+                        return 'add';
                     if (this.controlParam(path)) {
                         if (this.compName(path + '~style') == 'layout.horizontal')
                             return 'view_column';
@@ -244,12 +267,25 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var val = profileValFromPath(path);
                     if (path.indexOf('~') == -1)
                         return path;
+                    if (this.childrenType == 'jb-editor') {
+                        var compName = jb_core_1.jb.compName(val || {});
+                        var prop = path.split('~').pop();
+                        if (!isNaN(Number(prop)) || prop == '+')
+                            prop = path.split('~').slice(-2).join('[') + ']';
+                        if (compName)
+                            return prop + ' = ' + compName;
+                        if (typeof val == 'string')
+                            return prop + ' = ' + val;
+                        return prop;
+                    }
                     return (val && val.title) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
                 };
                 ControlModel.prototype.shortTitle = function (path) {
                     return this.title(path, false);
                 };
                 ControlModel.prototype.isArray = function (path) {
+                    if (this.childrenType == 'jb-editor' && path.split('~').pop() == '+')
+                        return false;
                     return this.controlParam(path);
                 };
                 ControlModel.prototype.modify = function (op, path, args, ctx) {
@@ -362,7 +398,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     jb_core_1.jb.writeValue(profileRefFromPath(path), evalProfile(res));
                 };
                 ControlModel.prototype.children = function (path, childrenType) {
-                    childrenType = childrenType || 'controls';
+                    childrenType = childrenType || this.childrenType || 'controls';
                     this.cache = this.cache || {};
                     var res = this.subNodes(path, childrenType);
                     if (!jb_core_1.jb.compareArrays(res, this.cache[path]))

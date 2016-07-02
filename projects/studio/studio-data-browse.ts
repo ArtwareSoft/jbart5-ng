@@ -12,7 +12,7 @@ jb.component('studio.open-resource', {
 		title: '%$id%',
 		style :{$: 'dialog.studio-floating', id: 'resource %$id%', width: 500 },
 		content :{$: 'tree', cssClass: 'jb-control-tree', 
-		    nodeModel :{$: 'tree.json', 
+		    nodeModel :{$: 'tree.json-read-only', 
 		      object: '%$resource%', rootPath: '%$id%' 
 		    },
 		    features: [
@@ -22,3 +22,4 @@ jb.component('studio.open-resource', {
 		 },
 	}
 })
+

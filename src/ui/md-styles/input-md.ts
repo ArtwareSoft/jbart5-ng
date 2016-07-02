@@ -10,7 +10,7 @@ jb.component('editable-text.md-input',{
   type: 'editable-text.style',
   params: {
     width: { as: 'number' }
-  }
+  },
   impl :{$: 'customStyle', 
     $vars: {
        widthCss: ctx =>

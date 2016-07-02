@@ -35,9 +35,11 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
         else if (profile.result)
             return jb_ui.Comp({
                 template: '<div>{{result}}</div>',
-                init: function (cmp) {
-                    cmp.result = 'start: ';
-                    ctx.run(profile.result, { as: 'observable' }).map(function (ctx) { return ctx.data; }).subscribe(function (x) { return cmp.result += x + ', '; });
+                methods: {
+                    init: function (cmp) {
+                        cmp.result = 'start: ';
+                        ctx.run(profile.result, { as: 'observable' }).map(function (ctx) { return ctx.data; }).subscribe(function (x) { return cmp.result += x + ', '; });
+                    }
                 }
             }, ctx);
     }
@@ -133,42 +135,47 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                     checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init' },
                     waitFor: {},
                 },
-                impl: function (ctx) { return new Promise(function (resolve, reject) {
-                    console.log('starting ' + ctx.vars.testID);
-                    return window.jbartTestsInstance.addComp(ctx.params.control(ctx.setVars({ ngZone: window.jbartTestsNgZone })).jbExtend({
-                        observable: function (observable, cmp) {
-                            observable
-                                .map(function (x) { return x.data || x; }) // maybe ctx
-                                .map(function (x) { console.log(ctx.vars.testID, x); return x; })
-                                .filter(function (x) { return x == ctx.params.checkAfterCmpEvent; })
-                                .do(function () {
-                                var promise = ctx.params.waitFor;
-                                if (!promise || !promise.then)
-                                    promise = Promise.resolve(1);
-                                promise.then(checkIt, checkIt);
-                                function checkIt() {
-                                    return jb_1.jb.delay(1).then(function () {
-                                        var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
-                                        cmp.elementRef.nativeElement.setAttribute('test', ctx.vars.testID);
-                                        //if (ctx.vars.testID == 'picklist') debugger;
-                                        if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
-                                            html = $('jb-dialog-parent').html();
-                                        resolve({
-                                            id: ctx.vars.testID,
-                                            success: ctx.params.expectedHtmlResult(ctx.setData(html))
+                impl: function (ctx) {
+                    return new Promise(function (resolve, reject) {
+                        console.log('starting ' + ctx.vars.testID);
+                        var ctrl = ctx.params.control(ctx.setVars({ ngZone: window.jbartTestsNgZone }));
+                        if (!ctrl)
+                            return resolve({ id: ctx.vars.testID, success: false, reason: ' can not create control' });
+                        return window.jbartTestsInstance.addComp(ctrl.jbExtend({
+                            observable: function (observable, cmp) {
+                                observable
+                                    .map(function (x) { return x.data || x; }) // maybe ctx
+                                    .map(function (x) { console.log(ctx.vars.testID, x); return x; })
+                                    .filter(function (x) { return x == ctx.params.checkAfterCmpEvent; })
+                                    .do(function () {
+                                    var promise = ctx.params.waitFor;
+                                    if (!promise || !promise.then)
+                                        promise = Promise.resolve(1);
+                                    promise.then(checkIt, checkIt);
+                                    function checkIt() {
+                                        return jb_1.jb.delay(1).then(function () {
+                                            var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
+                                            cmp.elementRef.nativeElement.setAttribute('test', ctx.vars.testID);
+                                            //if (ctx.vars.testID == 'picklist') debugger;
+                                            if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
+                                                html = $('jb-dialog-parent').html();
+                                            resolve({
+                                                id: ctx.vars.testID,
+                                                success: ctx.params.expectedHtmlResult(ctx.setData(html))
+                                            });
+                                            dialog_1.jb_dialogs.dialogs
+                                                .filter(function (d) { return d.context.vars.testID == ctx.vars.testID; })
+                                                .forEach(function (d) {
+                                                return d.close();
+                                            });
                                         });
-                                        dialog_1.jb_dialogs.dialogs
-                                            .filter(function (d) { return d.context.vars.testID == ctx.vars.testID; })
-                                            .forEach(function (d) {
-                                            return d.close();
-                                        });
-                                    });
-                                }
-                            })
-                                .catch(function (e) { debugger; resolve({ id: ctx.vars.testID, success: false }); })
-                                .subscribe(function () { });
-                        } }));
-                }); }
+                                    }
+                                })
+                                    .catch(function (e) { debugger; resolve({ id: ctx.vars.testID, success: false }); })
+                                    .subscribe(function () { });
+                            } }));
+                    });
+                }
             });
             jb_1.jb.component('ui-tests.show-tests', {
                 impl: { $: 'itemlog',

@@ -14,6 +14,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     { "name": "Bart Simpson", "age": 12, "male": true }
                 ]
             });
+            //jb.resource('studio-helper','settings', { "currentProfilePath": "studio-helper.sample-control"})
             jb_1.jb.resource('studio-helper', 'group-with-custom-style', { $: 'group',
                 title: 'main',
                 style: { $: 'customStyle',
@@ -29,6 +30,44 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     },
                     { $: 'label', title: '1.0' },
                 ] });
+            // fake current path
+            jb_1.jb.component('studio-helper.control-tree', {
+                type: 'control',
+                params: {
+                    path: { defaultValue: 'studio-helper.sample-control' }
+                },
+                impl: { $: 'studio.control-tree',
+                    $vars: {
+                        simulateProfilePath: '%$path%'
+                    }
+                }
+            });
+            jb_1.jb.component('studio-helper.jb-editor', {
+                type: 'control',
+                params: {
+                    path: { defaultValue: 'studio-helper.itemlist-with-find~controls~1' }
+                },
+                impl: { $: 'group',
+                    title: 'main',
+                    controls: [
+                        { $: 'studio.jb-editor', path: '%$path%' },
+                    ],
+                    features: { $: 'css', css: '{ height: 200px; padding: 50px }' }
+                }
+            });
+            jb_1.jb.component('studio-helper.sample-control', {
+                type: 'control',
+                impl: { $: 'group',
+                    title: 'main',
+                    controls: [
+                        { $: 'group', title: '2.0', controls: [
+                                { $: 'label', title: '2.1' },
+                                { $: 'button', title: '2.2' },
+                            ]
+                        },
+                        { $: 'label', title: '1.0' },
+                    ] }
+            });
             jb_1.jb.component('studio-helper.edit-style', {
                 type: 'control',
                 impl: { $: 'group',

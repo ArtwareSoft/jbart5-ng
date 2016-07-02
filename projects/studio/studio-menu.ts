@@ -10,6 +10,12 @@ jb.component('studio.main-menu', {
         title: 'File', 
         controls: [
           {$: 'pulldown.menu-item', 
+            title: 'New Project', 
+            icon: 'new', 
+            shortcut: '', 
+            action :{$: 'studio.saveComponents' }
+          }, 
+          {$: 'pulldown.menu-item', 
             title: 'Open Project ...', 
             action :{$: 'studio.open-project' }
           }, 
@@ -34,9 +40,14 @@ jb.component('studio.main-menu', {
         title: 'View', 
         controls: [
           {$: 'pulldown.menu-item', 
-            title: 'Refresh', 
+            title: 'Refresh Preview', 
             spritePosition: '10,0', 
             action :{$: 'studio.refreshPreview' }
+          }, 
+          {$: 'pulldown.menu-item', 
+            title: 'Redraw Studio', 
+            spritePosition: '10,0', 
+            action :{$: 'studio.redrawStudio' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Edit source', 
@@ -60,15 +71,12 @@ jb.component('studio.main-menu', {
         controls: [
           {$: 'pulldown.menu-item', 
             title: 'Field', 
-            action :{$: 'studio.refreshPreview' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Control', 
-            action :{$: 'studio.editSource' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Group', 
-            action :{$: 'studio.open-control-tree' }
           }
         ]
       }, 

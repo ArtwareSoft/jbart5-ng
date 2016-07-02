@@ -32,7 +32,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     }
     exports_1("ctrl", ctrl);
     function Comp(options, ctx) {
-        return new jbComponent(ctx).jbExtend(options).createComp();
+        return new jbComponent(ctx).jbExtend(options); //.createComp();
     }
     exports_1("Comp", Comp);
     function optionsOfProfile(profile) {
@@ -528,8 +528,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     var _this = this;
                     if (this.compId == 'studio.all' && !jbart.redrawStudio)
                         jbart.redrawStudio = function () {
-                            return _this.draw();
-                        }; // this.redrawEm.next(this.compId);
+                            _this.draw(); // this.redrawEm.next(this.compId);
+                        };
                     if (jbart.studioGlobals) {
                         this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
                         this.redrawEm.next(this.compId);
@@ -572,8 +572,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         return cmp.draw();
                     });
                     function relevantSource(compID) {
+                        if (compID == 'studio.all')
+                            return '';
                         var ns = compID.split('.')[0];
-                        return Object.getOwnPropertyNames(jb_core_1.jb.comps).filter(function (id) { return id.indexOf(ns + '.') == 0; }).map(function (id) { return jb_core_1.jb.prettyPrint(jb_core_1.jb.comps[id].impl); }).join('');
+                        return '' + jbart.previewRefreshCounter + Object.getOwnPropertyNames(jb_core_1.jb.comps).filter(function (id) { return id.indexOf(ns + '.') == 0; }).map(function (id) { return jb_core_1.jb.prettyPrint(jb_core_1.jb.comps[id].impl); }).join('');
                     }
                 };
                 jBartWidget.prototype.getOrCreateInitialCtx = function () {

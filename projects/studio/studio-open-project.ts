@@ -49,9 +49,9 @@ jb.component('studio.choose-project', {
           }, 
           action: [
             {$: 'closeContainingPopup' }, 
-            {$: 'writeValue', value: '%project%', to: '%$globals/project%' }
-            {$: 'writeValue', value: 'main', to: '%$globals/page%' }
-            {$: 'writeValue', value: '', to: '%$globals/profile_path%' }
+            {$: 'writeValue', value: '%project%', to: '%$globals/project%' },
+            {$: 'writeValue', value: 'main', to: '%$globals/page%' },
+            {$: 'writeValue', value: '', to: '%$globals/profile_path%' },
           ]
         }
       }

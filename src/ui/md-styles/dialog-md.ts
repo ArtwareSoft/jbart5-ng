@@ -27,8 +27,7 @@ jb.component('dialog.md-dialog-ok-cancel', {
 						</div>
 				</div>		
 		`,
-	  css: `.dialog-buttons { display: flex; justify-content: flex-end; margin: 5px }`
-
+	  css: `.dialog-buttons { display: flex; justify-content: flex-end; margin: 5px }`,
       directives: 'MdButton'
 	}
 })

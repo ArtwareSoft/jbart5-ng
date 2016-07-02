@@ -54,7 +54,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     { $: 'closeContainingPopup' },
                                     { $: 'writeValue', value: '%project%', to: '%$globals/project%' },
                                     { $: 'writeValue', value: 'main', to: '%$globals/page%' },
-                                    { $: 'writeValue', value: '', to: '%$globals/profile_path%' }
+                                    { $: 'writeValue', value: '', to: '%$globals/profile_path%' },
                                 ]
                             }
                         }

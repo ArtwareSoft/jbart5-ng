@@ -11,6 +11,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_core_1, jb_ui, jb_rx, Rx_1, core_1;
+    var TreeNodeLine, TreeNode;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -39,9 +40,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                     features: { type: "feature[]", dynamic: true }
                 },
                 impl: function (context) {
-                    if (!context.params.nodeModel())
+                    var nodeModel = context.params.nodeModel();
+                    if (!nodeModel)
                         return jb_core_1.jb.logException('missing nodeModel in tree');
-                    var tree = { nodeModel: context.params.nodeModel(ctx) };
+                    var tree = { nodeModel: nodeModel };
                     var ctx = context.setVars({ $tree: tree });
                     return jb_ui.ctrl(ctx).jbExtend({
                         host: { 'class': 'jb-tree' },
@@ -58,69 +60,76 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
             });
             jb_core_1.jb.component('tree.ul-li', {
                 type: 'tree.style',
-                impl: function (context) {
-                    var tree = context.vars.$tree;
-                    var TreeNodeLine = (function () {
-                        function TreeNodeLine() {
-                        }
-                        TreeNodeLine.prototype.ngOnInit = function () {
-                            this.tree = tree;
-                            this.model = tree.nodeModel;
-                        };
-                        TreeNodeLine.prototype.ngDoCheck = function () {
-                            this.title = this.model.title(this.path, !this.tree.expanded[this.path]);
-                            this.icon = tree.nodeModel.icon ? tree.nodeModel.icon(this.path) : 'radio_button_unchecked';
-                        };
-                        TreeNodeLine.prototype.flip = function (x) {
-                            tree.expanded[this.path] = !(tree.expanded[this.path]);
-                        };
-                        ;
-                        __decorate([
-                            core_1.Input('path'), 
-                            __metadata('design:type', Object)
-                        ], TreeNodeLine.prototype, "path", void 0);
-                        TreeNodeLine = __decorate([
-                            core_1.Component({
-                                selector: 'node_line',
-                                template: "<div class=\"treenode-line\" [ngClass]=\"{collapsed: !tree.expanded[path]}\">\n\t\t\t\t\t\t<button class=\"treenode-expandbox\" (click)=\"flip()\" [ngClass]=\"{nochildren: !model.isArray(path)}\">\n\t\t\t\t\t\t\t<div class=\"frame\"></div><div class=\"line-lr\"></div><div class=\"line-tb\"></div>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<i class=\"material-icons\">{{icon}}</i>\n\t\t\t\t\t\t<span class=\"treenode-label\" [innerHTML]=\"title\"></span>\n\t\t\t\t\t  </div>",
-                                styles: ["i {font-size: 16px; margin-left: -4px; padding-right:2px }"]
-                            }), 
-                            __metadata('design:paramtypes', [])
-                        ], TreeNodeLine);
-                        return TreeNodeLine;
-                    }());
-                    var TreeNode = (function () {
-                        function TreeNode(elementRef) {
-                            this.elementRef = elementRef;
-                        }
-                        TreeNode.prototype.ngOnInit = function () {
-                            this.tree = tree;
-                        };
-                        TreeNode.prototype.ngDoCheck = function () {
-                            if (tree.nodeModel.isArray(this.path))
-                                $(this.elementRef.nativeElement).addClass('jb-array-node');
-                            $(this.elementRef.nativeElement).attr('path', this.path);
-                        };
-                        __decorate([
-                            core_1.Input('path'), 
-                            __metadata('design:type', Object)
-                        ], TreeNode.prototype, "path", void 0);
-                        TreeNode = __decorate([
-                            core_1.Component({
-                                selector: 'jb_node',
-                                template: "<node_line [path]=\"path\"></node_line>\n\t\t\t\t<ul *ngIf=\"tree.expanded[path]\" class=\"treenode-children\">\n\t\t\t\t  <li *ngFor=\"let childPath of tree.nodeModel.children(path)\" class=\"treenode-li\">\n\t\t\t\t\t<jb_node [path]=\"childPath\" class=\"treenode\" [ngClass]=\"{selected: tree.selected == childPath}\"></jb_node>\n\t\t\t\t  </li>\n\t\t\t\t</ul>",
-                                directives: [TreeNodeLine, TreeNode]
-                            }), 
-                            __metadata('design:paramtypes', [core_1.ElementRef])
-                        ], TreeNode);
-                        return TreeNode;
-                    }());
-                    return {
-                        template: '<jb_node [path]="tree.nodeModel.rootPath" class="treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node>',
-                        directives: [TreeNode, TreeNodeLine]
-                    };
+                impl: { $: 'customStyle',
+                    template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
+                    directives: ['TreeNode', 'TreeNodeLine'],
                 }
             });
+            // part of ul-li
+            TreeNodeLine = (function () {
+                function TreeNodeLine() {
+                }
+                TreeNodeLine.prototype.ngOnInit = function () {
+                    //		this.tree = tree;
+                    this.model = this.tree.nodeModel;
+                };
+                TreeNodeLine.prototype.ngDoCheck = function () {
+                    this.title = this.model.title(this.path, !this.tree.expanded[this.path]);
+                    this.icon = this.tree.nodeModel.icon ? this.tree.nodeModel.icon(this.path) : 'radio_button_unchecked';
+                };
+                TreeNodeLine.prototype.flip = function (x) {
+                    this.tree.expanded[this.path] = !(this.tree.expanded[this.path]);
+                };
+                ;
+                __decorate([
+                    core_1.Input('path'), 
+                    __metadata('design:type', Object)
+                ], TreeNodeLine.prototype, "path", void 0);
+                __decorate([
+                    core_1.Input('tree'), 
+                    __metadata('design:type', Object)
+                ], TreeNodeLine.prototype, "tree", void 0);
+                TreeNodeLine = __decorate([
+                    core_1.Component({
+                        selector: 'node_line',
+                        template: "<div class=\"treenode-line\" [ngClass]=\"{collapsed: !tree.expanded[path]}\">\n\t\t\t\t<button class=\"treenode-expandbox\" (click)=\"flip()\" [ngClass]=\"{nochildren: !model.isArray(path)}\">\n\t\t\t\t\t<div class=\"frame\"></div><div class=\"line-lr\"></div><div class=\"line-tb\"></div>\n\t\t\t\t</button>\n\t\t\t\t<i class=\"material-icons\">{{icon}}</i>\n\t\t\t\t<span class=\"treenode-label\" [innerHTML]=\"title\"></span>\n\t\t\t  </div>",
+                        styles: ["i {font-size: 16px; margin-left: -4px; padding-right:2px }"]
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], TreeNodeLine);
+                return TreeNodeLine;
+            }());
+            TreeNode = (function () {
+                function TreeNode(elementRef) {
+                    this.elementRef = elementRef;
+                }
+                TreeNode.prototype.ngOnInit = function () {
+                    //		this.tree = tree;
+                };
+                TreeNode.prototype.ngDoCheck = function () {
+                    if (this.tree.nodeModel.isArray(this.path))
+                        $(this.elementRef.nativeElement).addClass('jb-array-node');
+                    $(this.elementRef.nativeElement).attr('path', this.path);
+                };
+                __decorate([
+                    core_1.Input('path'), 
+                    __metadata('design:type', Object)
+                ], TreeNode.prototype, "path", void 0);
+                __decorate([
+                    core_1.Input('tree'), 
+                    __metadata('design:type', Object)
+                ], TreeNode.prototype, "tree", void 0);
+                TreeNode = __decorate([
+                    core_1.Component({
+                        selector: 'jb_node',
+                        template: "<node_line [tree]=\"tree\" [path]=\"path\"></node_line>\n\t\t<ul *ngIf=\"tree.expanded[path]\" class=\"treenode-children\">\n\t\t  <li *ngFor=\"let childPath of tree.nodeModel.children(path)\" class=\"treenode-li\">\n\t\t\t<jb_node [tree]=\"tree\" [path]=\"childPath\" class=\"treenode\" [ngClass]=\"{selected: tree.selected == childPath}\"></jb_node>\n\t\t  </li>\n\t\t</ul>",
+                        directives: [TreeNodeLine, TreeNode]
+                    }), 
+                    __metadata('design:paramtypes', [core_1.ElementRef])
+                ], TreeNode);
+                return TreeNode;
+            }());
+            jb_ui.registerDirectives({ TreeNode: TreeNode, TreeNodeLine: TreeNodeLine });
             jb_core_1.jb.component('tree.selection', {
                 type: 'feature',
                 params: {
@@ -184,9 +193,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                         init: function (cmp) {
                             var tree = cmp.tree;
                             cmp.keydown = cmp.keydown || new Rx_1.Subject();
-                            cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () { cmp.elementRef.nativeElement.focus(); return false; });
+                            cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
+                                cmp.elementRef.nativeElement.focus();
+                                return false;
+                            });
                             if (context.params.autoFocus)
-                                setTimeout(function () { return cmp.elementRef.nativeElement.focus(); }, 1);
+                                setTimeout(function () {
+                                    return cmp.elementRef.nativeElement.focus();
+                                }, 1);
                             cmp.keydown.filter(function (e) {
                                 return e.keyCode == 13;
                             })

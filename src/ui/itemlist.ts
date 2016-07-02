@@ -50,14 +50,6 @@ function jb_itemlist_comp(model,context) {
       @ViewChild('jb_item_repl', {read: ViewContainerRef}) childView;
       constructor(private componentResolver:ComponentResolver) {}
 
-      // ngOnInit() {
-      //   this.componentResolver
-      //     .resolveComponent(this.comp)
-      //     .then(componentFactory => {
-      //       this.childView.createComponent(componentFactory)
-      //     });
-      // }
-
       ngAfterViewInit() {
         var cmp = this;
         var vars = {item: cmp.item};
@@ -103,6 +95,7 @@ jb.component('itemlist.selection', {
   params: {
     databind: { as: 'ref' },
     onSelection: { type: 'action', dynamic: true },
+    onDoubleClick: { type: 'action', dynamic: true },
     autoSelectFirst: { type: 'boolean'}
   },
   impl: function(context) {
@@ -126,6 +119,12 @@ jb.component('itemlist.selection', {
          itemlist.selectionEmitter.next(jb.val(context.params.databind));
         else if (context.params.autoSelectFirst && itemlist.items[0])
           itemlist.selectionEmitter.next(itemlist.items[0]);
+
+        cmp.click.buffer(cmp.click.debounceTime(250)) // double click
+          .map(list => list.length)
+          .filter(x => x === 2)
+          .subscribe(x=>context.params.onDoubleClick(context.setData(itemlist.selected)))
+
 
         cmp.click.map(event => 
           itemlist.elemToItem(event.target))
@@ -156,7 +155,8 @@ jb.component('itemlist.keyboard-selection', {
         var itemlist = cmp.itemlist
         cmp.keydown = new jb_rx.Subject();
         if (context.params.autoFocus)
-            setTimeout(()=> cmp.elementRef.nativeElement.focus(),1);
+            setTimeout(()=> 
+              cmp.elementRef.nativeElement.focus(),1);
 
         cmp.keydown.filter(e=>e.keyCode == 38 || e.keyCode == 40)
             .map(event => {

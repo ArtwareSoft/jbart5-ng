@@ -131,31 +131,29 @@ jb.component('studio.open-responsive-phone-popup', {
       tabs :{$: 'dynamic-controls', 
         controlItems: [
           {
-            id: 'phone', 
             width: { min: 320, max: 479, default: 400 }, 
-            height: { min: 300, max: 700, default: 600 }
+            height: { min: 300, max: 700, default: 600 }, 
+            id: 'phone'
           }, 
           {
-            id: 'tablet', 
             width: { min: 480, max: 1024, default: 600 }, 
-            height: { min: 800, max: 1440, default: 850 }
+            height: { min: 300, max: 1440, default: 850 }, 
+            id: 'tablet'
           }, 
           {
-            id: 'desktop', 
             width: { min: 1024, max: 2048, default: 1280 }, 
-            height: { min: 800, max: 1440, default: 850 }
+            height: { min: 300, max: 1440, default: 520 }, // avoid scroll by default 
+            id: 'desktop'
           }
         ], 
         genericControl :{$: 'group', 
-          title: '%$controlItem/id%', 
-          style :{$: 'property-sheet.titles-above' }, 
           controls: [
             {$: 'editable-number', 
               databind: '%$globals/responsive/{%$controlItem/id%}/width%', 
-              title: 'width', 
-              style :{$: 'editable-number.slider' }, 
               min: '%$controlItem/width/min%', 
               max: '%$controlItem/width/max%', 
+              style :{$: 'editable-number.slider' }, 
+              title: 'width', 
               features: [
                 {$: 'field.default', value: '%$controlItem/width/default%' }, 
                 {$: 'field.subscribe', 
@@ -166,10 +164,10 @@ jb.component('studio.open-responsive-phone-popup', {
             }, 
             {$: 'editable-number', 
               databind: '%$globals/responsive/{%$controlItem/id%}/height%', 
-              title: 'height', 
-              style :{$: 'editable-number.slider' }, 
               min: '%$controlItem/height/min%', 
               max: '%$controlItem/height/max%', 
+              style :{$: 'editable-number.slider' }, 
+              title: 'height', 
               features: [
                 {$: 'field.default', value: '%$controlItem/height/default%' }, 
                 {$: 'field.subscribe', 
@@ -179,6 +177,8 @@ jb.component('studio.open-responsive-phone-popup', {
               ]
             }
           ], 
+          style :{$: 'property-sheet.titles-above' }, 
+          title: '%$controlItem/id%', 
           features: [{$: 'css', css: '{ padding-left: 12px; padding-top: 7px }' }]
         }
       }, 

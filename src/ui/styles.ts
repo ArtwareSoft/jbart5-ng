@@ -11,14 +11,14 @@ jb.component('customStyle', {
 		methods: { as: 'object'},
 		atts: { as: 'object'},
 		noViewEncapsulation: { as: 'boolean', type: 'boolean'},
-		directives: { as: 'array'}
+		directives: { ignore: true }
 	},
-	impl: function (context,template,css,features,methods,atts,noViewEncapsulation,directives) {
+	impl: function (context,template,css,features,methods,atts,noViewEncapsulation) {
 		var options = jb.extend({
 				jbTemplate: template,
 				css: css,
 				atts: atts,
-				directives: directives,
+				directives: context.profile.directives,
 				featuresOptions: features()
 			},methods);
 		if (noViewEncapsulation)

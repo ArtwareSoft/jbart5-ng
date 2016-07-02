@@ -39,8 +39,8 @@ jb.component('studio.toolbar', {
         style :{$: 'button.md-icon', icon: 'save' }
       }, 
       {$: 'button', 
-        title: 'Refresh', 
-        action :{$: 'studio.redraw' }, 
+        title: 'Refresh Preview', 
+        action :{$: 'studio.refreshPreview' }, 
         style :{$: 'button.md-icon', icon: 'refresh' }
       }, 
       {$: 'button', 
@@ -144,10 +144,4 @@ jb.component('studio-toolbar', {
   }
 })
 
-
-jb.component('studio.redraw',{
-	type: 'action',
-	impl: () => 
-    jbart.redrawStudio && jbart.redrawStudio()
-})
 

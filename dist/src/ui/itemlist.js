@@ -16,13 +16,6 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
             function ItemListChild(componentResolver) {
                 this.componentResolver = componentResolver;
             }
-            // ngOnInit() {
-            //   this.componentResolver
-            //     .resolveComponent(this.comp)
-            //     .then(componentFactory => {
-            //       this.childView.createComponent(componentFactory)
-            //     });
-            // }
             ItemListChild.prototype.ngAfterViewInit = function () {
                 var cmp = this;
                 var vars = { item: cmp.item };
@@ -128,6 +121,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                 params: {
                     databind: { as: 'ref' },
                     onSelection: { type: 'action', dynamic: true },
+                    onDoubleClick: { type: 'action', dynamic: true },
                     autoSelectFirst: { type: 'boolean' }
                 },
                 impl: function (context) {
@@ -151,6 +145,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                                 itemlist.selectionEmitter.next(jb_1.jb.val(context.params.databind));
                             else if (context.params.autoSelectFirst && itemlist.items[0])
                                 itemlist.selectionEmitter.next(itemlist.items[0]);
+                            cmp.click.buffer(cmp.click.debounceTime(250)) // double click
+                                .map(function (list) { return list.length; })
+                                .filter(function (x) { return x === 2; })
+                                .subscribe(function (x) { return context.params.onDoubleClick(context.setData(itemlist.selected)); });
                             cmp.click.map(function (event) {
                                 return itemlist.elemToItem(event.target);
                             })
@@ -180,7 +178,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                             var itemlist = cmp.itemlist;
                             cmp.keydown = new jb_rx.Subject();
                             if (context.params.autoFocus)
-                                setTimeout(function () { return cmp.elementRef.nativeElement.focus(); }, 1);
+                                setTimeout(function () {
+                                    return cmp.elementRef.nativeElement.focus();
+                                }, 1);
                             cmp.keydown.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
                                 .map(function (event) {
                                 event.stopPropagation();

@@ -45,8 +45,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             style: { $: 'button.md-icon', icon: 'save' }
                         },
                         { $: 'button',
-                            title: 'Refresh',
-                            action: { $: 'studio.redraw' },
+                            title: 'Refresh Preview',
+                            action: { $: 'studio.refreshPreview' },
                             style: { $: 'button.md-icon', icon: 'refresh' }
                         },
                         { $: 'button',
@@ -139,12 +139,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: { $: 'group.initGroup' },
                     template: '<section class="jb-group"><jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
                     css: "{ \n            display: flex;\n            height: 33px; \n            width: 100%;\n        }\n        * { margin-right: 0 }"
-                }
-            });
-            jb_core_1.jb.component('studio.redraw', {
-                type: 'action',
-                impl: function () {
-                    return jbart.redrawStudio && jbart.redrawStudio();
                 }
             });
         }

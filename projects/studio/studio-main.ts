@@ -97,6 +97,13 @@ jb.component('studio.all', {
                     value: '{%$globals/project%}.{%$globals/page%}'
                   }
                 }, 
+                onDoubleClick :{$: 'onNextTimer', 
+                  action : [
+                  	{$: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' },
+            		{$: 'studio.openProperties'},
+            		{$: 'studio.open-control-tree'},
+            	  ]
+                }, 
                 autoSelectFirst: true
               }, 
               {$: 'css', 
@@ -118,7 +125,7 @@ jb.component('studio.all', {
               $runActions: [
                 {$: 'studio.waitForPreviewIframe' }, 
                 {$: 'studio.fixProfilePath' },
-                {$: 'studio.setPreviewSize', width: 1280, height: 840 }
+                {$: 'studio.setPreviewSize', width: 1280, height: 520 }
               ]
             }
           }
@@ -262,7 +269,7 @@ jb.component('studio.fixProfilePath', {
 
 
 jb.component('studio.currentProfilePath', {
-	impl: { $firstSucceeding: ['%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
+	impl: { $firstSucceeding: ['%$simulateProfilePath%', '%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
 })
 
 
@@ -413,6 +420,20 @@ jb.component('studio.message',{
 	params: { message: { as: 'string' } },
 	impl: (ctx,message) => 
 		studio.message(message)
+})
+
+jb.component('studio.refreshPreview',{
+	type: 'action',
+	impl: () => {
+		if (jbart.previewjbart)
+			jbart.previewjbart.previewRefreshCounter = (jbart.previewjbart.previewRefreshCounter || 0) + 1;
+	}
+})
+
+jb.component('studio.redrawStudio',{
+	type: 'action',
+	impl: () => 
+    	jbart.redrawStudio && jbart.redrawStudio()
 })
 
 jb.component('studio.goto-path',{

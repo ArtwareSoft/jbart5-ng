@@ -131,6 +131,13 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                                     value: '{%$globals/project%}.{%$globals/page%}'
                                                 }
                                             },
+                                            onDoubleClick: { $: 'onNextTimer',
+                                                action: [
+                                                    { $: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' },
+                                                    { $: 'studio.openProperties' },
+                                                    { $: 'studio.open-control-tree' },
+                                                ]
+                                            },
                                             autoSelectFirst: true
                                         },
                                         { $: 'css',
@@ -149,7 +156,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                         $runActions: [
                                             { $: 'studio.waitForPreviewIframe' },
                                             { $: 'studio.fixProfilePath' },
-                                            { $: 'studio.setPreviewSize', width: 1280, height: 840 }
+                                            { $: 'studio.setPreviewSize', width: 1280, height: 520 }
                                         ]
                                     }
                                 }
@@ -274,7 +281,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 }
             });
             jb_core_1.jb.component('studio.currentProfilePath', {
-                impl: { $firstSucceeding: ['%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
+                impl: { $firstSucceeding: ['%$simulateProfilePath%', '%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
             });
             jb_core_1.jb.component('studio.short-title', {
                 params: { path: { as: 'string' } },
@@ -414,6 +421,19 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 params: { message: { as: 'string' } },
                 impl: function (ctx, message) {
                     return studio.message(message);
+                }
+            });
+            jb_core_1.jb.component('studio.refreshPreview', {
+                type: 'action',
+                impl: function () {
+                    if (jbart.previewjbart)
+                        jbart.previewjbart.previewRefreshCounter = (jbart.previewjbart.previewRefreshCounter || 0) + 1;
+                }
+            });
+            jb_core_1.jb.component('studio.redrawStudio', {
+                type: 'action',
+                impl: function () {
+                    return jbart.redrawStudio && jbart.redrawStudio();
                 }
             });
             jb_core_1.jb.component('studio.goto-path', {

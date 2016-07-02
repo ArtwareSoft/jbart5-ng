@@ -23,14 +23,14 @@ System.register(['jb-core', 'jb-ui', '@angular/core'], function(exports_1, conte
                     methods: { as: 'object' },
                     atts: { as: 'object' },
                     noViewEncapsulation: { as: 'boolean', type: 'boolean' },
-                    directives: { as: 'array' }
+                    directives: { ignore: true }
                 },
-                impl: function (context, template, css, features, methods, atts, noViewEncapsulation, directives) {
+                impl: function (context, template, css, features, methods, atts, noViewEncapsulation) {
                     var options = jb_core_1.jb.extend({
                         jbTemplate: template,
                         css: css,
                         atts: atts,
-                        directives: directives,
+                        directives: context.profile.directives,
                         featuresOptions: features()
                     }, methods);
                     if (noViewEncapsulation)

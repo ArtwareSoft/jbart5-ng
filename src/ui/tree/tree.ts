@@ -25,9 +25,10 @@ jb.component('tree', {
 		features: { type: "feature[]", dynamic: true }
 	},
 	impl: function(context) { 
-		if (!context.params.nodeModel())
+		var nodeModel = context.params.nodeModel();
+		if (!nodeModel)
 			return jb.logException('missing nodeModel in tree');
-		var tree = { nodeModel: context.params.nodeModel(ctx) };
+		var tree = { nodeModel: nodeModel };
 		var ctx = context.setVars({$tree: tree});
 		return jb_ui.ctrl(ctx).jbExtend({
 			host: { 'class': 'jb-tree' }, // define host element to keep the wrapper
@@ -45,63 +46,65 @@ jb.component('tree', {
 
 jb.component('tree.ul-li', {
 	type: 'tree.style',
-	impl: function(context) { 
-		var tree = context.vars.$tree;
-		@Component({
-			selector: 'node_line',
-			template: `<div class="treenode-line" [ngClass]="{collapsed: !tree.expanded[path]}">
-						<button class="treenode-expandbox" (click)="flip()" [ngClass]="{nochildren: !model.isArray(path)}">
-							<div class="frame"></div><div class="line-lr"></div><div class="line-tb"></div>
-						</button>
-						<i class="material-icons">{{icon}}</i>
-						<span class="treenode-label" [innerHTML]="title"></span>
-					  </div>`,
-			styles: [`i {font-size: 16px; margin-left: -4px; padding-right:2px }`]
-		})
-		class TreeNodeLine {
-			@Input('path') path;
-			ngOnInit() {
-				this.tree = tree;
-				this.model = tree.nodeModel;
-			}
-			ngDoCheck() {
-				this.title = this.model.title(this.path,!this.tree.expanded[this.path]);
-				this.icon = tree.nodeModel.icon ? tree.nodeModel.icon(this.path) : 'radio_button_unchecked';
-			}
-			flip(x) { 
-				tree.expanded[this.path] = !(tree.expanded[this.path]);
-			};
-		}
-		
-		@Component({
-		    selector: 'jb_node',
-			template: `<node_line [path]="path"></node_line>
-				<ul *ngIf="tree.expanded[path]" class="treenode-children">
-				  <li *ngFor="let childPath of tree.nodeModel.children(path)" class="treenode-li">
-					<jb_node [path]="childPath" class="treenode" [ngClass]="{selected: tree.selected == childPath}"></jb_node>
-				  </li>
-				</ul>`,
-			directives: [TreeNodeLine,TreeNode]
-		})
-		class TreeNode {
-			@Input('path') path;
-			constructor(private elementRef: ElementRef) { }
-			ngOnInit() {
-				this.tree = tree;
-			}
-			ngDoCheck() {
-				if (tree.nodeModel.isArray(this.path))
-					$(this.elementRef.nativeElement).addClass('jb-array-node');
-				$(this.elementRef.nativeElement).attr('path', this.path);
-			}
-		}
-
-		return {
-			template: '<jb_node [path]="tree.nodeModel.rootPath" class="treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node>',
-			directives: [TreeNode, TreeNodeLine]
-		}
+	impl :{$:'customStyle',
+		template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
+		directives: ['TreeNode', 'TreeNodeLine'],
 	}
 })
+
+// part of ul-li
+@Component({
+	selector: 'node_line',
+	template: `<div class="treenode-line" [ngClass]="{collapsed: !tree.expanded[path]}">
+				<button class="treenode-expandbox" (click)="flip()" [ngClass]="{nochildren: !model.isArray(path)}">
+					<div class="frame"></div><div class="line-lr"></div><div class="line-tb"></div>
+				</button>
+				<i class="material-icons">{{icon}}</i>
+				<span class="treenode-label" [innerHTML]="title"></span>
+			  </div>`,
+	styles: [`i {font-size: 16px; margin-left: -4px; padding-right:2px }`]
+})
+class TreeNodeLine {
+	@Input('path') path;
+	@Input('tree') tree;
+	ngOnInit() {
+//		this.tree = tree;
+		this.model = this.tree.nodeModel;
+	}
+	ngDoCheck() {
+		this.title = this.model.title(this.path,!this.tree.expanded[this.path]);
+		this.icon = this.tree.nodeModel.icon ? this.tree.nodeModel.icon(this.path) : 'radio_button_unchecked';
+	}
+	flip(x) { 
+		this.tree.expanded[this.path] = !(this.tree.expanded[this.path]);
+	};
+}
+
+@Component({
+    selector: 'jb_node',
+	template: `<node_line [tree]="tree" [path]="path"></node_line>
+		<ul *ngIf="tree.expanded[path]" class="treenode-children">
+		  <li *ngFor="let childPath of tree.nodeModel.children(path)" class="treenode-li">
+			<jb_node [tree]="tree" [path]="childPath" class="treenode" [ngClass]="{selected: tree.selected == childPath}"></jb_node>
+		  </li>
+		</ul>`,
+	directives: [TreeNodeLine,TreeNode]
+})
+class TreeNode {
+	@Input('path') path;
+	@Input('tree') tree;
+	constructor(private elementRef: ElementRef) { }
+	ngOnInit() {
+//		this.tree = tree;
+	}
+	ngDoCheck() {
+		if (this.tree.nodeModel.isArray(this.path))
+			$(this.elementRef.nativeElement).addClass('jb-array-node');
+		$(this.elementRef.nativeElement).attr('path', this.path);
+	}
+}
+
+jb_ui.registerDirectives({TreeNode: TreeNode, TreeNodeLine:TreeNodeLine});
 
 jb.component('tree.selection', {
   type: 'feature',
@@ -171,10 +174,14 @@ jb.component('tree.keyboard-selection', {
 			init: cmp=> {
 				var tree = cmp.tree;
 				cmp.keydown = cmp.keydown || new Subject();
-				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {cmp.elementRef.nativeElement.focus(); return false});
+				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {
+					cmp.elementRef.nativeElement.focus(); 
+					return false;
+				});
 
 				if (context.params.autoFocus)
-					setTimeout(() => cmp.elementRef.nativeElement.focus(), 1);
+					setTimeout(() => 
+						cmp.elementRef.nativeElement.focus(), 1);
 
 				cmp.keydown.filter(e=> 
 					e.keyCode == 13)

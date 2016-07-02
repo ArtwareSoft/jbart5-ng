@@ -261,17 +261,21 @@ itemlist :{$: 'ng2-ui-test',
 },
 
 tree :{$: 'ng2-ui-test',  
-  control :{$: 'json-editable-tree' ,
-    nodeModel :{$: 'tree.json', 
-      object: '%$personWithAddress%', rootPath: 'personWithAddress' 
-    },
+  control: {$: 'tree',
+        nodeModel :{$: 'tree.json-read-only', 
+          object: '%$personWithAddress%', rootPath: 'personWithAddress' 
+        },
+    features: [
+        { $: 'tree.selection' },
+        { $: 'tree.keyboard-selection'} 
+    ] 
   },
-  expectedHtmlResult :{$: 'contains', text: [''] } ,
+  expectedHtmlResult :{$: 'contains', text: ['address'] } ,
 },
 
 'tree-DD' :{$: 'ng2-ui-test',  
-  control :{$: 'tree', cssClass: 'jb-control-tree', 
-    nodeModel :{$: 'tree.json', 
+  control :{$: 'tree',
+    nodeModel :{$: 'tree.json-read-only', 
       object: '%$personWithChildren%', rootPath: 'Homer' 
     },
     features: [

@@ -87,7 +87,10 @@ jb.component('pulldown.topMenuItem', {
 			}).run({
 				$: 'openDialog', 
 				style :{$: 'pulldownPopup.mainMenuPopup' }, 
-				content :{$: 'group', controls: (ctx) => context.params.controls(ctx) }
+				content :{$: 'group', 
+					controls: ctx => 
+						context.params.controls(ctx) 
+				}
 			})
 		}
 
@@ -136,10 +139,8 @@ jb.component('pulldownPopup.mainMenuPopup',{
 
 jb.component('pulldownPopup.contextMenuPopup',{
 	type: 'dialog.style',
-	impl: function(context) {
-		return {
-			jbTemplate: '<div><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
-			cssClass: 'jb-dialog jb-popup pulldown-mainmenu-popup',
+	impl :{$: 'customStyle',
+			template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
 			features: [
 				{ $: 'dialogFeature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },
 				{ $: 'dialogFeature.maxZIndexOnClick' },
@@ -147,6 +148,5 @@ jb.component('pulldownPopup.contextMenuPopup',{
 				{ $: 'dialogFeature.cssClassOnLaunchingControl' },
 				{ $: 'dialogFeature.nearLauncherLocation' }
 			]
-		}
 	}
 })
