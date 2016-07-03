@@ -45,9 +45,12 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('studio-helper.jb-editor', {
                 type: 'control',
                 params: {
-                    path: { defaultValue: 'studio-helper.itemlist-with-find~controls~1' }
+                    path: { defaultValue: 'studio-helper.label' }
                 },
                 impl: { $: 'group',
+                    $vars: {
+                        circuit: 'studio-helper.label'
+                    },
                     title: 'main',
                     controls: [
                         { $: 'studio.jb-editor', path: '%$path%' },
@@ -111,6 +114,28 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             title: 'Hello',
                             style: { $: 'button.md-flat' }
                         }
+                    ]
+                }
+            });
+            jb_1.jb.component('studio-helper.label', {
+                type: 'control',
+                impl: { $: 'label',
+                    title: ['%$people/people%',
+                        { $filter: '%age% == 42' },
+                        '%name%'
+                    ]
+                },
+            });
+            jb_1.jb.component('studio-helper.group-with-label', {
+                type: 'control',
+                impl: { $: 'group',
+                    controls: [
+                        { $: 'label',
+                            title: ['%$people/people%',
+                                { $filter: '%age% == 42' },
+                                '%name%'
+                            ]
+                        },
                     ]
                 }
             });

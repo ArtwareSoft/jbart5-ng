@@ -28,12 +28,12 @@ jb_component('pipeline',{
 		var data = jb_toarray(context.data);
 		var curr = (data.length) ? jb_toarray(context.data) : [null];
 		var profiles = jb_toarray(context.profile.items || context.profile['$pipeline']);
-		profiles.forEach(function(profile) {
+		profiles.forEach(function(profile,i) {
 			if (jb_profileType(profile) == 'aggregator')
-				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile }), { as: 'array'});
+				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile, path: ''+i }), { as: 'array'});
 			else 
 				curr = [].concat.apply([],curr.map(function(item) {
-					return jb_run(jb_ctx(context,{data: item, profile: profile}), { as: 'array'});
+					return jb_run(jb_ctx(context,{data: item, profile: profile, path: ''+i}), { as: 'array'});
 				})).filter(notNull);
 		});
 		return curr;

@@ -284,8 +284,13 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return this.title(path, false);
                 };
                 ControlModel.prototype.isArray = function (path) {
-                    if (this.childrenType == 'jb-editor' && path.split('~').pop() == '+')
-                        return false;
+                    if (this.childrenType == 'jb-editor') {
+                        var val = profileValFromPath(path);
+                        if (path.split('~').pop() == '+')
+                            return false;
+                        if (typeof val == 'object')
+                            return true;
+                    }
                     return this.controlParam(path);
                 };
                 ControlModel.prototype.modify = function (op, path, args, ctx) {

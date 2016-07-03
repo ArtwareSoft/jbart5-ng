@@ -30,7 +30,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     if (typeof val == 'object')
                         out = Object.getOwnPropertyNames(val || {});
                     if (Array.isArray(val))
-                        out = out.slice(-1);
+                        out = out.slice(0, -1);
                     return out.map(function (x) { return path + '~' + x; });
                 };
                 ROjson.prototype.val = function (path) {
@@ -55,7 +55,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     if (typeof val != 'object')
                         return prop + ': <span class="treenode-val">' + val + "</span>";
                     return prop + ': ' + Object.getOwnPropertyNames(val)
-                        .filter(function (p) { return p.indexOf('$jb') != 0; })
                         .filter(function (p) { return typeof val[p] == 'string' || typeof val[p] == 'number' || typeof val[p] == 'boolean'; })
                         .map(function (p) {
                         return p + '= ' + '<span class="treenode-val">' + val[p] + "</span>";

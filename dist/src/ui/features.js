@@ -25,9 +25,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     return {
                         ctrlsEmFunc: function (originalCtrlsEmFunc, ctx) {
                             return jb_rx.observableFromCtx(ctx.setData(waitFor))
-                                .flatMap(function (x) { return originalCtrlsEmFunc(ctx); })
+                                .flatMap(function (x) {
+                                return originalCtrlsEmFunc(ctx.setData(x));
+                            })
                                 .startWith([loading(ctx)])
-                                .catch(function (e) { return jb_rx.Observable.of([error(ctx.setVars({ error: e }))]); });
+                                .catch(function (e) {
+                                return jb_rx.Observable.of([error(ctx.setVars({ error: e }))]);
+                            });
                         }
                     };
                 }
@@ -52,7 +56,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 .distinctUntilChanged()
                                 .filter(function (x) { return x && x != 'undefined'; })
                                 .flatMap(function (val) {
-                                return originalCtrlsEmFunc(ctxWithItemVar(ctx.setData(val), val));
+                                var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(ctx) : ctx;
+                                var ctx3 = ctxWithItemVar(ctx2.setData(val), val);
+                                return originalCtrlsEmFunc(ctx3);
                             });
                             function ctxWithItemVar(ctx, val) { return itemVariable ? ctx.setVars(jb_core_1.jb.obj(itemVariable, val)) : ctx; }
                         },
@@ -73,7 +79,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                         })
                             .distinctUntilChanged()
                             .flatMap(function (x) {
-                            return originalCtrlsEmFunc(ctx);
+                            var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(ctx) : ctx;
+                            return originalCtrlsEmFunc(ctx2);
                         });
                     },
                     observable: function () { } // to create jbEmitter
@@ -97,6 +104,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                         return action(cmp.ctx);
                     }
                 }); }
+            });
+            jb_core_1.jb.component('feature.disableChangeDetection', {
+                type: 'feature',
+                impl: function (ctx) { return ({
+                    disableChangeDetection: true }); }
             });
             jb_core_1.jb.component('ngAtts', {
                 type: 'feature',

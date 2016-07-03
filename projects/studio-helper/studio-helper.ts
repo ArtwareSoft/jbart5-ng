@@ -48,9 +48,12 @@ jb.component('studio-helper.control-tree', {
 jb.component('studio-helper.jb-editor', {
   type: 'control', 
   params: {
-    path: { defaultValue: 'studio-helper.itemlist-with-find~controls~1' }
+    path: { defaultValue: 'studio-helper.label' }
   }, 
   impl :{$: 'group', 
+    $vars: {
+        circuit: 'studio-helper.label'
+    },
     title: 'main', 
     controls: [
       {$: 'studio.jb-editor', path: '%$path%' },
@@ -121,6 +124,30 @@ jb.component('studio-helper.expandable', {
         title: 'Hello', 
         style :{$: 'button.md-flat' }
       }
+    ]
+  }
+})
+
+jb.component('studio-helper.label', {
+  type: 'control', 
+  impl :{$: 'label', 
+        title: [ '%$people/people%', 
+                {$filter: '%age% == 42'},
+                '%name%'
+        ]
+      }, 
+})
+
+jb.component('studio-helper.group-with-label', {
+  type: 'control', 
+  impl :{$: 'group', 
+    controls: [
+      {$: 'label', 
+        title: [ '%$people/people%', 
+                {$filter: '%age% == 42'},
+                '%name%'
+        ]
+      }, 
     ]
   }
 })

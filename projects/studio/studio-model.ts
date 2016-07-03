@@ -228,8 +228,13 @@ export class ControlModel {
 	}
 
 	isArray(path) {
-		if (this.childrenType == 'jb-editor' && path.split('~').pop() == '+')
-			return false;
+		if (this.childrenType == 'jb-editor') {
+			var val = profileValFromPath(path);
+			if (path.split('~').pop() == '+')
+				return false;
+			if (typeof val == 'object')
+				return true;
+		}
 		return this.controlParam(path);
 	}
 

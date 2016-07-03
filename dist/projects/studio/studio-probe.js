@@ -1,42 +1,13 @@
-System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio, jb_rx;
-    function probeResult(path, ctx) {
-        return jb_rx.Observable.create(function (observer) {
-            //studio.model.writeValue(path+'~$jb_probe',{value:path});
-            var jbart = studio.jbart_base();
-            jbart.probes = jbart.probes || {};
-            jbart.probes[path] = new jb_rx.Subject();
-            Promise.resolve(runCircuit(path, ctx)).then(function () {
-                //studio.model._delete(path+'~$jb_probe');
-                jbart.probes[path].onCompleted();
-            });
-            return jbart.probes[path];
-        });
-    }
-    function runCircuit(path, ctx) {
-        return ctx.run({ $: 'studio.refreshPreview' });
-    }
+    var jb_core_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
-            },
-            function (studio_1) {
-                studio = studio_1;
-            },
-            function (jb_rx_1) {
-                jb_rx = jb_rx_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('studio.probe', {
-                type: 'data',
-                params: { path: { as: 'string' } },
-                impl: function (context, path) {
-                    return probeResult(path);
-                }
-            });
             jb_core_1.jb.component('studio.showProbeData', {
                 type: 'action',
                 impl: {

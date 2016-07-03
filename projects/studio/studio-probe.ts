@@ -3,32 +3,6 @@ import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 import * as jb_rx from 'jb-ui/jb-rx';
 
-function probeResult(path,ctx) {
-  return jb_rx.Observable.create(function (observer) {
-    //studio.model.writeValue(path+'~$jb_probe',{value:path});
-    var jbart = studio.jbart_base();
-    jbart.probes = jbart.probes || {};
-    jbart.probes[path] = new jb_rx.Subject();
-    Promise.resolve(runCircuit(path,ctx)).then(()=> {
-      //studio.model._delete(path+'~$jb_probe');
-      jbart.probes[path].onCompleted();
-    });
-
-    return jbart.probes[path];
-  });
-}
-
-function runCircuit(path,ctx) {
-  return ctx.run({$:'studio.refreshPreview'})
-}
-
-
-jb.component('studio.probe',{
-  type:'data',
-  params: { path: { as: 'string' } },
-  impl: (context,path) =>
-    probeResult(path)
-})
 
 
 jb.component('studio.showProbeData', {

@@ -236,7 +236,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 function jbComponent(ctx) {
                     this.ctx = ctx;
                     this.annotations = {};
-                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [] };
+                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
                     this.cssFixes = [];
                     this.jb_profile = ctx.profile;
                     var title = jb_tosingle(jb_core_1.jb.val(this.ctx.params.title)) || (function () { return ''; });
@@ -293,8 +293,13 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                                 this.jbEmitter = new jb_rx.Subject();
                                 this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
                             }
-                            if (this.methodHandler.extendCtx)
-                                this.ctx = this.methodHandler.extendCtx(this.ctx, this);
+                            this.refreshCtx = function (ctx2) {
+                                _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
+                                    _this.ctx = extendCtx(ctx2, _this);
+                                });
+                                return _this.ctx;
+                            };
+                            this.refreshCtx(this.ctx);
                             this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
                             this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
                         }
@@ -306,6 +311,9 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         var _this = this;
                         this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
                         this.jbEmitter && this.jbEmitter.next('after-init');
+                        jb_core_1.jb.delay(1).then(function () {
+                            return _this.jbEmitter && _this.jbEmitter.next('after-init-children');
+                        });
                     };
                     Cmp.prototype.ngDoCheck = function () {
                         var _this = this;
@@ -351,7 +359,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     if (options.ctrlsEmFunc)
                         this.methodHandler.ctrlsEmFunc = options.ctrlsEmFunc;
                     if (options.extendCtx)
-                        this.methodHandler.extendCtx = options.extendCtx;
+                        this.methodHandler.extendCtxFuncs.push(options.extendCtx);
                     if (options.extendComp)
                         jb_core_1.jb.extend(this, options.extendComp);
                     if (options.invisible)
@@ -379,6 +387,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         if (options[prop] !== undefined || annotations[prop] != undefined)
                             annotations[prop] = (annotations[prop] || []).concat(jb_core_1.jb.toarray(options[prop]));
                     });
+                    if (options.disableChangeDetection)
+                        annotations.changeDetection = core_1.ChangeDetectionStrategy.OnPush;
                     if (options.directives !== undefined)
                         annotations.directives = (annotations.directives || []).concat(jb_core_1.jb.toarray(options.directives).map(function (x) {
                             return typeof x == 'string' ? directivesObj[x] : x;

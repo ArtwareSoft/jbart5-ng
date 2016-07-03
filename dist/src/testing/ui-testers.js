@@ -132,7 +132,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                     expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
                     runBefore: { type: 'action', dynamic: true },
                     cleanAfter: { type: 'action', dynamic: true },
-                    checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init' },
+                    checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init-children' },
                     waitFor: {},
                 },
                 impl: function (ctx) {
@@ -153,22 +153,22 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core', 'jb-ui/dialog'], 
                                         promise = Promise.resolve(1);
                                     promise.then(checkIt, checkIt);
                                     function checkIt() {
-                                        return jb_1.jb.delay(1).then(function () {
-                                            var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
-                                            cmp.elementRef.nativeElement.setAttribute('test', ctx.vars.testID);
-                                            //if (ctx.vars.testID == 'picklist') debugger;
-                                            if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
-                                                html = $('jb-dialog-parent').html();
-                                            resolve({
-                                                id: ctx.vars.testID,
-                                                success: ctx.params.expectedHtmlResult(ctx.setData(html))
-                                            });
-                                            dialog_1.jb_dialogs.dialogs
-                                                .filter(function (d) { return d.context.vars.testID == ctx.vars.testID; })
-                                                .forEach(function (d) {
-                                                return d.close();
-                                            });
+                                        //return jb.delay(1).then(()=>{
+                                        var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
+                                        cmp.elementRef.nativeElement.setAttribute('test', ctx.vars.testID);
+                                        //if (ctx.vars.testID == 'picklist') debugger;
+                                        if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
+                                            html = $('jb-dialog-parent').html();
+                                        resolve({
+                                            id: ctx.vars.testID,
+                                            success: ctx.params.expectedHtmlResult(ctx.setData(html))
                                         });
+                                        dialog_1.jb_dialogs.dialogs
+                                            .filter(function (d) { return d.context.vars.testID == ctx.vars.testID; })
+                                            .forEach(function (d) {
+                                            return d.close();
+                                        });
+                                        //})
                                     }
                                 })
                                     .catch(function (e) { debugger; resolve({ id: ctx.vars.testID, success: false }); })

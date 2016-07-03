@@ -13,9 +13,11 @@ jb.component('group.wait', {
     return {
       ctrlsEmFunc: function(originalCtrlsEmFunc,ctx) {
         return jb_rx.observableFromCtx(ctx.setData(waitFor))
-          .flatMap(x=>originalCtrlsEmFunc(ctx))
+          .flatMap(x=>
+            originalCtrlsEmFunc(ctx.setData(x)))
           .startWith([loading(ctx)])
-          .catch(e=>{ return jb_rx.Observable.of([error(ctx.setVars({error:e}))])})
+          .catch(e=> 
+            jb_rx.Observable.of([error(ctx.setVars({error:e}))]))
       }
   }}
 })
@@ -42,7 +44,9 @@ jb.component('group.data', {
           .filter(x=>x && x!='undefined')
 //          .map(x=>{console.log('group.data: ref changed',x);return x})
           .flatMap(function(val) {
-              return originalCtrlsEmFunc(ctxWithItemVar(ctx.setData(val),val))
+              var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(ctx) : ctx;
+              var ctx3 = ctxWithItemVar(ctx2.setData(val),val);
+              return originalCtrlsEmFunc(ctx3);
             }
           );
 
@@ -63,8 +67,10 @@ jb.component('group.watch', {
           .map(()=> 
             jb.val(data())) 
           .distinctUntilChanged()
-          .flatMap(x=>
-              originalCtrlsEmFunc(ctx)
+          .flatMap(x=> {
+                var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(ctx) : ctx;
+                return originalCtrlsEmFunc(ctx2)
+              }
           );
       },
       observable: () => {} // to create jbEmitter
@@ -92,6 +98,14 @@ jb.component('feature.init', {
       action(cmp.ctx)
   })
 })
+
+jb.component('feature.disableChangeDetection', {
+  type: 'feature',
+  impl: (ctx) => ({
+      disableChangeDetection: true })
+})
+
+
 
 jb.component('ngAtts', {
   type: 'feature',

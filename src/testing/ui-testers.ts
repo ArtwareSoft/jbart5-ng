@@ -92,7 +92,7 @@ jb.component('ng2-ui-test', {
 		expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
 		runBefore: { type: 'action', dynamic: true },
 		cleanAfter: { type: 'action', dynamic: true },
-		checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init' },
+		checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init-children' },
 		waitFor: {},
 	},
 	impl: ctx=> 
@@ -113,7 +113,7 @@ jb.component('ng2-ui-test', {
 							if (!promise || !promise.then) promise = Promise.resolve(1);
 							promise.then(checkIt,checkIt);
 							function checkIt() {
-								return jb.delay(1).then(()=>{
+								//return jb.delay(1).then(()=>{
 									var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
 									cmp.elementRef.nativeElement.setAttribute('test',ctx.vars.testID);
 									//if (ctx.vars.testID == 'picklist') debugger;
@@ -127,7 +127,7 @@ jb.component('ng2-ui-test', {
 										.filter(d=> d.context.vars.testID == ctx.vars.testID)
 										.forEach(d=> 
 											d.close())
-								})
+								//})
 							}
 						})
 						.catch(e=>{ debugger; resolve({ id: ctx.vars.testID, success:false }) })

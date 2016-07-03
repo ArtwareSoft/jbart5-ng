@@ -1,7 +1,14 @@
-function jb_run(context,parentParam) {
+function jb_run(context,parentParam,settings) {
   try {
     var profile = context.profile;
-    console.log('path:' + context.path + ' , ' + context.fullPath);
+    // if (jbart.trace_paths)
+    //   console.log('path: ' +context.path);
+    if (jbart.probe && context.path && jbart.probe.trace == context.path && !(settings || {}).noprobe ) {
+        var input = new jbCtx(context,{});
+        var out = jb_run(context,parentParam,{ noprobe: true })
+        jbart.probe.sample[context.path].push({in: input, out: out});
+        return out;
+    }
     if (profile === null) return;
     if (profile.$debugger == 0) debugger;
     if (profile.$asIs) return profile.$asIs;
@@ -18,8 +25,8 @@ function jb_run(context,parentParam) {
       case 'function': return jb_tojstype(profile(context),jstype, context);
       case 'null': return jb_tojstype(null,jstype, context);
       case 'ignore': return context.data;
-      case 'pipeline': return jb_tojstype(jbart.comps.pipeline.impl(jb_ctx(context,{profile: { items : profile }})),jstype, context);
-      case 'rx-pipeline': return jb_tojstype(jbart.comps.rxPipe.impl(jb_ctx(context,{profile: { items : profile }})),jstype,context);
+      case 'pipeline': return jb_tojstype(jbart.comps.pipeline.impl(jb_ctx(context,{profile: { items : profile },path:''})),jstype, context);
+      case 'rx-pipeline': return jb_tojstype(jbart.comps.rxPipe.impl(jb_ctx(context,{profile: { items : profile },path:''})),jstype,context);
       case 'foreach': return profile.forEach(function(inner,i) { jb_run(jb_ctx(context,{profile: inner, path: i})) });
       case 'if': 
 		return jb_run(run.ifContext, run.IfParentParam) ? 
@@ -47,8 +54,6 @@ function jb_run(context,parentParam) {
         if (profile.$log)
           jbart.comps.log.impl(context, (profile.$log == true) ? out : jb_run( jb_ctx(context, { profile: profile.$log, data: out, vars: { data: context.data } })));
 
-        if (profile.$probe && jbart.probes && jbart.probes[profile.$probe])
-            jbart.probes[profile.$probe].next(context);
         if (profile.$trace) console.log('trace: ' + jb_compName(profile),context,out,run);
           
         return jb_tojstype(out,jstype, context);
@@ -139,7 +144,7 @@ function jb_run(context,parentParam) {
 
 function jb_funcDynamicParam(ctx,profileToRun,param,paramName) {
    if (param && param.type && param.type.indexOf('[') != -1 && jb_isArray(profileToRun)) // array
-    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map(prof=>(ctx2||ctx).setData(data2).run(prof,param,paramName))))
+    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map((prof,i)=>(ctx2||ctx).setData(data2).run(prof,param,paramName+'~'+i))))
   else // single
     var res = jb_func(paramName,(ctx2,data2) => profileToRun && (ctx2||ctx).setData(data2).run(profileToRun,param,paramName))
   return res;

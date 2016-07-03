@@ -2,6 +2,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio;
+    function runCircuit(path, ctx) {
+        var circuit = ctx.exp('%$circuit%') || 'studio.refreshPreview';
+        jb_run(new jbCtx(ctx, { profile: { $: circuit }, comp: circuit, path: '', data: '' }));
+    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -57,22 +61,19 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         },
                         { $: 'group',
                             title: 'input-output',
-                            features: { $: 'group.data', data: '%$globals/jb_editor_selection' },
-                            $vars: {
-                                probeResult: { $: 'studio.probe', path: '%%' }
-                            },
-                            controls: { $: 'itemlog',
-                                items: '%$probeResult%',
-                                controls: [
-                                    { $: 'studio.data-browse',
-                                        data: '%input%',
-                                        title: 'input'
-                                    },
-                                    { $: 'studio.data-browse',
-                                        data: '%output%',
-                                        title: 'output'
-                                    }
-                                ],
+                            features: { $: 'group.data', data: '%$globals/jb_editor_selection%' },
+                            controls: { $: 'group',
+                                features: { $: 'group.wait',
+                                    for: { $: 'studio.probe', path: '%$globals/jb_editor_selection%' }
+                                },
+                                title: 'wait for probe',
+                                controls: { $: 'itemlist',
+                                    items: '%%',
+                                    controls: [
+                                        { $: 'studio.data-browse', data: '%data[0]/in/data%', title: 'in' },
+                                        { $: 'studio.data-browse', data: '%data[0]/out%', title: 'out' }
+                                    ]
+                                }
                             }
                         }
                     ],
@@ -96,6 +97,32 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             { $: 'tree.keyboard-selection' }
                         ]
                     },
+                }
+            });
+            studio.modifyOperationsEm.subscribe(function (e) {
+                var jbart = studio.jbart_base();
+                if (jbart.probe)
+                    jbart.probe.sample = {};
+            });
+            jb_core_1.jb.component('studio.probe', {
+                type: 'data',
+                params: { path: { as: 'string', dynamic: true } },
+                impl: function (ctx, path) {
+                    var _path = path();
+                    if (!_path)
+                        return;
+                    var jbart = studio.jbart_base();
+                    jbart.probe = jbart.probe || { sample: {} };
+                    if (jbart.probe.sample[_path])
+                        return Promise.resolve(jbart.probe.sample[_path]);
+                    jbart.probe.sample[_path] = [];
+                    jbart.probe.trace = _path;
+                    //      jbart.trace_paths = true;
+                    runCircuit(_path, ctx);
+                    return jb_core_1.jb.delay(1).then(function () {
+                        jbart.probe.trace = '';
+                        return jbart.probe.sample[_path];
+                    });
                 }
             });
             jb_core_1.jb.component('studio.jb-editor.nodes', {

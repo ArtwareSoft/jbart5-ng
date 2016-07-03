@@ -19,7 +19,7 @@ class ROjson {
 		if (typeof val == 'object')
 			out = Object.getOwnPropertyNames(val || {});
 		if (Array.isArray(val))
-			out = out.slice(-1);
+			out = out.slice(0,-1);
 		return out.map(x=>path+'~'+x);
 	}
 	val(path) {
@@ -46,7 +46,6 @@ class ROjson {
 			return prop + ': <span class="treenode-val">' + val + "</span>";
 
 		return prop + ': ' + Object.getOwnPropertyNames(val)
-			.filter(p=> p.indexOf('$jb') != 0)
 			.filter(p=> typeof val[p] == 'string' || typeof val[p] == 'number' || typeof val[p] == 'boolean')
 			.map(p=> 
 				p + '= ' + '<span class="treenode-val">' + val[p] + "</span>" )

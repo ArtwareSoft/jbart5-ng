@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation} from '@angular/core';
+import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
 import {NgForm,FORM_DIRECTIVES,NgClass} from '@angular/common';
 
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
@@ -20,7 +20,7 @@ var factory_hash = {}, cssFixes_hash = {};
 class jbComponent {
 	constructor(private ctx) {
 		this.annotations = {};
-		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: [] };
+		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
 		this.cssFixes = [];
 
 		this.jb_profile = ctx.profile;
@@ -79,8 +79,13 @@ class jbComponent {
 					this.jbEmitter = new jb_rx.Subject();
 					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
 				}
-		    	if (this.methodHandler.extendCtx)
-		    		this.ctx = this.methodHandler.extendCtx(this.ctx,this);
+	    		this.refreshCtx = (ctx2) => {
+					this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
+		    			this.ctx = extendCtx(ctx2,this);
+		    		})
+		    		return this.ctx;
+		    	}
+		    	this.refreshCtx(this.ctx);
 				this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
 				this.methodHandler.jbInitFuncs.forEach(init=> init(this));
 		    } catch(e) { jb.logException(e,'') }
@@ -88,7 +93,11 @@ class jbComponent {
 		Cmp.prototype.ngAfterViewInit = function() {
 			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
 			this.jbEmitter && this.jbEmitter.next('after-init');
+			jb.delay(1).then(()=> // ugly huck to get event after children are initialized
+				this.jbEmitter && this.jbEmitter.next('after-init-children')
+			)
 		}
+
 		Cmp.prototype.ngDoCheck = function() {
 			this.methodHandler.jbCheckFuncs.forEach(f=> 
 				f(this));
@@ -125,7 +134,7 @@ class jbComponent {
 		if (options.doCheck) this.methodHandler.jbCheckFuncs.push(options.doCheck);
 		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
 		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
-		if (options.extendCtx) this.methodHandler.extendCtx=options.extendCtx;
+		if (options.extendCtx) this.methodHandler.extendCtxFuncs.push(options.extendCtx);
 		if (options.extendComp) jb.extend(this,options.extendComp);
 
 		if (options.invisible) 
@@ -157,6 +166,9 @@ class jbComponent {
 			if (options[prop] !== undefined || annotations[prop] != undefined)
 				annotations[prop] = (annotations[prop] || []).concat(jb.toarray(options[prop]))
 		});
+
+		if (options.disableChangeDetection)
+			annotations.changeDetection = ChangeDetectionStrategy.OnPush;
 
 		if (options.directives !== undefined)
 				annotations.directives = (annotations.directives || []).concat(

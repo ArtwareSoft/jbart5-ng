@@ -13,16 +13,19 @@ jb.component('itemlist',{
 		items: { as: 'array' , dynamic: true, essential: true },
     controls: { type: 'control[]', essential: true, dynamic: true},
 		style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+    dynamicItems: { type: 'boolean', as: 'boolean', defaultValue: true },
     itemVariable: { as: 'string' },
 		features: { type: 'feature[]', dynamic: true },
 	},
 	impl: function(context) {
+//    var items = context.params.items();
     return jb_ui.ctrl(context).jbExtend({
       doCheck: cmp => {
-        cmp.items = context.params.items();
+        if (context.params.dynamicItems)
+          cmp.items = context.params.items(cmp.ctx);
       },
       beforeInit: function(cmp) {
-        cmp.items = context.params.items();
+        cmp.items = context.params.items(cmp.ctx);
         cmp.itemlist = {
             items: cmp.items,
             elems: () => Array.from($(cmp._nativeElement).find('[jb-item]')),
