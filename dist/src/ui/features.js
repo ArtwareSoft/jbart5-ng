@@ -110,6 +110,25 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 impl: function (ctx) { return ({
                     disableChangeDetection: true }); }
             });
+            jb_core_1.jb.component('feature.onEnter', {
+                type: 'feature',
+                params: {
+                    action: { type: 'action[]', essential: true, dynamic: true }
+                },
+                impl: function (ctx) { return ({
+                    host: {
+                        '(keydown)': 'keydown.next($event)',
+                        'tabIndex': '0',
+                    },
+                    init: function (cmp) {
+                        cmp.keydown = cmp.keydown || new Subject();
+                        cmp.keydown.filter(function (e) { return e.keyCode == 13; })
+                            .subscribe(function () {
+                            return jb_ui.wrapWithLauchingElement(ctx.params.action, cmp.ctx, cmp.elementRef)();
+                        });
+                    }
+                }); }
+            });
             jb_core_1.jb.component('ngAtts', {
                 type: 'feature',
                 params: {

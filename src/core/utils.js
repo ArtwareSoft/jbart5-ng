@@ -406,11 +406,11 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
           sortedPropertyNames(obj).forEach(function(prop,index,array) {
               if (prop != '$')
                 newLine();
-              if (obj[prop] != null)
+              if (obj[prop] != null) {
                 printProp(obj,prop,path);
-              if (index < array.length -1) {
-                result += ', ';//newLine();
-            }
+                if (index < array.length -1)
+                  result += ', ';//newLine();
+              }
           });
         }
         depth--;

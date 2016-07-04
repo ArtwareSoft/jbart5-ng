@@ -30,20 +30,21 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 params: {
                     path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
                 },
-                impl: function (context, path) {
-                    var ref = studio.profileRefFromPath(path);
-                    return {
-                        $jb_val: function (value) {
-                            if (typeof value == 'undefined')
-                                return jb_core_1.jb.prettyPrint(jb_core_1.jb.val(ref));
-                            else {
-                                var newProf = studio.evalProfile(value);
-                                if (newProf)
-                                    studio.model.modify(studio.model.writeValue, path, { value: newProf }, context);
-                            }
+                impl: function (context, path) { return ({
+                    $jb_val: function (value) {
+                        if (typeof value == 'undefined') {
+                            var val = studio.model.val(path);
+                            if (typeof val == 'string')
+                                return val;
+                            return jb_core_1.jb.prettyPrint(val);
                         }
-                    };
-                }
+                        else {
+                            var newVal = value.match(/^\s*({|\[)/) ? studio.evalProfile(value) : value;
+                            if (newVal != null)
+                                studio.model.modify(studio.model.writeValue, path, { value: newVal }, context);
+                        }
+                    }
+                }); }
             });
             jb_core_1.jb.component('studio.openSublime', {
                 type: 'action',

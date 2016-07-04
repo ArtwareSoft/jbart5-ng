@@ -105,6 +105,24 @@ jb.component('feature.disableChangeDetection', {
       disableChangeDetection: true })
 })
 
+jb.component('feature.onEnter', {
+  type: 'feature',
+  params: {
+    action: { type: 'action[]', essential: true, dynamic: true }
+  },
+  impl: ctx => ({ 
+      host: {
+        '(keydown)': 'keydown.next($event)',
+        'tabIndex': '0',
+      },
+      init: cmp=> {
+        cmp.keydown = cmp.keydown || new Subject();
+        cmp.keydown.filter(e=> e.keyCode == 13)
+            .subscribe(()=>
+              jb_ui.wrapWithLauchingElement(ctx.params.action, cmp.ctx, cmp.elementRef)())
+      }
+  })
+})
 
 
 jb.component('ngAtts', {

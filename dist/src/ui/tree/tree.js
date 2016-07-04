@@ -145,9 +145,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                             var tree = cmp.tree;
                             cmp.click = new jb_rx.Subject();
                             cmp.click.buffer(cmp.click.debounceTime(250)) // double click
-                                .map(function (list) { return list.length; })
-                                .filter(function (x) { return x === 2; })
-                                .subscribe(function (x) { return context.params.onDoubleClick(context.setData(tree.selected)); });
+                                .filter(function (x) { return x.length === 2; })
+                                .subscribe(function (x) {
+                                jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)();
+                            });
                             tree.selectionEmitter.distinctUntilChanged().subscribe(function (selected) {
                                 tree.selected = selected;
                                 selected.split('~').slice(0, -1).reduce(function (base, x) {
@@ -204,9 +205,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                             cmp.keydown.filter(function (e) {
                                 return e.keyCode == 13;
                             })
-                                .subscribe(function () {
-                                context.params.onEnter(context.setData(tree.selected));
+                                .subscribe(function (e) {
+                                jb_ui.wrapWithLauchingElement(context.params.onEnter, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
                             });
+                            //context.params.onEnter(context.setData(tree.selected))})
                             cmp.keydown.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
                                 .map(function (event) {
                                 event.stopPropagation();
@@ -223,6 +225,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                             });
                         }
                     };
+                }
+            });
+            jb_core_1.jb.component('tree.regain-focus', {
+                type: 'actions',
+                impl: function (ctx) {
+                    return ctx.vars.regainFocus && ctx.vars.regainFocus();
                 }
             });
             jb_core_1.jb.component('tree.keyboard-shortcut', {

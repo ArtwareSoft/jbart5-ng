@@ -21,20 +21,20 @@ jb.component('studio.currentProfileAsScript', {
 	params: {
 		path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
 	},
-	impl: function(context,path) {
-		var ref = studio.profileRefFromPath(path);
-		return {
+	impl: (context,path) => ({
 			$jb_val: function(value) {
-				if (typeof value == 'undefined') 
-					return jb.prettyPrint(jb.val(ref));
-				else {
-					var newProf = studio.evalProfile(value);
-					if (newProf)
-						studio.model.modify(studio.model.writeValue, path, { value: newProf },context);
+				if (typeof value == 'undefined') {
+					var val = studio.model.val(path);
+					if (typeof val == 'string')
+						return val;
+					return jb.prettyPrint(val);
+				} else {
+					var newVal = value.match(/^\s*({|\[)/) ? studio.evalProfile(value) : value;
+					if (newVal != null)
+						studio.model.modify(studio.model.writeValue, path, { value: newVal },context);
 				}
 			}
-		}
-	}
+		})
 })
 
 jb.component('studio.openSublime', {

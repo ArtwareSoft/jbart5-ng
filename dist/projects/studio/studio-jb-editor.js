@@ -2,10 +2,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio;
-    function runCircuit(path, ctx) {
-        var circuit = ctx.exp('%$circuit%') || 'studio.refreshPreview';
-        jb_run(new jbCtx(ctx, { profile: { $: circuit }, comp: circuit, path: '', data: '' }));
-    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -29,10 +25,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             features: [
                                 { $: 'tree.selection',
                                     autoSelectFirst: true,
-                                    databind: '%$globals/jb_editor_selection%'
+                                    databind: '%$globals/jb_editor_selection%',
+                                    onDoubleClick: { $: 'studio.open-jb-edit-property',
+                                        path: '%$globals/jb_editor_selection%'
+                                    }
                                 },
                                 { $: 'tree.keyboard-selection',
-                                    onEnter: { $: 'studio.openProperties' }
+                                    onEnter: { $: 'studio.open-jb-edit-property',
+                                        path: '%$globals/jb_editor_selection%'
+                                    }
                                 },
                                 { $: 'tree.drag-and-drop' },
                                 { $: 'tree.keyboard-shortcut',
@@ -94,35 +95,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         },
                         features: [
                             { $: 'tree.selection' },
-                            { $: 'tree.keyboard-selection' }
+                            { $: 'tree.keyboard-selection' },
                         ]
                     },
-                }
-            });
-            studio.modifyOperationsEm.subscribe(function (e) {
-                var jbart = studio.jbart_base();
-                if (jbart.probe)
-                    jbart.probe.sample = {};
-            });
-            jb_core_1.jb.component('studio.probe', {
-                type: 'data',
-                params: { path: { as: 'string', dynamic: true } },
-                impl: function (ctx, path) {
-                    var _path = path();
-                    if (!_path)
-                        return;
-                    var jbart = studio.jbart_base();
-                    jbart.probe = jbart.probe || { sample: {} };
-                    if (jbart.probe.sample[_path])
-                        return Promise.resolve(jbart.probe.sample[_path]);
-                    jbart.probe.sample[_path] = [];
-                    jbart.probe.trace = _path;
-                    //      jbart.trace_paths = true;
-                    runCircuit(_path, ctx);
-                    return jb_core_1.jb.delay(1).then(function () {
-                        jbart.probe.trace = '';
-                        return jbart.probe.sample[_path];
-                    });
                 }
             });
             jb_core_1.jb.component('studio.jb-editor.nodes', {
@@ -130,6 +105,40 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
                     return new studio.ControlModel(path, 'jb-editor');
+                }
+            });
+            jb_core_1.jb.component('studio.open-jb-edit-property', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'openDialog',
+                    style: { $: 'pulldownPopup.contextMenuPopup' },
+                    content: { $: 'editable-text',
+                        databind: { $: 'studio.currentProfileAsScript', path: '%$path%' },
+                        features: [
+                            { $: 'studio.undo-support', path: '%$path%' },
+                            { $: 'css.padding', left: '4', right: '4' },
+                            { $: 'feature.onEnter',
+                                action: [
+                                    { $: 'closeContainingPopup', OK: true },
+                                    { $: 'tree.regain-focus' }
+                                ]
+                            }
+                        ],
+                        style: {
+                            $if: { $: 'studio.is-primitive-value', path: '%$path%' },
+                            then: { $: 'editable-text.md-input', width: '400' },
+                            else: { $: 'editable-text.codemirror', mode: 'javascript' }
+                        }
+                    },
+                    features: { $: 'dialogFeature.autoFocusOnFirstInput' }
+                }
+            });
+            jb_core_1.jb.component('studio.is-primitive-value', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return typeof studio.model.val(path) == 'string';
                 }
             });
         }
