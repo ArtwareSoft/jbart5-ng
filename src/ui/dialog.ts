@@ -17,7 +17,7 @@ jb.component('openDialog', {
 	},
 	impl: function(context,id) {
 		var modal = context.params.modal;
-		var dialog = { id: id, onOK: context.params.onOK, modal: modal, $: $('div') };
+		var dialog = { id: id, onOK: context.params.onOK, modal: modal, $: $('div'), em: new jb_rx.Subject() };
 		var ctx = (modal ? context.setVars({dialogData: {}}) : context).setVars({ $dialog: dialog });
 		dialog.comp = jb_ui.ctrl(ctx).jbExtend({
 			beforeInit: function(cmp) {
@@ -30,12 +30,7 @@ jb.component('openDialog', {
 				cmp.contentComp = ctx.params.content(ctx);
 				cmp.menuComp = ctx.params.menu(ctx);
 				cmp.hasMenu = !!ctx.params.menu.profile;
-				jb.trigger(cmp.dialog, 'attach');
-//				jb_ui.insertComponent(content, cmp.componentResolver, cmp.childView);
-				// jb_ui.loadIntoLocation(content, cmp, 'content',ctx).then(function(ref) { // clean Redundent Parents
-				// 	$(ref.location.nativeElement).addClass('dialog-content');
-				// 	jb.trigger(cmp.dialog, 'attach')
-				// })
+				cmp.dialog.em.next({ type: 'attach' });
 			}
 		});
 		jb_dialogs.addDialog(dialog,ctx);
@@ -63,6 +58,19 @@ jb.component('dialog.default', {
 	}
 })
 
+jb.component('dialog.popup', {
+  type: 'dialog.style',
+  impl :{$: 'customStyle',
+      template: '<div class="jb-dialog jb-popup"><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
+      features: [
+        { $: 'dialogFeature.maxZIndexOnClick' },
+        { $: 'dialogFeature.closeWhenClickingOutside' },
+        { $: 'dialogFeature.cssClassOnLaunchingControl' },
+        { $: 'dialogFeature.nearLauncherLocation' }
+      ]
+  }
+})
+
 
 jb.component('dialogFeature.uniqueDialog', {
 	type: 'dialogFeature',
@@ -74,9 +82,11 @@ jb.component('dialogFeature.uniqueDialog', {
 		if (!id) return;
 		var dialog = context.vars.$dialog;
 		dialog.id = id;
-		jb.bind(dialog, 'otherDialogCreated', function(otherDialog) {
-			if (otherDialog.id == id)
-				dialog.close();
+		dialog.em.filter(e=> 
+			e.type == 'otherDialogCreated')
+			.subscribe(e=> {
+				if (e.id == id)
+					dialog.close();
 		})
 	}
 })
@@ -126,20 +136,34 @@ jb.component('dialogFeature.closeWhenClickingOutside', {
 	type: 'dialogFeature',
 	impl: function(context) { 
 		var dialog = context.vars.$dialog;
-		function clickOutHandler(e) {
-			if ($(e.target).closest(dialog.$el[0]).length == 0)
-				dialog.close();
-		}
-		jb.delay(10).then( function() { // delay - close older before
-			window.onmousedown = clickOutHandler;
-			if (jbart.previewWindow)
-				jbart.previewWindow.onmousedown = clickOutHandler;
-		})
-		jb.bind(dialog, 'close', function() {
-			window.onmousedown = null;
-			if (jbart.previewWindow) 
-				jbart.previewWindow.onmousedown = null;
-		});
+		var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
+		      			.merge(jb_rx.Observable.fromEvent(
+		      				(jbart.previewWindow || {}).document, 'mousedown')).
+		      			filter(e =>
+		      				$(e.target).closest(dialog.$el[0]).length == 0);
+
+		jb.delay(10).then(() =>  // delay - close older before    			
+	 		clickoutEm.take(1)
+	  			.subscribe(()=>
+	  				dialog.close())
+  		)
+
+
+		// function clickOutHandler(e) {
+		// 	if ($(e.target).closest(dialog.$el[0]).length == 0)
+		// 		dialog.close();
+		// }
+		// jb.delay(10).then( function() { // delay - close older before
+		// 	window.onmousedown = clickOutHandler;
+		// 	if (jbart.previewWindow)
+		// 		jbart.previewWindow.onmousedown = clickOutHandler;
+		// })
+		// dialog.filter(x=>x.type == 'close').
+		// 	subscribe(() =>{
+		// 		window.onmousedown = null;
+		// 		if (jbart.previewWindow) 
+		// 			jbart.previewWindow.onmousedown = null;
+		// 	})
 	}
 })
 
@@ -159,10 +183,14 @@ jb.component('dialogFeature.cssClassOnLaunchingControl', {
 				var dialog = context.vars.$dialog;
 				var $control = context.vars.$launchingElement.$el;
 				$control.addClass('dialog-open');
-
-				jb.bind(dialog,'close',function() {
-					$control.removeClass('dialog-open');
-				});
+				cmp.dialogOpen = true;
+				dialog.em.filter(e=>
+					e.type == 'close')
+					.take(1)
+					.subscribe(()=> {
+						$control.removeClass('dialog-open');
+						cmp.dialogOpen = true;
+					})
 			}
 	})
 })
@@ -256,7 +284,7 @@ export var jb_dialogs = {
 		dialog.context = context;
 		var dialogs = this.dialogs;
 		dialogs.forEach(d=>
-			jb.trigger(d, 'otherDialogCreated', dialog));
+			d.em.next({ type: 'otherDialogCreated', id: dialog.id });
 		dialogs.push(dialog);
 		if (dialog.modal)
 			$('body').prepend('<div class="modal-overlay"></div>');
@@ -264,7 +292,8 @@ export var jb_dialogs = {
 		jb_ui.apply(context);
 
 		dialog.close = function(args) {
-			jb.trigger(dialog, 'close');
+			dialog.em.next({type: 'close'});
+			dialog.em.complete();
 			var index = dialogs.indexOf(dialog);
 			if (index != -1)
 				dialogs.splice(index, 1);

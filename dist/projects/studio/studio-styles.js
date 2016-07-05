@@ -123,11 +123,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'dialogFeature.maxZIndexOnClick' },
                         { $: 'dialogFeature.closeWhenClickingOutside' },
                         { $: 'dialogFeature.cssClassOnLaunchingControl' },
-                        { $: 'dialogFeature.studio-under-property' }
+                        { $: 'dialogFeature.studio-position-under-property' }
                     ]
                 }
             });
-            jb_core_1.jb.component('dialogFeature.studio-under-property', {
+            jb_core_1.jb.component('dialogFeature.studio-position-under-property', {
                 type: 'dialogFeature',
                 impl: function (context, offsetLeft, offsetTop) {
                     return {

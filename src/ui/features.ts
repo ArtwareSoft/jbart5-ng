@@ -207,7 +207,7 @@ jb.component('field.style-on-focus', {
 })
 
 jb.component('css', {
-  type: 'feature',
+  type: 'feature,dialogFeature',
   params: {
     css: { essential: true, as: 'string' },
   },
@@ -216,7 +216,7 @@ jb.component('css', {
 })
 
 jb.component('css.width', {
-  type: 'feature',
+  type: 'feature,dialogFeature',
   params: {
     width: { essential: true, as: 'number' },
   },
@@ -225,7 +225,7 @@ jb.component('css.width', {
 })
 
 jb.component('css.padding', {
-  type: 'feature',
+  type: 'feature,dialogFeature',
   params: {
     top: { as: 'number' },
     left: { as: 'number' },
@@ -243,7 +243,7 @@ jb.component('css.padding', {
 })
 
 jb.component('css.margin', {
-  type: 'feature',
+  type: 'feature,dialogFeature',
   params: {
     top: { as: 'number' },
     left: { as: 'number' },
@@ -261,7 +261,7 @@ jb.component('css.margin', {
 })
 
 jb.component('css.box-shadow', {
-  type: 'feature',
+  type: 'feature,dialogFeature',
   params: {
     blurRadius: { as: 'number', defaultValue: 5 },
     spreadRadius: { as: 'number', defaultValue: 0 },
@@ -279,7 +279,7 @@ jb.component('css.box-shadow', {
 })
 
 jb.component('cssClass', {
-  type: 'feature',
+  type: 'feature,dialogFeature',
   params: {
     cssClass: { essential: true, as: 'string' },
   },

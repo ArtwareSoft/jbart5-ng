@@ -45,15 +45,17 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('studio-helper.jb-editor', {
                 type: 'control',
                 params: {
-                    path: { defaultValue: 'studio-helper.label' }
+                    path: { defaultValue: 'studio-helper-dummy.label' }
                 },
                 impl: { $: 'group',
-                    $vars: {
-                        circuit: 'studio-helper.label'
-                    },
+                    $vars: { circuit: 'studio-helper-dummy.label' },
                     title: 'main',
                     controls: [
-                        { $: 'studio.jb-editor', path: '%$path%' },
+                        { $: 'jb-edit-property', path: '%$path%~title~0' },
+                        { $: 'group',
+                            controls: [{ $: 'studio.jb-editor', path: '%$path%' }],
+                            features: { $: 'group-item.if', showCondition: false }
+                        }
                     ],
                     features: { $: 'css', css: '{ height: 200px; padding: 50px }' }
                 }
@@ -117,7 +119,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     ]
                 }
             });
-            jb_1.jb.component('studio-helper.label', {
+            jb_1.jb.component('studio-helper-dummy.label', {
                 type: 'control',
                 impl: { $: 'label',
                     title: ['%$people/people%',

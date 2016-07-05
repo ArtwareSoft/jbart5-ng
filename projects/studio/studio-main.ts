@@ -288,7 +288,13 @@ jb.component('studio.val',{
 	impl: (context,path) => studio.model.val(path)
 })
 
-jb.component('studio.short-title',{
+jb.component('studio.is-primitive-value', {
+  params: { path: { as: 'string' } },
+  impl: (context,path) => 
+      typeof studio.model.val(path) == 'string'
+})
+
+jb.component('studio.short-title', {
 	params: { path: { as: 'string' } },
 	impl: (context,path) => 
 		studio.model.shortTitle(path)

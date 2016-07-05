@@ -207,12 +207,12 @@ jb.component('dialog.studio-multiline-edit',{
 				{ $: 'dialogFeature.maxZIndexOnClick' },
 				{ $: 'dialogFeature.closeWhenClickingOutside' },
 				{ $: 'dialogFeature.cssClassOnLaunchingControl' },
-				{ $: 'dialogFeature.studio-under-property' }
+				{ $: 'dialogFeature.studio-position-under-property' }
 			]
 	}
 })
 
-jb.component('dialogFeature.studio-under-property', {
+jb.component('dialogFeature.studio-position-under-property', {
 	type: 'dialogFeature',
 	impl: function(context,offsetLeft,offsetTop) {
 		return {

@@ -215,7 +215,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }); }
             });
             jb_core_1.jb.component('css', {
-                type: 'feature',
+                type: 'feature,dialogFeature',
                 params: {
                     css: { essential: true, as: 'string' },
                 },
@@ -224,7 +224,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }
             });
             jb_core_1.jb.component('css.width', {
-                type: 'feature',
+                type: 'feature,dialogFeature',
                 params: {
                     width: { essential: true, as: 'number' },
                 },
@@ -233,7 +233,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }
             });
             jb_core_1.jb.component('css.padding', {
-                type: 'feature',
+                type: 'feature,dialogFeature',
                 params: {
                     top: { as: 'number' },
                     left: { as: 'number' },
@@ -250,7 +250,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }
             });
             jb_core_1.jb.component('css.margin', {
-                type: 'feature',
+                type: 'feature,dialogFeature',
                 params: {
                     top: { as: 'number' },
                     left: { as: 'number' },
@@ -267,7 +267,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }
             });
             jb_core_1.jb.component('css.box-shadow', {
-                type: 'feature',
+                type: 'feature,dialogFeature',
                 params: {
                     blurRadius: { as: 'number', defaultValue: 5 },
                     spreadRadius: { as: 'number', defaultValue: 0 },
@@ -284,7 +284,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 }
             });
             jb_core_1.jb.component('cssClass', {
-                type: 'feature',
+                type: 'feature,dialogFeature',
                 params: {
                     cssClass: { essential: true, as: 'string' },
                 },

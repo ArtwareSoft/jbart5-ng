@@ -295,6 +295,12 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 params: { path: { as: 'string' } },
                 impl: function (context, path) { return studio.model.val(path); }
             });
+            jb_core_1.jb.component('studio.is-primitive-value', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return typeof studio.model.val(path) == 'string';
+                }
+            });
             jb_core_1.jb.component('studio.short-title', {
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
