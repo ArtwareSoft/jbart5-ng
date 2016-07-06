@@ -107,13 +107,15 @@ jb.component('itemlist.selection', {
       init: function(cmp) {
         cmp.click = new jb_rx.Subject();
         var itemlist = cmp.itemlist;
-        jb_rx.refObservable(context.params.databind,context).distinctUntilChanged()
-          .subscribe(selected=>
+        context.params.databind && jb_rx.refObservable(context.params.databind,context).distinctUntilChanged()
+          .subscribe(selected=> {
+//            console.log('selected1',itemlist.selected);
             itemlist.selected = selected
-        );
+        });
         itemlist.selectionEmitter
           .distinctUntilChanged().subscribe(selected=>{
             itemlist.selected = selected;
+//            console.log('selected2',itemlist.selected);
             if (context.params.databind)
               jb.writeValue(context.params.databind,selected);
         });

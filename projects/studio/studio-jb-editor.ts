@@ -3,6 +3,10 @@ import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as studio from './studio-model';
 
+function rev(str) {
+  return str.split('').reverse().join('');
+}
+
 jb.component('studio.jb-editor', {
   type: 'control', 
   params: {
@@ -128,7 +132,9 @@ jb.component('jb-edit-property', {
             {$: 'tree.regain-focus' }
           ]
         }, 
-        {$: 'editable-text.studio-jb-edit-suggestions' }
+        {$: 'editable-text.studio-jb-detect-suggestions', 
+          action :{$: 'studio.jb-open-suggestions', path: '%$path%'} 
+        }
       ], 
       style :{
         $if :{$: 'studio.is-primitive-value', path: '%$path%' }, 
@@ -139,48 +145,73 @@ jb.component('jb-edit-property', {
 })
 
 
-jb.component('editable-text.studio-jb-edit-suggestions', {
+jb.component('editable-text.studio-jb-detect-suggestions', {
   type: 'feature', 
   params: {
-    path: { as: 'string' },
-    action: { type: 'action', dynamic:true, defaultValue: {$: 'studio.open-jb-edit-suggestions'} }
+    action: { type: 'action', dynamic:true }
   }, 
   impl: ctx => ({ 
-      host: {
-        '(keydown)': 'keydown.next($event)',
+      innerhost: {
+        'md-input' : {'(keyup)': 'keyEm.next($event)' }
       },
       init: cmp=> {
-        cmp.keydown = cmp.keydown || new Subject();
-        cmp.keydown
-            .filter(e=> 
-              ['%','.','/','{'].indexOf(e.key) != -1)
-            .subscribe((e)=>
+        cmp.keyEm = cmp.keyEm || new Subject();
+        cmp.keyEm
+            .map(e=>{
+              var input = e.srcElement;
+              var pos = input.selectionStart;
+              var text = input.value.substr(0,pos).trim();
+              var text_with_open_close = text.replace(/%([^%;{}\s><"']*)%/g, (match,contents) =>
+                '{' + contents + '}');
+              var exp = rev((rev(text_with_open_close).match(/([^\}%]*%)/) || ['',''])[1]);
+              var tail = rev((rev(exp).match(/([^.\/]*)(\/|\.)/)||['',''])[1]);
+
+              var suggestionEvent = { original: e, pos: pos, input: input, tail: tail,
+                text: text, text_with_open_close : text_with_open_close, exp: exp,
+                lastChar: text_with_open_close.slice(-1)
+              }
+              console.log(suggestionEvent.input.value)
+              return suggestionEvent;
+            })
+            .distinctUntilChanged(null,e=>
+              e.input.value)
+            .filter(e => 
+              e.exp)
+            .subscribe(e=>
               jb_ui.wrapWithLauchingElement(ctx.params.action, 
-                cmp.ctx.setVars({ jbEditInput: e.srcElement, keyEmitter: cmp.keydown }), 
-                e.srcElement)())
+                cmp.ctx.setVars({ jbEditEvent: e, keyEmitter: cmp.keyEm }), e.input)())
       }
   })
 })
 
-jb.component('studio.open-jb-edit-suggestions', {
+function onCloseingExp(input) {
+    return text_with_open_close.slice(-1) == '}'
+}
+
+jb.component('studio.jb-open-suggestions', {
   type: 'action', 
   params: {
     path: { as: 'string' }
   }, 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-suggestions-popup' }, 
-    content :{$: 'itemlist', 
-      items :{$: 'studio.jb-suggestions'} ,
-      controls: {$: 'label', title: 'aa - %%' },
-      features: [
-        {$: 'itemlist.selection' },
-        {$: 'itemlist.studio-suggestions-selection',
-          onEnter: [
-            {$: 'studio.jb-paste-suggestion', toPaste: '%%'},
-            {$: 'closeContainingPopup'}
-          ]
-        } 
-      ]
+    content: {$: 'group',
+      features :{$: 'group.wait', 
+        for :{$: 'studio.probe', path: '%$path%' }
+      },
+      controls:{$: 'itemlist', 
+        items :{$: 'studio.jb-suggestions'} ,
+        controls: {$: 'label', title: '%%' },
+        features: [
+          {$: 'itemlist.studio-suggestions-selection',
+            onEnter: [
+              {$: 'studio.jb-paste-suggestion', toPaste: '%%'},
+              {$: 'closeContainingPopup'}
+            ]
+          },
+          {$: 'itemlist.selection' },
+        ]
+      }
     }
   }
 })
@@ -190,32 +221,49 @@ jb.component('studio.jb-suggestions', {
     path: { as: 'string' }
   }, 
   impl: (ctx,path) => {
-    var text = ctx.exp('%$jbEditInput%').val;
-    var position = ctx.exp('%$jbEditInput%').selectionStart;
-
-    return [1,2,3];
+    var probeCtx = ctx.data.data[0].in;
+    var e = ctx.exp('%$jbEditEvent%');
+    if (e.lastChar == '%')
+      return jb.toarray(probeCtx.exp('%%'))
+        .concat(jb.entries(probeCtx.vars).map(x=>'$' + x[0]))
+        .concat(jb.entries(probeCtx.resources).map(x=>'$' + x[0]));
+    var base = e.exp.slice(0,-1-e.tail.length);
+    return [].concat.apply([],
+      jb.toarray(probeCtx.exp(base + '%'))
+        .map(x=>
+          jb.entries(x).map(x=>x[0])))
+      .filter( jb_onlyUnique )
+      .filter(p=>
+        e.tail == '' || p.indexOf(e.tail) == 0);
   }
 })
-
+  
 jb.component('itemlist.studio-suggestions-selection', {
   type: 'feature',
   params: {
     onEnter: { type: 'action', dynamic: true },
   },
-  impl: ctx => ({
+  impl: ctx => 
+    ({
       init: function(cmp) {
-        var itemlist = cmp.itemlist
-        cmp.keydown = ctx.exp('%$keyEmitter%');
-        cmp.keydown.filter(e=>e.keyCode == 13)
-          .take(1)
+        var itemlist = cmp.itemlist;
+        itemlist.selected = itemlist.items[0];
+        var keyEm = ctx.exp('%$keyEmitter%')
+          .takeUntil(ctx.vars.$dialog.em.filter(e => 
+            e.type == 'close'))
+
+        keyEm.filter(e=>e.keyCode == 13)
           .subscribe(x=>
                 ctx.params.onEnter(ctx.setData(itemlist.selected)))
 
-        cmp.keydown && cmp.keydown.filter(e=>e.keyCode == 38 || e.keyCode == 40)
+        keyEm.filter(e=>
+                e.keyCode == 38 || e.keyCode == 40)
             .map(event => {
+              // event.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
               return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
-            }).subscribe(x=>
+            })
+            .subscribe(x=>
                 itemlist.selectionEmitter.next(x))
       }
   })
@@ -227,7 +275,13 @@ jb.component('studio.jb-paste-suggestion', {
   },
   type: 'action',
   impl: (ctx,toPaste) => {
-    var input = ctx.exp('%$jbEditInput%');
-    input.value = input.value.substr(0,input.selectionStart) + toPaste + input.value.substr(input.selectionStart);
+    var e = ctx.exp('%$jbEditEvent%');
+    var input = e.input;
+    var pos = e.pos + 1;
+    input.value = input.value.substr(0,e.pos-e.tail.length) + toPaste + input.value.substr(pos);
+    jb.delay(100).then (() => {
+      input.selectionStart = pos + toPaste.length;
+      input.selectionEnd = input.selectionStart;
+    })
   }
 })

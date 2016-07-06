@@ -133,13 +133,15 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                         init: function (cmp) {
                             cmp.click = new jb_rx.Subject();
                             var itemlist = cmp.itemlist;
-                            jb_rx.refObservable(context.params.databind, context).distinctUntilChanged()
+                            context.params.databind && jb_rx.refObservable(context.params.databind, context).distinctUntilChanged()
                                 .subscribe(function (selected) {
-                                return itemlist.selected = selected;
+                                //            console.log('selected1',itemlist.selected);
+                                itemlist.selected = selected;
                             });
                             itemlist.selectionEmitter
                                 .distinctUntilChanged().subscribe(function (selected) {
                                 itemlist.selected = selected;
+                                //            console.log('selected2',itemlist.selected);
                                 if (context.params.databind)
                                     jb_1.jb.writeValue(context.params.databind, selected);
                             });

@@ -351,6 +351,7 @@ function jb_initJstypes() {
       return value;
     },
     'ref': val=> { 
+      if (val == null) return val;
       if (val && (val.$jb_parent || val.$jb_val))
         return val;
       return { $jb_val: () => val }

@@ -89,10 +89,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                     var dialog = context.vars.$dialog;
                     dialog.id = id;
                     dialog.em.filter(function (e) {
-                        return e.type == 'otherDialogCreated';
+                        return e.type == 'new-dialog';
                     })
                         .subscribe(function (e) {
-                        if (e.id == id)
+                        if (e.dialog != dialog && e.dialog.id == id)
                             dialog.close();
                     });
                 }
@@ -140,13 +140,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 type: 'dialogFeature',
                 impl: function (context) {
                     var dialog = context.vars.$dialog;
-                    var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
-                        .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'mousedown')).
-                        filter(function (e) {
-                        return $(e.target).closest(dialog.$el[0]).length == 0;
-                    });
                     jb_core_1.jb.delay(10).then(function () {
-                        return clickoutEm.take(1)
+                        var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
+                            .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'mousedown')).
+                            filter(function (e) {
+                            return $(e.target).closest(dialog.$el[0]).length == 0;
+                        });
+                        clickoutEm.take(1)
                             .subscribe(function () {
                             return dialog.close();
                         });
@@ -276,7 +276,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                     dialog.context = context;
                     var dialogs = this.dialogs;
                     dialogs.forEach(function (d) {
-                        return d.em.next({ type: 'otherDialogCreated', id: dialog.id });
+                        return d.em.next({ type: 'new-dialog', dialog: dialog });
                     });
                     dialogs.push(dialog);
                     if (dialog.modal)

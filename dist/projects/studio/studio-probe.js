@@ -4,7 +4,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
     var jb_core_1, studio;
     function runCircuit(path, ctx) {
         var circuit = ctx.exp('%$circuit%') || 'studio.refreshPreview';
-        jb_run(new jbCtx(ctx, { profile: { $: circuit }, comp: circuit, path: '', data: '' }));
+        var context = jb_core_1.jb.ctx({ ngMode: true, resources: ctx.resources, vars: {} }, { profile: { $: circuit }, comp: circuit, path: '', data: '' });
+        jb_run(context);
     }
     return {
         setters:[

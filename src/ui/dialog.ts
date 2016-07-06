@@ -83,9 +83,9 @@ jb.component('dialogFeature.uniqueDialog', {
 		var dialog = context.vars.$dialog;
 		dialog.id = id;
 		dialog.em.filter(e=> 
-			e.type == 'otherDialogCreated')
+			e.type == 'new-dialog')
 			.subscribe(e=> {
-				if (e.id == id)
+				if (e.dialog != dialog && e.dialog.id == id )
 					dialog.close();
 		})
 	}
@@ -136,17 +136,17 @@ jb.component('dialogFeature.closeWhenClickingOutside', {
 	type: 'dialogFeature',
 	impl: function(context) { 
 		var dialog = context.vars.$dialog;
-		var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
-		      			.merge(jb_rx.Observable.fromEvent(
-		      				(jbart.previewWindow || {}).document, 'mousedown')).
-		      			filter(e =>
-		      				$(e.target).closest(dialog.$el[0]).length == 0);
+		jb.delay(10).then(() =>  { // delay - close older before    		
+			var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
+			      			.merge(jb_rx.Observable.fromEvent(
+			      				(jbart.previewWindow || {}).document, 'mousedown')).
+			      			filter(e =>
+			      				$(e.target).closest(dialog.$el[0]).length == 0);
 
-		jb.delay(10).then(() =>  // delay - close older before    			
-	 		clickoutEm.take(1)
-	  			.subscribe(()=>
-	  				dialog.close())
-  		)
+		 	clickoutEm.take(1)
+		  		.subscribe(()=>
+		  			dialog.close())
+  		})
 
 
 		// function clickOutHandler(e) {
@@ -284,7 +284,7 @@ export var jb_dialogs = {
 		dialog.context = context;
 		var dialogs = this.dialogs;
 		dialogs.forEach(d=>
-			d.em.next({ type: 'otherDialogCreated', id: dialog.id });
+			d.em.next({ type: 'new-dialog', dialog: dialog }));
 		dialogs.push(dialog);
 		if (dialog.modal)
 			$('body').prepend('<div class="modal-overlay"></div>');

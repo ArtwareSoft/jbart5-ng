@@ -528,3 +528,7 @@ function jb_isProfOfType(prof,type) {
   var types = ((jbart.comps[jb_compName(prof)] || {}).type || '').split('[]')[0].split(',');
   return types.indexOf(type) != -1;
 }
+
+function jb_onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}

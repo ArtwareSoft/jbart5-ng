@@ -2,6 +2,12 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, studio;
+    function rev(str) {
+        return str.split('').reverse().join('');
+    }
+    function onCloseingExp(input) {
+        return text_with_open_close.slice(-1) == '}';
+    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -135,7 +141,9 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                                 { $: 'tree.regain-focus' }
                             ]
                         },
-                        { $: 'editable-text.studio-jb-edit-suggestions' }
+                        { $: 'editable-text.studio-jb-detect-suggestions',
+                            action: { $: 'studio.jb-open-suggestions', path: '%$path%' }
+                        }
                     ],
                     style: {
                         $if: { $: 'studio.is-primitive-value', path: '%$path%' },
@@ -144,47 +152,70 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     }
                 }
             });
-            jb_core_1.jb.component('editable-text.studio-jb-edit-suggestions', {
+            jb_core_1.jb.component('editable-text.studio-jb-detect-suggestions', {
                 type: 'feature',
                 params: {
-                    path: { as: 'string' },
-                    action: { type: 'action', dynamic: true, defaultValue: { $: 'studio.open-jb-edit-suggestions' } }
+                    action: { type: 'action', dynamic: true }
                 },
                 impl: function (ctx) { return ({
-                    host: {
-                        '(keydown)': 'keydown.next($event)',
+                    innerhost: {
+                        'md-input': { '(keyup)': 'keyEm.next($event)' }
                     },
                     init: function (cmp) {
-                        cmp.keydown = cmp.keydown || new Subject();
-                        cmp.keydown
+                        cmp.keyEm = cmp.keyEm || new Subject();
+                        cmp.keyEm
+                            .map(function (e) {
+                            var input = e.srcElement;
+                            var pos = input.selectionStart;
+                            var text = input.value.substr(0, pos).trim();
+                            var text_with_open_close = text.replace(/%([^%;{}\s><"']*)%/g, function (match, contents) {
+                                return '{' + contents + '}';
+                            });
+                            var exp = rev((rev(text_with_open_close).match(/([^\}%]*%)/) || ['', ''])[1]);
+                            var tail = rev((rev(exp).match(/([^.\/]*)(\/|\.)/) || ['', ''])[1]);
+                            var suggestionEvent = { original: e, pos: pos, input: input, tail: tail,
+                                text: text, text_with_open_close: text_with_open_close, exp: exp,
+                                lastChar: text_with_open_close.slice(-1)
+                            };
+                            console.log(suggestionEvent.input.value);
+                            return suggestionEvent;
+                        })
+                            .distinctUntilChanged(null, function (e) {
+                            return e.input.value;
+                        })
                             .filter(function (e) {
-                            return ['%', '.', '/', '{'].indexOf(e.key) != -1;
+                            return e.exp;
                         })
                             .subscribe(function (e) {
-                            return jb_ui.wrapWithLauchingElement(ctx.params.action, cmp.ctx.setVars({ jbEditInput: e.srcElement, keyEmitter: cmp.keydown }), e.srcElement)();
+                            return jb_ui.wrapWithLauchingElement(ctx.params.action, cmp.ctx.setVars({ jbEditEvent: e, keyEmitter: cmp.keyEm }), e.input)();
                         });
                     }
                 }); }
             });
-            jb_core_1.jb.component('studio.open-jb-edit-suggestions', {
+            jb_core_1.jb.component('studio.jb-open-suggestions', {
                 type: 'action',
                 params: {
                     path: { as: 'string' }
                 },
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-suggestions-popup' },
-                    content: { $: 'itemlist',
-                        items: { $: 'studio.jb-suggestions' },
-                        controls: { $: 'label', title: 'aa - %%' },
-                        features: [
-                            { $: 'itemlist.selection' },
-                            { $: 'itemlist.studio-suggestions-selection',
-                                onEnter: [
-                                    { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
-                                    { $: 'closeContainingPopup' }
-                                ]
-                            }
-                        ]
+                    content: { $: 'group',
+                        features: { $: 'group.wait',
+                            for: { $: 'studio.probe', path: '%$path%' }
+                        },
+                        controls: { $: 'itemlist',
+                            items: { $: 'studio.jb-suggestions' },
+                            controls: { $: 'label', title: '%%' },
+                            features: [
+                                { $: 'itemlist.studio-suggestions-selection',
+                                    onEnter: [
+                                        { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
+                                        { $: 'closeContainingPopup' }
+                                    ]
+                                },
+                                { $: 'itemlist.selection' },
+                            ]
+                        }
                     }
                 }
             });
@@ -193,9 +224,21 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    var text = ctx.exp('%$jbEditInput%').val;
-                    var position = ctx.exp('%$jbEditInput%').selectionStart;
-                    return [1, 2, 3];
+                    var probeCtx = ctx.data.data[0].in;
+                    var e = ctx.exp('%$jbEditEvent%');
+                    if (e.lastChar == '%')
+                        return jb_core_1.jb.toarray(probeCtx.exp('%%'))
+                            .concat(jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return '$' + x[0]; }))
+                            .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return '$' + x[0]; }));
+                    var base = e.exp.slice(0, -1 - e.tail.length);
+                    return [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(base + '%'))
+                        .map(function (x) {
+                        return jb_core_1.jb.entries(x).map(function (x) { return x[0]; });
+                    }))
+                        .filter(jb_onlyUnique)
+                        .filter(function (p) {
+                        return e.tail == '' || p.indexOf(e.tail) == 0;
+                    });
                 }
             });
             jb_core_1.jb.component('itemlist.studio-suggestions-selection', {
@@ -203,24 +246,33 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 params: {
                     onEnter: { type: 'action', dynamic: true },
                 },
-                impl: function (ctx) { return ({
-                    init: function (cmp) {
-                        var itemlist = cmp.itemlist;
-                        cmp.keydown = ctx.exp('%$keyEmitter%');
-                        cmp.keydown.filter(function (e) { return e.keyCode == 13; })
-                            .take(1)
-                            .subscribe(function (x) {
-                            return ctx.params.onEnter(ctx.setData(itemlist.selected));
-                        });
-                        cmp.keydown && cmp.keydown.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
-                            .map(function (event) {
-                            var diff = event.keyCode == 40 ? 1 : -1;
-                            return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
-                        }).subscribe(function (x) {
-                            return itemlist.selectionEmitter.next(x);
-                        });
-                    }
-                }); }
+                impl: function (ctx) {
+                    return ({
+                        init: function (cmp) {
+                            var itemlist = cmp.itemlist;
+                            itemlist.selected = itemlist.items[0];
+                            var keyEm = ctx.exp('%$keyEmitter%')
+                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) {
+                                return e.type == 'close';
+                            }));
+                            keyEm.filter(function (e) { return e.keyCode == 13; })
+                                .subscribe(function (x) {
+                                return ctx.params.onEnter(ctx.setData(itemlist.selected));
+                            });
+                            keyEm.filter(function (e) {
+                                return e.keyCode == 38 || e.keyCode == 40;
+                            })
+                                .map(function (event) {
+                                // event.stopPropagation();
+                                var diff = event.keyCode == 40 ? 1 : -1;
+                                return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+                            })
+                                .subscribe(function (x) {
+                                return itemlist.selectionEmitter.next(x);
+                            });
+                        }
+                    });
+                }
             });
             jb_core_1.jb.component('studio.jb-paste-suggestion', {
                 params: {
@@ -228,8 +280,14 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                 },
                 type: 'action',
                 impl: function (ctx, toPaste) {
-                    var input = ctx.exp('%$jbEditInput%');
-                    input.value = input.value.substr(0, input.selectionStart) + toPaste + input.value.substr(input.selectionStart);
+                    var e = ctx.exp('%$jbEditEvent%');
+                    var input = e.input;
+                    var pos = e.pos + 1;
+                    input.value = input.value.substr(0, e.pos - e.tail.length) + toPaste + input.value.substr(pos);
+                    jb_core_1.jb.delay(100).then(function () {
+                        input.selectionStart = pos + toPaste.length;
+                        input.selectionEnd = input.selectionStart;
+                    });
                 }
             });
         }
