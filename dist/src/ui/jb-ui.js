@@ -148,7 +148,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             };
         };
         // keyup for input change for select & checkbox
-        var modelExp = "[(ngModel)] = \"" + modelPath + "\" (change)=\"jbOnChange($event)\" (keyup)=\"jbOnChange($event)\""; // (keyup)="writeValue($event.target.value)" (change)="writeValue($event.target.value)`;
+        var modelExp = "[(ngModel)] = \"" + modelPath + "\" (change)=\"jbOnChange($event)\" (keyup)=\"jbOnChange($event)\"";
         return {
             bindToCmp: bindToCmp,
             valueExp: modelPath,
@@ -167,7 +167,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     exports_1("twoWayBind", twoWayBind);
     function insertComponent(comp, resolver, parentView) {
         return comp.compile(resolver).then(function (componentFactory) {
-            return comp.registerMethods(parentView.createComponent(componentFactory));
+            return comp.registerMethods(parentView.createComponent(componentFactory), comp);
         });
     }
     exports_1("insertComponent", insertComponent);
@@ -257,8 +257,9 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
                     return this.factory;
                 };
-                jbComponent.prototype.registerMethods = function (cmp_ref) {
+                jbComponent.prototype.registerMethods = function (cmp_ref, parent) {
                     var cmp = cmp_ref.hostView._view._Cmp_0_4;
+                    cmp.parentCmp = parent;
                     cmp.ctx = this.ctx;
                     cmp.methodHandler = this.methodHandler;
                     if (this.cssFixes.length > 0) {
@@ -290,7 +291,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         var _this = this;
                         try {
                             if (this.methodHandler.jbObservableFuncs.length) {
-                                this.jbEmitter = new jb_rx.Subject();
+                                this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
                                 this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
                             }
                             this.refreshCtx = function (ctx2) {
@@ -312,7 +313,11 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
                         this.jbEmitter && this.jbEmitter.next('after-init');
                         jb_core_1.jb.delay(1).then(function () {
-                            return _this.jbEmitter && _this.jbEmitter.next('after-init-children');
+                            if (_this.jbEmitter) {
+                                _this.jbEmitter.next('after-init-children');
+                                if (_this.readyCounter == null)
+                                    _this.jbEmitter.next('ready');
+                            }
                         });
                     };
                     Cmp.prototype.ngDoCheck = function () {
@@ -322,6 +327,22 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         });
                         this.refreshModel && this.refreshModel();
                         this.jbEmitter && this.jbEmitter.next('check');
+                    };
+                    Cmp.prototype.wait = function () {
+                        var _this = this;
+                        this.readyCounter = (this.readyCounter || 0) + 1;
+                        if (this.parentCmp && this.parentCmp.wait)
+                            this.parentWaiting = this.parentCmp.wait();
+                        return {
+                            ready: function () {
+                                _this.readyCounter--;
+                                if (!_this.readyCounter) {
+                                    _this.jbEmitter && _this.jbEmitter.next('ready');
+                                    if (_this.parentWaiting)
+                                        _this.parentWaiting.ready();
+                                }
+                            }
+                        };
                     };
                     return Cmp;
                 };
@@ -458,7 +479,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         var compiled = this.componentResolver.resolveComponent(this.comp);
                     compiled.then(function (componentFactory) {
                         var cmp_ref = _this.childView.createComponent(componentFactory);
-                        _this.comp.registerMethods && _this.comp.registerMethods(cmp_ref);
+                        _this.comp.registerMethods && _this.comp.registerMethods(cmp_ref, _this);
                         _this.flattenjBComp(cmp_ref);
                     });
                 };

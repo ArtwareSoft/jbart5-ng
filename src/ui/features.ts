@@ -8,13 +8,21 @@ jb.component('group.wait', {
     for: { essential: true },
     loadingControl: { type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
     error: { type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
+    resource: { as: 'string' },
+    mapToResource: { dynamic: true, defaultValue: '%%' },
   },
   impl: function(context,waitFor,loading,error) { 
     return {
-      ctrlsEmFunc: function(originalCtrlsEmFunc,ctx) {
+      ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
+        var waiting = cmp.wait();
         return jb_rx.observableFromCtx(ctx.setData(waitFor))
-          .flatMap(x=>
-            originalCtrlsEmFunc(ctx.setData(x)))
+          .flatMap(x=>{
+              var data = context.params.mapToResource(x);
+              jb.writeToResource(context.params.resource,data,ctx);
+              return originalCtrlsEmFunc(ctx.setData(data));
+            })
+          .do(x=>
+            waiting.ready())
           .startWith([loading(ctx)])
           .catch(e=> 
             jb_rx.Observable.of([error(ctx.setVars({error:e}))]))
@@ -162,10 +170,11 @@ jb.component('var',{
     name: { as: 'string'},
     value: { dynamic: true },
   },
-  impl: (context,name,value) => ({
-    extendCtx: ctx => 
-      ctx.setVars(jb.obj(name,value(ctx))),
-  })
+  impl: (context,name,value) => 
+    jb.extend({}, name && {
+      extendCtx: ctx =>
+        ctx.setVars(jb.obj(name,value(ctx)))
+    })
 })
 
 jb.component('hidden', {

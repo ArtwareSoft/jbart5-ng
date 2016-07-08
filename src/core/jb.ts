@@ -37,4 +37,5 @@ export var jb = {
 	entries: jb_entries,
 	flattenArray: jb_flattenArray,
 	compareArrays: jb_compareArrays,
+	writeToResource: jb_writeToResource,
 }

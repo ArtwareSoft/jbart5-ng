@@ -28,13 +28,9 @@ jb.component('itemlist',{
         cmp.items = context.params.items(cmp.ctx);
         cmp.itemlist = {
             items: cmp.items,
-            elems: () => Array.from($(cmp._nativeElement).find('[jb-item]')),
             el: cmp.elementRef.nativeElement,
             elemToItem: (elem) => 
               cmp.items[$(elem).closest('[jb-item]').index()],
-            itemToElem: function(item) { 
-              return this.elems()[cmp.items.indexOf(item)] 
-            },
             selectionEmitter: new jb_rx.Subject(),
         }
        },
@@ -168,7 +164,8 @@ jb.component('itemlist.keyboard-selection', {
               event.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
               return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
-        }).subscribe(x=>itemlist.selectionEmitter.next(x))
+        }).subscribe(x=>
+          itemlist.selectionEmitter.next(x))
       },
       host: {
         '(keydown)': 'keydown.next($event)',

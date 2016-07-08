@@ -183,14 +183,12 @@ jb.component('dialogFeature.cssClassOnLaunchingControl', {
 				var dialog = context.vars.$dialog;
 				var $control = context.vars.$launchingElement.$el;
 				$control.addClass('dialog-open');
-				cmp.dialogOpen = true;
 				dialog.em.filter(e=>
 					e.type == 'close')
 					.take(1)
-					.subscribe(()=> {
-						$control.removeClass('dialog-open');
-						cmp.dialogOpen = true;
-					})
+					.subscribe(()=>
+						$control.removeClass('dialog-open')
+					)
 			}
 	})
 })

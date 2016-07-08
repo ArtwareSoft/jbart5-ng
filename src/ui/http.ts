@@ -6,15 +6,15 @@ import { Http, Response, XHRBackend, BrowserXhr, RequestOptions, XSRFStrategy, C
 jb.component('http.get', {
 	params: {
 		url: { as: 'string' },
-		resource: { as: 'string' },
-		mapToResource: { dynamic: true, defaultValue: '%%' },
 	},
 	impl: (ctx,url,resource) => 
 		new Http(new XHRBackend(new BrowserXhr(), null, new CookieXSRFStrategy()), new RequestOptions())
-//		new Http(new Request(new RequestOptions({url: url})))
 			.get(url)
-			.do(x => {
-				if (resource)
-					ctx.resources[resource] = ctx.params.mapToResource(ctx.setData(x.json()))
-			})
+			.map(x=>
+				x.json())
+//			.take(1)
+			// .do(x => {
+			// 	if (resource)
+			// 		ctx.resources[resource] = ctx.params.mapToResource(ctx.setData(x.json()))
+			// })
 })

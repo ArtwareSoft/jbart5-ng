@@ -43,8 +43,9 @@ class jbComponent {
 
 		return this.factory;
 	}
-	registerMethods(cmp_ref) { // should be called by the instantiator
+	registerMethods(cmp_ref,parent) { // should be called by the instantiator
 		var cmp = cmp_ref.hostView._view._Cmp_0_4;
+		cmp.parentCmp = parent;
 		cmp.ctx = this.ctx;
 		cmp.methodHandler = this.methodHandler;
 		if (this.cssFixes.length > 0) {
@@ -76,7 +77,7 @@ class jbComponent {
 		Cmp.prototype.ngOnInit = function() {
 			try {
 				if (this.methodHandler.jbObservableFuncs.length) {
-					this.jbEmitter = new jb_rx.Subject();
+					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
 					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
 				}
 	    		this.refreshCtx = (ctx2) => {
@@ -93,9 +94,13 @@ class jbComponent {
 		Cmp.prototype.ngAfterViewInit = function() {
 			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
 			this.jbEmitter && this.jbEmitter.next('after-init');
-			jb.delay(1).then(()=> // ugly huck to get event after children are initialized
-				this.jbEmitter && this.jbEmitter.next('after-init-children')
-			)
+			jb.delay(1).then(()=>{ // ugly huck to get event after children are initialized
+				if (this.jbEmitter) {
+					this.jbEmitter.next('after-init-children');
+					if (this.readyCounter == null)
+						this.jbEmitter.next('ready');
+				}
+			})
 		}
 
 		Cmp.prototype.ngDoCheck = function() {
@@ -103,6 +108,21 @@ class jbComponent {
 				f(this));
 			this.refreshModel && this.refreshModel();
 			this.jbEmitter && this.jbEmitter.next('check');
+		}
+		Cmp.prototype.wait = function () {
+			this.readyCounter = (this.readyCounter || 0)+1;
+			if (this.parentCmp && this.parentCmp.wait)
+				this.parentWaiting = this.parentCmp.wait();
+			return {
+				ready: () => {
+					this.readyCounter--;
+					if (!this.readyCounter) {
+						this.jbEmitter && this.jbEmitter.next('ready');
+						if (this.parentWaiting)
+							this.parentWaiting.ready();
+					}
+				}
+			}
 		}
 		return Cmp;
 	}
@@ -340,7 +360,7 @@ export class jbComp {
 
     compiled.then(componentFactory => {
     	var cmp_ref = this.childView.createComponent(componentFactory);
-    	_this.comp.registerMethods && this.comp.registerMethods(cmp_ref);
+    	_this.comp.registerMethods && this.comp.registerMethods(cmp_ref,this);
         this.flattenjBComp(cmp_ref)
     });
   }
@@ -415,7 +435,7 @@ export function twoWayBind(ref) {
 		  		cmp[modelPath] = jb.val(ref);
 	}
 	// keyup for input change for select & checkbox
-	var modelExp = `[(ngModel)] = "${modelPath}" (change)="jbOnChange($event)" (keyup)="jbOnChange($event)"`; // (keyup)="writeValue($event.target.value)" (change)="writeValue($event.target.value)`;
+	var modelExp = `[(ngModel)] = "${modelPath}" (change)="jbOnChange($event)" (keyup)="jbOnChange($event)"`;
 
 	return {
 		bindToCmp: bindToCmp,
@@ -433,7 +453,7 @@ export function twoWayBind(ref) {
 
 export function insertComponent(comp, resolver, parentView) {
   	return comp.compile(resolver).then(componentFactory => 
-  		comp.registerMethods(parentView.createComponent(componentFactory))
+  		comp.registerMethods(parentView.createComponent(componentFactory),comp)
     )
 }
 

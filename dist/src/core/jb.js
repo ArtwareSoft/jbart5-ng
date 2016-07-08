@@ -40,6 +40,7 @@ System.register([], function(exports_1, context_1) {
                 entries: jb_entries,
                 flattenArray: jb_flattenArray,
                 compareArrays: jb_compareArrays,
+                writeToResource: jb_writeToResource,
             });
         }
     }

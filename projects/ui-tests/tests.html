@@ -15,12 +15,9 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(['testing/ui-testers','/projects/ui-tests/ui-tests.js']))
-  .then(loadedModules=> {
-     var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
-     bootstrap(loadedModules['testing/ui-testers'].jBartTests);
-     bootstrap(loadedModules['jb-ui'].jBartWidget);
-  });
+jbLoadModules(jb_modules.concat(['/projects/ui-tests/ui-tests.js']))
+  .then(loadedModules=>
+    jbBootstrap(loadedModules))   
   
 </script>
 

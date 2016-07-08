@@ -105,11 +105,12 @@ jb_modules =
 'jb-ui/md-styles/group-md',
 'jb-ui/md-styles/tabs-md',
 
+'testing/ui-testers'
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
 ,'tree','properties','pick','save','probe','edit-source','new-control'
-,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles']
+,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions']
   .map(x=>'studio/studio-' + x)
 
 jb_system_config = {
@@ -174,6 +175,6 @@ function jbLoadModules(modules) {
 }
 
 function jbBootstrap(loadedModules) {
-     var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
-     bootstrap(loadedModules['jb-ui'].jBartWidget);
+  var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
+  bootstrap(loadedModules['jb-ui'].jBartWidget);
 }

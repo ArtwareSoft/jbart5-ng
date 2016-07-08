@@ -100,28 +100,28 @@ jb_tests('md-ui-tests', {
     },
     expectedHtmlResult: { $: 'contains', text: ['Homer'] },
   },
-  'dialog-md-alert' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-    control :{$: 'button', title: 'Open Dialog', $click: true,
-        action :{$: 'openDialog', 
-          style :{$: 'dialog.md-dialog-ok-cancel'},
-          title: 'Hello' , 
-          content :{$: 'label', title: 'Hello Dialog' },      
-        } 
-    },
-    expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
-  },
+  // 'dialog-md-alert' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+  //   control :{$: 'button', title: 'Open Dialog', $click: true,
+  //       action :{$: 'openDialog', 
+  //         style :{$: 'dialog.md-dialog-ok-cancel'},
+  //         title: 'Hello' , 
+  //         content :{$: 'label', title: 'Hello Dialog' },      
+  //       } 
+  //   },
+  //   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
+  // },
 
-  'md-dialog-modal' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-    control :{$: 'button', title: 'Open Dialog', $click: true,
-        action :{$: 'openDialog', 
-          modal: true,
-          style :{$: 'dialog.md-dialog-ok-cancel' },
-          title: 'Hello' , 
-          content :{$: 'label', title: 'Hello Dialog' },      
-        } 
-    },
-    expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
-  },
+  // 'md-dialog-modal' :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+  //   control :{$: 'button', title: 'Open Dialog', $click: true,
+  //       action :{$: 'openDialog', 
+  //         modal: true,
+  //         style :{$: 'dialog.md-dialog-ok-cancel' },
+  //         title: 'Hello' , 
+  //         content :{$: 'label', title: 'Hello Dialog' },      
+  //       } 
+  //   },
+  //   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
+  // },
   
 'md-tabs' :{$: 'ng2-ui-test', 
   control :{$: 'tabs',
@@ -234,8 +234,29 @@ itemlist :{$: 'ng2-ui-test',
         }
     },
     features :{$: 'group.wait', 
-      for :{$: 'http.get', url: '/projects/ui-tests/people.json', resource: 'peopleFromUrl', mapToResource: '%people%'} 
+      for :{$: 'http.get', url: '/projects/ui-tests/people.json'},
+      resource: 'peopleFromUrl', 
+      mapToResource: '%people%'        
     }
+  },
+  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', '42'] },
+},
+
+'wait': {$: 'ng2-ui-test',  
+  control :{$: 'wait', 
+    for :{$: 'http.get', url: '/projects/ui-tests/people.json' },  
+    resource: 'peopleFromUrl', 
+    dataVariable: 'peopleFromUrlVar',
+    mapToResource: '%people%',
+    control :{$: 'itemlist',
+      items: '%$peopleFromUrlVar%',
+        controls :{$:'group',
+          controls: [ 
+            { $: 'label', title: '%name%' }, 
+            { $: 'label', title: '%age%' }, 
+          ]
+        }
+    },
   },
   expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', '42'] },
 },
@@ -671,27 +692,27 @@ picklist :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Springfield', 'New York'] },
 },
 
-dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-  control :{$: 'button', title: 'Open Dialog', $click: true,
-      action :{$: 'openDialog', 
-        title: 'Hello' , 
-        content :{$: 'label', title: 'Hello Dialog' },      
-        features :{$: 'dialogFeature.dragTitle', id: "dialog-test"}, 
-      } 
-  },
-  expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
-},
+// dialog :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+//   control :{$: 'button', title: 'Open Dialog', $click: true,
+//       action :{$: 'openDialog', 
+//         title: 'Hello' , 
+//         content :{$: 'label', title: 'Hello Dialog' },      
+//         features :{$: 'dialogFeature.dragTitle', id: "dialog-test"}, 
+//       } 
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
+// },
 
-'popup-menu' :{$: 'ng2-ui-test', 
-  control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
-      controls: 
-      [
-        { $: 'pulldown.menu-item', title: 'Open ...'} ,
-        { $: 'pulldown.menu-item', title: 'Save', spritePosition: '4,0'}
-      ]
-  },
-  expectedHtmlResult: { $: 'contains', text: ['Open'], lookin: 'popups' },
-},
+// 'popup-menu' :{$: 'ng2-ui-test', 
+//   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
+//       controls: 
+//       [
+//         { $: 'pulldown.menu-item', title: 'Open ...'} ,
+//         { $: 'pulldown.menu-item', title: 'Save', spritePosition: '4,0'}
+//       ]
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['Open'], lookin: 'popups' },
+// },
 
 'dynamic-controls' :{$: 'ng2-ui-test', 
   control :{$: 'group',

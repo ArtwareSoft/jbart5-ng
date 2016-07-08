@@ -1,18 +1,15 @@
-jb_component('dataTest',{
+jb_component('data-test',{
 	params: {
-		calculate: { dynamic:true },
+		calculate: { dynamic: true },
 		runBefore: { type: 'action', dynamic: true },
 		resultVariable: { as: 'string', defaultValue:'result' },
 		action: { type: 'action', dynamic: true },
-		expectedResult: { type: "boolean", dynamic: true, as: 'boolean' }
+		expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
 	},
 	impl: function(context,calculate,runBefore,resultVariable,action,expectedResult) {
 		runBefore();
 		var value = calculate();
-		if (!value || !value.promise)	// sync
-			return result(value);
-		else 
-			return $.when(value).then(result);
+		return result(value);
 
 		function result(value) {
 			if (context.vars.$testContext) 

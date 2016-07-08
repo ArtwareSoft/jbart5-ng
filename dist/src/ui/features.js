@@ -20,13 +20,21 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     for: { essential: true },
                     loadingControl: { type: 'control', defaultValue: { $: 'label', title: 'loading ...' }, dynamic: true },
                     error: { type: 'control', defaultValue: { $: 'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}' }, dynamic: true },
+                    resource: { as: 'string' },
+                    mapToResource: { dynamic: true, defaultValue: '%%' },
                 },
                 impl: function (context, waitFor, loading, error) {
                     return {
-                        ctrlsEmFunc: function (originalCtrlsEmFunc, ctx) {
+                        ctrlsEmFunc: function (originalCtrlsEmFunc, ctx, cmp) {
+                            var waiting = cmp.wait();
                             return jb_rx.observableFromCtx(ctx.setData(waitFor))
                                 .flatMap(function (x) {
-                                return originalCtrlsEmFunc(ctx.setData(x));
+                                var data = context.params.mapToResource(x);
+                                jb_core_1.jb.writeToResource(context.params.resource, data, ctx);
+                                return originalCtrlsEmFunc(ctx.setData(data));
+                            })
+                                .do(function (x) {
+                                return waiting.ready();
                             })
                                 .startWith([loading(ctx)])
                                 .catch(function (e) {
@@ -169,11 +177,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     name: { as: 'string' },
                     value: { dynamic: true },
                 },
-                impl: function (context, name, value) { return ({
-                    extendCtx: function (ctx) {
-                        return ctx.setVars(jb_core_1.jb.obj(name, value(ctx)));
-                    },
-                }); }
+                impl: function (context, name, value) {
+                    return jb_core_1.jb.extend({}, name && {
+                        extendCtx: function (ctx) {
+                            return ctx.setVars(jb_core_1.jb.obj(name, value(ctx)));
+                        }
+                    });
+                }
             });
             jb_core_1.jb.component('hidden', {
                 type: 'feature',

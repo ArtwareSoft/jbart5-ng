@@ -14,15 +14,12 @@ System.register(['jb-core', '@angular/http'], function(exports_1, context_1) {
             jb_core_1.jb.component('http.get', {
                 params: {
                     url: { as: 'string' },
-                    resource: { as: 'string' },
-                    mapToResource: { dynamic: true, defaultValue: '%%' },
                 },
                 impl: function (ctx, url, resource) {
                     return new http_1.Http(new http_1.XHRBackend(new http_1.BrowserXhr(), null, new http_1.CookieXSRFStrategy()), new http_1.RequestOptions())
                         .get(url)
-                        .do(function (x) {
-                        if (resource)
-                            ctx.resources[resource] = ctx.params.mapToResource(ctx.setData(x.json()));
+                        .map(function (x) {
+                        return x.json();
                     });
                 }
             });

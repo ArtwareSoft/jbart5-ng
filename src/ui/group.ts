@@ -74,3 +74,29 @@ jb.component('group.section', {
   }
 })
 
+jb.component('wait', {
+  type: 'control',
+  params: {
+    title: { as: 'string' , dynamic: true },
+    for: { essential: true },
+    resource: { as: 'string' },
+    dataVariable: { as: 'string' },
+    mapToResource: { dynamic: true, defaultValue: '%%' },
+    control: { type: 'control' , dynamic: true },
+    loadingControl: { type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
+    errorControl: { type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
+  },
+  impl :{$: 'group', 
+      controls :{$: 'group',
+          controls :{$call: 'control' },
+          features :{$: 'var', name: '%$dataVariable%', value: '%%'}
+      },
+      features :{$: 'group.wait', 
+        for :{$call: 'for' }, 
+        resource: '%$resource%', 
+        mapToResource :{$call: 'mapToResource' }, 
+        loadingControl :{$call: 'loadingControl' }, 
+        error :{$call: 'errorControl' }, 
+      }
+  }
+})

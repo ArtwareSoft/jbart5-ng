@@ -97,7 +97,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                     cmp.openPopup();
                             };
                             cmp.title = context.params.title();
-                            cmp.openPopup = jb_ui.wrapWithLauchingElement(openPopup, context, cmp._nativeElement || cmp.elementRef);
+                            cmp.openPopup = jb_ui.wrapWithLauchingElement(openPopup, context, cmp.elementRef);
                             if (context.params.open)
                                 cmp.openPopup();
                         }

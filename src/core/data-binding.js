@@ -10,6 +10,11 @@ function jb_writeValue(to,val) {
     to.$jb_parent[to.$jb_property] = jb_val(val);
 }
 
+function jb_writeToResource(resource,val,ctx) {
+  if (resource)
+    ctx.resources[resource] = val;
+}
+
 function jb_objectProperty(object,property,jstype,lastInExpression) {
   if (!object) return null;
   if (typeof object[property] == 'undefined') 

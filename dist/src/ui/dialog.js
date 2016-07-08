@@ -185,14 +185,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                         var dialog = context.vars.$dialog;
                         var $control = context.vars.$launchingElement.$el;
                         $control.addClass('dialog-open');
-                        cmp.dialogOpen = true;
                         dialog.em.filter(function (e) {
                             return e.type == 'close';
                         })
                             .take(1)
                             .subscribe(function () {
-                            $control.removeClass('dialog-open');
-                            cmp.dialogOpen = true;
+                            return $control.removeClass('dialog-open');
                         });
                     }
                 }); }

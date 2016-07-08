@@ -40,7 +40,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'dialogFeature.closeWhenClickingOutside' },
                         { $: 'dialogFeature.cssClassOnLaunchingControl' },
                         { $: 'dialogFeature.nearLauncherLocation' },
-                        { $: 'studio.fix-suggestions-margin' },
+                        //        { $: 'studio.fix-suggestions-margin' } ,
                         { $: 'dialogFeature.uniqueDialog', id: 'studio-suggestions-popup' },
                         { $: 'css.box-shadow',
                             blurRadius: 5,
@@ -53,22 +53,22 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.fix-suggestions-margin', {
-                type: 'dialogFeature',
-                impl: function (ctx) {
-                    var e = ctx.exp('%$jbEditEvent%');
-                    var temp = $('<span></span>').css('font', $(e.input).css('font')).css('width', '100%')
-                        .css('z-index', '-1000').text($(e.input).val().substr(0, e.pos)).appendTo('body');
-                    var offset = temp.width();
-                    temp.remove();
-                    return {
-                        css: "{ margin-left: " + offset + "px }"
-                    };
-                }
-            });
         }
     }
 });
+// jb.component('studio.fix-suggestions-margin', {
+//   type: 'dialogFeature',
+//   impl: ctx => {
+//     var e = ctx.exp('%$jbEditEvent%');
+//     var temp = $('<span></span>').css('font',$(e.input).css('font')).css('width','100%')
+//       .css('z-index','-1000').text($(e.input).val().substr(0,e.pos)).appendTo('body');
+//     var offset = temp.width();
+//     temp.remove();
+//     return {
+//       css: `{ margin-left: ${offset}px }`
+//     }
+//   }
+// })
 // jb.component('editable-text.studio-jb-edit-input',{
 //   type: 'editable-text.style',
 //   impl :{$: 'customStyle', 

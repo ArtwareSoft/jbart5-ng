@@ -58,7 +58,7 @@ export class jBartSingleTest {
 	this.counter = 0;
   	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
   	comp.compile(this.componentResolver).then(componentFactory => 
-  		comp.registerMethods(this.childView.createComponent(componentFactory))
+  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
     );
     // this.componentResolver.resolveComponent(comp)
     //   .then(componentFactory => {
@@ -80,7 +80,7 @@ export class jBartTests {
 	}
 	addComp(comp) {
 	  	comp.compile(this.componentResolver).then(componentFactory => 
-	  		comp.registerMethods(this.childView.createComponent(componentFactory))
+	  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
 	    );
 	}
 }
@@ -92,50 +92,78 @@ jb.component('ng2-ui-test', {
 		expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
 		runBefore: { type: 'action', dynamic: true },
 		cleanAfter: { type: 'action', dynamic: true },
-		checkAfterCmpEvent: { as: 'string', defaultValue: 'after-init-children' },
+		checkAfterCmpEvent: { as: 'string', defaultValue: 'ready' },
 		waitFor: {},
 	},
-	impl: ctx=> 
+	impl: ctx=>
 		new Promise((resolve,reject)=> {
-		 console.log('starting ' + ctx.vars.testID);
-		 var ctrl = ctx.params.control(ctx.setVars({ngZone:window.jbartTestsNgZone}));
-		 if (!ctrl)
-		 	return resolve({ id: ctx.vars.testID, success:false, reason: ' can not create control' });
-		 return window.jbartTestsInstance.addComp(
-				ctrl.jbExtend({
-					observable: (observable,cmp) => { 
-						observable
-						.map(x=>x.data||x) // maybe ctx
-						.map(x=>{console.log(ctx.vars.testID,x);return x})
-						.filter(x=>x==ctx.params.checkAfterCmpEvent)
-						.do(()=>{
-							var promise = ctx.params.waitFor;
-							if (!promise || !promise.then) promise = Promise.resolve(1);
-							promise.then(checkIt,checkIt);
-							function checkIt() {
-								//return jb.delay(1).then(()=>{
-									var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
-									cmp.elementRef.nativeElement.setAttribute('test',ctx.vars.testID);
-									//if (ctx.vars.testID == 'picklist') debugger;
-									if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
-					 					html = $('jb-dialog-parent').html();
-									resolve({ 
-										id: ctx.vars.testID,
-										success: ctx.params.expectedHtmlResult(ctx.setData(html))
-									});
-									jb_dialogs.dialogs
-										.filter(d=> d.context.vars.testID == ctx.vars.testID)
-										.forEach(d=> 
-											d.close())
-								//})
-							}
-						})
-						.catch(e=>{ debugger; resolve({ id: ctx.vars.testID, success:false }) })
-						.subscribe(()=>{})
-					}})
-				)
+			ctx.run({$:'openDialog', content: ctx.profile.control, 
+			features: ctx2 => ({
+					observable: (observable,cmp) =>
+						observable.map(x=>
+							x.data||x) // maybe ctx
+						.filter(x=>
+							x==ctx.params.checkAfterCmpEvent)
+						.catch(e=>{ 
+							resolve({ id: ctx.vars.testID, success:false }) })
+						.subscribe(x=>{
+							var html = cmp.elementRef.nativeElement.outerHTML;
+							resolve({ 
+								id: ctx.vars.testID,
+								success: ctx.params.expectedHtmlResult(ctx.setData(html))
+							});
+							ctx2.run({$:'closeContainingPopup'})
+						}),
+					css: '{display: none}'
+			})
 		})
+	})
 })
+
+// 		new Promise((resolve,reject)=> {
+// 		 console.log('starting ' + ctx.vars.testID);
+// 		 var ctrl = ctx.params.control(ctx.setVars({ngZone:window.jbartTestsNgZone}));
+// 		 if (!ctrl)
+// 		 	return resolve({ id: ctx.vars.testID, success:false, reason: ' can not create control' });
+// 		 return window.jbartTestsInstance.addComp(
+// 				ctrl.jbExtend({
+// 					observable: (observable,cmp) => { 
+// 						observable
+// 						.map(x=>
+// 							x.data||x) // maybe ctx
+// 						.do(x=>
+// 							console.log(ctx.vars.testID,x))
+// 						.filter(x=>
+// 							x==ctx.params.checkAfterCmpEvent)
+// 						.do(()=>{
+// 							var promise = ctx.params.waitFor;
+// 							if (!promise || !promise.then) promise = Promise.resolve(1);
+// 							promise.then(checkIt,checkIt);
+// 							function checkIt() {
+// 								//return jb.delay(1).then(()=>{
+// 									var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
+// 									cmp.elementRef.nativeElement.setAttribute('test',ctx.vars.testID);
+// 									//if (ctx.vars.testID == 'picklist') debugger;
+// 									if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
+// 					 					html = $('jb-dialog-parent').html();
+// 									resolve({ 
+// 										id: ctx.vars.testID,
+// 										success: ctx.params.expectedHtmlResult(ctx.setData(html))
+// 									});
+// 									jb_dialogs.dialogs
+// 										.filter(d=> d.context.vars.testID == ctx.vars.testID)
+// 										.forEach(d=> 
+// 											d.close())
+// 								//})
+// 							}
+// 						})
+// 						.catch(e=>{ debugger; resolve({ id: ctx.vars.testID, success:false }) })
+// 						.subscribe(()=>{})
+// 					}})
+// 				)
+// 		})
+// 	}
+// })
 
 jb.component('ui-tests.show-tests', {
 	impl :{$: 'itemlog',

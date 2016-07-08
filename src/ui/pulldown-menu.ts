@@ -101,7 +101,7 @@ jb.component('pulldown.topMenuItem', {
 						cmp.openPopup();
 				}
 				cmp.title = context.params.title();
-				cmp.openPopup = jb_ui.wrapWithLauchingElement(openPopup, context, cmp._nativeElement || cmp.elementRef); 
+				cmp.openPopup = jb_ui.wrapWithLauchingElement(openPopup, context, cmp.elementRef); 
 
 				if (context.params.open)
 					cmp.openPopup();

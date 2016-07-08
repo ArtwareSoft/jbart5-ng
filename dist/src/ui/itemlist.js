@@ -84,13 +84,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                             cmp.items = context.params.items(cmp.ctx);
                             cmp.itemlist = {
                                 items: cmp.items,
-                                elems: function () { return Array.from($(cmp._nativeElement).find('[jb-item]')); },
                                 el: cmp.elementRef.nativeElement,
                                 elemToItem: function (elem) {
                                     return cmp.items[$(elem).closest('[jb-item]').index()];
-                                },
-                                itemToElem: function (item) {
-                                    return this.elems()[cmp.items.indexOf(item)];
                                 },
                                 selectionEmitter: new jb_rx.Subject(),
                             };
@@ -191,7 +187,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                                 event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
                                 return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
-                            }).subscribe(function (x) { return itemlist.selectionEmitter.next(x); });
+                            }).subscribe(function (x) {
+                                return itemlist.selectionEmitter.next(x);
+                            });
                         },
                         host: {
                             '(keydown)': 'keydown.next($event)',

@@ -76,15 +76,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'pulldown.topMenuItem',
                             title: 'Insert',
                             controls: [
-                                { $: 'pulldown.menu-item',
-                                    title: 'Field',
-                                },
-                                { $: 'pulldown.menu-item',
-                                    title: 'Control',
-                                },
-                                { $: 'pulldown.menu-item',
-                                    title: 'Group',
-                                }
+                                { $: 'pulldown.menu-item', title: 'Field' },
+                                { $: 'pulldown.menu-item', title: 'Control' },
+                                { $: 'pulldown.menu-item', title: 'Group' }
                             ]
                         },
                         { $: 'pulldown.topMenuItem',
@@ -97,19 +91,49 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                             .filter(function (x) { return x != 'window'; });
                                     },
                                     genericControl: { $: 'pulldown.menu-item',
-                                        title: '%$controlItem%',
                                         action: { $: 'studio.open-resource',
                                             resource: function (ctx) {
                                                 return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%')]);
                                             },
                                             id: '%$controlItem%'
-                                        }
+                                        },
+                                        title: '%$controlItem%'
                                     }
                                 },
                                 { $: 'pulldown.menu-item-separator' },
                                 { $: 'pulldown.menu-item',
-                                    title: 'Add Data Resource...',
-                                    action: { $: 'studio.addDataResource' }
+                                    action: { $: 'studio.addDataResource' },
+                                    title: 'Add Data Resource...'
+                                }
+                            ]
+                        },
+                        { $: 'pulldown.topMenuItem',
+                            title: 'Tests',
+                            controls: [
+                                { $: 'dynamic-controls',
+                                    controlItems: function (ctx) {
+                                        var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'tests']);
+                                        return Object.getOwnPropertyNames(res)
+                                            .filter(function (x) { return x != 'window'; });
+                                    },
+                                    genericControl: { $: 'pulldown.menu-item',
+                                        action: { $: 'studio.run-test',
+                                            resource: function (ctx) {
+                                                return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'tests', ctx.exp('%$controlItem%')]);
+                                            },
+                                            id: '%$controlItem%'
+                                        },
+                                        title: '%$controlItem%'
+                                    }
+                                },
+                                { $: 'pulldown.menu-item-separator' },
+                                { $: 'pulldown.menu-item',
+                                    action: { $: 'studio.add-test' },
+                                    title: 'Add Test...'
+                                },
+                                { $: 'pulldown.menu-item',
+                                    action: { $: 'studio.run-all-tests' },
+                                    title: 'Run All Tests...'
                                 }
                             ]
                         }
