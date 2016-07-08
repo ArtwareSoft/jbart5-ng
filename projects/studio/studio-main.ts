@@ -192,6 +192,7 @@ jb.component('studio.renderWidget',{
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;
 						document.title = cmp.project + ' with jBart';
+						jbart.previewjbart.comps[cmp.project + '.tests'] = jbart.previewjbart.comps['ui-tests.show-project-tests'];
 						
 						// forward the studio zone to the preview widget so it will be updated
 						jb_ui.getZone('studio.all').then(zone=> {

@@ -24,7 +24,7 @@ export class suggestionObj {
       .css('margin-left', `${offset}px`);
   }
 
-  extendWithSuggestions(ctx) {
+  extendWithSuggestions(probeCtx) {
     var base = this.exp.slice(0,-1-this.tail.length);
     if (this.lastChar == '%')
       this.suggestions = jb.toarray(probeCtx.exp('%%'))

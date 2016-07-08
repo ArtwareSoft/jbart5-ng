@@ -4,7 +4,7 @@
   <head>
     <title>Studio Helper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
-  <script type="text/javascript" src="/src/loader/load-jbart.js"></script>
+  	<script type="text/javascript" src="/src/loader/load-jbart.js"></script>
   </head>
 
     <link rel="stylesheet" href="/projects/studio/css/studio.css">
@@ -15,7 +15,7 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/studio-helper/studio-helper']))
+jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/studio-helper/studio-helper','projects/studio-helper/suggestion-tests']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

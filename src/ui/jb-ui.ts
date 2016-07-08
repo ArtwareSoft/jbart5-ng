@@ -547,13 +547,15 @@ export class jBartWidget {
 	}
 
     private getOrCreateInitialCtx() {
-    	if (this.$jbInitialCtx) return this.$jbInitialCtx;
-    	var ns = this.compId.split('.')[0];
-		var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
-		var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
-		jb.extend(resources, { window: window, globals: { } });
-		this.$jbInitialCtx = ctx;
-		return ctx;
+    	if (!this.$jbInitialCtx) {
+	    	var ns = this.compId.split('.')[0];
+			var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
+			jb.extend(resources, { window: window, globals: { } });
+			this.$jbInitialCtx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
+		}
+		if (jbart.studioGlobals)
+			return this.$jbInitialCtx.setVars({studio: {project: jbart.studioGlobals.project, page: jbart.studioGlobals.page}})
+		return this.$jbInitialCtx;
     }
 }
 

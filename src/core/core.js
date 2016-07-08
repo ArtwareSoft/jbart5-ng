@@ -244,7 +244,7 @@ function jb_evalExpressionPart(expressionPart,context,jstype) {
 
     else if (jb_isArray(item))
       item = jb_map(item,function(inner) {
-        return typeof inner === "object" ? jb_objectProperty(inner,part,jstype) : inner;
+        return typeof inner === "object" ? jb_objectProperty(inner,part,jstype,i == parts.length -1) : inner;
       });
     else if (typeof item === 'object')
       item = item && jb_objectProperty(item,part,jstype,i == parts.length -1);

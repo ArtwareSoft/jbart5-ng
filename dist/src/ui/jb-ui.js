@@ -610,14 +610,15 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     }
                 };
                 jBartWidget.prototype.getOrCreateInitialCtx = function () {
-                    if (this.$jbInitialCtx)
-                        return this.$jbInitialCtx;
-                    var ns = this.compId.split('.')[0];
-                    var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
-                    var ctx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
-                    jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                    this.$jbInitialCtx = ctx;
-                    return ctx;
+                    if (!this.$jbInitialCtx) {
+                        var ns = this.compId.split('.')[0];
+                        var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
+                        jb_core_1.jb.extend(resources, { window: window, globals: {} });
+                        this.$jbInitialCtx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
+                    }
+                    if (jbart.studioGlobals)
+                        return this.$jbInitialCtx.setVars({ studio: { project: jbart.studioGlobals.project, page: jbart.studioGlobals.page } });
+                    return this.$jbInitialCtx;
                 };
                 jBartWidget = __decorate([
                     core_1.Component({

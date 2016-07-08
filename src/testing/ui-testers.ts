@@ -1,4 +1,4 @@
-import { jb } from 'jb-core/jb';;
+import { jb } from 'jb-core/jb';
 import * as jb_ui from 'jb-ui/jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
@@ -11,79 +11,79 @@ var allTestModules = ['ng-ui-tests','md-ui-tests','studio-tests','rx-tests'];
 //testModules = allTestModules;
 //testModules = ['studio-tests'];
 
-function testComp(compID,ngZone) {
-	var ns = 'ui-tests';
-	var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
-	jb.extend(resources, { window: window, globals: {} });
-	var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: ngZone},  }, {});
-	// Object.getOwnPropertyNames(resources).forEach(id=> {
-	// 	var r = resources[id];
-	// 	if (r && r.$) resources[id] = ctx.run(r);
-	// })
-	var profile = allTestModules.reduce((found,module) => found || jb.widgets[module].tests[compID],false);
-	if (!profile)
-		console.log('can not find a test ' + compID);
-	else if (profile.control && profile.$ == 'studio-test') {
-		return ctx.run(jb.extend({},profile,{$:'run-studio-test'}));
-	}
-	else if (profile.control)
-		return ctx.run(profile.control);
-	else if (profile.result)
-		return jb_ui.Comp({ 
-			template: '<div>{{result}}</div>',
-			methods: {
-				init: function(cmp) {
-					cmp.result = 'start: ';
-					ctx.run(profile.result,{ as: 'observable'}).map(ctx=>ctx.data).subscribe(x=>cmp.result += x + ', ');
-				}
-			}
-		},ctx)
-}
+// function testComp(compID,ngZone) {
+// 	var ns = 'ui-tests';
+// 	var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
+// 	jb.extend(resources, { window: window, globals: {} });
+// 	var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: ngZone},  }, {});
+// 	// Object.getOwnPropertyNames(resources).forEach(id=> {
+// 	// 	var r = resources[id];
+// 	// 	if (r && r.$) resources[id] = ctx.run(r);
+// 	// })
+// 	var profile = allTestModules.reduce((found,module) => found || jb.widgets[module].tests[compID],false);
+// 	if (!profile)
+// 		console.log('can not find a test ' + compID);
+// 	else if (profile.control && profile.$ == 'studio-test') {
+// 		return ctx.run(jb.extend({},profile,{$:'run-studio-test'}));
+// 	}
+// 	else if (profile.control)
+// 		return ctx.run(profile.control);
+// 	else if (profile.result)
+// 		return jb_ui.Comp({ 
+// 			template: '<div>{{result}}</div>',
+// 			methods: {
+// 				init: function(cmp) {
+// 					cmp.result = 'start: ';
+// 					ctx.run(profile.result,{ as: 'observable'}).map(ctx=>ctx.data).subscribe(x=>cmp.result += x + ', ');
+// 				}
+// 			}
+// 		},ctx)
+// }
 
 
-@Component({
-    selector: 'jBartSingleTest',
-	template: '<div #single_test></div>',
-})
-export class jBartSingleTest {
-  @ViewChild('single_test', {read: ViewContainerRef}) childView;
-  constructor(private componentResolver:ComponentResolver, private ngZone: NgZone, private elementRef: ElementRef) {
-		window.ngZone = this.ngZone;
-		jbart.zones['single-test'] = this.ngZone;
-		if ((this.elementRef.nativeElement.getAttribute('compID')||'').indexOf('studio') == 0)
-			jbart.zones['studio.all'] = this.ngZone;
-	}
+// @Component({
+//     selector: 'jBartSingleTest',
+// 	template: '<div #single_test></div>',
+// })
+// export class jBartSingleTest {
+//   @ViewChild('single_test', {read: ViewContainerRef}) childView;
+//   constructor(private componentResolver:ComponentResolver, private ngZone: NgZone, private elementRef: ElementRef) {
+// 		window.ngZone = this.ngZone;
+// 		jbart.zones['single-test'] = this.ngZone;
+// 		if ((this.elementRef.nativeElement.getAttribute('compID')||'').indexOf('studio') == 0)
+// 			jbart.zones['studio.all'] = this.ngZone;
+// 	}
 
-  ngOnInit() {
-	this.counter = 0;
-  	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
-  	comp.compile(this.componentResolver).then(componentFactory => 
-  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
-    );
-    // this.componentResolver.resolveComponent(comp)
-    //   .then(componentFactory => {
-    //     this.childView.createComponent(componentFactory);
-    //   });
-  }
-}
+//   ngOnInit() {
+// 	this.counter = 0;
+//   	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
+//   	comp.compile(this.componentResolver).then(componentFactory => 
+//   		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
+//     );
+//     // this.componentResolver.resolveComponent(comp)
+//     //   .then(componentFactory => {
+//     //     this.childView.createComponent(componentFactory);
+//     //   });
+//   }
+// }
 
-@Component({
-    selector: 'jbartTests',
-	template: '<div #tests></div>',
-})
-export class jBartTests {
-  @ViewChild('tests', {read: ViewContainerRef}) childView;
-  constructor(private componentResolver:ComponentResolver, private ngZone: NgZone) {
-		window.jbartTestsInstance = this;
-		window.jbartTestsNgZone = ngZone;
-//		window.ngZone = this.ngZone;
-	}
-	addComp(comp) {
-	  	comp.compile(this.componentResolver).then(componentFactory => 
-	  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
-	    );
-	}
-}
+// @Component({
+//     selector: 'jbartTests',
+// 	template: '<div #tests></div>',
+// })
+// export class jBartTests {
+//   @ViewChild('tests', {read: ViewContainerRef}) childView;
+//   constructor(private componentResolver:ComponentResolver, private ngZone: NgZone) {
+// 		window.jbartTestsInstance = this;
+// 		window.jbartTestsNgZone = ngZone;
+// //		window.ngZone = this.ngZone;
+// 	}
+// 	addComp(comp) {
+// 	  	comp.compile(this.componentResolver).then(componentFactory => 
+// 	  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
+// 	    );
+// 	}
+// }
 
 jb.component('ng2-ui-test', {
 	params: {
@@ -120,52 +120,50 @@ jb.component('ng2-ui-test', {
 	})
 })
 
-// 		new Promise((resolve,reject)=> {
-// 		 console.log('starting ' + ctx.vars.testID);
-// 		 var ctrl = ctx.params.control(ctx.setVars({ngZone:window.jbartTestsNgZone}));
-// 		 if (!ctrl)
-// 		 	return resolve({ id: ctx.vars.testID, success:false, reason: ' can not create control' });
-// 		 return window.jbartTestsInstance.addComp(
-// 				ctrl.jbExtend({
-// 					observable: (observable,cmp) => { 
-// 						observable
-// 						.map(x=>
-// 							x.data||x) // maybe ctx
-// 						.do(x=>
-// 							console.log(ctx.vars.testID,x))
-// 						.filter(x=>
-// 							x==ctx.params.checkAfterCmpEvent)
-// 						.do(()=>{
-// 							var promise = ctx.params.waitFor;
-// 							if (!promise || !promise.then) promise = Promise.resolve(1);
-// 							promise.then(checkIt,checkIt);
-// 							function checkIt() {
-// 								//return jb.delay(1).then(()=>{
-// 									var html = (cmp._nativeElement || cmp.elementRef.nativeElement).outerHTML;
-// 									cmp.elementRef.nativeElement.setAttribute('test',ctx.vars.testID);
-// 									//if (ctx.vars.testID == 'picklist') debugger;
-// 									if (ctx.params.expectedHtmlResult.profile.lookin == 'popups')
-// 					 					html = $('jb-dialog-parent').html();
-// 									resolve({ 
-// 										id: ctx.vars.testID,
-// 										success: ctx.params.expectedHtmlResult(ctx.setData(html))
-// 									});
-// 									jb_dialogs.dialogs
-// 										.filter(d=> d.context.vars.testID == ctx.vars.testID)
-// 										.forEach(d=> 
-// 											d.close())
-// 								//})
-// 							}
-// 						})
-// 						.catch(e=>{ debugger; resolve({ id: ctx.vars.testID, success:false }) })
-// 						.subscribe(()=>{})
-// 					}})
-// 				)
-// 		})
-// 	}
-// })
+jb.component('data-test', {
+	params: {
+		calculate: { dynamic: true },
+		runBefore: { type: 'action', dynamic: true },
+		resultVariable: { as: 'string', defaultValue:'result' },
+		action: { type: 'action', dynamic: true },
+		expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
+	},
+	impl: function(context,calculate,runBefore,resultVariable,action,expectedResult) {
+		runBefore();
+		var value = calculate();
+		if (result(value))
+			return ({ id: context.vars.testID, success: true })
+		else
+			return ({ id: context.vars.testID, success: false })
+
+		function result(value) {
+			if (context.vars.$testContext) 
+				context.vars.$testContext.result = value;
+			action(jb_ctx(context, { data: value, vars: jb_obj(resultVariable,value) }));
+			return expectedResult(jb_ctx(context,{ data: value, vars: jb_obj(resultVariable,value) }));
+		}
+	}
+})
+
+jb.component('ui-tests.show-project-tests', {
+	type: 'control',
+	impl :{$: 'itemlog',
+		items: [
+			'%$window.jbart.comps%',
+			{ $: 'objectToArray' },
+			{$filter: '%val/type% == "test"' },
+			ctx => 
+				ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+			// { $rxParallelKeepOrder: ctx => 
+			// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
+		],
+		controls :{$: 'ui-tests.show-one-test' } 
+	}
+})
+
 
 jb.component('ui-tests.show-tests', {
+	type: 'control',
 	impl :{$: 'itemlog',
 		items: [
 			() => testModules,
@@ -184,6 +182,7 @@ jb.component('ui-tests.show-tests', {
 })
 
 jb.component('ui-tests.show-one-test', {
+	type: 'control',
 	impl :{$: 'group',
 		layout :{$: 'md-layout', layout: 'row',  },
 		controls: 

@@ -32,7 +32,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     $(cmp.elementRef.nativeElement).parents('.jb-dialog')
                         .css('margin-left', offset + "px");
                 };
-                suggestionObj.prototype.extendWithSuggestions = function (ctx) {
+                suggestionObj.prototype.extendWithSuggestions = function (probeCtx) {
                     var _this = this;
                     var base = this.exp.slice(0, -1 - this.tail.length);
                     if (this.lastChar == '%')

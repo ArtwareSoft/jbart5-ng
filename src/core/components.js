@@ -379,7 +379,7 @@ jb_component('filter',{
 		filter: { type: 'boolean', as: 'boolean', dynamic: true }
 	},
 	impl: (context,filter) =>
-		context.data.filter(item =>
+		jb_toarray(context.data).filter(item =>
 			filter(context,item)
 		)
 });

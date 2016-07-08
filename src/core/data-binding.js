@@ -19,11 +19,12 @@ function jb_objectProperty(object,property,jstype,lastInExpression) {
   if (!object) return null;
   if (typeof object[property] == 'undefined') 
     object[property] = lastInExpression ? null : {};
-  if (jstype == 'string' || jstype == 'boolean' || jstype == 'number')
-    return jbart.jstypes[jstype](object[property]); // no need for valueByRef
-
-  if (jstype == 'ref' && lastInExpression)
-    return { $jb_parent: object, $jb_property: property };
+  if (lastInExpression) {
+    if (jstype == 'string' || jstype == 'boolean' || jstype == 'number')
+      return jbart.jstypes[jstype](object[property]); // no need for valueByRef
+    if (jstype == 'ref')
+      return { $jb_parent: object, $jb_property: property };
+  }
   return object[property];
 }
 
