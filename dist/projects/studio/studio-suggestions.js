@@ -1,7 +1,7 @@
-System.register(['jb-core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1;
+    var jb_core_1, jb_ui;
     var suggestionObj;
     function rev(str) {
         return str.split('').reverse().join('');
@@ -10,19 +10,25 @@ System.register(['jb-core'], function(exports_1, context_1) {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
+            },
+            function (jb_ui_1) {
+                jb_ui = jb_ui_1;
             }],
         execute: function() {
             suggestionObj = (function () {
-                function suggestionObj(input) {
+                function suggestionObj(input, lastKey) {
                     this.input = input;
-                    this.pos = input.selectionStart;
-                    this.text = input.value.substr(0, this.pos).trim();
+                    this.pos = input.selectionStart + (lastKey ? 1 : 0);
+                    this.text = (input.value + lastKey).substr(0, this.pos).trim();
                     this.text_with_open_close = this.text.replace(/%([^%;{}\s><"']*)%/g, function (match, contents) {
                         return '{' + contents + '}';
                     });
                     this.exp = rev((rev(this.text_with_open_close).match(/([^\}%]*%)/) || ['', ''])[1]);
-                    this.tail = rev((rev(this.exp).match(/([^.\/]*)(\/|\.)/) || ['', ''])[1]);
-                    this.lastChar = this.text_with_open_close.slice(-1);
+                    this.tail = rev((rev(this.exp).match(/([^%.\/]*)(\/|\.|%)/) || ['', ''])[1]);
+                    this.tailSymbol = this.text_with_open_close.slice(-1 - this.tail.length).slice(0, 1); // % or /
+                    if (this.tailSymbol == '%' && this.exp.slice(0, 2) == '%$')
+                        this.tailSymbol = '%$';
+                    this.base = this.exp.slice(0, -1 - this.tail.length) + '%';
                 }
                 suggestionObj.prototype.adjustPopupPlace = function (cmp) {
                     var temp = $('<span></span>').css('font', $(this.input).css('font')).css('width', '100%')
@@ -34,20 +40,23 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 };
                 suggestionObj.prototype.extendWithSuggestions = function (probeCtx) {
                     var _this = this;
-                    var base = this.exp.slice(0, -1 - this.tail.length);
-                    if (this.lastChar == '%')
+                    var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return '$' + x[0]; })
+                        .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return '$' + x[0]; }));
+                    if (this.tailSymbol == '%')
                         this.suggestions = jb_core_1.jb.toarray(probeCtx.exp('%%'))
-                            .concat(jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return '$' + x[0]; }))
-                            .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return '$' + x[0]; }));
+                            .concat(vars);
+                    else if (this.tailSymbol == '%$')
+                        this.suggestions = vars;
                     else
-                        this.suggestions = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(base + '%'))
+                        this.suggestions = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
                             .map(function (x) {
                             return jb_core_1.jb.entries(x).map(function (x) { return x[0]; });
-                        }))
-                            .filter(jb_onlyUnique)
-                            .filter(function (p) {
-                            return _this.tail == '' || p.indexOf(e.tail) == 0;
-                        });
+                        }));
+                    this.suggestions = this.suggestions
+                        .filter(jb_onlyUnique)
+                        .filter(function (p) {
+                        return _this.tail == '' || typeof p != 'string' || p.indexOf(_this.tail) == 0;
+                    });
                     return this;
                 };
                 suggestionObj.prototype.paste = function (selection) {
@@ -65,59 +74,60 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('editable-text.studio-jb-detect-suggestions', {
                 type: 'feature',
                 params: {
+                    path: { as: 'string' },
                     action: { type: 'action', dynamic: true }
                 },
                 impl: function (ctx) { return ({
                     innerhost: {
-                        'md-input': { '(keyup)': 'keyEm.next($event)' }
+                        'md-input': { '(keydown)': 'keyEm.next($event)' }
                     },
                     init: function (cmp) {
                         cmp.keyEm = cmp.keyEm || new Subject();
-                        var suggestionsEm = cmp.keyEm
-                            .map(function (e) { return new suggestionObj(e.srcElement); })
-                            .distinctUntilChanged(null, function (e) { return e.input.value; })
-                            .filter(function (e) {
-                            return e.exp;
-                        });
-                        suggestionsEm.subscribe(function (e) {
-                            if (!$(e.input).hasClass('dialog-open'))
-                                jb_ui.wrapWithLauchingElement(ctx.params.action, cmp.ctx.setVars({ keyEmitter: cmp.keyEm,
-                                    suggestionsEm: suggestionsEm.startWith(e) }), e.input)();
+                        ctx.run({ $: 'studio.probe', path: ctx.params.path }).then(function (probeResult) {
+                            var suggestionEm = cmp.keyEm
+                                .map(function (e) {
+                                return new suggestionObj(e.srcElement, e.key.length == 1 ? e.key : '');
+                            })
+                                .distinctUntilChanged(null, function (e) { return e.input.value; })
+                                .filter(function (e) {
+                                return e.exp;
+                            })
+                                .map(function (e) {
+                                return e.extendWithSuggestions(probeResult[0].in);
+                            });
+                            suggestionEm.subscribe(function (e) {
+                                if (!$(e.input).hasClass('dialog-open')) {
+                                    var ctx2 = ctx.setVars({ suggestionContext: { suggestionEm: suggestionEm.startWith(e), keyEm: cmp.keyEm } });
+                                    jb_ui.wrapWithLauchingElement(ctx.params.action, ctx2, e.input)();
+                                }
+                            });
                         });
                     }
                 }); }
             });
             jb_core_1.jb.component('studio.jb-open-suggestions', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
                 impl: { $: 'openDialog',
-                    $vars: { dialogData: { $object: {} } },
                     style: { $: 'dialog.studio-suggestions-popup' },
-                    content: { $: 'wait',
-                        for: { $: 'studio.probe', path: '%$path%' },
-                        dataVariable: 'probeResult',
-                        control: { $: 'group',
-                            features: { $: 'studio.refresh-suggestions' },
-                            controls: { $: 'itemlist',
-                                items: '%$dialogData/suggestionObj/suggestions%',
-                                controls: { $: 'label', title: '%%' },
-                                features: [
-                                    { $: 'itemlist.studio-suggestions-selection',
-                                        onEnter: [
-                                            { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
-                                            { $: 'closeContainingPopup' }
-                                        ]
-                                    },
-                                    { $: 'itemlist.selection' },
-                                ]
-                            }
+                    content: { $: 'group',
+                        features: { $: 'studio.suggestions-emitter' },
+                        controls: { $: 'itemlist',
+                            items: '%$suggestionContext/suggestionObj/suggestions%',
+                            controls: { $: 'label', title: '%%' },
+                            features: [
+                                { $: 'itemlist.studio-suggestions-selection',
+                                    onEnter: [
+                                        { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
+                                        { $: 'closeContainingPopup' }
+                                    ]
+                                },
+                                { $: 'itemlist.selection' },
+                            ]
                         }
                     }
                 }
             });
-            jb_core_1.jb.component('studio.refresh-suggestions', {
+            jb_core_1.jb.component('studio.suggestions-emitter', {
                 type: 'feature',
                 params: {
                     into: { as: 'ref' }
@@ -125,11 +135,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: function (ctx, into) {
                     return ({
                         init: function (cmp) {
-                            ctx.exp('%$suggestionsEm%')
-                                .do(function (e) { return e.adjustPopupPlace(cmp); })
-                                .map(function (e) { return extendWithSuggestions(ctx.exp('%$probeResult%')[0].in); })
+                            ctx.vars.suggestionContext.suggestionEm
+                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
                                 .subscribe(function (e) {
-                                return ctx.vars.dialogData.suggestionObj = e;
+                                e.adjustPopupPlace(cmp);
+                                ctx.vars.suggestionContext.suggestionObj = e;
                             });
                         }
                     });
@@ -144,11 +154,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     return ({
                         init: function (cmp) {
                             var itemlist = cmp.itemlist;
-                            itemlist.selected = itemlist.items[0];
-                            var keyEm = ctx.exp('%$keyEmitter%')
-                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) {
-                                return e.type == 'close';
-                            }));
+                            itemlist.selected = cmp.items[0];
+                            var keyEm = ctx.vars.suggestionContext.keyEm
+                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }));
                             keyEm.filter(function (e) { return e.keyCode == 13; })
                                 .subscribe(function (x) {
                                 return ctx.params.onEnter(ctx.setData(itemlist.selected));
@@ -159,10 +167,18 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 .map(function (event) {
                                 // event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
-                                return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+                                return cmp.items[cmp.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
                             })
                                 .subscribe(function (x) {
                                 return itemlist.selectionEmitter.next(x);
+                            });
+                            ctx.vars.suggestionContext.suggestionEm
+                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
+                                .distinctUntilChanged(null, function (e) { return e.suggestions.join(','); })
+                                .subscribe(function (e) {
+                                if (!e.suggestions[0])
+                                    console.log(e);
+                                itemlist.selected = e.suggestions[0];
                             });
                         }
                     });
@@ -174,7 +190,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
                 type: 'action',
                 impl: function (ctx, toPaste) {
-                    return ctx.vars.dialogData.suggestionObj.paste(toPaste);
+                    return ctx.vars.suggestionContext.suggestionObj.paste(toPaste);
                 }
             });
         }

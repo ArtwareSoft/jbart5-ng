@@ -289,6 +289,9 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     ], Cmp);
                     Cmp.prototype.ngOnInit = function () {
                         var _this = this;
+                        if (this.ngOnInitAlreadyCalled)
+                            debugger;
+                        this.ngOnInitAlreadyCalled = true;
                         try {
                             if (this.methodHandler.jbObservableFuncs.length) {
                                 this.jbEmitter = this.jbEmitter || new jb_rx.Subject();

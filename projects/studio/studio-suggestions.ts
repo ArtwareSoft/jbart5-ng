@@ -1,18 +1,22 @@
 import {jb} from 'jb-core';
+import * as jb_ui from 'jb-ui';
 
 function rev(str) {
   return str.split('').reverse().join('');
 }
 
 export class suggestionObj {
-  constructor(public input) {
-    this.pos = input.selectionStart;
-    this.text = input.value.substr(0,this.pos).trim();
+  constructor(public input,lastKey) {
+    this.pos = input.selectionStart + (lastKey ? 1 : 0);
+    this.text = (input.value+lastKey).substr(0,this.pos).trim();
     this.text_with_open_close = this.text.replace(/%([^%;{}\s><"']*)%/g, (match,contents) =>
       '{' + contents + '}');
     this.exp = rev((rev(this.text_with_open_close).match(/([^\}%]*%)/) || ['',''])[1]);
-    this.tail = rev((rev(this.exp).match(/([^.\/]*)(\/|\.)/)||['',''])[1]);
-    this.lastChar = this.text_with_open_close.slice(-1);
+    this.tail = rev((rev(this.exp).match(/([^%.\/]*)(\/|\.|%)/)||['',''])[1]);
+    this.tailSymbol = this.text_with_open_close.slice(-1-this.tail.length).slice(0,1); // % or /
+    if (this.tailSymbol == '%' && this.exp.slice(0,2) == '%$')
+      this.tailSymbol = '%$';
+    this.base = this.exp.slice(0,-1-this.tail.length) + '%';
   }
 
   adjustPopupPlace(cmp) {
@@ -25,19 +29,24 @@ export class suggestionObj {
   }
 
   extendWithSuggestions(probeCtx) {
-    var base = this.exp.slice(0,-1-this.tail.length);
-    if (this.lastChar == '%')
+    var vars = jb.entries(probeCtx.vars).map(x=>'$' + x[0])
+        .concat(jb.entries(probeCtx.resources).map(x=>'$' + x[0]));
+
+    if (this.tailSymbol == '%') 
       this.suggestions = jb.toarray(probeCtx.exp('%%'))
-        .concat(jb.entries(probeCtx.vars).map(x=>'$' + x[0]))
-        .concat(jb.entries(probeCtx.resources).map(x=>'$' + x[0]))
+        .concat(vars)
+    else if (this.tailSymbol == '%$') 
+      this.suggestions = vars
     else
       this.suggestions = [].concat.apply([],
-        jb.toarray(probeCtx.exp(base + '%'))
+        jb.toarray(probeCtx.exp(this.base))
           .map(x=>
             jb.entries(x).map(x=>x[0])))
+
+    this.suggestions = this.suggestions
         .filter( jb_onlyUnique )
         .filter(p=>
-          this.tail == '' || p.indexOf(e.tail) == 0);
+          this.tail == '' || typeof p != 'string' || p.indexOf(this.tail) == 0);
     return this;
   }
 
@@ -56,45 +65,45 @@ export class suggestionObj {
 jb.component('editable-text.studio-jb-detect-suggestions', {
   type: 'feature', 
   params: {
+    path: { as: 'string' },
     action: { type: 'action', dynamic:true }
   }, 
   impl: ctx => ({ 
       innerhost: {
-        'md-input' : {'(keyup)': 'keyEm.next($event)' }
+        'md-input' : {'(keydown)': 'keyEm.next($event)' }
       },
       init: cmp=> {
         cmp.keyEm = cmp.keyEm || new Subject();
-        var suggestionsEm = cmp.keyEm
-            .map(e=> new suggestionObj(e.srcElement))
-            .distinctUntilChanged(null,e=>e.input.value)
-            .filter(e => 
-              e.exp);
 
-        suggestionsEm.subscribe(e=> {
-              if (!$(e.input).hasClass('dialog-open'))
-                jb_ui.wrapWithLauchingElement(ctx.params.action, 
-                  cmp.ctx.setVars({ keyEmitter: cmp.keyEm, 
-                    suggestionsEm: suggestionsEm.startWith(e) }), e.input)()
-            })
+        ctx.run({$: 'studio.probe', path: ctx.params.path }).then(probeResult => {
+            var suggestionEm = cmp.keyEm
+                .map(e=> 
+                  new suggestionObj(e.srcElement,e.key.length == 1 ? e.key : ''))
+                .distinctUntilChanged(null,e=>e.input.value)
+                .filter(e => 
+                  e.exp)
+                .map(e=>
+                    e.extendWithSuggestions(probeResult[0].in))
+
+            suggestionEm.subscribe(e=> {
+                if (!$(e.input).hasClass('dialog-open')) {
+                  var ctx2 = ctx.setVars({suggestionContext: { suggestionEm: suggestionEm.startWith(e), keyEm: cmp.keyEm }});
+                  jb_ui.wrapWithLauchingElement(ctx.params.action,ctx2, e.input)()
+                }
+              })
+        })
       }
   })
 })
 
 jb.component('studio.jb-open-suggestions', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
   impl :{$: 'openDialog', 
-    $vars: { dialogData: {$object: {}} },
     style :{$: 'dialog.studio-suggestions-popup' }, 
-    content: {$: 'wait',
-      for :{$: 'studio.probe', path: '%$path%' },
-      dataVariable: 'probeResult',
-      control :{$: 'group',
-        features :{$: 'studio.refresh-suggestions' },
+    content :{$: 'group',
+        features :{$: 'studio.suggestions-emitter' },
         controls:{$: 'itemlist', 
-          items : '%$dialogData/suggestionObj/suggestions%', 
+          items : '%$suggestionContext/suggestionObj/suggestions%', 
           controls: {$: 'label', title: '%%' },
           features: [
             {$: 'itemlist.studio-suggestions-selection',
@@ -107,11 +116,10 @@ jb.component('studio.jb-open-suggestions', {
           ]
         }
       }
-    }
   }
 })
 
-jb.component('studio.refresh-suggestions', {
+jb.component('studio.suggestions-emitter', {
   type: 'feature',
   params: {
     into: { as: 'ref' }
@@ -119,12 +127,12 @@ jb.component('studio.refresh-suggestions', {
   impl: (ctx,into) => 
     ({
       init: function(cmp) {
-        ctx.exp('%$suggestionsEm%')
-          .do(e=>e.adjustPopupPlace(cmp))
-          .map(e=>extendWithSuggestions(ctx.exp('%$probeResult%')[0].in))
-          .subscribe(e =>
-            ctx.vars.dialogData.suggestionObj = e
-          )
+        ctx.vars.suggestionContext.suggestionEm
+            .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
+            .subscribe(e => {
+              e.adjustPopupPlace(cmp);
+              ctx.vars.suggestionContext.suggestionObj = e
+        })
       }
     })
 })
@@ -138,10 +146,9 @@ jb.component('itemlist.studio-suggestions-selection', {
     ({
       init: function(cmp) {
         var itemlist = cmp.itemlist;
-        itemlist.selected = itemlist.items[0];
-        var keyEm = ctx.exp('%$keyEmitter%')
-          .takeUntil(ctx.vars.$dialog.em.filter(e => 
-            e.type == 'close'))
+        itemlist.selected = cmp.items[0];
+        var keyEm = ctx.vars.suggestionContext.keyEm
+          .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
 
         keyEm.filter(e=>e.keyCode == 13)
           .subscribe(x=>
@@ -152,10 +159,19 @@ jb.component('itemlist.studio-suggestions-selection', {
             .map(event => {
               // event.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
-              return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+              return cmp.items[cmp.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
             })
             .subscribe(x=>
                 itemlist.selectionEmitter.next(x))
+
+        ctx.vars.suggestionContext.suggestionEm
+             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
+            .distinctUntilChanged(null,e=>e.suggestions.join(','))
+            .subscribe(e => {
+              if (!e.suggestions[0])
+                console.log(e);
+              itemlist.selected = e.suggestions[0]
+          })
       }
   })
 })
@@ -166,5 +182,5 @@ jb.component('studio.jb-paste-suggestion', {
   },
   type: 'action',
   impl: (ctx,toPaste) =>
-    ctx.vars.dialogData.suggestionObj.paste(toPaste)
+    ctx.vars.suggestionContext.suggestionObj.paste(toPaste)
 })

@@ -129,7 +129,8 @@ jb.component('jb-edit-property', {
           ]
         }, 
         {$: 'editable-text.studio-jb-detect-suggestions', 
-          action :{$: 'studio.jb-open-suggestions', path: '%$path%'} 
+          path: '%$path%',
+          action :{$: 'studio.jb-open-suggestions' } 
         }
       ], 
       style :{

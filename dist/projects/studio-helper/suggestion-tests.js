@@ -18,7 +18,27 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                         var obj = new suggestions.suggestionObj({ value: '%', selectionStart: 1 }).extendWithSuggestions(ctx);
                         return JSON.stringify(obj.suggestions);
                     },
-                    expectedResult: { $: 'contains', text: '$people' }
+                    expectedResult: { $: 'contains', text: '$win' }
+                },
+            });
+            jb_core_1.jb.component('vars-filter', {
+                type: 'test',
+                impl: { $: 'data-test',
+                    calculate: function (ctx) {
+                        var obj = new suggestions.suggestionObj({ value: '%$p', selectionStart: 3 }).extendWithSuggestions(ctx);
+                        return JSON.stringify(obj.suggestions);
+                    },
+                    expectedResult: { $and: [{ $: 'contains', text: '$people' }, { $not: { $contains: '$win' } }] }
+                },
+            });
+            jb_core_1.jb.component('inside-array', {
+                type: 'test',
+                impl: { $: 'data-test',
+                    calculate: function (ctx) {
+                        var obj = new suggestions.suggestionObj({ value: '%$people/', selectionStart: 9 }).extendWithSuggestions(ctx);
+                        return JSON.stringify(obj.suggestions);
+                    },
+                    expectedResult: { $and: [{ $: 'contains', text: 'people' }, { $not: { $contains: '$people' } }] }
                 },
             });
         }

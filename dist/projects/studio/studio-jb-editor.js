@@ -133,7 +133,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             ]
                         },
                         { $: 'editable-text.studio-jb-detect-suggestions',
-                            action: { $: 'studio.jb-open-suggestions', path: '%$path%' }
+                            path: '%$path%',
+                            action: { $: 'studio.jb-open-suggestions' }
                         }
                     ],
                     style: {
