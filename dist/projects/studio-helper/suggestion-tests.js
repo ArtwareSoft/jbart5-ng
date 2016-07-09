@@ -15,7 +15,7 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestionObj({ value: '%', selectionStart: 1 }).extendWithSuggestions(ctx);
+                        var obj = new suggestions.suggestions({ value: '%', selectionStart: 1 }).extendWithSuggestions(ctx);
                         return JSON.stringify(obj.suggestions);
                     },
                     expectedResult: { $: 'contains', text: '$win' }
@@ -25,7 +25,7 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestionObj({ value: '%$p', selectionStart: 3 }).extendWithSuggestions(ctx);
+                        var obj = new suggestions.suggestions({ value: '%$p', selectionStart: 3 }).extendWithSuggestions(ctx);
                         return JSON.stringify(obj.suggestions);
                     },
                     expectedResult: { $and: [{ $: 'contains', text: '$people' }, { $not: { $contains: '$win' } }] }
@@ -35,7 +35,7 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestionObj({ value: '%$people/', selectionStart: 9 }).extendWithSuggestions(ctx);
+                        var obj = new suggestions.suggestions({ value: '%$people/', selectionStart: 9 }).extendWithSuggestions(ctx);
                         return JSON.stringify(obj.suggestions);
                     },
                     expectedResult: { $and: [{ $: 'contains', text: 'people' }, { $not: { $contains: '$people' } }] }

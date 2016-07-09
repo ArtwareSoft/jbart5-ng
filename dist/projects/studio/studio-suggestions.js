@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui;
-    var suggestionObj;
+    var suggestions;
     function rev(str) {
         return str.split('').reverse().join('');
     }
@@ -15,11 +15,11 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 jb_ui = jb_ui_1;
             }],
         execute: function() {
-            suggestionObj = (function () {
-                function suggestionObj(input, lastKey) {
+            suggestions = (function () {
+                function suggestions(input) {
                     this.input = input;
-                    this.pos = input.selectionStart + (lastKey ? 1 : 0);
-                    this.text = (input.value + lastKey).substr(0, this.pos).trim();
+                    this.pos = input.selectionStart;
+                    this.text = input.value.substr(0, this.pos).trim();
                     this.text_with_open_close = this.text.replace(/%([^%;{}\s><"']*)%/g, function (match, contents) {
                         return '{' + contents + '}';
                     });
@@ -29,37 +29,43 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     if (this.tailSymbol == '%' && this.exp.slice(0, 2) == '%$')
                         this.tailSymbol = '%$';
                     this.base = this.exp.slice(0, -1 - this.tail.length) + '%';
+                    // for debug
+                    this.inputVal = input.value;
+                    this.inputPos = input.selectionStart;
                 }
-                suggestionObj.prototype.adjustPopupPlace = function (cmp) {
+                suggestions.prototype.adjustPopupPlace = function (cmp, options) {
                     var temp = $('<span></span>').css('font', $(this.input).css('font')).css('width', '100%')
                         .css('z-index', '-1000').text($(this.input).val().substr(0, this.pos)).appendTo('body');
                     var offset = temp.width();
                     temp.remove();
-                    $(cmp.elementRef.nativeElement).parents('.jb-dialog')
-                        .css('margin-left', offset + "px");
+                    var dialogEl = $(cmp.elementRef.nativeElement).parents('.jb-dialog');
+                    dialogEl.css('margin-left', offset + "px")
+                        .css('display', options.length ? 'block' : 'none');
                 };
-                suggestionObj.prototype.extendWithSuggestions = function (probeCtx) {
+                suggestions.prototype.extendWithOptions = function (probeCtx) {
                     var _this = this;
                     var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return '$' + x[0]; })
                         .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return '$' + x[0]; }));
+                    this.options = [];
                     if (this.tailSymbol == '%')
-                        this.suggestions = jb_core_1.jb.toarray(probeCtx.exp('%%'))
+                        this.options = jb_core_1.jb.toarray(probeCtx.exp('%%'))
                             .concat(vars);
                     else if (this.tailSymbol == '%$')
-                        this.suggestions = vars;
-                    else
-                        this.suggestions = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
+                        this.options = vars;
+                    else if (this.tailSymbol == '/' || this.tailSymbol == '.')
+                        this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
                             .map(function (x) {
                             return jb_core_1.jb.entries(x).map(function (x) { return x[0]; });
                         }));
-                    this.suggestions = this.suggestions
+                    this.options = this.options
                         .filter(jb_onlyUnique)
+                        .filter(function (x) { return x != _this.tail; })
                         .filter(function (p) {
                         return _this.tail == '' || typeof p != 'string' || p.indexOf(_this.tail) == 0;
                     });
                     return this;
                 };
-                suggestionObj.prototype.paste = function (selection) {
+                suggestions.prototype.paste = function (selection) {
                     var input = this.input;
                     var pos = this.pos + 1;
                     input.value = input.value.substr(0, this.pos - this.tail.length) + selection + input.value.substr(pos);
@@ -68,9 +74,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         input.selectionEnd = input.selectionStart;
                     });
                 };
-                return suggestionObj;
+                return suggestions;
             }());
-            exports_1("suggestionObj", suggestionObj);
+            exports_1("suggestions", suggestions);
             jb_core_1.jb.component('editable-text.studio-jb-detect-suggestions', {
                 type: 'feature',
                 params: {
@@ -79,29 +85,42 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 },
                 impl: function (ctx) { return ({
                     innerhost: {
-                        'md-input': { '(keydown)': 'keyEm.next($event)' }
+                        'md-input': { '(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
                     },
                     init: function (cmp) {
                         cmp.keyEm = cmp.keyEm || new Subject();
-                        ctx.run({ $: 'studio.probe', path: ctx.params.path }).then(function (probeResult) {
-                            var suggestionEm = cmp.keyEm
-                                .map(function (e) {
-                                return new suggestionObj(e.srcElement, e.key.length == 1 ? e.key : '');
-                            })
-                                .distinctUntilChanged(null, function (e) { return e.input.value; })
-                                .filter(function (e) {
-                                return e.exp;
-                            })
-                                .map(function (e) {
-                                return e.extendWithSuggestions(probeResult[0].in);
-                            });
-                            suggestionEm.subscribe(function (e) {
-                                if (!$(e.input).hasClass('dialog-open')) {
-                                    var ctx2 = ctx.setVars({ suggestionContext: { suggestionEm: suggestionEm.startWith(e), keyEm: cmp.keyEm } });
-                                    jb_ui.wrapWithLauchingElement(ctx.params.action, ctx2, e.input)();
-                                }
-                            });
+                        var suggestionEm = cmp.keyEm.filter(function (e) {
+                            return (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1;
+                        })
+                            .flatMap(function (e) {
+                            return getProbe().then(function (probeResult) { return ({ keyEv: e, ctx: probeResult[0].in }); });
+                        })
+                            .delay(1) // we use keydown - let the input fill itself
+                            .map(function (e) {
+                            return new suggestions(e.keyEv.srcElement, '').extendWithOptions(e.ctx);
+                        })
+                            .filter(function (e) {
+                            return e.text;
                         });
+                        suggestionEm.subscribe(function (e) {
+                            //            console.log(1,e);
+                            if (!$(e.input).hasClass('dialog-open')) {
+                                var suggestionContext = {
+                                    suggestionEm: suggestionEm
+                                        .startWith(e)
+                                        .do(function (e) {
+                                        return suggestionContext.suggestionObj = e;
+                                    }),
+                                    suggestionObj: e,
+                                    keyEm: cmp.keyEm
+                                };
+                                jb_ui.wrapWithLauchingElement(ctx.params.action, ctx.setVars({ suggestionContext: suggestionContext }), e.input)();
+                            }
+                        });
+                        function getProbe() {
+                            cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
+                            return cmp.probeResult;
+                        }
                     }
                 }); }
             });
@@ -112,7 +131,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     content: { $: 'group',
                         features: { $: 'studio.suggestions-emitter' },
                         controls: { $: 'itemlist',
-                            items: '%$suggestionContext/suggestionObj/suggestions%',
+                            items: '%$suggestionContext/suggestionObj/options%',
                             controls: { $: 'label', title: '%%' },
                             features: [
                                 { $: 'itemlist.studio-suggestions-selection',
@@ -121,7 +140,12 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                         { $: 'closeContainingPopup' }
                                     ]
                                 },
-                                { $: 'itemlist.selection' },
+                                { $: 'itemlist.selection',
+                                    onDoubleClick: [
+                                        { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
+                                        { $: 'closeContainingPopup' }
+                                    ]
+                                },
                             ]
                         }
                     }
@@ -135,11 +159,17 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 impl: function (ctx, into) {
                     return ({
                         init: function (cmp) {
+                            // gain focus back to input after clicking the popup
+                            jb_core_1.jb.delay(1).then(function () {
+                                return ctx.vars.$dialog.$el.find('.jb-itemlist').attr('tabIndex', '0').focus(function () {
+                                    return $(ctx.vars.suggestionContext.suggestionObj.input).focus();
+                                });
+                            });
+                            // adjust popup position
                             ctx.vars.suggestionContext.suggestionEm
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
                                 .subscribe(function (e) {
-                                e.adjustPopupPlace(cmp);
-                                ctx.vars.suggestionContext.suggestionObj = e;
+                                return e.adjustPopupPlace(cmp, e.options);
                             });
                         }
                     });
@@ -157,9 +187,13 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                             itemlist.selected = cmp.items[0];
                             var keyEm = ctx.vars.suggestionContext.keyEm
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }));
-                            keyEm.filter(function (e) { return e.keyCode == 13; })
+                            keyEm.filter(function (e) { return e.keyCode == 13; }) // ENTER
                                 .subscribe(function (x) {
                                 return ctx.params.onEnter(ctx.setData(itemlist.selected));
+                            });
+                            keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC
+                                .subscribe(function (x) {
+                                return ctx.run({ $: 'closeContainingPopup' });
                             });
                             keyEm.filter(function (e) {
                                 return e.keyCode == 38 || e.keyCode == 40;
@@ -172,13 +206,12 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                 .subscribe(function (x) {
                                 return itemlist.selectionEmitter.next(x);
                             });
+                            // change selection if options are changed
                             ctx.vars.suggestionContext.suggestionEm
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
-                                .distinctUntilChanged(null, function (e) { return e.suggestions.join(','); })
+                                .distinctUntilChanged(null, function (e) { return e.options.join(','); })
                                 .subscribe(function (e) {
-                                if (!e.suggestions[0])
-                                    console.log(e);
-                                itemlist.selected = e.suggestions[0];
+                                itemlist.selected = e.options[0];
                             });
                         }
                     });

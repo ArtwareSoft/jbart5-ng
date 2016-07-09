@@ -1,14 +1,15 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
+import * as jb_rx from 'jb-rx';
 
 function rev(str) {
   return str.split('').reverse().join('');
 }
 
-export class suggestionObj {
-  constructor(public input,lastKey) {
-    this.pos = input.selectionStart + (lastKey ? 1 : 0);
-    this.text = (input.value+lastKey).substr(0,this.pos).trim();
+export class suggestions {
+  constructor(public input) {
+    this.pos = input.selectionStart;
+    this.text = input.value.substr(0,this.pos).trim();
     this.text_with_open_close = this.text.replace(/%([^%;{}\s><"']*)%/g, (match,contents) =>
       '{' + contents + '}');
     this.exp = rev((rev(this.text_with_open_close).match(/([^\}%]*%)/) || ['',''])[1]);
@@ -17,34 +18,40 @@ export class suggestionObj {
     if (this.tailSymbol == '%' && this.exp.slice(0,2) == '%$')
       this.tailSymbol = '%$';
     this.base = this.exp.slice(0,-1-this.tail.length) + '%';
+    // for debug
+    this.inputVal = input.value;
+    this.inputPos = input.selectionStart;
   }
 
-  adjustPopupPlace(cmp) {
+  adjustPopupPlace(cmp,options) {
     var temp = $('<span></span>').css('font',$(this.input).css('font')).css('width','100%')
       .css('z-index','-1000').text($(this.input).val().substr(0,this.pos)).appendTo('body');
     var offset = temp.width();
     temp.remove();
-    $(cmp.elementRef.nativeElement).parents('.jb-dialog')
-      .css('margin-left', `${offset}px`);
+    var dialogEl = $(cmp.elementRef.nativeElement).parents('.jb-dialog');
+    dialogEl.css('margin-left', `${offset}px`)
+      .css('display', options.length ? 'block' : 'none');
   }
 
-  extendWithSuggestions(probeCtx) {
+  extendWithOptions(probeCtx) {
     var vars = jb.entries(probeCtx.vars).map(x=>'$' + x[0])
         .concat(jb.entries(probeCtx.resources).map(x=>'$' + x[0]));
 
+    this.options = []
     if (this.tailSymbol == '%') 
-      this.suggestions = jb.toarray(probeCtx.exp('%%'))
+      this.options = jb.toarray(probeCtx.exp('%%'))
         .concat(vars)
     else if (this.tailSymbol == '%$') 
-      this.suggestions = vars
-    else
-      this.suggestions = [].concat.apply([],
+      this.options = vars
+    else if (this.tailSymbol == '/' || this.tailSymbol == '.')
+      this.options = [].concat.apply([],
         jb.toarray(probeCtx.exp(this.base))
           .map(x=>
             jb.entries(x).map(x=>x[0])))
 
-    this.suggestions = this.suggestions
+    this.options = this.options
         .filter( jb_onlyUnique )
+        .filter(x=> x != this.tail)
         .filter(p=>
           this.tail == '' || typeof p != 'string' || p.indexOf(this.tail) == 0);
     return this;
@@ -70,28 +77,40 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
   }, 
   impl: ctx => ({ 
       innerhost: {
-        'md-input' : {'(keydown)': 'keyEm.next($event)' }
+        'md-input' : {'(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
       },
       init: cmp=> {
         cmp.keyEm = cmp.keyEm || new Subject();
 
-        ctx.run({$: 'studio.probe', path: ctx.params.path }).then(probeResult => {
-            var suggestionEm = cmp.keyEm
-                .map(e=> 
-                  new suggestionObj(e.srcElement,e.key.length == 1 ? e.key : ''))
-                .distinctUntilChanged(null,e=>e.input.value)
-                .filter(e => 
-                  e.exp)
-                .map(e=>
-                    e.extendWithSuggestions(probeResult[0].in))
+        var suggestionEm = cmp.keyEm.filter(e=> // has % sign - look for suggestion
+            (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1 )
+          .flatMap(e=>
+            getProbe().then(probeResult=>({ keyEv: e, ctx: probeResult[0].in})))
+          .delay(1) // we use keydown - let the input fill itself
+          .map(e=> 
+            new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx))
+          .filter(e => 
+            e.text)
 
-            suggestionEm.subscribe(e=> {
-                if (!$(e.input).hasClass('dialog-open')) {
-                  var ctx2 = ctx.setVars({suggestionContext: { suggestionEm: suggestionEm.startWith(e), keyEm: cmp.keyEm }});
-                  jb_ui.wrapWithLauchingElement(ctx.params.action,ctx2, e.input)()
-                }
-              })
-        })
+        suggestionEm.subscribe(e=> {
+//            console.log(1,e);
+            if (!$(e.input).hasClass('dialog-open')) { // opening the popup if not already opened
+              var suggestionContext = { 
+                suggestionEm: suggestionEm
+                  .startWith(e)
+                  .do(e=>
+                      suggestionContext.suggestionObj = e),
+                suggestionObj: e, 
+                keyEm: cmp.keyEm 
+              };
+              jb_ui.wrapWithLauchingElement(ctx.params.action,ctx.setVars({suggestionContext: suggestionContext}), e.input)()
+            }
+          })
+
+        function getProbe() {
+          cmp.probeResult = cmp.probeResult || ctx.run({$: 'studio.probe', path: ctx.params.path });
+          return cmp.probeResult;
+        }
       }
   })
 })
@@ -103,7 +122,7 @@ jb.component('studio.jb-open-suggestions', {
     content :{$: 'group',
         features :{$: 'studio.suggestions-emitter' },
         controls:{$: 'itemlist', 
-          items : '%$suggestionContext/suggestionObj/suggestions%', 
+          items : '%$suggestionContext/suggestionObj/options%', 
           controls: {$: 'label', title: '%%' },
           features: [
             {$: 'itemlist.studio-suggestions-selection',
@@ -112,7 +131,12 @@ jb.component('studio.jb-open-suggestions', {
                 {$: 'closeContainingPopup'}
               ]
             },
-            {$: 'itemlist.selection' },
+            {$: 'itemlist.selection', 
+                onDoubleClick: [
+                {$: 'studio.jb-paste-suggestion', toPaste: '%%'},
+                {$: 'closeContainingPopup'}
+              ]
+            },
           ]
         }
       }
@@ -127,12 +151,17 @@ jb.component('studio.suggestions-emitter', {
   impl: (ctx,into) => 
     ({
       init: function(cmp) {
+        // gain focus back to input after clicking the popup
+        jb.delay(1).then(()=>
+          ctx.vars.$dialog.$el.find('.jb-itemlist').attr('tabIndex','0').focus(() => 
+            $(ctx.vars.suggestionContext.suggestionObj.input).focus())
+        )
+
+        // adjust popup position
         ctx.vars.suggestionContext.suggestionEm
             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
-            .subscribe(e => {
-              e.adjustPopupPlace(cmp);
-              ctx.vars.suggestionContext.suggestionObj = e
-        })
+            .subscribe(e =>
+              e.adjustPopupPlace(cmp,e.options))
       }
     })
 })
@@ -150,9 +179,12 @@ jb.component('itemlist.studio-suggestions-selection', {
         var keyEm = ctx.vars.suggestionContext.keyEm
           .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
 
-        keyEm.filter(e=>e.keyCode == 13)
+        keyEm.filter(e=>e.keyCode == 13) // ENTER
           .subscribe(x=>
                 ctx.params.onEnter(ctx.setData(itemlist.selected)))
+        keyEm.filter(e=>e.keyCode == 27) // ESC
+          .subscribe(x=>
+                ctx.run({$:'closeContainingPopup'}));
 
         keyEm.filter(e=>
                 e.keyCode == 38 || e.keyCode == 40)
@@ -164,13 +196,12 @@ jb.component('itemlist.studio-suggestions-selection', {
             .subscribe(x=>
                 itemlist.selectionEmitter.next(x))
 
+        // change selection if options are changed
         ctx.vars.suggestionContext.suggestionEm
-             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
-            .distinctUntilChanged(null,e=>e.suggestions.join(','))
+            .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
+            .distinctUntilChanged(null,e=>e.options.join(','))
             .subscribe(e => {
-              if (!e.suggestions[0])
-                console.log(e);
-              itemlist.selected = e.suggestions[0]
+              itemlist.selected = e.options[0]
           })
       }
   })
