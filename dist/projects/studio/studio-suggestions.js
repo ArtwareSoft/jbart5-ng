@@ -44,24 +44,23 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 };
                 suggestions.prototype.extendWithOptions = function (probeCtx) {
                     var _this = this;
-                    var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return '$' + x[0]; })
-                        .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return '$' + x[0]; }));
+                    var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); })
+                        .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); }));
                     this.options = [];
                     if (this.tailSymbol == '%')
                         this.options = jb_core_1.jb.toarray(probeCtx.exp('%%'))
+                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ text: x[0], value: x[1] }); }); })
                             .concat(vars);
                     else if (this.tailSymbol == '%$')
                         this.options = vars;
                     else if (this.tailSymbol == '/' || this.tailSymbol == '.')
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
-                            .map(function (x) {
-                            return jb_core_1.jb.entries(x).map(function (x) { return x[0]; });
-                        }));
+                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ text: x[0], value: x[1] }); }); }));
                     this.options = this.options
-                        .filter(jb_onlyUnique)
-                        .filter(function (x) { return x != _this.tail; })
-                        .filter(function (p) {
-                        return _this.tail == '' || typeof p != 'string' || p.indexOf(_this.tail) == 0;
+                        .filter(jb_onlyUniqueFunc(function (x) { return x.text; }))
+                        .filter(function (x) { return x.text != _this.tail; })
+                        .filter(function (x) {
+                        return _this.tail == '' || typeof x.text != 'string' || x.text.indexOf(_this.tail) == 0;
                     });
                     return this;
                 };
@@ -101,9 +100,10 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         })
                             .filter(function (e) {
                             return e.text;
-                        });
+                        })
+                            .distinctUntilChanged(null, function (e) { return e.options.join(','); });
                         suggestionEm.subscribe(function (e) {
-                            //            console.log(1,e);
+                            console.log(1, e);
                             if (!$(e.input).hasClass('dialog-open')) {
                                 var suggestionContext = {
                                     suggestionEm: suggestionEm
@@ -132,7 +132,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         features: { $: 'studio.suggestions-emitter' },
                         controls: { $: 'itemlist',
                             items: '%$suggestionContext/suggestionObj/options%',
-                            controls: { $: 'label', title: '%%' },
+                            controls: { $: 'label', title: '%text%' },
                             features: [
                                 { $: 'itemlist.studio-suggestions-selection',
                                     onEnter: [
@@ -219,11 +219,12 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.jb-paste-suggestion', {
                 params: {
-                    toPaste: { as: 'string' },
+                    toPaste: {},
                 },
                 type: 'action',
                 impl: function (ctx, toPaste) {
-                    return ctx.vars.suggestionContext.suggestionObj.paste(toPaste);
+                    var suffix = typeof toPaste.value == 'object' ? '/' : '%';
+                    ctx.vars.suggestionContext.suggestionObj.paste(toPaste.text + suffix);
                 }
             });
         }

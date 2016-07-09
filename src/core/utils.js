@@ -529,6 +529,13 @@ function jb_isProfOfType(prof,type) {
   return types.indexOf(type) != -1;
 }
 
+function jb_onlyUniqueFunc(mapFunc) { 
+  function jb_onlyUnique(value, index, self) { 
+      return self.map(mapFunc).indexOf(mapFunc(value)) === index;
+  }
+  return jb_onlyUnique;
+}
+
 function jb_onlyUnique(value, index, self) { 
     return self.indexOf(value) === index;
 }

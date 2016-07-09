@@ -34,26 +34,26 @@ export class suggestions {
   }
 
   extendWithOptions(probeCtx) {
-    var vars = jb.entries(probeCtx.vars).map(x=>'$' + x[0])
-        .concat(jb.entries(probeCtx.resources).map(x=>'$' + x[0]));
+    var vars = jb.entries(probeCtx.vars).map(x=>({text: '$' + x[0], value: x[1]}))
+        .concat(jb.entries(probeCtx.resources).map(x=>({text: '$' + x[0], value: x[1]})))
 
     this.options = []
     if (this.tailSymbol == '%') 
       this.options = jb.toarray(probeCtx.exp('%%'))
+        .map(x=>jb.entries(x).map(x=>({text: x[0], value: x[1]})))
         .concat(vars)
     else if (this.tailSymbol == '%$') 
       this.options = vars
     else if (this.tailSymbol == '/' || this.tailSymbol == '.')
       this.options = [].concat.apply([],
         jb.toarray(probeCtx.exp(this.base))
-          .map(x=>
-            jb.entries(x).map(x=>x[0])))
+          .map(x=>jb.entries(x).map(x=>({text: x[0], value: x[1]}))) )
 
     this.options = this.options
-        .filter( jb_onlyUnique )
-        .filter(x=> x != this.tail)
-        .filter(p=>
-          this.tail == '' || typeof p != 'string' || p.indexOf(this.tail) == 0);
+        .filter( jb_onlyUniqueFunc(x=>x.text) )
+        .filter(x=> x.text != this.tail)
+        .filter(x=>
+          this.tail == '' || typeof x.text != 'string' || x.text.indexOf(this.tail) == 0); 
     return this;
   }
 
@@ -91,9 +91,10 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
             new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx))
           .filter(e => 
             e.text)
+          .distinctUntilChanged(null,e=>e.options.join(','))
 
         suggestionEm.subscribe(e=> {
-//            console.log(1,e);
+            console.log(1,e);
             if (!$(e.input).hasClass('dialog-open')) { // opening the popup if not already opened
               var suggestionContext = { 
                 suggestionEm: suggestionEm
@@ -123,7 +124,7 @@ jb.component('studio.jb-open-suggestions', {
         features :{$: 'studio.suggestions-emitter' },
         controls:{$: 'itemlist', 
           items : '%$suggestionContext/suggestionObj/options%', 
-          controls: {$: 'label', title: '%%' },
+          controls: {$: 'label', title: '%text%' },
           features: [
             {$: 'itemlist.studio-suggestions-selection',
               onEnter: [
@@ -209,9 +210,11 @@ jb.component('itemlist.studio-suggestions-selection', {
 
 jb.component('studio.jb-paste-suggestion', {
   params: {
-    toPaste: { as: 'string' },
+    toPaste: { },
   },
   type: 'action',
-  impl: (ctx,toPaste) =>
-    ctx.vars.suggestionContext.suggestionObj.paste(toPaste)
+  impl: (ctx,toPaste) => {
+    var suffix = typeof toPaste.value == 'object' ? '/' : '%';
+    ctx.vars.suggestionContext.suggestionObj.paste(toPaste.text + suffix);
+  }
 })
