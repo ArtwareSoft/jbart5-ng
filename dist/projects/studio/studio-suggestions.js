@@ -103,7 +103,6 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         })
                             .distinctUntilChanged(null, function (e) { return e.options.join(','); });
                         suggestionEm.subscribe(function (e) {
-                            console.log(1, e);
                             if (!$(e.input).hasClass('dialog-open')) {
                                 var suggestionContext = {
                                     suggestionEm: suggestionEm

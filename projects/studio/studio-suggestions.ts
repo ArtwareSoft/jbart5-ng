@@ -94,7 +94,6 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
           .distinctUntilChanged(null,e=>e.options.join(','))
 
         suggestionEm.subscribe(e=> {
-            console.log(1,e);
             if (!$(e.input).hasClass('dialog-open')) { // opening the popup if not already opened
               var suggestionContext = { 
                 suggestionEm: suggestionEm
