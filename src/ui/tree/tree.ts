@@ -213,7 +213,7 @@ jb.component('tree.keyboard-selection', {
 })
 
 jb.component('tree.regain-focus', {
-	type: 'actions',
+	type: 'action',
 	impl : ctx =>
 		ctx.vars.regainFocus && ctx.vars.regainFocus()
 })

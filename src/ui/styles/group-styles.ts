@@ -38,6 +38,7 @@ jb.component('group.expandable', {
       css: `.header { display: flex; flex-direction: row; }
         button:hover { background: none }
         button { margin-left: auto }
+        i { color: #}
         .title { margin: 5px }`, 
       features :{$: 'group.initGroup' }
     }, 

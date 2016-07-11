@@ -6,6 +6,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
         var circuit = ctx.exp('%$circuit%') || 'studio.refreshPreview';
         var context = jb_core_1.jb.ctx({ ngMode: true, resources: ctx.resources, vars: {} }, { profile: { $: circuit }, comp: circuit, path: '', data: '' });
         jb_run(context);
+        return context;
     }
     return {
         setters:[
@@ -16,29 +17,26 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 studio = studio_1;
             }],
         execute: function() {
-            studio.modifyOperationsEm.subscribe(function (e) {
-                var jbart = studio.jbart_base();
-                if (jbart.probe)
-                    jbart.probe.sample = {};
-            });
             jb_core_1.jb.component('studio.probe', {
                 type: 'data',
                 params: { path: { as: 'string', dynamic: true } },
                 impl: function (ctx, path) {
                     var _path = path();
                     if (!_path)
-                        return;
+                        return [];
                     var jbart = studio.jbart_base();
-                    jbart.probe = jbart.probe || { sample: {} };
-                    if (jbart.probe.sample[_path])
-                        return Promise.resolve(jbart.probe.sample[_path]);
-                    jbart.probe.sample[_path] = [];
+                    jbart.probe = jbart.probe || {};
+                    // if (jbart.probe.sample[_path])
+                    //   return Promise.resolve(jbart.probe.sample[_path]);
+                    jbart.probe[_path] = [];
                     jbart.probe.trace = _path;
                     //      jbart.trace_paths = true;
-                    runCircuit(_path, ctx);
+                    var runningCtx = runCircuit(_path, ctx);
                     return jb_core_1.jb.delay(1).then(function () {
                         jbart.probe.trace = '';
-                        return jbart.probe.sample[_path];
+                        if (jbart.probe[_path].length == 0)
+                            jbart.probe[_path].push({ in: runningCtx });
+                        return jbart.probe[_path];
                     });
                 }
             });

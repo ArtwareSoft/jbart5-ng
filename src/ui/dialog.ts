@@ -18,7 +18,8 @@ jb.component('openDialog', {
 	impl: function(context,id) {
 		var modal = context.params.modal;
 		var dialog = { id: id, onOK: context.params.onOK, modal: modal, $: $('div'), em: new jb_rx.Subject() };
-		var ctx = (modal ? context.setVars({dialogData: {}}) : context).setVars({ $dialog: dialog });
+		var ctx = (modal ? context.setVars({dialogData: {}}) : context)
+				.setVars({ $dialog: dialog });
 		dialog.comp = jb_ui.ctrl(ctx).jbExtend({
 			beforeInit: function(cmp) {
 				cmp.title = ctx.params.title(ctx);

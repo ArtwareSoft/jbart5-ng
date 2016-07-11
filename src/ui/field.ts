@@ -41,3 +41,4 @@ jb.component('field.toolbar', {
     extendComp: { jb_toolbar: toolbar() }
   })
 })
+

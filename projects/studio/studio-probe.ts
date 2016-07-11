@@ -8,32 +8,31 @@ function runCircuit(path,ctx) {
   var context = jb.ctx({ ngMode: true, resources: ctx.resources, vars: {} },
     { profile: {$: circuit}, comp: circuit, path: '', data: ''} );
   jb_run(context);
+  return context;
 }
 
-studio.modifyOperationsEm.subscribe(e=>{
-  var jbart = studio.jbart_base();
-  if (jbart.probe)
-    jbart.probe.sample = {};
-})
 
 jb.component('studio.probe', {
   type:'data',
   params: { path: { as: 'string', dynamic: true } },
   impl: (ctx,path) => {
       var _path = path();
-      if (!_path) return;
+      if (!_path) 
+        return [];
       var jbart = studio.jbart_base();
-      jbart.probe = jbart.probe || { sample: {} };
-      if (jbart.probe.sample[_path])
-        return Promise.resolve(jbart.probe.sample[_path]);
+      jbart.probe = jbart.probe || {};
+      // if (jbart.probe.sample[_path])
+      //   return Promise.resolve(jbart.probe.sample[_path]);
 
-      jbart.probe.sample[_path] = [];
+      jbart.probe[_path] = [];
       jbart.probe.trace = _path;
 //      jbart.trace_paths = true;
-      runCircuit(_path,ctx);
+      var runningCtx = runCircuit(_path,ctx);
       return jb.delay(1).then(()=> {
         jbart.probe.trace = '';
-        return jbart.probe.sample[_path];
+        if (jbart.probe[_path].length == 0)
+          jbart.probe[_path].push({in: runningCtx });
+        return jbart.probe[_path];
       })
     }
 })

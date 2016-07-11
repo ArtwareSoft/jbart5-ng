@@ -3,6 +3,30 @@ import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 import * as jb_rx from 'jb-ui/jb-rx';
 
+jb.component('pick.highlight-box', {
+    type: 'control',
+    params: {
+    },
+    impl: ctx => 
+		jb_ui.Comp({ 
+			template: `
+<div>
+	<div class="title-above" [ngIf]="titleAbove">
+		<div class="text">{{title}}</div>
+		<div class="triangle"></div>
+	</div>
+	<div class="box"></div>
+	<div class="title-below" [ngIf]="!titleAbove">
+		<div class="text"></div>
+		<div class="triangle"></div>
+	</div>
+</div>`,
+			css: `
+
+			`
+		},ctx)
+})
+
 jb.component('studio.pick', {
 	type: 'action',
 	params: {
@@ -10,6 +34,11 @@ jb.component('studio.pick', {
 		onSelect: { type:'action', dynamic:true }
 	},
 	impl: function(context,from,onSelect) {
+	  	var _window = from == 'preview' ? jbart.previewWindow : window;
+
+		function pick() {
+
+
 		var _window = from == 'preview' ? jbart.previewWindow : window;
 		var _$window = $(_window);
 		var _body = _window.document.body;
@@ -51,7 +80,7 @@ jb.component('studio.pick', {
 			_$('.jbs-shadow').show().css({ zIndex: 6000 });
 			if (!$el.length) { clearSelection(); return; }
 
-			_$('#jbs-title').show().css({ zIndex: 60001 });
+			_$('#jbs-title').show().css({ zIndex: 6000 });
 			_$('.jbs-shadow.top').css({ height: $el.offset().top });
 			_$('.jbs-shadow.bottom').css({ top: $el.offset().top + $el.outerHeight(), height: docHeight() - $el.offset().top - $el.outerHeight() });
 			_$('.jbs-shadow.left').css({ width: $el.offset().left });
@@ -125,26 +154,25 @@ jb.component('studio.pick', {
 		}
 
 		function addPickCss() {
-			var pickCss = '\
-				\
-				#jbs-title {	z-index: 6001;position: absolute;	transition:top 100ms, left 100ms ;}\
-				#jbs-title .triangle {	width:0;height:0; border-style: solid; 	border-color: #fff transparent transparent transparent; border-width: 6px;	margin-left: 14px;}\
-				#jbs-title .text {	background: #fff; font: 14px arial; padding: 3px 8px; }\
-				#jbs-title.bottom .triangle { border-color: transparent transparent #fff transparent; transform: translateY(-28px);}\
-				#jbs-title.bottom .text {	transform: translateY(6px);}\
-				\
-				.jbs-shadow { display: block; opacity: 0.4; background: rgb(102, 102, 102); position: absolute; z-index:6000; top:0; left:0;}\
-				.jbs-shadow.bottom { right:0;}\
-				.jbs-shadow.top { right:0;}\
-				.jbs-shadow.right { right: 0;}\
-				.jbs-shadow { transition: top 100ms,left 100ms,right 100ms,bottom 100ms,height 100ms,width 100ms; }\
-				.jbs-select * { cursor: default !important; }\
-				';
-
+			var pickCss = `
+				#jbs-title {	z-index: 6001;position: absolute;	transition:top 100ms, left 100ms ;}
+				#jbs-title .triangle {	width:0;height:0; border-style: solid; 	border-color: #fff transparent transparent transparent; border-width: 6px;	margin-left: 14px;}
+				#jbs-title .text {	background: #fff; font: 14px arial; padding: 3px 8px; }
+				#jbs-title.bottom .triangle { border-color: transparent transparent #fff transparent; transform: translateY(-28px);}
+				#jbs-title.bottom .text {	transform: translateY(6px);}
+				
+				.jbs-shadow { display: block; opacity: 0.4; background: rgb(102, 102, 102); position: absolute; z-index:6000; top:0; left:0;}
+				.jbs-shadow.bottom { right:0;}
+				.jbs-shadow.top { right:0;}
+				.jbs-shadow.right { right: 0;}
+				.jbs-shadow { transition: top 100ms,left 100ms,right 100ms,bottom 100ms,height 100ms,width 100ms; }
+				.jbs-select * { cursor: default !important; }
+				';`
 			$('<style/>').text(pickCss).appendTo(_head);
 		}
 	}
 });
+
 
 jb.component('studio.highlight-in-preview',{
 	params: {

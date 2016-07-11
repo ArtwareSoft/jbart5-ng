@@ -26,7 +26,7 @@ jb_component('pipeline',{
 	},
 	impl: function(context,items) {
 		var data = jb_toarray(context.data);
-		var curr = (data.length) ? jb_toarray(context.data) : [null];
+		var curr = [data[0]]; // use only one data item, the first or null
 		var profiles = jb_toarray(context.profile.items || context.profile['$pipeline']);
 		profiles.forEach(function(profile,i) {
 			if (jb_profileType(profile) == 'aggregator')

@@ -44,9 +44,11 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 };
                 suggestions.prototype.extendWithOptions = function (probeCtx) {
                     var _this = this;
+                    this.options = [];
+                    if (!probeCtx)
+                        return this;
                     var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); })
                         .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); }));
-                    this.options = [];
                     if (this.tailSymbol == '%')
                         this.options = jb_core_1.jb.toarray(probeCtx.exp('%%'))
                             .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ text: x[0], value: x[1] }); }); })
@@ -80,48 +82,59 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 type: 'feature',
                 params: {
                     path: { as: 'string' },
-                    action: { type: 'action', dynamic: true }
+                    action: { type: 'action', dynamic: true },
+                    mdInput: { type: 'boolean', as: 'boolean' }
                 },
-                impl: function (ctx) { return ({
-                    innerhost: {
-                        'md-input': { '(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
-                    },
-                    init: function (cmp) {
-                        cmp.keyEm = cmp.keyEm || new Subject();
-                        var suggestionEm = cmp.keyEm.filter(function (e) {
-                            return (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1;
-                        })
-                            .flatMap(function (e) {
-                            return getProbe().then(function (probeResult) { return ({ keyEv: e, ctx: probeResult[0].in }); });
-                        })
-                            .delay(1) // we use keydown - let the input fill itself
-                            .map(function (e) {
-                            return new suggestions(e.keyEv.srcElement, '').extendWithOptions(e.ctx);
-                        })
-                            .filter(function (e) {
-                            return e.text;
-                        })
-                            .distinctUntilChanged(null, function (e) { return e.options.join(','); });
-                        suggestionEm.subscribe(function (e) {
-                            if (!$(e.input).hasClass('dialog-open')) {
-                                var suggestionContext = {
-                                    suggestionEm: suggestionEm
-                                        .startWith(e)
-                                        .do(function (e) {
-                                        return suggestionContext.suggestionObj = e;
-                                    }),
-                                    suggestionObj: e,
-                                    keyEm: cmp.keyEm
-                                };
-                                jb_ui.wrapWithLauchingElement(ctx.params.action, ctx.setVars({ suggestionContext: suggestionContext }), e.input)();
+                impl: function (ctx) {
+                    var result = {
+                        innerhost: {
+                            'input': { '(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
+                        },
+                        init: function (cmp) {
+                            cmp.keyEm = cmp.keyEm || new Subject();
+                            var suggestionEm = cmp.keyEm.filter(function (e) {
+                                return (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1;
+                            })
+                                .flatMap(function (e) {
+                                return getProbe().then(function (probeResult) {
+                                    return ({ keyEv: e, ctx: probeResult[0] && probeResult[0].in });
+                                });
+                            })
+                                .delay(1) // we use keydown - let the input fill itself
+                                .map(function (e) {
+                                return new suggestions(e.keyEv.srcElement, '').extendWithOptions(e.ctx);
+                            })
+                                .filter(function (e) {
+                                return e.text;
+                            })
+                                .distinctUntilChanged(null, function (e) { return e.options.join(','); });
+                            suggestionEm.subscribe(function (e) {
+                                //            console.log(e);
+                                if (!$(e.input).hasClass('dialog-open')) {
+                                    var suggestionContext = {
+                                        suggestionEm: suggestionEm
+                                            .startWith(e)
+                                            .do(function (e) {
+                                            return suggestionContext.suggestionObj = e;
+                                        }),
+                                        suggestionObj: e,
+                                        keyEm: cmp.keyEm
+                                    };
+                                    jb_ui.wrapWithLauchingElement(ctx.params.action, ctx.setVars({ suggestionContext: suggestionContext }), e.input)();
+                                }
+                            });
+                            function getProbe() {
+                                cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
+                                return cmp.probeResult;
                             }
-                        });
-                        function getProbe() {
-                            cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
-                            return cmp.probeResult;
                         }
+                    };
+                    if (ctx.params.mdInput) {
+                        result.innerhost['md-input'] = result.innerhost.input;
+                        delete result.innerhost.input;
                     }
-                }); }
+                    return result;
+                }
             });
             jb_core_1.jb.component('studio.jb-open-suggestions', {
                 type: 'action',

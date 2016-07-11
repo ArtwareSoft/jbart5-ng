@@ -115,10 +115,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-jb-editor-popup' },
-                    content: { $: 'jb-edit-property', path: '%$path%' }
+                    content: { $: 'studio.jb-edit-property', path: '%$path%' }
                 }
             });
-            jb_core_1.jb.component('jb-edit-property', {
+            jb_core_1.jb.component('studio.jb-edit-property', {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'editable-text',
@@ -133,6 +133,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             ]
                         },
                         { $: 'editable-text.studio-jb-detect-suggestions',
+                            mdInput: true,
                             path: '%$path%',
                             action: { $: 'studio.jb-open-suggestions' }
                         }

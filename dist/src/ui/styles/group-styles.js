@@ -28,7 +28,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             };
                         }
                     },
-                    css: ".header { display: flex; flex-direction: row; }\n        button:hover { background: none }\n        button { margin-left: auto }\n        .title { margin: 5px }",
+                    css: ".header { display: flex; flex-direction: row; }\n        button:hover { background: none }\n        button { margin-left: auto }\n        i { color: #}\n        .title { margin: 5px }",
                     features: { $: 'group.initGroup' }
                 },
             });

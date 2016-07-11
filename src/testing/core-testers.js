@@ -1,3 +1,4 @@
+
 jb_component('data-test',{
 	params: {
 		calculate: { dynamic: true },
@@ -18,7 +19,7 @@ jb_component('data-test',{
 			return expectedResult(jb_ctx(context,{ data: value, vars: jb_obj(resultVariable,value) }));
 		}
 	}
-});
+})
 
 jb_component('ng-ui-test',{
 	params: {

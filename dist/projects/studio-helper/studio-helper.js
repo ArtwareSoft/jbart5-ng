@@ -31,6 +31,15 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     { $: 'label', title: '1.0' },
                 ] });
             // fake current path
+            jb_1.jb.component('studio-helper.properties', {
+                type: 'control',
+                params: {
+                    path: { defaultValue: 'studio-helper.sample-control' }
+                },
+                impl: { $: 'studio.properties', path: '%$path%',
+                    $vars: { circuit: 'studio-helper.sample-control' },
+                }
+            });
             jb_1.jb.component('studio-helper.control-tree', {
                 type: 'control',
                 params: {
@@ -51,7 +60,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     $vars: { circuit: 'studio-helper-dummy.label' },
                     title: 'main',
                     controls: [
-                        { $: 'jb-edit-property', path: '%$path%~title~0' },
+                        { $: 'studio.jb-edit-property', path: '%$path%~title~0' },
                         { $: 'group',
                             controls: [{ $: 'studio.jb-editor', path: '%$path%' }],
                             features: { $: 'group-item.if', showCondition: false }

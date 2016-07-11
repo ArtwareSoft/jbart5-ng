@@ -110,11 +110,11 @@ jb.component('studio.open-jb-edit-property', {
   }, 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-jb-editor-popup' }, 
-    content :{$: 'jb-edit-property', path: '%$path%' } 
+    content :{$: 'studio.jb-edit-property', path: '%$path%' } 
   }
 })
 
-jb.component('jb-edit-property', {
+jb.component('studio.jb-edit-property', {
   type: 'control',
   params: { path: { as: 'string'} },
   impl :{$: 'editable-text', 
@@ -129,6 +129,7 @@ jb.component('jb-edit-property', {
           ]
         }, 
         {$: 'editable-text.studio-jb-detect-suggestions', 
+          mdInput: true,
           path: '%$path%',
           action :{$: 'studio.jb-open-suggestions' } 
         }

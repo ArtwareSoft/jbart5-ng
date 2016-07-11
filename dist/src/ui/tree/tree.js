@@ -228,7 +228,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                 }
             });
             jb_core_1.jb.component('tree.regain-focus', {
-                type: 'actions',
+                type: 'action',
                 impl: function (ctx) {
                     return ctx.vars.regainFocus && ctx.vars.regainFocus();
                 }

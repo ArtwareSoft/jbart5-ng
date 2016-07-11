@@ -33,6 +33,16 @@ jb.resource('studio-helper','group-with-custom-style',
 
 // fake current path
 
+jb.component('studio-helper.properties', {
+  type: 'control', 
+  params: {
+    path: { defaultValue: 'studio-helper.sample-control' }
+  },
+  impl :{$: 'studio.properties', path: '%$path%',
+      $vars: { circuit: 'studio-helper.sample-control' }, 
+  } 
+})
+
 jb.component('studio-helper.control-tree', {
   type: 'control', 
   params: {
@@ -54,7 +64,7 @@ jb.component('studio-helper.jb-editor', {
     $vars: { circuit: 'studio-helper-dummy.label' }, 
     title: 'main', 
     controls: [
-      {$: 'jb-edit-property', path: '%$path%~title~0' }, 
+      {$: 'studio.jb-edit-property', path: '%$path%~title~0' }, 
       {$: 'group', 
         controls: [{$: 'studio.jb-editor', path: '%$path%' }], 
         features :{$: 'group-item.if', showCondition: false }

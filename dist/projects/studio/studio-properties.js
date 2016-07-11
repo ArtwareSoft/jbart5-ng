@@ -67,9 +67,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         fieldPT = 'studio.property-slider';
                     else if (paramDef.options)
                         fieldPT = 'studio.property-enum';
-                    else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1 && ['number', 'string', 'undefined'].indexOf(valType) != -1) {
+                    else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1) {
+                        //				['number','string','undefined'].indexOf(valType) != -1) {
                         if (studio.model.compName(path))
-                            fieldPT = 'studio.property-JBEditor';
+                            fieldPT = 'studio.property-data-script';
                         else
                             fieldPT = (paramDef.type == 'boolean' && (valType == 'boolean' || val == null)) ? 'studio.property-boolean' : 'studio.property-primitive';
                     }
@@ -102,8 +103,41 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 style: { $: 'button.md-icon-12', icon: 'more_vert' },
                                 action: { $: 'studio.open-property-menu', path: '%$path%' },
                             }
+                        },
+                        { $: 'editable-text.studio-jb-detect-suggestions',
+                            path: '%$path%',
+                            action: { $: 'studio.jb-open-suggestions' }
                         }
                     ],
+                }
+            });
+            jb_core_1.jb.component('studio.property-data-script', {
+                type: 'control',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'text',
+                    title: { $: 'studio.prop-name', path: '%$path%' },
+                    text: { $: 'studio.compName', path: '%$path%' },
+                    action: { $: 'openDialog',
+                        style: { $: 'dialog.studio-floating', id: 'jb editor', width: 300 },
+                        content: { $: 'studio.jb-editor', path: '%$path%' }
+                    },
+                    features: [
+                        { $: 'studio.undo-support', path: '%$path%' },
+                        { $: 'field.toolbar',
+                            toolbar: { $: 'button',
+                                title: 'more',
+                                style: { $: 'button.md-icon-12', icon: 'more_vert' },
+                                action: { $: 'studio.open-property-menu', path: '%$path%' }
+                            }
+                        }
+                    ],
+                    style: { $: 'customStyle',
+                        template: '<div>{{text}}</div>',
+                        features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' },
+                        css: "{ display: block; width: 143px; height: 16px; padding-left: 4px; padding-top: 2px;\n\tfont: 12px \"arial\"; color: #555555; background-color: #eee; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tcursor: pointer;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) }"
+                    }
                 }
             });
             jb_core_1.jb.component('studio.property-boolean', {

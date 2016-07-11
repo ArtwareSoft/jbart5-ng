@@ -34,10 +34,12 @@ export class suggestions {
   }
 
   extendWithOptions(probeCtx) {
+    this.options = [];
+    if (!probeCtx)
+      return this;
     var vars = jb.entries(probeCtx.vars).map(x=>({text: '$' + x[0], value: x[1]}))
         .concat(jb.entries(probeCtx.resources).map(x=>({text: '$' + x[0], value: x[1]})))
 
-    this.options = []
     if (this.tailSymbol == '%') 
       this.options = jb.toarray(probeCtx.exp('%%'))
         .map(x=>jb.entries(x).map(x=>({text: x[0], value: x[1]})))
@@ -73,19 +75,22 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
   type: 'feature', 
   params: {
     path: { as: 'string' },
-    action: { type: 'action', dynamic:true }
+    action: { type: 'action', dynamic:true },
+    mdInput: {type: 'boolean', as : 'boolean'}
   }, 
-  impl: ctx => ({ 
+  impl: ctx => {
+    var result = {
       innerhost: {
-        'md-input' : {'(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
-      },
+        'input' : {'(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
+      },     
       init: cmp=> {
         cmp.keyEm = cmp.keyEm || new Subject();
 
         var suggestionEm = cmp.keyEm.filter(e=> // has % sign - look for suggestion
             (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1 )
           .flatMap(e=>
-            getProbe().then(probeResult=>({ keyEv: e, ctx: probeResult[0].in})))
+            getProbe().then(probeResult=>
+              ({ keyEv: e, ctx: probeResult[0] && probeResult[0].in})))
           .delay(1) // we use keydown - let the input fill itself
           .map(e=> 
             new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx))
@@ -94,6 +99,7 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
           .distinctUntilChanged(null,e=>e.options.join(','))
 
         suggestionEm.subscribe(e=> {
+//            console.log(e);
             if (!$(e.input).hasClass('dialog-open')) { // opening the popup if not already opened
               var suggestionContext = { 
                 suggestionEm: suggestionEm
@@ -112,7 +118,13 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
           return cmp.probeResult;
         }
       }
-  })
+  }
+  if (ctx.params.mdInput) {
+    result.innerhost['md-input'] = result.innerhost.input;
+    delete result.innerhost.input;
+  }
+  return result;
+  }
 })
 
 jb.component('studio.jb-open-suggestions', {
