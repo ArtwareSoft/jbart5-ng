@@ -122,7 +122,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'control',
                 params: { path: { as: 'string' } },
                 impl: { $: 'editable-text',
-                    databind: { $: 'studio.currentProfileAsScript', path: '%$path%' },
+                    databind: { $: 'studio.profile-as-text', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
                         { $: 'css.padding', left: '4', right: '4' },

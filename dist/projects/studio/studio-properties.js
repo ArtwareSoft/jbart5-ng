@@ -119,31 +119,28 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 params: {
                     path: { as: 'string' }
                 },
-                impl: { $: 'text',
+                impl: { $: 'group',
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    text: { $: 'studio.data-script-type', path: '%$path%' },
-                    action: { $: 'openDialog',
-                        style: { $: 'dialog.studio-floating', id: 'jb editor', width: 300 },
-                        content: { $: 'studio.jb-editor', path: '%$path%' }
-                    },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'field.toolbar',
-                            toolbar: { $: 'button',
-                                title: 'more',
-                                style: { $: 'button.md-icon-12', icon: 'more_vert' },
-                                action: { $: 'studio.open-property-menu', path: '%$path%' }
-                            }
-                        }
+                        { $: 'studio.property-toobar-feature', path: '%$path%' },
                     ],
-                    style: { $: 'customStyle',
-                        template: '<div [title]="text"><div class="inner-text">{{text}}</div></div>',
-                        features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' },
-                        css: ".inner-text {\n  white-space: nowrap; overflow-x: hidden;\n  display: inline; height: 16px; \n  padding-left: 4px; padding-top: 2px;\n\tfont: 12px \"arial\"; color: #555555; \n}\n\n{\n  width: 149px;\n\tborder: 1px solid #ccc; border-radius: 4px;\n\tcursor: pointer;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n  background: #eee;\n  white-space: nowrap; overflow-x: hidden;\n  text-overflow: ellipsis;\n}"
+                    controls: { $: 'button',
+                        title: { $: 'studio.data-script-summary', path: '%$path%' },
+                        action: { $: 'openDialog',
+                            content: { $: 'studio.jb-editor', path: '%$path%' },
+                            style: { $: 'dialog.studio-floating',
+                                id: 'jb editor',
+                                width: '500',
+                                height: '400'
+                            },
+                            title: 'Inteliscript'
+                        },
+                        style: { $: 'button.studio-data-script' }
                     }
                 }
             });
-            jb_core_1.jb.component('studio.data-script-type', {
+            jb_core_1.jb.component('studio.data-script-summary', {
                 type: 'data',
                 params: {
                     path: { as: 'string' }
@@ -167,13 +164,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'field.toolbar',
-                            toolbar: { $: 'button',
-                                title: 'more',
-                                style: { $: 'button.md-icon-12', icon: 'more_vert' },
-                                action: { $: 'studio.open-property-menu', path: '%$path%' },
-                            }
-                        }
+                        { $: 'studio.property-toobar-feature', path: '%$path%' }
                     ],
                 }
             });
@@ -214,13 +205,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         tgpCtrl: { $: 'object', expanded: true }
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    features: { $: 'field.toolbar',
-                        toolbar: { $: 'button',
-                            title: 'more',
-                            style: { $: 'button.md-icon-12', icon: 'more_vert' },
-                            action: { $: 'studio.open-property-menu', path: '%$path%' }
-                        }
-                    },
+                    features: { $: 'studio.property-toobar-feature', path: '%$path%' },
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
@@ -313,77 +298,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         }
                     ],
                     style: { $: 'group.expandable' }
-                }
-            });
-            jb_core_1.jb.component('studio.open-property-menu', {
-                type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
-                impl: { $: 'openDialog',
-                    style: { $: 'pulldownPopup.contextMenuPopup' },
-                    content: { $: 'group',
-                        controls: [
-                            { $: 'pulldown.menu-item',
-                                title: 'Style Editor',
-                                icon: 'build',
-                                action: { $: 'studio.open-style-editor', path: '%$path%' },
-                                features: { $: 'hidden',
-                                    showCondition: { $: 'endsWith', endsWith: '~style', text: '%$path%' }
-                                }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Customize style',
-                                icon: 'build',
-                                action: { $: 'studio.makeLocal', path: '%$path%' },
-                                features: { $: 'hidden',
-                                    showCondition: { $and: [
-                                            { $: 'endsWith', endsWith: '~style', text: '%$path%' },
-                                            { $: 'notEquals',
-                                                item1: { $: 'studio.compName', path: '%$path%' },
-                                                item2: 'customStyle'
-                                            }
-                                        ] }
-                                }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Multiline edit',
-                                features: { $: 'hidden',
-                                    showCondition: { $: 'equals',
-                                        item1: [{ $: 'studio.paramDef', path: '%$path%' }, '%as%'],
-                                        item2: 'string'
-                                    }
-                                },
-                                action: { $: 'studio.open-multiline-edit', path: '%$path%' }
-                            },
-                            { $: 'pulldown.menu-item',
-                                $vars: {
-                                    compName: { $: 'studio.compName', path: '%$path%' }
-                                },
-                                title: 'Goto %$compName%',
-                                features: { $: 'hidden', showCondition: '%$compName%' },
-                                action: { $: 'studio.goto-path', path: '%$compName%' }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Javascript editor',
-                                icon: 'code',
-                                action: { $: 'studio.editSource', path: '%$path%' }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Open sublime',
-                                action: { $: 'studio.openSublime', path: '%$path%' }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Delete',
-                                icon: 'delete',
-                                shortcut: 'Delete',
-                                action: [
-                                    { $: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false },
-                                    { $: 'studio.delete', path: '%$path%' }
-                                ]
-                            }
-                        ]
-                    }
                 }
             });
             // jb.component('studio.property-Style',{

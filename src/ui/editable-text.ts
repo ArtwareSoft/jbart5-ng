@@ -24,7 +24,7 @@ jb.component('editable-text.bindField', {
   })
 })
 
-jb.component('editable-text.input',{
+jb.component('editable-text.input', {
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
       features :{$: 'editable-text.bindField' },

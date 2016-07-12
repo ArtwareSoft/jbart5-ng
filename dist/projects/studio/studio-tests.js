@@ -21,7 +21,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 'studio-codemirror': { $: 'studio-test',
                     page: 'main',
                     control: { $: 'editable-text',
-                        databind: { $: 'studio.currentProfileAsScript' },
+                        databind: { $: 'studio.profile-as-text' },
                         style: { $: 'editable-text.codemirror' }
                     },
                     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }

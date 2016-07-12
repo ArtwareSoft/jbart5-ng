@@ -20,6 +20,32 @@ input[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }
 	}
 })
 
+jb.component('button.studio-data-script',{
+  type: 'editable-text.style',
+  impl :{$: 'customStyle', 
+          template: '<div [title]="title" (click)="clicked()"><div class="inner-text">{{title}}</div></div>', 
+          css: `.inner-text {
+  white-space: nowrap; overflow-x: hidden;
+  display: inline; height: 16px; 
+  padding-left: 4px; padding-top: 2px;
+  font: 12px "arial"; color: #555555; 
+}
+
+{
+  width: 149px;
+  border: 1px solid #ccc; border-radius: 4px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
+  background: #eee;
+  white-space: nowrap; overflow-x: hidden;
+  text-overflow: ellipsis;
+}`, 
+          features :{$: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
+        } 
+})
+
+
+
 jb.component('editable-boolean.studio-slide-toggle', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 

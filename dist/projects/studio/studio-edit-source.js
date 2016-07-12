@@ -13,22 +13,25 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('studio.editSource', {
                 type: 'action',
+                params: {
+                    path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+                },
                 impl: {
                     $: 'openDialog',
-                    title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
+                    title: { $: 'studio.short-title', path: '%$path%' },
                     style: { $: 'dialog.studio-floating', id: 'edit source', width: 600 },
                     features: { $: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}' },
                     content: { $: 'editable-text',
-                        databind: { $: 'studio.currentProfileAsScript' },
+                        databind: { $: 'studio.profile-as-text', path: '%$path%' },
                         style: { $: 'editable-text.codemirror', mode: 'javascript' },
                         features: { $: 'studio.undo-support', path: '%$path%' },
                     }
                 }
             });
-            jb_core_1.jb.component('studio.currentProfileAsScript', {
+            jb_core_1.jb.component('studio.profile-as-text', {
                 type: 'data',
                 params: {
-                    path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+                    path: { as: 'string' }
                 },
                 impl: function (context, path) { return ({
                     $jb_val: function (value) {

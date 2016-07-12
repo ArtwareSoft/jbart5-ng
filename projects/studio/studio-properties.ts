@@ -120,47 +120,29 @@ jb.component('studio.property-data-script', {
   params: {
     path: { as: 'string' }
   }, 
-  impl :{$: 'text', 
+  impl :{$: 'group', 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
-    text :{$: 'studio.data-script-type', path: '%$path%' }, 
-    action :{$: 'openDialog', 
-      style :{$: 'dialog.studio-floating', id: 'jb editor', width: 300 }, 
-      content :{$: 'studio.jb-editor', path: '%$path%' }
-    }, 
     features: [
-      {$: 'studio.undo-support', path: '%$path%' }, 
-      {$: 'field.toolbar', 
-        toolbar :{$: 'button', 
-          title: 'more', 
-          style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
-          action :{$: 'studio.open-property-menu', path: '%$path%' }
-        }
-      }
-    ], 
-    style :{$: 'customStyle', 
-      template: '<div [title]="text"><div class="inner-text">{{text}}</div></div>', 
-      features :{$: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }, 
-      css: `.inner-text {
-  white-space: nowrap; overflow-x: hidden;
-  display: inline; height: 16px; 
-  padding-left: 4px; padding-top: 2px;
-	font: 12px "arial"; color: #555555; 
-}
-
-{
-  width: 149px;
-	border: 1px solid #ccc; border-radius: 4px;
-	cursor: pointer;
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
-  background: #eee;
-  white-space: nowrap; overflow-x: hidden;
-  text-overflow: ellipsis;
-}`
+          {$: 'studio.undo-support', path: '%$path%' }, 
+          {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+    ],
+    controls :{$: 'button', 
+        title :{$: 'studio.data-script-summary', path: '%$path%' }, 
+        action :{$: 'openDialog', 
+          content :{$: 'studio.jb-editor', path: '%$path%' }, 
+          style :{$: 'dialog.studio-floating', 
+            id: 'jb editor', 
+            width: '500', 
+            height: '400'
+          }, 
+          title: 'Inteliscript'
+        }, 
+        style :{$: 'button.studio-data-script'}
     }
   }
 })
 
-jb.component('studio.data-script-type', {
+jb.component('studio.data-script-summary', {
   type: 'data', 
   params: {
     path: { as: 'string' }
@@ -185,13 +167,7 @@ jb.component('studio.property-boolean',{
 		databind :{$: 'studio.ref', path: '%$path%' },
 		features : [
 			{$: 'studio.undo-support', path: '%$path%' },
-			{$: 'field.toolbar', 
-				toolbar :{$: 'button' ,
-					title: 'more',
-					style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
-					action :{$: 'studio.open-property-menu', path: '%$path%' },
-				}
-			}
+			{$: 'studio.property-toobar-feature', path: '%$path%' }
 		],
 	}
 })
@@ -234,13 +210,7 @@ jb.component('studio.property-tgp', {
       tgpCtrl :{$: 'object', expanded: true }
     }, 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
-    features :{$: 'field.toolbar', 
-      toolbar :{$: 'button', 
-        title: 'more', 
-        style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
-        action :{$: 'studio.open-property-menu', path: '%$path%' }
-      }
-    }, 
+    features :{$: 'studio.property-toobar-feature', path: '%$path%' },
     controls: [
       {$: 'group', 
         style :{$: 'layout.horizontal' }, 
@@ -338,79 +308,6 @@ i { font-size: 16px; margin-right: 1px; color: #909090 }`
       }
     ], 
     style :{$: 'group.expandable' }
-  }
-})
-
-
-jb.component('studio.open-property-menu', {
-  type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
-  impl :{$: 'openDialog', 
-    style :{$: 'pulldownPopup.contextMenuPopup' }, 
-    content :{$: 'group', 
-      controls: [
-        {$: 'pulldown.menu-item', 
-          title: 'Style Editor', 
-          icon: 'build', 
-          action :{$: 'studio.open-style-editor', path: '%$path%' }, 
-          features :{$: 'hidden', 
-            showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
-          }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Customize style', 
-          icon: 'build', 
-          action :{$: 'studio.makeLocal', path: '%$path%' }, 
-          features :{$: 'hidden', 
-            showCondition :{ $and: [ 
-            		{$: 'endsWith', endsWith: '~style', text: '%$path%' },
-            		{$: 'notEquals', 
-            			item1 :{$: 'studio.compName', path : '%$path%'},
-            			item2: 'customStyle' 
-            		}
-            ]}
-          }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Multiline edit', 
-          features :{$: 'hidden', 
-          	showCondition: {$: 'equals', 
-          		item1: [ {$: 'studio.paramDef', path: '%$path%' }, '%as%'],
-          		item2: 'string'
-          	}
-          },
-          action :{$: 'studio.open-multiline-edit', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          $vars: {
-          	compName: {$: 'studio.compName', path : '%$path%'}
-          },
-          title: 'Goto %$compName%', 
-          features :{$: 'hidden', showCondition: '%$compName%' },
-          action :{$: 'studio.goto-path', path: '%$compName%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Javascript editor', 
-          icon: 'code', 
-          action :{$: 'studio.editSource', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Open sublime', 
-          action :{$: 'studio.openSublime', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Delete', 
-          icon: 'delete', 
-          shortcut: 'Delete', 
-          action: [
-            {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
-            {$: 'studio.delete', path: '%$path%' }
-          ]
-        }
-      ]
-    }
   }
 })
 

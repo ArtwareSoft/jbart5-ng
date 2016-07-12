@@ -3,23 +3,26 @@ import * as studio from './studio-model';
 
 jb.component('studio.editSource', {
 	type: 'action',
+	params: {
+		path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+	},
 	impl: {
 		$: 'openDialog',
-		title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
+		title :{$: 'studio.short-title', path: '%$path%' },
 		style :{$: 'dialog.studio-floating', id: 'edit source', width: 600 },
 		features :{$: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}'},
 		content :{$: 'editable-text', 
-			databind :{$: 'studio.currentProfileAsScript' },
+			databind :{$: 'studio.profile-as-text', path: '%$path%' },
 			style :{$: 'editable-text.codemirror', mode: 'javascript'},
 			features: {$: 'studio.undo-support', path: '%$path%' },
 		}
 	}
 })
 
-jb.component('studio.currentProfileAsScript', {
+jb.component('studio.profile-as-text', {
 	type: 'data',
 	params: {
-		path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+		path: { as: 'string' }
 	},
 	impl: (context,path) => ({
 			$jb_val: function(value) {

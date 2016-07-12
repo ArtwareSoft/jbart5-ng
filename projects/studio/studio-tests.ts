@@ -17,7 +17,7 @@ jb_tests('studio-tests', {
 'studio-codemirror' :{$: 'studio-test', 
   page: 'main',
 	control :{$: 'editable-text', 
-      databind: {$: 'studio.currentProfileAsScript'}, 
+      databind: {$: 'studio.profile-as-text'}, 
 			style: { $: 'editable-text.codemirror' }
 	},
   expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
