@@ -60,6 +60,7 @@ export class suggestions {
         .filter(x=>['$ngZone','$window'].indexOf(x.text) == -1)
         .filter(x=>
           this.tail == '' || typeof x.text != 'string' || x.text.indexOf(this.tail) == 0); 
+
     return this;
   }
 
@@ -107,7 +108,6 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
           .distinctUntilChanged(null,e=>e.options.join(','))
 
         suggestionEm.subscribe(e=> {
-//            console.log(e);
             if (!$(e.input).hasClass('dialog-open')) { // opening the popup if not already opened
               var suggestionContext = { 
                 suggestionEm: suggestionEm
@@ -127,12 +127,6 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
         }
       }
   })
-  // if (ctx.params.mdInput) {
-  //   result.innerhost['md-input'] = result.innerhost.input;
-  //   delete result.innerhost.input;
-  // }
-  // return result;
-  // }
 })
 
 jb.component('studio.jb-open-suggestions', {
@@ -200,8 +194,10 @@ jb.component('itemlist.studio-suggestions-selection', {
           .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
 
         keyEm.filter(e=>e.keyCode == 13) // ENTER
-          .subscribe(x=>
-                ctx.params.onEnter(ctx.setData(itemlist.selected)))
+          .subscribe(x=>{
+              if (itemlist.selected)
+                ctx.params.onEnter(ctx.setData(itemlist.selected))
+          })
         keyEm.filter(e=>e.keyCode == 27) // ESC
           .subscribe(x=>
                 ctx.run({$:'closeContainingPopup'}));

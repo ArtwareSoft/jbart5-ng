@@ -95,7 +95,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: { $: 'editable-text',
-                    style: { $: 'editable-text.input' },
+                    style: { $: 'editable-text.studio-primitive-text' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [

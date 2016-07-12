@@ -248,9 +248,10 @@ function jb_evalExpressionPart(expressionPart,context,jstype) {
       });
     else if (typeof item === 'object')
       item = item && jb_objectProperty(item,part,jstype,i == parts.length -1);
-
-    if (index && Array.isArray(item)) 
+    else if (index && Array.isArray(item)) 
       item = item[index];
+    else
+      item = null; // no match
     if (!item) return item;	// 0 should return 0
   }
   return item;

@@ -123,7 +123,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             })
                                 .distinctUntilChanged(null, function (e) { return e.options.join(','); });
                             suggestionEm.subscribe(function (e) {
-                                //            console.log(e);
                                 if (!$(e.input).hasClass('dialog-open')) {
                                     var suggestionContext = {
                                         suggestionEm: suggestionEm
@@ -210,7 +209,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }));
                             keyEm.filter(function (e) { return e.keyCode == 13; }) // ENTER
                                 .subscribe(function (x) {
-                                return ctx.params.onEnter(ctx.setData(itemlist.selected));
+                                if (itemlist.selected)
+                                    ctx.params.onEnter(ctx.setData(itemlist.selected));
                             });
                             keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC
                                 .subscribe(function (x) {

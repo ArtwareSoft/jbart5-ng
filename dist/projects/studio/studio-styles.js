@@ -12,7 +12,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 type: 'editable-text.style',
                 impl: { $: 'customStyle',
                     features: { $: 'editable-text.bindField' },
-                    template: "<div><input [(ngModel)]=\"jbModel\"></div>",
+                    template: "<div><input %$field.modelExp%></div>",
                     css: "\ninput { display: block; width: 149px; height: 16px; padding-left: 2px;\n\tfont-size: 12px; color: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\ninput:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\ninput::placeholder { color: #999; opacity: 1; }\ninput[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }\n\t  \tinput.focused {width: 300px; transition: width: 1s}"
                 }
             });

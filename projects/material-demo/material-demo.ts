@@ -20,7 +20,7 @@ jb.component('material-demo.main', {
         title: 'Name', 
         style :{$: 'layout.horizontal' }, 
         controls: [
-          {$: 'editable-text', databind: '%firstName%', title: 'First Name' }, 
+          {$: 'editable-text', databind: '%firstName% %', title: 'First Name' }, 
           {$: 'editable-text', 
             databind: '%lastName%', 
             title: 'Long Last Name That Will Be Truncated'

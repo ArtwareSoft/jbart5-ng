@@ -4,7 +4,7 @@ jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
       features :{$: 'editable-text.bindField' },
-      template: `<div><input [(ngModel)]="jbModel"></div>`,
+      template: `<div><input %$field.modelExp%></div>`,
 	  css: `
 input { display: block; width: 149px; height: 16px; padding-left: 2px;
 	font-size: 12px; color: #555555; background-color: #fff; 

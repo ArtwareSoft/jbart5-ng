@@ -28,7 +28,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             title: 'Name',
                             style: { $: 'layout.horizontal' },
                             controls: [
-                                { $: 'editable-text', databind: '%firstName%', title: 'First Name' },
+                                { $: 'editable-text', databind: '%firstName% %', title: 'First Name' },
                                 { $: 'editable-text',
                                     databind: '%lastName%',
                                     title: 'Long Last Name That Will Be Truncated'
