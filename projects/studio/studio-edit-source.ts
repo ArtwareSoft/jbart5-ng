@@ -42,7 +42,9 @@ jb.component('studio.openSublime', {
 	params: {
 		path: { as: 'string'}
 	},
-	impl: (ctx,path) => 
-		studio.model.compName(path) && $.ajax(`/?op=gotoSource&comp=${studio.model.compName(path)}`)
+	impl: (ctx,path) => {
+		var compName = path.indexOf('~') == -1 ? path : studio.model.compName(path);
+		compName && $.ajax(`/?op=gotoSource&comp=${compName}`)
+	}
 }) 
 

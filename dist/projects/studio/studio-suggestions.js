@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui;
+    var jb_core_1, jb_ui, jb_rx;
     var suggestions;
     function rev(str) {
         return str.split('').reverse().join('');
@@ -13,6 +13,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
+            },
+            function (jb_rx_1) {
+                jb_rx = jb_rx_1;
             }],
         execute: function() {
             suggestions = (function () {
@@ -50,8 +53,12 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); })
                         .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); }));
                     if (this.tailSymbol == '%')
-                        this.options = jb_core_1.jb.toarray(probeCtx.exp('%%'))
-                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ text: x[0], value: x[1] }); }); })
+                        this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp('%%'))
+                            .map(function (x) {
+                            return jb_core_1.jb.entries(x).map(function (x) {
+                                return ({ text: x[0], value: x[1] });
+                            });
+                        }))
                             .concat(vars);
                     else if (this.tailSymbol == '%$')
                         this.options = vars;
@@ -61,6 +68,8 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     this.options = this.options
                         .filter(jb_onlyUniqueFunc(function (x) { return x.text; }))
                         .filter(function (x) { return x.text != _this.tail; })
+                        .filter(function (x) { return x.text.indexOf('$$') != 0; })
+                        .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.text) == -1; })
                         .filter(function (x) {
                         return _this.tail == '' || typeof x.text != 'string' || x.text.indexOf(_this.tail) == 0;
                     });
@@ -86,12 +95,17 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     mdInput: { type: 'boolean', as: 'boolean' }
                 },
                 impl: function (ctx) {
-                    var result = {
-                        innerhost: {
-                            'input': { '(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
-                        },
+                    return ({
                         init: function (cmp) {
-                            cmp.keyEm = cmp.keyEm || new Subject();
+                            var input = $(cmp.elementRef.nativeElement).findIncludeSelf('input')[0];
+                            if (!input)
+                                return;
+                            cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown');
+                            cmp.keyEm.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
+                                .subscribe(function (e) {
+                                return e.preventDefault();
+                            });
+                            cmp.keyEm || new Subject();
                             var suggestionEm = cmp.keyEm.filter(function (e) {
                                 return (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1;
                             })
@@ -128,12 +142,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                 return cmp.probeResult;
                             }
                         }
-                    };
-                    if (ctx.params.mdInput) {
-                        result.innerhost['md-input'] = result.innerhost.input;
-                        delete result.innerhost.input;
-                    }
-                    return result;
+                    });
                 }
             });
             jb_core_1.jb.component('studio.jb-open-suggestions', {

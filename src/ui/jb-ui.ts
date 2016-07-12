@@ -1,6 +1,6 @@
 import {jb} from 'jb-core';
 import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
-import {NgForm,FORM_DIRECTIVES,NgClass} from '@angular/common';
+import {NgForm,FORM_DIRECTIVES,NgClass,NgStyle} from '@angular/common';
 
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 
@@ -66,7 +66,7 @@ class jbComponent {
 		return JSON.stringify(this.annotations)
 	}
 	createComp() {
-	    this.jbExtend({directives: [NgClass, jbComp]});
+	    this.jbExtend({directives: [NgClass, NgStyle, jbComp]});
 	    if (!this.annotations.selector)	this.annotations.selector = 'div';
 
 	    var Cmp = function(dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef }
@@ -75,9 +75,9 @@ class jbComponent {
 			Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
 		], Cmp);
 		Cmp.prototype.ngOnInit = function() {
-			if (this.ngOnInitAlreadyCalled)
-				debugger;
-			this.ngOnInitAlreadyCalled = true;
+			// if (this.ngOnInitAlreadyCalled)
+			// 	debugger;
+			// this.ngOnInitAlreadyCalled = true;
 			try {
 				if (this.methodHandler.jbObservableFuncs.length) {
 					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
@@ -249,7 +249,7 @@ export function ctrl(context) {
 
 	function defaultStyle(ctx) {
 		var profile = context.profile;
-		var defaultVar = (profile.$ || '')+'.default-style-profile';
+		var defaultVar = '$' + (profile.$ || '')+'.default-style-profile';
 		if (!profile.style && context.vars[defaultVar])
 			return ctx.run({$:context.vars[defaultVar]})
 		return context.params.style(ctx);
@@ -521,10 +521,11 @@ export class jBartWidget {
 
 		this.ngZone.runOutsideAngular(() => {
 			setInterval(()=>
-				this.redrawEm.next(this.compId),555)
+				this.redrawEm.next(this.compId),600)
 		})
-			this.redrawEm 
-//			  .debounceTime(600) // fast user reaction - must be run outside angular
+			
+		this.redrawEm 
+//			  .debounceTime(600) // fast user reaction - must be run outside angular - see solution above
 			  .map(id=>
 			  	relevantSource(id))
 			  .distinctUntilChanged()
@@ -550,15 +551,15 @@ export class jBartWidget {
 	}
 
     private getOrCreateInitialCtx() {
-    	if (!this.$jbInitialCtx) {
+    	if (!jbart.initialCtx) {
 	    	var ns = this.compId.split('.')[0];
 			var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 			jb.extend(resources, { window: window, globals: { } });
-			this.$jbInitialCtx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
+			jbart.initialCtx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
 		}
 		if (jbart.studioGlobals)
-			return this.$jbInitialCtx.setVars({studio: {project: jbart.studioGlobals.project, page: jbart.studioGlobals.page}})
-		return this.$jbInitialCtx;
+			return jbart.initialCtx.setVars({studio: {project: jbart.studioGlobals.project, page: jbart.studioGlobals.page}})
+		return jbart.initialCtx;
     }
 }
 

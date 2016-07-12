@@ -23,7 +23,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('theme.material-design', {
                 type: 'theme',
                 impl: function () { return ({
-                    'editable-text.default-style-profile': 'editable-text.md-input'
+                    '$editable-text.default-style-profile': 'editable-text.md-input'
                 }); }
             });
         }

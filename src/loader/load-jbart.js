@@ -167,7 +167,7 @@ function jbLoadModules(modules) {
         },
         (e)=>{
           loaded++;
-          console.log(e);
+          console.log(x,e);
           if (loaded == modules.length) resolve(loadedModules) 
         }
       )

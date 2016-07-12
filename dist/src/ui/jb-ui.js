@@ -24,7 +24,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
         function defaultStyle(ctx) {
             var profile = context.profile;
-            var defaultVar = (profile.$ || '') + '.default-style-profile';
+            var defaultVar = '$' + (profile.$ || '') + '.default-style-profile';
             if (!profile.style && context.vars[defaultVar])
                 return ctx.run({ $: context.vars[defaultVar] });
             return context.params.style(ctx);
@@ -279,7 +279,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     return JSON.stringify(this.annotations);
                 };
                 jbComponent.prototype.createComp = function () {
-                    this.jbExtend({ directives: [common_1.NgClass, jbComp] });
+                    this.jbExtend({ directives: [common_1.NgClass, common_1.NgStyle, jbComp] });
                     if (!this.annotations.selector)
                         this.annotations.selector = 'div';
                     var Cmp = function (dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef; };
@@ -289,9 +289,9 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     ], Cmp);
                     Cmp.prototype.ngOnInit = function () {
                         var _this = this;
-                        if (this.ngOnInitAlreadyCalled)
-                            debugger;
-                        this.ngOnInitAlreadyCalled = true;
+                        // if (this.ngOnInitAlreadyCalled)
+                        // 	debugger;
+                        // this.ngOnInitAlreadyCalled = true;
                         try {
                             if (this.methodHandler.jbObservableFuncs.length) {
                                 this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
@@ -586,7 +586,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     this.ngZone.runOutsideAngular(function () {
                         setInterval(function () {
                             return _this.redrawEm.next(_this.compId);
-                        }, 555);
+                        }, 600);
                     });
                     this.redrawEm
                         .map(function (id) {
@@ -613,15 +613,15 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     }
                 };
                 jBartWidget.prototype.getOrCreateInitialCtx = function () {
-                    if (!this.$jbInitialCtx) {
+                    if (!jbart.initialCtx) {
                         var ns = this.compId.split('.')[0];
                         var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
                         jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                        this.$jbInitialCtx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
+                        jbart.initialCtx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
                     }
                     if (jbart.studioGlobals)
-                        return this.$jbInitialCtx.setVars({ studio: { project: jbart.studioGlobals.project, page: jbart.studioGlobals.page } });
-                    return this.$jbInitialCtx;
+                        return jbart.initialCtx.setVars({ studio: { project: jbart.studioGlobals.project, page: jbart.studioGlobals.page } });
+                    return jbart.initialCtx;
                 };
                 jBartWidget = __decorate([
                     core_1.Component({

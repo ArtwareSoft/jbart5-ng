@@ -77,18 +77,20 @@ jb.component('property-sheet.studio-properties', {
     },
 
   	template: `<div>
-      <div *ngFor="let ctrl of ctrls" class="property">
+      <div *ngFor="let ctrl of ctrls" class="property" 
+          (mouseenter)="ctrl.hover=true" (mouseleave)="ctrl.hover=false">
         <label class="property-title">{{ctrl.comp.jb_title()}}</label>
         <div class="input-and-toolbar">
           <jb_comp [comp]="ctrl.comp"></jb_comp>
-          <jb_comp [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+          <jb_comp [hidden]="!ctrl.hover" [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
         </div>
       </div>
       </div>
     `,
     css: `.property { margin-bottom: 5px; display: flex }
       .property:last-child { margin-bottom:0px }
-      .input-and-toolbar { display: flex; margin-right:0;  }
+      .input-and-toolbar { display: flex; }
+      .toolbar { height: 16px; margin-left: 10px }
       .property>.property-title {
         min-width: 90px;
         width: 90px;

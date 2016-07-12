@@ -2,11 +2,34 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio;
-    function runCircuit(path, ctx) {
-        var circuit = ctx.exp('%$circuit%') || 'studio.refreshPreview';
-        var context = jb_core_1.jb.ctx({ ngMode: true, resources: ctx.resources, vars: {} }, { profile: { $: circuit }, comp: circuit, path: '', data: '' });
-        jb_run(context);
-        return context;
+    function runCircuit(context, circuit) {
+        if (studio.model.isOfType(circuit, 'control'))
+            return testControl(circuit, context);
+        else
+            return Promise.resolve(_win.jb_run(context));
+    }
+    function testControl(compName, ctx) {
+        return new Promise(function (resolve, reject) {
+            ctx.run({ $: 'openDialog',
+                content: { $: compName },
+                features: function (ctx2) { return ({
+                    observable: function (cmp_obs) {
+                        return cmp_obs.filter(function (x) {
+                            return x == 'ready';
+                        })
+                            .take(1)
+                            .catch(function (e) {
+                            return resolve();
+                        })
+                            .subscribe(function (x) {
+                            resolve();
+                            ctx2.run({ $: 'closeContainingPopup' });
+                        });
+                    },
+                    css: '{display: none}'
+                }); }
+            });
+        });
     }
     return {
         setters:[
@@ -24,94 +47,21 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     var _path = path();
                     if (!_path)
                         return [];
-                    var jbart = studio.jbart_base();
-                    jbart.probe = jbart.probe || {};
-                    // if (jbart.probe.sample[_path])
-                    //   return Promise.resolve(jbart.probe.sample[_path]);
-                    jbart.probe[_path] = [];
-                    jbart.probe.trace = _path;
-                    //      jbart.trace_paths = true;
-                    var runningCtx = runCircuit(_path, ctx);
-                    return jb_core_1.jb.delay(1).then(function () {
-                        jbart.probe.trace = '';
-                        if (jbart.probe[_path].length == 0)
-                            jbart.probe[_path].push({ in: runningCtx });
-                        return jbart.probe[_path];
+                    var _jbart = studio.jbart_base();
+                    var _win = (jbart.previewWindow || window);
+                    _jbart.probe = _jbart.probe || {};
+                    _jbart.probe[_path] = [];
+                    _jbart.probe.trace = _path;
+                    //     _jbart.trace_paths = true;
+                    var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
+                    var context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: '' });
+                    return runCircuit(context, circuit).then(function () {
+                        if (_jbart.probe[_path].length == 0)
+                            _jbart.probe[_path].push({ in: context });
+                        return _jbart.probe[_path];
                     });
                 }
             });
         }
     }
 });
-// jb.component('studio.showProbeData', {
-//   type: 'action',
-//   impl: {
-//     $: 'openDialog',
-//       title: 'probe - %$globals/profile_path%',
-//       style :{$: 'dialog.studio-floating', id: 'probe', width: 600 },
-//       features :{$: 'css', css: '.jb-dialog-content-parent {overflow-y: hidden}'},
-//       content :{$: 'group', 
-//         $vars: { selected : {$: 'object' } },
-//         controls:
-//           [
-//             {$: 'itemlog', 
-//               title: 'input',
-//               items :{$: 'studio.start-probe', path :{$: 'studio.currentProfilePath' } },
-//               controls :{$: 'studio.context-view' },
-//               features :{$: 'itemlog.selection', databind: '%$selected/ctx%'},
-//             },
-//             {$: 'group', 
-//               features :{$: 'group.watch', data: '%$selected/ctx%'},
-//               controls :{$: 'studio.output-view', path :{$: 'studio.currentProfilePath' }, ctx: '%$selected/ctx%' }
-//             }
-//           ]
-//       }
-//     }
-// })
-// jb.component('studio.context-view', {
-//   type: 'control',
-//   impl :{$: 'label', title :{$: 'studio.contextToString'} }
-// })
-// jb.component('studio.output-view', {
-//   type: 'control',
-//   params: {
-//     path: { as: 'string' },
-//     ctx: { as: 'single' },
-//   },
-//   impl: function(context,path,ctx) {
-//     var res = ctx.run(studio.profileValFromPath(path));
-//     var ctrl = 'single';
-//     if (res.jb_title)
-//       ctrl = 'comp';
-//     else if (Array.isArray(res))
-//       ctrl = 'array';
-//     return context.setVars({toShow: res}).run({ $: 'studio.output-' + ctrl });
-//   }
-// })
-// jb.component('studio.output-comp', {
-//   type: 'control',
-//   params: {
-//     toShow: { as: 'single' },
-//   },
-//   impl :{$: 'label', title :{$: 'studio.compToString' , toShow: '%$toShow%'} }
-// })
-// jb.component('studio.contextToString', {
-//   type: 'data',
-//   impl: function(context) {
-//     return jb_toarray(context.data.data || context.data.vars)
-//       .map(val =>(typeof val == 'object') ? JSON.stringify(val,null,' ') : val)
-//       .join('\n');
-//   }
-// });
-// jb.component('studio.compToString', {
-//   type: 'data',
-//   impl: function(context) {
-//     var comp = context.vars.toShow;
-//     var annotations = Reflect.getMetadata('annotations', comp)[0];
-//     return [
-//       comp.jb$title, 
-//       annotations.template, 
-//       JSON.stringify(jb.extend({},annotations.host))
-//     ].join('\n');
-//   }
-// }); 

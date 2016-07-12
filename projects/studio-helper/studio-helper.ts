@@ -36,10 +36,10 @@ jb.resource('studio-helper','group-with-custom-style',
 jb.component('studio-helper.properties', {
   type: 'control', 
   params: {
-    path: { defaultValue: 'studio-helper.sample-control' }
+    path: { defaultValue: 'studio-helper-dummy.label' }
   },
   impl :{$: 'studio.properties', path: '%$path%',
-      $vars: { circuit: 'studio-helper.sample-control' }, 
+      $vars: { circuit: 'studio-helper-dummy.label' }, 
   } 
 })
 

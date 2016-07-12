@@ -1,6 +1,6 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as jb_rx from 'jb-rx';
+import * as jb_rx from 'jb-ui/jb-rx';
 
 function rev(str) {
   return str.split('').reverse().join('');
@@ -41,8 +41,10 @@ export class suggestions {
         .concat(jb.entries(probeCtx.resources).map(x=>({text: '$' + x[0], value: x[1]})))
 
     if (this.tailSymbol == '%') 
-      this.options = jb.toarray(probeCtx.exp('%%'))
-        .map(x=>jb.entries(x).map(x=>({text: x[0], value: x[1]})))
+      this.options = [].concat.apply([],jb.toarray(probeCtx.exp('%%'))
+        .map(x=>
+          jb.entries(x).map(x=>
+            ({text: x[0], value: x[1]}))))
         .concat(vars)
     else if (this.tailSymbol == '%$') 
       this.options = vars
@@ -54,6 +56,8 @@ export class suggestions {
     this.options = this.options
         .filter( jb_onlyUniqueFunc(x=>x.text) )
         .filter(x=> x.text != this.tail)
+        .filter(x=> x.text.indexOf('$$') != 0)
+        .filter(x=>['$ngZone','$window'].indexOf(x.text) == -1)
         .filter(x=>
           this.tail == '' || typeof x.text != 'string' || x.text.indexOf(this.tail) == 0); 
     return this;
@@ -78,13 +82,17 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
     action: { type: 'action', dynamic:true },
     mdInput: {type: 'boolean', as : 'boolean'}
   }, 
-  impl: ctx => {
-    var result = {
-      innerhost: {
-        'input' : {'(keydown)': 'keyEm.next($event); ($event.keyCode == 38 || $event.keyCode == 40) ? false: true' }
-      },     
+  impl: ctx => 
+    ({
       init: cmp=> {
-        cmp.keyEm = cmp.keyEm || new Subject();
+        var input = $(cmp.elementRef.nativeElement).findIncludeSelf('input')[0];
+        if (!input)
+          return;
+        cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown');
+        cmp.keyEm.filter(e=> e.keyCode == 38 || e.keyCode == 40)
+            .subscribe(e=>
+                e.preventDefault())
+        cmp.keyEm || new Subject();
 
         var suggestionEm = cmp.keyEm.filter(e=> // has % sign - look for suggestion
             (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1 )
@@ -118,13 +126,13 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
           return cmp.probeResult;
         }
       }
-  }
-  if (ctx.params.mdInput) {
-    result.innerhost['md-input'] = result.innerhost.input;
-    delete result.innerhost.input;
-  }
-  return result;
-  }
+  })
+  // if (ctx.params.mdInput) {
+  //   result.innerhost['md-input'] = result.innerhost.input;
+  //   delete result.innerhost.input;
+  // }
+  // return result;
+  // }
 })
 
 jb.component('studio.jb-open-suggestions', {

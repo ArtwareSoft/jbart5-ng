@@ -20,26 +20,6 @@ jb.component('studio.pick', {
 	 }
 })
 
-	// <div class="title-above" [ngIf]="titleAbove">
-	// 	<div class="text">{{title}}</div>
-	// 	<div class="triangle" [style.margin-left]="triangleOffset"></div>
-	// </div>
-	// <div class="box"></div>
-	// <div class="title-below" [ngIf]="!titleAbove">
-	// 	<div class="triangle triangle-below" [style.margin-left]="triangleOffset"></div>
-	// 	<div class="text"></div>
-	// </div>
-
-// <div class="title">
-// 	<div class="triangle"></div>
-// 	<div class="title">{{title}}</div>
-// </div>
-// <div class="title">
-// 	<div class="title">{{title}}</div>
-// 	<div class="triangle triangle-below"></div>
-// </div>
-// [ngClass]="{bottom: titleBelow}"
-
 jb.component('dialog.studio-pick-dialog', {
 	hidden: true,
 	type: 'dialog.style',
@@ -48,11 +28,11 @@ jb.component('dialog.studio-pick-dialog', {
 	},
 	impl: {$: 'customStyle',
 			template: `<div class="jb-dialog">
-<div class="edge top"></div>
-<div class="edge left"></div>
-<div class="edge right"></div>
-<div class="edge bottom"></div>
-<div class="title" >
+<div class="edge top" [style.width]="width+'px'" [style.top]="top+'px'" [style.left]="left+'px'"></div>
+<div class="edge left" [style.height]="height+'px'" [style.top]="top+'px'" [style.left]="left+'px'"></div>
+<div class="edge right" [style.height]="height+'px'" [style.top]="top+'px'" [style.left]="left+width+'px'"></div>
+<div class="edge bottom" [style.width]="width+'px'" [style.top]="top+height+'px'" [style.left]="left+'px'"></div>
+<div class="title" [class.bottom]="titleBelow" [style.top]="titleTop+'px'" [style.left]="titleLeft+'px'">
 	<div class="text">{{title}}</div>
 	<div class="triangle"></div>
 </div>
@@ -69,8 +49,7 @@ jb.component('dialog.studio-pick-dialog', {
 .title {
 	z-index: 6001;
 	position: absolute;
-	font: 14px arial; padding: 0; 
-	cursor: pointer;
+	font: 14px arial; padding: 0; cursor: pointer;
 	transition:top 100ms, left 100ms;
 }
 .title .triangle {	width:0;height:0; border-style: solid; 	border-color: #e0e0e0 transparent transparent transparent; border-width: 6px; margin-left: 14px;}
@@ -113,7 +92,8 @@ jb.component('dialogFeature.studio-pick', {
 		  	.filter(x=>x.length > 0)
 		  	.do(profElem=> {
 		  		ctx.vars.pickPath.path = profElem.attr('jb-path');
-		  		showBox(cmp,profElem,_window,previewOffset)
+		  		showBox(cmp,profElem,_window,previewOffset);
+		  		jb_ui.apply(ctx);
 		  	})
 		  	.last()
 		  	.subscribe(x=> {
@@ -136,43 +116,23 @@ function showBox(cmp,profElem,_window,previewOffset) {
 	if (profElem.offset() == null || $('#jb-preview').offset() == null) 
 		return;
 
-	var top = previewOffset + profElem.offset().top;
-	var left = profElem.offset().left;
+	cmp.top = previewOffset + profElem.offset().top;
+	cmp.left = profElem.offset().left;
 	if (profElem.outerWidth() == $(_window.document.body).width())
-		var width = (profElem.outerWidth() -10);
+		cmp.width = (profElem.outerWidth() -10);
 	else
-		var width = profElem.outerWidth();
-	var height = profElem.outerHeight();
+		cmp.width = profElem.outerWidth();
+	cmp.height = profElem.outerHeight();
 
-	var title = studio.model.shortTitle(profElem.attr('jb-path'));
+	cmp.title = studio.model.shortTitle(profElem.attr('jb-path'));
+
 	var $el = $(cmp.elementRef.nativeElement);
 	var $titleText = $el.find('.title .text');
+	$el.find('.title .text').text(cmp.title);
 	cmp.titleBelow = top - $titleText.outerHeight() -6 < $(_window).scrollTop();
-
-	$el.find('.top,.bottom').css('width',width+'px');
-	$el.find('.left,.right').css('height',height+'px');
-	$el.find('.top,.left,.bottom,.title').css('left',left+'px');
-	$el.find('.right').css('left',left+width+'px');
-	$el.find('.top,.left,.right').css('top',top+'px');
-	$el.find('.bottom').css('top',top+height+'px');
-	$el.find('.title').css('top',top+ (cmp.titleBelow ? height : 0) + 'px');
-	$el.find('.title .text').text(title);
-
-	$el.find('.title .triangle').css({ marginLeft: $titleText.outerWidth()/2-6 });
-	if (!cmp.titleBelow) {
-		$el.find('.title').css({
-			top: top - $titleText.outerHeight() -6,
-			left: left + (width - $titleText.outerWidth())/2
-		}).removeClass('bottom');
-	} else {	// label under element
-		$el.find('.title').css({
-			top: top + height,
-			left: left + (width - $titleText.outerWidth())/2
-		}).addClass('bottom');
-	};
-
-
-	console.log(cmp.title,profElem);
+	cmp.titleTop = cmp.titleBelow ? cmp.top + cmp.height : cmp.top - $titleText.outerHeight() -6;
+	cmp.titleLeft = cmp.left + (cmp.width - $titleText.outerWidth())/2;
+	$el.find('.title .triangle').css({ marginLeft: $titleText.outerWidth()/2-6 })
 }
 
 jb.component('studio.highlight-in-preview',{

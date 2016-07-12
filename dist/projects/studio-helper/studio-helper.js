@@ -34,10 +34,10 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('studio-helper.properties', {
                 type: 'control',
                 params: {
-                    path: { defaultValue: 'studio-helper.sample-control' }
+                    path: { defaultValue: 'studio-helper-dummy.label' }
                 },
                 impl: { $: 'studio.properties', path: '%$path%',
-                    $vars: { circuit: 'studio-helper.sample-control' },
+                    $vars: { circuit: 'studio-helper-dummy.label' },
                 }
             });
             jb_1.jb.component('studio-helper.control-tree', {

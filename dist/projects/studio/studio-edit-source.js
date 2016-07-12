@@ -52,7 +52,8 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    return studio.model.compName(path) && $.ajax("/?op=gotoSource&comp=" + studio.model.compName(path));
+                    var compName = path.indexOf('~') == -1 ? path : studio.model.compName(path);
+                    compName && $.ajax("/?op=gotoSource&comp=" + compName);
                 }
             });
         }

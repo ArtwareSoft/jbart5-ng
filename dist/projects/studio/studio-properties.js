@@ -68,11 +68,12 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     else if (paramDef.options)
                         fieldPT = 'studio.property-enum';
                     else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1) {
-                        //				['number','string','undefined'].indexOf(valType) != -1) {
-                        if (studio.model.compName(path))
+                        if (studio.model.compName(path) || valType == 'object')
                             fieldPT = 'studio.property-data-script';
+                        else if (paramDef.type == 'boolean' && (valType == 'boolean' || val == null))
+                            fieldPT = 'studio.property-boolean';
                         else
-                            fieldPT = (paramDef.type == 'boolean' && (valType == 'boolean' || val == null)) ? 'studio.property-boolean' : 'studio.property-primitive';
+                            fieldPT = 'studio.property-primitive';
                     }
                     else if ((paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
                         fieldPT = 'studio.property-array';
@@ -90,9 +91,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.property-primitive', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: {
+                    path: { as: 'string' }
+                },
                 impl: { $: 'editable-text',
-                    style: { $: 'editable-text.studio-primitive-text' },
+                    style: { $: 'editable-text.input' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [
@@ -101,14 +104,14 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             toolbar: { $: 'button',
                                 title: 'more',
                                 style: { $: 'button.md-icon-12', icon: 'more_vert' },
-                                action: { $: 'studio.open-property-menu', path: '%$path%' },
+                                action: { $: 'studio.open-property-menu', path: '%$path%' }
                             }
                         },
                         { $: 'editable-text.studio-jb-detect-suggestions',
                             path: '%$path%',
                             action: { $: 'studio.jb-open-suggestions' }
                         }
-                    ],
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.property-data-script', {
@@ -118,7 +121,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: { $: 'text',
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    text: { $: 'studio.compName', path: '%$path%' },
+                    text: { $: 'studio.data-script-type', path: '%$path%' },
                     action: { $: 'openDialog',
                         style: { $: 'dialog.studio-floating', id: 'jb editor', width: 300 },
                         content: { $: 'studio.jb-editor', path: '%$path%' }
@@ -134,10 +137,25 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         }
                     ],
                     style: { $: 'customStyle',
-                        template: '<div>{{text}}</div>',
+                        template: '<div [title]="text"><div class="inner-text">{{text}}</div></div>',
                         features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' },
-                        css: "{ display: block; width: 143px; height: 16px; padding-left: 4px; padding-top: 2px;\n\tfont: 12px \"arial\"; color: #555555; background-color: #eee; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tcursor: pointer;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) }"
+                        css: ".inner-text {\n  white-space: nowrap; overflow-x: hidden;\n  display: inline; height: 16px; \n  padding-left: 4px; padding-top: 2px;\n\tfont: 12px \"arial\"; color: #555555; \n}\n\n{\n  width: 149px;\n\tborder: 1px solid #ccc; border-radius: 4px;\n\tcursor: pointer;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n  background: #eee;\n  white-space: nowrap; overflow-x: hidden;\n  text-overflow: ellipsis;\n}"
                     }
+                }
+            });
+            jb_core_1.jb.component('studio.data-script-type', {
+                type: 'data',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: function (ctx, path) {
+                    var val = studio.model.val(path);
+                    if (studio.model.compName(path))
+                        return studio.model.compName(path);
+                    if (Array.isArray(val))
+                        return jb_core_1.jb.prettyPrint(val);
+                    if (typeof val == 'function')
+                        return 'javascript';
                 }
             });
             jb_core_1.jb.component('studio.property-boolean', {
@@ -196,6 +214,13 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         tgpCtrl: { $: 'object', expanded: true }
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
+                    features: { $: 'field.toolbar',
+                        toolbar: { $: 'button',
+                            title: 'more',
+                            style: { $: 'button.md-icon-12', icon: 'more_vert' },
+                            action: { $: 'studio.open-property-menu', path: '%$path%' }
+                        }
+                    },
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
@@ -221,14 +246,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     features: { $: 'css',
                                         css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
                                     }
-                                },
-                                { $: 'button',
-                                    title: 'more',
-                                    action: { $: 'studio.open-property-menu', path: '%$path%' },
-                                    style: { $: 'button.md-icon-12', icon: 'more_vert' }
                                 }
                             ],
-                            features: { $: 'css', css: '{ position: relative }' },
+                            features: { $: 'css', css: '{ position: relative }' }
                         },
                         { $: 'group',
                             controls: { $: 'studio.properties', path: '%$path%' },

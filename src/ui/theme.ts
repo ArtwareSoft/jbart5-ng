@@ -18,6 +18,6 @@ jb.component('group.theme', {
 jb.component('theme.material-design', {
   type: 'theme',
   impl: () => ({
-  	'editable-text.default-style-profile': 'editable-text.md-input'
+  	'$editable-text.default-style-profile': 'editable-text.md-input'
   })
 })
