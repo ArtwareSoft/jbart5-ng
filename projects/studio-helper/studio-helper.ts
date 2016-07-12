@@ -64,11 +64,8 @@ jb.component('studio-helper.jb-editor', {
     $vars: { circuit: 'studio-helper-dummy.label' }, 
     title: 'main', 
     controls: [
-      {$: 'studio.jb-edit-property', path: '%$path%~title~0' }, 
-      {$: 'group', 
-        controls: [{$: 'studio.jb-editor', path: '%$path%' }], 
-        features :{$: 'group-item.if', showCondition: false }
-      }
+//      {$: 'studio.jb-edit-property', path: '%$path%~title~0' }, 
+      {$: 'studio.jb-editor', path: '%$path%' },
     ], 
     features :{$: 'css', css: '{ height: 200px; padding: 50px }' }
   }
@@ -146,6 +143,16 @@ jb.component('studio-helper-dummy.label', {
         title: [ '%$people/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'
+        ],
+        features: [
+          {$: 'css', 
+            css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
+          }, 
+          {$: 'hidden', 
+            showCondition :{
+              $notEmpty :{$: 'studio.non-control-children', path: '%$path%' }
+            }
+          }
         ]
       }, 
 })

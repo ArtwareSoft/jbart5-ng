@@ -94,7 +94,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                             var keyUpEm = jb_rx.Observable.fromEvent(document, 'keyup')
                                 .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'keyup'));
                             mouseMoveEm
-                                .takeUntil(keyUpEm.filter(function (e) { return e.keyCode == 27; }).merge(userPick))
+                                .takeUntil(keyUpEm.filter(function (e) {
+                                return e.keyCode == 27;
+                            })
+                                .merge(userPick))
+                                .do(function (e) {
+                                if (e.keyCode == 27)
+                                    ctx.vars.$dialog.close({ OK: false });
+                            })
                                 .map(function (e) {
                                 return eventToProfileElem(e, _window);
                             })

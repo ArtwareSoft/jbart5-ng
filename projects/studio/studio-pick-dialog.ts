@@ -86,7 +86,13 @@ jb.component('dialogFeature.studio-pick', {
 
 		  mouseMoveEm
 		  	.takeUntil(
-		  		keyUpEm.filter(e=>e.keyCode == 27).merge(userPick))
+		  		keyUpEm.filter(e=>
+		  			e.keyCode == 27)
+		  			  .merge(userPick))
+		  	.do(e=>{
+		  		if (e.keyCode == 27)
+		  			ctx.vars.$dialog.close({OK:false});	
+		  	})
 		  	.map(e=>
 		  		eventToProfileElem(e,_window))
 		  	.filter(x=>x.length > 0)

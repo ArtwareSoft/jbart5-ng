@@ -196,10 +196,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.property-tgp', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' },
-                    inArray: { type: 'boolean' }
-                },
+                params: { path: { as: 'string' } },
                 impl: { $: 'group',
                     $vars: {
                         tgpCtrl: { $: 'object', expanded: true }
@@ -243,11 +240,61 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 },
                                 { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
                                 { $: 'css',
-                                    css: {
-                                        $if: '%$inArray%',
-                                        then: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}',
-                                        else: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
+                                    css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            });
+            jb_core_1.jb.component('studio.property-tgp-in-array', {
+                type: 'control',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'group',
+                    $vars: {
+                        tgpCtrl: { $: 'object', expanded: false }
+                    },
+                    features: { $: 'studio.property-toobar-feature', path: '%$path%' },
+                    controls: [
+                        { $: 'group',
+                            style: { $: 'layout.horizontal' },
+                            controls: [
+                                { $: 'editable-boolean',
+                                    databind: '%$tgpCtrl/expanded%',
+                                    style: { $: 'editable-boolean.expand-collapse' },
+                                    features: [
+                                        { $: 'css',
+                                            css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
+                                        },
+                                        { $: 'hidden',
+                                            showCondition: {
+                                                $notEmpty: { $: 'studio.non-control-children', path: '%$path%' }
+                                            }
+                                        }
+                                    ]
+                                },
+                                { $: 'picklist',
+                                    databind: { $: 'studio.compName-ref', path: '%$path%' },
+                                    options: { $: 'studio.tgp-path-options', path: '%$path%' },
+                                    style: { $: 'picklist.groups' },
+                                    features: { $: 'css',
+                                        css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
                                     }
+                                }
+                            ],
+                            features: { $: 'css', css: '{ position: relative; margin-left: -80px }' }
+                        },
+                        { $: 'group',
+                            controls: { $: 'studio.properties', path: '%$path%' },
+                            features: [
+                                { $: 'group.watch',
+                                    data: { $: 'studio.compName', path: '%$path%' }
+                                },
+                                { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
+                                { $: 'css',
+                                    css: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}'
                                 }
                             ]
                         }
@@ -271,17 +318,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             style: { $: 'button.md-icon', icon: 'add', size: '12', aria: undefined },
                             features: [
                                 { $: 'css',
-                                    css: "{ position: absolute;   top: 0px;   right: 30px }\n\nbutton:hover {  background: none }"
+                                    css: "{ position: absolute;   top: 0px;   right: 30px }\nbutton:hover {  background: none }"
                                 },
-                                { $: 'ngAtts', atts: undefined },
-                                { $: 'css', css: undefined }
                             ]
                         },
                         { $: 'itemlist',
                             items: { $: 'studio.array-children', path: '%$path%' },
                             controls: { $: 'group',
                                 style: { $: 'property-sheet.studio-properties' },
-                                controls: { $: 'studio.property-tgp', path: '%$arrayItem%', inArray: true }
+                                controls: { $: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
                             },
                             itemVariable: 'arrayItem',
                             features: [

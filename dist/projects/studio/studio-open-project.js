@@ -44,7 +44,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             itemVariable: 'project',
                             style: { $: 'itemlist.ul-li' },
                             controls: { $: 'button',
-                                title: '%project%',
+                                title: '%$project%',
                                 style: { $: 'customStyle',
                                     template: '<span><button md-button (click)="clicked()">{{title}}</button></span>',
                                     directives: 'MdButton',
@@ -52,7 +52,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 },
                                 action: [
                                     { $: 'closeContainingPopup' },
-                                    { $: 'writeValue', value: '%project%', to: '%$globals/project%' },
+                                    { $: 'writeValue', value: '%$project%', to: '%$globals/project%' },
                                     { $: 'writeValue', value: 'main', to: '%$globals/page%' },
                                     { $: 'writeValue', value: '', to: '%$globals/profile_path%' }
                                 ]
@@ -64,3 +64,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
         }
     }
 });
+// style :{$: 'customStyle', 
+//   template: '<span><button md-button (click)="clicked()">{{title}}</button></span>', 
+//   directives: 'MdButton', 
+//   css: 'button { width: 260px; text-align: left }'
+// }, 
