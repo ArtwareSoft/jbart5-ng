@@ -202,24 +202,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             return val.map(function (inner, i) { return path + '~' + i; });
                     }
                     else if (childrenType == 'jb-editor') {
-                        var comp = getComp(jb_core_1.jb.compName(val || {}));
-                        if (Array.isArray(val))
-                            return val.map(function (inner, i) { return path + '~' + i; });
-                        else if (comp)
-                            return Array.prototype.concat.apply([], // flatmap
-                            jb_core_1.jb.entries(comp.params)
-                                .map(function (p) { return path + '~' + p[0]; })
-                                .map(function (p) { return ({ p: p, val: profileValFromPath(p) }); })
-                                .filter(function (x) { return x.val != null; }) // only with values
-                                .map(function (x) {
-                                if (Array.isArray(x.val))
-                                    return Object.getOwnPropertyNames(x.val)
-                                        .map(function (x) { return x == 'length' ? '+' : x; })
-                                        .map(function (k) {
-                                        return x.p + '~' + k;
-                                    });
-                                return [x.p];
-                            }));
+                        return this.jbEditorSubNodes(path);
                     }
                     function childPath(prop) {
                         if (Array.isArray(val[prop]))
@@ -227,6 +210,56 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         else
                             return [path + '~' + prop];
                     }
+                };
+                ControlModel.prototype.jbEditorSubNodes = function (path) {
+                    var val = profileValFromPath(path);
+                    var comp = getComp(jb_core_1.jb.compName(val || {}));
+                    if (Array.isArray(val))
+                        return Object.getOwnPropertyNames(val)
+                            .map(function (x) { return x == 'length' ? '+' : x; })
+                            .map(function (k) { return path + '~' + k; });
+                    else if (comp)
+                        return jb_core_1.jb.entries(comp.params)
+                            .map(function (p) { return path + '~' + p[0]; })
+                            .filter(function (p) { return profileValFromPath(p) != null; }); // only with values
+                    // return Array.prototype.concat.apply([], // flatmap - flatting array values
+                    // 	jb.entries(comp.params)
+                    // 		.map(p=> path + '~' + p[0])
+                    // 		.map(p=>({ p: p, val: profileValFromPath(p)}))
+                    // 		.filter(x=>x.val != null) // only with values
+                    // 		.map(x=> { // flatten array exculding data (pipeline) and action (actions)
+                    // 			if (Array.isArray(x.val) && ['data','action'].indexOf(this.paramType(x.p)) == -1)
+                    // 				return Object.getOwnPropertyNames(x.val)
+                    // 					.map(x=>x=='length'? '+' : x)
+                    // 					.map(k=>
+                    // 						x.p +'~'+k) 
+                    // 			return [x.p];
+                    // 		})
+                    // )
+                };
+                ControlModel.prototype.jbEditorTitle = function (path, collapsed) {
+                    var val = profileValFromPath(path);
+                    var compName = jb_core_1.jb.compName(val || {});
+                    var prop = path.split('~').pop();
+                    if (!isNaN(Number(prop)) || prop == '+')
+                        prop = path.split('~').slice(-2).join('[') + ']';
+                    if (Array.isArray(val) && this.paramType(path) == 'data')
+                        compName = "pipeline (" + val.length + ")";
+                    if (Array.isArray(val) && this.paramType(path) == 'action')
+                        compName = "actions (" + val.length + ")";
+                    if (compName)
+                        return prop + (collapsed ? "= <span class=\"treenode-val\">" + compName + "</span>" : '');
+                    else if (typeof val == 'string')
+                        return prop + (collapsed ? ": <span class=\"treenode-val\" title=\"" + val + "\">" + val + "</span>" : '');
+                    return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
+                };
+                ControlModel.prototype.title = function (path, collapsed) {
+                    var val = profileValFromPath(path);
+                    if (path.indexOf('~') == -1)
+                        return path;
+                    if (this.childrenType == 'jb-editor')
+                        return this.jbEditorTitle(path, collapsed);
+                    return (val && val.title) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
                 };
                 ControlModel.prototype.icon = function (path) {
                     if (path.split('~').pop() == '+')
@@ -262,23 +295,6 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var name = val && jb_core_1.jb.compName(val);
                     if (name && jbart.comps[name])
                         return (jbart.comps[name].type || '').indexOf(type) == 0;
-                };
-                ControlModel.prototype.title = function (path, collapsed) {
-                    var val = profileValFromPath(path);
-                    if (path.indexOf('~') == -1)
-                        return path;
-                    if (this.childrenType == 'jb-editor') {
-                        var compName = jb_core_1.jb.compName(val || {});
-                        var prop = path.split('~').pop();
-                        if (!isNaN(Number(prop)) || prop == '+')
-                            prop = path.split('~').slice(-2).join('[') + ']';
-                        if (compName)
-                            return prop + ' = ' + compName;
-                        if (typeof val == 'string')
-                            return prop + ' = ' + val;
-                        return prop;
-                    }
-                    return (val && val.title) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
                 };
                 ControlModel.prototype.shortTitle = function (path) {
                     return this.title(path, false);
@@ -421,8 +437,11 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         .filter(function (p) { return p[0] == paramName; })
                         .map(function (p) { return p[1]; })[0] || {};
                 };
+                ControlModel.prototype.paramType = function (path) {
+                    return (this.paramDef(path) || {}).type || 'data';
+                };
                 ControlModel.prototype.PTsOfPath = function (path) {
-                    return this.PTsOfType((this.paramDef(path) || {}).type, findjBartToLook(path));
+                    return this.PTsOfType(this.paramType(path), findjBartToLook(path));
                 };
                 ControlModel.prototype.PTsOfType = function (type, jbartToLook) {
                     var types = (type || '').split(',').map(function (x) { return x.match(/([^\[]*)([])?/)[1]; });

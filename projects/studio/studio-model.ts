@@ -134,25 +134,7 @@ export class ControlModel {
 			else
 				return val.map((inner, i) => path + '~' + i)
 		} else if (childrenType == 'jb-editor') {
-			var comp = getComp(jb.compName(val||{}));
-			if (Array.isArray(val))
-				return val.map((inner, i) => path + '~' + i)
-			else if (comp)
-				return Array.prototype.concat.apply([], // flatmap
-					jb.entries(comp.params)
-						.map(p=> path + '~' + p[0])
-						.map(p=>({ p: p, val: profileValFromPath(p)}))
-						.filter(x=>x.val != null) // only with values
-						.map(x=> { // flatten array
-							if (Array.isArray(x.val))
-								return Object.getOwnPropertyNames(x.val)
-									.map(x=>x=='length'? '+' : x)
-									.map(k=>
-										x.p +'~'+k) 
-							return [x.p];
-						})
-				)
-
+			return this.jbEditorSubNodes(path);
 		}
 
 		function childPath(prop) {
@@ -161,6 +143,62 @@ export class ControlModel {
 			else
 				return [path + '~' + prop]
 		}
+	}
+
+	jbEditorSubNodes(path) {
+		var val = profileValFromPath(path);
+		var comp = getComp(jb.compName(val||{}));
+		if (Array.isArray(val))
+			return Object.getOwnPropertyNames(val)
+				.map(x=>x=='length'? '+' : x)
+				.map(k=> path +'~'+k)
+		else if (comp)
+			return jb.entries(comp.params)
+					.map(p=> path + '~' + p[0])
+					.filter(p=>profileValFromPath(p) != null) // only with values
+
+			// return Array.prototype.concat.apply([], // flatmap - flatting array values
+			// 	jb.entries(comp.params)
+			// 		.map(p=> path + '~' + p[0])
+			// 		.map(p=>({ p: p, val: profileValFromPath(p)}))
+			// 		.filter(x=>x.val != null) // only with values
+			// 		.map(x=> { // flatten array exculding data (pipeline) and action (actions)
+			// 			if (Array.isArray(x.val) && ['data','action'].indexOf(this.paramType(x.p)) == -1)
+			// 				return Object.getOwnPropertyNames(x.val)
+			// 					.map(x=>x=='length'? '+' : x)
+			// 					.map(k=>
+			// 						x.p +'~'+k) 
+			// 			return [x.p];
+			// 		})
+			// )
+	}
+
+	jbEditorTitle(path, collapsed) { 
+		var val = profileValFromPath(path);
+		var compName = jb.compName(val||{});
+		var prop = path.split('~').pop();
+		if (!isNaN(Number(prop)) || prop == '+') // array value - title as a[i]
+			prop = path.split('~').slice(-2).join('[') + ']';
+		if (Array.isArray(val) && this.paramType(path) == 'data')
+			compName = `pipeline (${val.length})`;
+		if (Array.isArray(val) && this.paramType(path) == 'action')
+			compName = `actions (${val.length})`;
+		if (compName)
+			return prop + (collapsed ? `= <span class="treenode-val">${compName}</span>` : '');
+		else if (typeof val == 'string')
+			return prop + (collapsed ? `: <span class="treenode-val" title="${val}">${val}</span>` : '');
+		return prop + (Array.isArray(val) ? ` (${val.length})` : '');
+	}
+
+	title(path, collapsed) {
+		var val = profileValFromPath(path);
+		if (path.indexOf('~') == -1)
+			return path;
+
+		if (this.childrenType == 'jb-editor') 
+			return this.jbEditorTitle(path,collapsed);
+
+		return (val && val.title) || (val && jb.compName(val)) || path.split('~').pop();
 	}
 
 	icon(path) {
@@ -201,26 +239,6 @@ export class ControlModel {
 		var name = val && jb.compName(val);
 		if (name && jbart.comps[name])
 			return (jbart.comps[name].type || '').indexOf(type) == 0;
-	}
-
-	title(path, collapsed) {
-		var val = profileValFromPath(path);
-		if (path.indexOf('~') == -1)
-			return path;
-
-		if (this.childrenType == 'jb-editor') {
-			var compName = jb.compName(val||{});
-			var prop = path.split('~').pop();
-			if (!isNaN(Number(prop)) || prop == '+')
-				prop = path.split('~').slice(-2).join('[') + ']';
-			if (compName)
-				return prop + ' = ' + compName;
-			if (typeof val == 'string')
-				return prop + ' = ' + val;
-			return prop;
-		}
-
-		return (val && val.title) || (val && jb.compName(val)) || path.split('~').pop();
 	}
 
 	shortTitle(path) {
@@ -378,8 +396,11 @@ export class ControlModel {
 			.map(p=>p[1])[0] || {};
 	}
 
+	paramType(path) {
+		return (this.paramDef(path) || {}).type || 'data';
+	}
 	PTsOfPath(path) {
-		return this.PTsOfType((this.paramDef(path) || {}).type,findjBartToLook(path))
+		return this.PTsOfType(this.paramType(path),findjBartToLook(path))
 	}
 	PTsOfType(type,jbartToLook) {
 		var types = (type||'').split(',').map(x=>x.match(/([^\[]*)([])?/)[1]);

@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx;
+    var jb_core_1, jb_ui, jb_rx, studio;
     var suggestions;
     function rev(str) {
         return str.split('').reverse().join('');
@@ -16,6 +16,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
+            },
+            function (studio_1) {
+                studio = studio_1;
             }],
         execute: function() {
             suggestions = (function () {
@@ -32,7 +35,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     if (this.tailSymbol == '%' && this.exp.slice(0, 2) == '%$')
                         this.tailSymbol = '%$';
                     this.base = this.exp.slice(0, -1 - this.tail.length) + '%';
-                    // for debug
                     this.inputVal = input.value;
                     this.inputPos = input.selectionStart;
                 }
@@ -45,14 +47,18 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     dialogEl.css('margin-left', offset + "px")
                         .css('display', options.length ? 'block' : 'none');
                 };
-                suggestions.prototype.extendWithOptions = function (probeCtx) {
+                suggestions.prototype.extendWithOptions = function (probeCtx, path) {
                     var _this = this;
                     this.options = [];
                     if (!probeCtx)
                         return this;
                     var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); })
                         .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); }));
-                    if (this.tailSymbol == '%')
+                    if (this.inputVal == '=')
+                        this.options = studio.model.PTsOfPath(path).map(function (compName) {
+                            return ({ text: compName.substring(compName.indexOf('.') + 1), value: compName });
+                        });
+                    else if (this.tailSymbol == '%')
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp('%%'))
                             .map(function (x) {
                             return jb_core_1.jb.entries(x).map(function (x) {
@@ -76,23 +82,25 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     return this;
                 };
                 suggestions.prototype.paste = function (selection) {
+                    var toPaste = selection.text + (typeof selection.value == 'object' ? '/' : '%');
                     var input = this.input;
                     var pos = this.pos + 1;
-                    input.value = input.value.substr(0, this.pos - this.tail.length) + selection + input.value.substr(pos);
+                    input.value = input.value.substr(0, this.pos - this.tail.length) + toPaste + input.value.substr(pos);
                     jb_core_1.jb.delay(100).then(function () {
-                        input.selectionStart = pos + selection.length;
+                        input.selectionStart = pos + toPaste.length;
                         input.selectionEnd = input.selectionStart;
                     });
                 };
                 return suggestions;
             }());
             exports_1("suggestions", suggestions);
-            jb_core_1.jb.component('editable-text.studio-jb-detect-suggestions', {
+            jb_core_1.jb.component('editable-text.suggestions-input-feature', {
                 type: 'feature',
                 params: {
                     path: { as: 'string' },
                     action: { type: 'action', dynamic: true },
-                    mdInput: { type: 'boolean', as: 'boolean' }
+                    onEnter: { type: 'action', dynamic: true },
+                    floatingInput: { type: 'boolean', as: 'boolean', description: 'used to close the floating input popup' }
                 },
                 impl: function (ctx) {
                     return ({
@@ -105,9 +113,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 .subscribe(function (e) {
                                 return e.preventDefault();
                             });
-                            cmp.keyEm || new Subject();
+                            cmp.keyEm.filter(function (e) { return e.keyCode == 13; })
+                                .subscribe(function (e) {
+                                if (!$(input).hasClass('dialog-open'))
+                                    ctx.params.onEnter();
+                            });
                             var suggestionEm = cmp.keyEm.filter(function (e) {
-                                return (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1;
+                                var inpValue = e.srcElement.value + (e.key.length == 1 ? e.key : '');
+                                return inpValue.indexOf('%') != -1; // || inpValue.indexOf('=') == 0;
                             })
                                 .flatMap(function (e) {
                                 return getProbe().then(function (probeResult) {
@@ -116,14 +129,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             })
                                 .delay(1) // we use keydown - let the input fill itself
                                 .map(function (e) {
-                                return new suggestions(e.keyEv.srcElement, '').extendWithOptions(e.ctx);
+                                return new suggestions(e.keyEv.srcElement, '').extendWithOptions(e.ctx, ctx.params.path);
                             })
                                 .filter(function (e) {
                                 return e.text;
                             })
                                 .distinctUntilChanged(null, function (e) { return e.options.join(','); });
                             suggestionEm.subscribe(function (e) {
-                                if (!$(e.input).hasClass('dialog-open')) {
+                                if (!$(e.input).hasClass('dialog-open') && e.options.length > 0) {
                                     var suggestionContext = {
                                         suggestionEm: suggestionEm
                                             .startWith(e)
@@ -131,7 +144,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                             return suggestionContext.suggestionObj = e;
                                         }),
                                         suggestionObj: e,
-                                        keyEm: cmp.keyEm
+                                        keyEm: cmp.keyEm,
+                                        closeFloatingInput: function () {
+                                            if (ctx.params.floatingInput)
+                                                ctx.run({ $: 'closeContainingPopup' });
+                                        }
                                     };
                                     jb_ui.wrapWithLauchingElement(ctx.params.action, ctx.setVars({ suggestionContext: suggestionContext }), e.input)();
                                 }
@@ -146,6 +163,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             });
             jb_core_1.jb.component('studio.jb-open-suggestions', {
                 type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-suggestions-popup' },
                     content: { $: 'group',
@@ -156,13 +176,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             features: [
                                 { $: 'itemlist.studio-suggestions-selection',
                                     onEnter: [
-                                        { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
+                                        { $: 'studio.jb-paste-suggestion', path: '%$path%' },
                                         { $: 'closeContainingPopup' }
                                     ]
                                 },
                                 { $: 'itemlist.selection',
                                     onDoubleClick: [
-                                        { $: 'studio.jb-paste-suggestion', toPaste: '%%' },
+                                        { $: 'studio.jb-paste-suggestion', path: '%$path%' },
                                         { $: 'closeContainingPopup' }
                                     ]
                                 },
@@ -173,10 +193,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             });
             jb_core_1.jb.component('studio.suggestions-emitter', {
                 type: 'feature',
-                params: {
-                    into: { as: 'ref' }
-                },
-                impl: function (ctx, into) {
+                impl: function (ctx) {
                     return ({
                         init: function (cmp) {
                             // gain focus back to input after clicking the popup
@@ -240,12 +257,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             });
             jb_core_1.jb.component('studio.jb-paste-suggestion', {
                 params: {
-                    toPaste: {},
+                    path: { as: 'string' }
                 },
                 type: 'action',
-                impl: function (ctx, toPaste) {
-                    var suffix = typeof toPaste.value == 'object' ? '/' : '%';
-                    ctx.vars.suggestionContext.suggestionObj.paste(toPaste.text + suffix);
+                impl: function (ctx, path) {
+                    var suggestions = ctx.vars.suggestionContext.suggestionObj;
+                    if (suggestions.inputVal.indexOf('=') == 0)
+                        ctx.vars.suggestionContext.closeFloatingInput();
+                    suggestions.paste(ctx.data);
                 }
             });
         }

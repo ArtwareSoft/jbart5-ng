@@ -58,14 +58,15 @@ jb.component('studio.jb-editor', {
         features :{$: 'group.data', data: '%$globals/jb_editor_selection%' }, 
         controls :{$: 'group', 
           features :{$: 'group.wait', 
-            for :{$: 'studio.probe', path: '%$globals/jb_editor_selection%' }
+            for :{$: 'studio.probe', path: '%$globals/jb_editor_selection%' }, 
+            resource: 'probeResult'
           }, 
           title: 'wait for probe', 
           controls :{$: 'itemlist', 
-            items: '%%', 
+            items: '%$probeResult%', 
             controls: [
-              {$: 'studio.data-browse', data: '%data[0]/in/data%', title: 'in' }, 
-              {$: 'studio.data-browse', data: '%data[0]/out%', title: 'out' }
+              {$: 'studio.data-browse', data: '%in/data%', title: 'in' }, 
+              {$: 'studio.data-browse', data: '%out%', title: 'out' }
             ]
           }
         }
@@ -110,28 +111,28 @@ jb.component('studio.open-jb-edit-property', {
   }, 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-jb-editor-popup' }, 
-    content :{$: 'studio.jb-edit-property', path: '%$path%' } 
+    content :{$: 'studio.jb-floating-input', path: '%$path%' }, 
+    features :{$: 'dialogFeature.autoFocusOnFirstInput' }
   }
 })
 
-jb.component('studio.jb-edit-property', {
+jb.component('studio.jb-floating-input', {
   type: 'control',
   params: { path: { as: 'string'} },
   impl :{$: 'editable-text', 
-      databind :{$: 'studio.profile-as-text', path: '%$path%' }, 
+      databind :{$: 'studio.profile-value-as-text', path: '%$path%' }, 
       features: [
         {$: 'studio.undo-support', path: '%$path%' }, 
         {$: 'css.padding', left: '4', right: '4' }, 
-        {$: 'feature.onEnter', 
-          action: [
+        {$: 'editable-text.suggestions-input-feature', 
+          mdInput: true,
+          floatingInput: true,
+          path: '%$path%',
+          action :{$: 'studio.jb-open-suggestions', path: '%$path%' },
+          onEnter: [
             {$: 'closeContainingPopup', OK: true }, 
             {$: 'tree.regain-focus' }
-          ]
-        }, 
-        {$: 'editable-text.studio-jb-detect-suggestions', 
-          mdInput: true,
-          path: '%$path%',
-          action :{$: 'studio.jb-open-suggestions' } 
+          ]  
         }
       ], 
       style :{
@@ -140,5 +141,34 @@ jb.component('studio.jb-edit-property', {
         else :{$: 'editable-text.codemirror', mode: 'javascript' }
       }
     }
+})
+
+jb.component('studio.profile-value-as-text', {
+  type: 'data',
+  params: {
+    path: { as: 'string' }
+  },
+  impl: (context,path) => ({
+      $jb_val: function(value) {
+        if (typeof value == 'undefined') {
+          var val = studio.model.val(path);
+          if (typeof val == 'string')
+            return val;
+          if (studio.model.compName(path))
+            return '=' + studio.model.compName(path);
+          return typeof val;
+        } else {
+          if (value.indexOf('=') == 0) {
+            var comp = value.substr(2);
+            if (comp == 'pipeline')
+              studio.model.modify(studio.model.writeValue, path, { value: [] },context);  
+            else if (studio.findjBartToLook(path).comps[comp])
+              studio.model.modify(studio.model.setComp, path, { comp: value.substr(2) },context);
+          } else {
+            studio.model.modify(studio.model.writeValue, path, { value: value },context);
+          }
+        }
+      }
+    })
 })
 

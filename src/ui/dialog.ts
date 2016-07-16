@@ -187,9 +187,9 @@ jb.component('dialogFeature.cssClassOnLaunchingControl', {
 				dialog.em.filter(e=>
 					e.type == 'close')
 					.take(1)
-					.subscribe(()=>
-						$control.removeClass('dialog-open')
-					)
+					.subscribe(()=> {
+						$control.removeClass('dialog-open');
+					})
 			}
 	})
 })

@@ -107,9 +107,9 @@ jb.component('studio.property-primitive', {
           action :{$: 'studio.open-property-menu', path: '%$path%' }
         }
       }, 
-      {$: 'editable-text.studio-jb-detect-suggestions', 
+      {$: 'editable-text.suggestions-input-feature', 
         path: '%$path%', 
-        action :{$: 'studio.jb-open-suggestions' }
+        action :{$: 'studio.jb-open-suggestions', path: '%$path%' }
       }
     ]
   }
@@ -132,7 +132,7 @@ jb.component('studio.property-data-script', {
           content :{$: 'studio.jb-editor', path: '%$path%' }, 
           style :{$: 'dialog.studio-floating', 
             id: 'jb editor', 
-            width: '500', 
+            width: '700', 
             height: '400'
           }, 
           title: 'Inteliscript'

@@ -48,13 +48,13 @@ jb.component('group',{
 jb.component('dynamic-controls', {
   type: 'control',
   params: {
-    controlItems: { type: 'data[]', essential: true, dynamic: true },
+    controlItems: { type: 'data', as: 'array', essential: true, dynamic: true },
     genericControl: { type: 'control', essential: true, dynamic: true },
-    controlItemVariable: { as: 'string', defaultValue: 'controlItem'}
+    itemVariable: { as: 'string', defaultValue: 'controlItem'}
   },
-  impl: function(context,controlItems,genericControl,controlItemVariable) {
+  impl: function(context,controlItems,genericControl,itemVariable) {
     return controlItems().map(controlItem => genericControl(context.setVars(
-      jb.obj(controlItemVariable,controlItem))))
+      jb.obj(itemVariable,controlItem))))
   }
 })
 

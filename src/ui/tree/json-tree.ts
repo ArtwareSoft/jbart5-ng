@@ -43,12 +43,12 @@ class ROjson {
 			return prop;
 
 		if (typeof val != 'object')
-			return prop + ': <span class="treenode-val">' + val + "</span>";
+			return prop + `: <span class="treenode-val" title="${val}">${val}</span>`;
 
 		return prop + ': ' + Object.getOwnPropertyNames(val)
 			.filter(p=> typeof val[p] == 'string' || typeof val[p] == 'number' || typeof val[p] == 'boolean')
 			.map(p=> 
-				p + '= ' + '<span class="treenode-val">' + val[p] + "</span>" )
+				p + `= <span class="treenode-val" title="${val[p]}">${val[p]}</span>`)
 			.join(', ')
 	}
 }

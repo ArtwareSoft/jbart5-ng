@@ -137,9 +137,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
                         },
                         { $: 'hidden',
-                            showCondition: {
-                                $notEmpty: { $: 'studio.non-control-children', path: '%$path%' }
-                            }
+                            showCondition: true
                         }
                     ]
                 },

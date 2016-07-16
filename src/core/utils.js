@@ -466,7 +466,10 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
     remainedInLine = colWidth - tabSize * depth;
   }
   function flat_obj(obj) {
-    var props = sortedPropertyNames(obj).filter(x=>x!='$').map(prop => 
+    var props = sortedPropertyNames(obj)
+      .filter(p=>obj[p] != null)
+      .filter(x=>x!='$')
+      .map(prop => 
       quotePropName(prop) + ': ' + flat_val(obj[prop]));
     if (obj && obj.$) {
       props.unshift("$: '" + obj.$+ "'");

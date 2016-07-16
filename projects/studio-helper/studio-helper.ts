@@ -149,9 +149,7 @@ jb.component('studio-helper-dummy.label', {
             css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
           }, 
           {$: 'hidden', 
-            showCondition :{
-              $notEmpty :{$: 'studio.non-control-children', path: '%$path%' }
-            }
+            showCondition : true
           }
         ]
       }, 

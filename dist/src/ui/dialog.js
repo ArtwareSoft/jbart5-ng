@@ -191,7 +191,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                         })
                             .take(1)
                             .subscribe(function () {
-                            return $control.removeClass('dialog-open');
+                            $control.removeClass('dialog-open');
                         });
                     }
                 }); }

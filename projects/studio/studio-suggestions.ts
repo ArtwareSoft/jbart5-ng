@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
+import * as studio from './studio-model';
 
 function rev(str) {
   return str.split('').reverse().join('');
@@ -18,7 +19,6 @@ export class suggestions {
     if (this.tailSymbol == '%' && this.exp.slice(0,2) == '%$')
       this.tailSymbol = '%$';
     this.base = this.exp.slice(0,-1-this.tail.length) + '%';
-    // for debug
     this.inputVal = input.value;
     this.inputPos = input.selectionStart;
   }
@@ -33,14 +33,17 @@ export class suggestions {
       .css('display', options.length ? 'block' : 'none');
   }
 
-  extendWithOptions(probeCtx) {
+  extendWithOptions(probeCtx,path) {
     this.options = [];
     if (!probeCtx)
       return this;
     var vars = jb.entries(probeCtx.vars).map(x=>({text: '$' + x[0], value: x[1]}))
         .concat(jb.entries(probeCtx.resources).map(x=>({text: '$' + x[0], value: x[1]})))
 
-    if (this.tailSymbol == '%') 
+    if (this.inputVal == '=')
+      this.options = studio.model.PTsOfPath(path).map(compName=>
+            ({text: compName.substring(compName.indexOf('.')+1), value: compName }))
+    else if (this.tailSymbol == '%') 
       this.options = [].concat.apply([],jb.toarray(probeCtx.exp('%%'))
         .map(x=>
           jb.entries(x).map(x=>
@@ -65,23 +68,25 @@ export class suggestions {
   }
 
   paste(selection) {
+    var toPaste = selection.text + (typeof selection.value == 'object' ? '/' : '%');
     var input = this.input;
     var pos = this.pos + 1;
-    input.value = input.value.substr(0,this.pos-this.tail.length) + selection + input.value.substr(pos);
+    input.value = input.value.substr(0,this.pos-this.tail.length) + toPaste + input.value.substr(pos);
     jb.delay(100).then (() => {
-      input.selectionStart = pos + selection.length;
+      input.selectionStart = pos + toPaste.length;
       input.selectionEnd = input.selectionStart;
     })
   }
 
 }
 
-jb.component('editable-text.studio-jb-detect-suggestions', {
+jb.component('editable-text.suggestions-input-feature', {
   type: 'feature', 
   params: {
     path: { as: 'string' },
     action: { type: 'action', dynamic:true },
-    mdInput: {type: 'boolean', as : 'boolean'}
+    onEnter: { type: 'action', dynamic:true },
+    floatingInput: {type: 'boolean', as : 'boolean', description: 'used to close the floating input popup'}
   }, 
   impl: ctx => 
     ({
@@ -93,29 +98,40 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
         cmp.keyEm.filter(e=> e.keyCode == 38 || e.keyCode == 40)
             .subscribe(e=>
                 e.preventDefault())
-        cmp.keyEm || new Subject();
 
-        var suggestionEm = cmp.keyEm.filter(e=> // has % sign - look for suggestion
-            (e.srcElement.value + (e.key.length == 1 ? e.key : '')).indexOf('%') != -1 )
+        cmp.keyEm.filter(e=> e.keyCode == 13)
+            .subscribe(e=> {
+              if (!$(input).hasClass('dialog-open'))
+                ctx.params.onEnter()
+              })
+
+        var suggestionEm = cmp.keyEm.filter(e=> {// has % or = sign - look for suggestion
+            var inpValue  = e.srcElement.value + (e.key.length == 1 ? e.key : '');
+            return inpValue.indexOf('%') != -1; // || inpValue.indexOf('=') == 0;
+          })
           .flatMap(e=>
             getProbe().then(probeResult=>
               ({ keyEv: e, ctx: probeResult[0] && probeResult[0].in})))
           .delay(1) // we use keydown - let the input fill itself
           .map(e=> 
-            new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx))
+            new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx,ctx.params.path))
           .filter(e => 
             e.text)
           .distinctUntilChanged(null,e=>e.options.join(','))
 
         suggestionEm.subscribe(e=> {
-            if (!$(e.input).hasClass('dialog-open')) { // opening the popup if not already opened
+            if (!$(e.input).hasClass('dialog-open') && e.options.length > 0) { // opening the popup if not already opened
               var suggestionContext = { 
                 suggestionEm: suggestionEm
                   .startWith(e)
                   .do(e=>
                       suggestionContext.suggestionObj = e),
                 suggestionObj: e, 
-                keyEm: cmp.keyEm 
+                keyEm: cmp.keyEm,
+                closeFloatingInput: () => {
+                  if (ctx.params.floatingInput)
+                    ctx.run({$:'closeContainingPopup'});
+                }
               };
               jb_ui.wrapWithLauchingElement(ctx.params.action,ctx.setVars({suggestionContext: suggestionContext}), e.input)()
             }
@@ -131,6 +147,9 @@ jb.component('editable-text.studio-jb-detect-suggestions', {
 
 jb.component('studio.jb-open-suggestions', {
   type: 'action', 
+  params: {
+    path: { as: 'string' }
+  },
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-suggestions-popup' }, 
     content :{$: 'group',
@@ -141,13 +160,13 @@ jb.component('studio.jb-open-suggestions', {
           features: [
             {$: 'itemlist.studio-suggestions-selection',
               onEnter: [
-                {$: 'studio.jb-paste-suggestion', toPaste: '%%'},
+                {$: 'studio.jb-paste-suggestion', path: '%$path%'},
                 {$: 'closeContainingPopup'}
               ]
             },
             {$: 'itemlist.selection', 
                 onDoubleClick: [
-                {$: 'studio.jb-paste-suggestion', toPaste: '%%'},
+                {$: 'studio.jb-paste-suggestion', path: '%$path%'},
                 {$: 'closeContainingPopup'}
               ]
             },
@@ -159,10 +178,7 @@ jb.component('studio.jb-open-suggestions', {
 
 jb.component('studio.suggestions-emitter', {
   type: 'feature',
-  params: {
-    into: { as: 'ref' }
-  }, 
-  impl: (ctx,into) => 
+  impl: ctx => 
     ({
       init: function(cmp) {
         // gain focus back to input after clicking the popup
@@ -225,11 +241,13 @@ jb.component('itemlist.studio-suggestions-selection', {
 
 jb.component('studio.jb-paste-suggestion', {
   params: {
-    toPaste: { },
+    path: {as: 'string'}
   },
   type: 'action',
-  impl: (ctx,toPaste) => {
-    var suffix = typeof toPaste.value == 'object' ? '/' : '%';
-    ctx.vars.suggestionContext.suggestionObj.paste(toPaste.text + suffix);
+  impl: (ctx,path) => {
+    var suggestions = ctx.vars.suggestionContext.suggestionObj;
+    if (suggestions.inputVal.indexOf('=') == 0)
+      ctx.vars.suggestionContext.closeFloatingInput();
+    suggestions.paste(ctx.data);
   }
 })
