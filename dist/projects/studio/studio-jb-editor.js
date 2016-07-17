@@ -139,11 +139,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             ]
                         }
                     ],
-                    style: {
-                        $if: { $: 'studio.is-primitive-value', path: '%$path%' },
-                        then: { $: 'editable-text.md-input', width: '400' },
-                        else: { $: 'editable-text.codemirror', mode: 'javascript' }
-                    }
+                    style: { $: 'editable-text.md-input', width: '400' }
                 }
             });
             jb_core_1.jb.component('studio.profile-value-as-text', {
@@ -155,23 +151,30 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
                             var val = studio.model.val(path);
+                            if (val == null)
+                                return '';
                             if (typeof val == 'string')
                                 return val;
                             if (studio.model.compName(path))
                                 return '=' + studio.model.compName(path);
                             return typeof val;
                         }
+                        var _path = path;
+                        // if (path.slice(-2)== '~+') {
+                        //   var arrPath = path.slice(0,-2);
+                        //   studio.model.modify(studio.model.addArrayItem, arrPath, {}, context);
+                        //   var ar = studio.model.val(arrPath);
+                        //   _path = arrPath+'~'+ (ar.length-1);
+                        // }
+                        if (value.indexOf('=') == 0) {
+                            var comp = value.substr(1);
+                            if (comp == 'pipeline')
+                                studio.model.modify(studio.model.writeValue, _path, { value: [] }, context);
+                            else if (studio.findjBartToLook(_path).comps[comp])
+                                studio.model.modify(studio.model.setComp, _path, { comp: value.substr(1) }, context);
+                        }
                         else {
-                            if (value.indexOf('=') == 0) {
-                                var comp = value.substr(2);
-                                if (comp == 'pipeline')
-                                    studio.model.modify(studio.model.writeValue, path, { value: [] }, context);
-                                else if (studio.findjBartToLook(path).comps[comp])
-                                    studio.model.modify(studio.model.setComp, path, { comp: value.substr(2) }, context);
-                            }
-                            else {
-                                studio.model.modify(studio.model.writeValue, path, { value: value }, context);
-                            }
+                            studio.model.modify(studio.model.writeValue, _path, { value: value }, context);
                         }
                     }
                 }); }

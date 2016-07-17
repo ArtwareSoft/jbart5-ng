@@ -149,7 +149,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 .subscribe(function (x) {
                                 jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)();
                             });
-                            tree.selectionEmitter.distinctUntilChanged().subscribe(function (selected) {
+                            tree.selectionEmitter.subscribe(function (selected) {
+                                if (tree.selected == selected)
+                                    return;
                                 tree.selected = selected;
                                 selected.split('~').slice(0, -1).reduce(function (base, x) {
                                     var path = base ? (base + '~' + x) : x;
@@ -216,7 +218,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 var nodes = Array.from(tree.el.querySelectorAll('.treenode'));
                                 var selected = tree.el.querySelector('.treenode.selected');
                                 return tree.elemToPath(nodes[nodes.indexOf(selected) + diff]) || tree.selected;
-                            }).subscribe(function (x) { return tree.selectionEmitter.next(x); });
+                            }).subscribe(function (x) {
+                                return tree.selectionEmitter.next(x);
+                            });
                             // expand collapse
                             cmp.keydown.filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; }).subscribe(function (event) {
                                 event.stopPropagation();

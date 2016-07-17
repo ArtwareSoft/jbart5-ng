@@ -112,6 +112,10 @@ class jbComponent {
 			this.refreshModel && this.refreshModel();
 			this.jbEmitter && this.jbEmitter.next('check');
 		}
+		Cmp.prototype.ngOnDestroy = function() {
+			this.jbEmitter && this.jbEmitter.next('destroy');
+		}
+
 		Cmp.prototype.wait = function () {
 			this.readyCounter = (this.readyCounter || 0)+1;
 			if (this.parentCmp && this.parentCmp.wait)

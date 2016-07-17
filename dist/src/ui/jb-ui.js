@@ -331,6 +331,9 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         this.refreshModel && this.refreshModel();
                         this.jbEmitter && this.jbEmitter.next('check');
                     };
+                    Cmp.prototype.ngOnDestroy = function () {
+                        this.jbEmitter && this.jbEmitter.next('destroy');
+                    };
                     Cmp.prototype.wait = function () {
                         var _this = this;
                         this.readyCounter = (this.readyCounter || 0) + 1;

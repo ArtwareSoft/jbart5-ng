@@ -6,7 +6,7 @@ function jb_run(context,parentParam,settings) {
     if (jbart.probe && context.path && jbart.probe.trace == context.path && !(settings || {}).noprobe ) {
         var input = new jbCtx(context,{});
         var out = jb_run(context,parentParam,{ noprobe: true })
-        jbart.probe[context.path].push({in: input, out: out});
+        jbart.probe[context.path].push({in: input, out: jb_val(out)});
         return out;
     }
     if (profile === null) return;

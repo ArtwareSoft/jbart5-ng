@@ -94,7 +94,7 @@ function getComp(id) {
 }
 
 // used for PTs of type
-function findjBartToLook(path) {
+export function findjBartToLook(path) {
 	var id = path.split('~')[0];
 	if (jbart_base().comps[id])
 		return jbart_base();
@@ -119,6 +119,9 @@ export class ControlModel {
 	}
 
 	subNodes(path,childrenType) {
+		if (childrenType == 'jb-editor')
+			return this.jbEditorSubNodes(path);
+
 		var val = profileValFromPath(path);
 		if (childrenType == 'controls') {
 			var prop = this.controlParam(path);
@@ -133,8 +136,6 @@ export class ControlModel {
 				return [path + '~0'];
 			else
 				return val.map((inner, i) => path + '~' + i)
-		} else if (childrenType == 'jb-editor') {
-			return this.jbEditorSubNodes(path);
 		}
 
 		function childPath(prop) {
@@ -150,12 +151,13 @@ export class ControlModel {
 		var comp = getComp(jb.compName(val||{}));
 		if (Array.isArray(val))
 			return Object.getOwnPropertyNames(val)
-				.map(x=>x=='length'? '+' : x)
+				.map(x=>x=='length'? val.length : x)
 				.map(k=> path +'~'+k)
 		else if (comp)
 			return jb.entries(comp.params)
-					.map(p=> path + '~' + p[0])
-					.filter(p=>profileValFromPath(p) != null) // only with values
+					.map(p=> ({ path: path + '~' + p[0], param: p[1]}))
+					.filter(e=>profileValFromPath(e.path) != null || e.param.essential)
+					.map(e=>e.path)
 
 			// return Array.prototype.concat.apply([], // flatmap - flatting array values
 			// 	jb.entries(comp.params)
@@ -177,14 +179,14 @@ export class ControlModel {
 		var val = profileValFromPath(path);
 		var compName = jb.compName(val||{});
 		var prop = path.split('~').pop();
-		if (!isNaN(Number(prop)) || prop == '+') // array value - title as a[i]
+		if (!isNaN(Number(prop))) // array value - title as a[i]
 			prop = path.split('~').slice(-2).join('[') + ']';
 		if (Array.isArray(val) && this.paramType(path) == 'data')
 			compName = `pipeline (${val.length})`;
 		if (Array.isArray(val) && this.paramType(path) == 'action')
 			compName = `actions (${val.length})`;
 		if (compName)
-			return prop + (collapsed ? `= <span class="treenode-val">${compName}</span>` : '');
+			return prop + `= <span class="treenode-val">${compName}</span>`;
 		else if (typeof val == 'string')
 			return prop + (collapsed ? `: <span class="treenode-val" title="${val}">${val}</span>` : '');
 		return prop + (Array.isArray(val) ? ` (${val.length})` : '');
@@ -202,9 +204,10 @@ export class ControlModel {
 	}
 
 	icon(path) {
-		if (path.split('~').pop() == '+')
+		var parentVal = profileValFromPath(parentPath(path));
+		if (Array.isArray(parentVal) && path.split('~').pop() == parentVal.length)
 			return 'add';
-		if (this.controlParam(path)) {
+		if (this.paramType(path) == 'control') {
 			if (this.compName(path+'~style') == 'layout.horizontal')
 				return 'view_column'
 			return 'folder_open'; //'view_headline' , 'folder_open'
@@ -385,6 +388,8 @@ export class ControlModel {
 	}
 
 	paramDef(path) {
+		if (!parentPath(path)) // no param def for root
+			return;
 		if (!isNaN(Number(path.split('~').pop()))) // array elements
 			path = parentPath(path);
 		var parent_prof = profileValFromPath(parentPath(path));
@@ -440,9 +445,9 @@ export class ControlModel {
 		return val[prop];
 	}
 
-	addArrayItem(path) {
+	addArrayItem(path,args) {
 		var val = profileValFromPath(path);
-		var toAdd = {$:''};
+		var toAdd = args.toAdd || {$:''};
 		if (Array.isArray(val))
 			val.push(toAdd)
 		else if (!val)

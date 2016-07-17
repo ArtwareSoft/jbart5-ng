@@ -126,7 +126,9 @@ jb.component('tree.selection', {
 					jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)()
   				})
 
-		  tree.selectionEmitter.distinctUntilChanged().subscribe(selected=> {
+		  tree.selectionEmitter.subscribe(selected=> { // .distinctUntilChanged()
+		  	  if (tree.selected == selected)
+		  	  	return;
 			  tree.selected = selected;
 			  selected.split('~').slice(0,-1).reduce(function(base, x) { 
 				  var path = base ? (base + '~' + x) : x;
@@ -200,7 +202,8 @@ jb.component('tree.keyboard-selection', {
 						var nodes = Array.from(tree.el.querySelectorAll('.treenode'));
 						var selected = tree.el.querySelector('.treenode.selected');
 						return tree.elemToPath(nodes[nodes.indexOf(selected) + diff]) || tree.selected;
-					}).subscribe(x=> tree.selectionEmitter.next(x))
+					}).subscribe(x=> 
+						tree.selectionEmitter.next(x))
 				// expand collapse
 				cmp.keydown.filter(e=> e.keyCode == 37 || e.keyCode == 39).subscribe(event => {
 						event.stopPropagation();

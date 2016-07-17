@@ -30,7 +30,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                         return '{' + contents + '}';
                     });
                     this.exp = rev((rev(this.text_with_open_close).match(/([^\}%]*%)/) || ['', ''])[1]);
-                    this.tail = rev((rev(this.exp).match(/([^%.\/]*)(\/|\.|%)/) || ['', ''])[1]);
+                    this.exp = this.exp || rev((rev(this.text_with_open_close).match(/([^\}=]*=)/) || ['', ''])[1]);
+                    this.tail = rev((rev(this.exp).match(/([^%.\/=]*)(\/|\.|%|=)/) || ['', ''])[1]);
                     this.tailSymbol = this.text_with_open_close.slice(-1 - this.tail.length).slice(0, 1); // % or /
                     if (this.tailSymbol == '%' && this.exp.slice(0, 2) == '%$')
                         this.tailSymbol = '%$';
@@ -52,17 +53,23 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                     this.options = [];
                     if (!probeCtx)
                         return this;
-                    var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); })
-                        .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ text: '$' + x[0], value: x[1] }); }));
-                    if (this.inputVal == '=')
+                    var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); })
+                        .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); }));
+                    if (this.inputVal.indexOf('=') == 0)
                         this.options = studio.model.PTsOfPath(path).map(function (compName) {
-                            return ({ text: compName.substring(compName.indexOf('.') + 1), value: compName });
+                            var name = compName.substring(compName.indexOf('.') + 1);
+                            var ns = compName.substring(0, compName.indexOf('.'));
+                            return {
+                                text: ns ? name + " (" + ns + ")" : name,
+                                value: compName,
+                                toPaste: compName,
+                            };
                         });
                     else if (this.tailSymbol == '%')
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp('%%'))
                             .map(function (x) {
                             return jb_core_1.jb.entries(x).map(function (x) {
-                                return ({ text: x[0], value: x[1] });
+                                return ({ toPaste: x[0], value: x[1] });
                             });
                         }))
                             .concat(vars);
@@ -70,19 +77,29 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                         this.options = vars;
                     else if (this.tailSymbol == '/' || this.tailSymbol == '.')
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
-                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ text: x[0], value: x[1] }); }); }));
+                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ toPaste: x[0], value: x[1] }); }); }));
                     this.options = this.options
-                        .filter(jb_onlyUniqueFunc(function (x) { return x.text; }))
-                        .filter(function (x) { return x.text != _this.tail; })
-                        .filter(function (x) { return x.text.indexOf('$$') != 0; })
-                        .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.text) == -1; })
+                        .filter(jb_onlyUniqueFunc(function (x) { return x.toPaste; }))
+                        .filter(function (x) { return x.toPaste != _this.tail; })
+                        .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
+                        .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; })
                         .filter(function (x) {
-                        return _this.tail == '' || typeof x.text != 'string' || x.text.indexOf(_this.tail) == 0;
+                        return _this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.indexOf(_this.tail) == 0;
+                    })
+                        .map(function (x) {
+                        return jb_core_1.jb.extend(x, { text: x.text || x.toPaste + _this.valAsText(x.value) });
                     });
                     return this;
                 };
+                suggestions.prototype.valAsText = function (val) {
+                    if (typeof val == 'string' && val.length > 20)
+                        return " (" + val.substring(0, 20) + "...)";
+                    else if (typeof val == 'string' || typeof val == 'number' || typeof val == 'boolean')
+                        return " (" + val + ")";
+                    return "";
+                };
                 suggestions.prototype.paste = function (selection) {
-                    var toPaste = selection.text + (typeof selection.value == 'object' ? '/' : '%');
+                    var toPaste = selection.toPaste + (typeof selection.value == 'object' ? '/' : '%');
                     var input = this.input;
                     var pos = this.pos + 1;
                     input.value = input.value.substr(0, this.pos - this.tail.length) + toPaste + input.value.substr(pos);
@@ -104,11 +121,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                 },
                 impl: function (ctx) {
                     return ({
+                        observable: function () { },
                         init: function (cmp) {
                             var input = $(cmp.elementRef.nativeElement).findIncludeSelf('input')[0];
                             if (!input)
                                 return;
-                            cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown');
+                            var inputClosed = cmp.jbEmitter.filter(function (x) { return x == 'destroy'; });
+                            cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
+                                .takeUntil(inputClosed);
                             cmp.keyEm.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
                                 .subscribe(function (e) {
                                 return e.preventDefault();
@@ -118,9 +138,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                 if (!$(input).hasClass('dialog-open'))
                                     ctx.params.onEnter();
                             });
-                            var suggestionEm = cmp.keyEm.filter(function (e) {
+                            cmp.keyEm.filter(function (e) { return e.keyCode == 27; })
+                                .subscribe(function (e) {
+                                if (!$(input).hasClass('dialog-open'))
+                                    closeFloatingInput(ctx);
+                            });
+                            var suggestionEm = cmp.keyEm
+                                .debounceTime(30)
+                                .takeUntil(inputClosed) // sensitive timing of closing the floating input
+                                .filter(function (e) {
                                 var inpValue = e.srcElement.value + (e.key.length == 1 ? e.key : '');
-                                return inpValue.indexOf('%') != -1; // || inpValue.indexOf('=') == 0;
+                                return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;
                             })
                                 .flatMap(function (e) {
                                 return getProbe().then(function (probeResult) {
@@ -145,9 +173,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                         }),
                                         suggestionObj: e,
                                         keyEm: cmp.keyEm,
+                                        cmp: cmp,
                                         closeFloatingInput: function () {
-                                            if (ctx.params.floatingInput)
-                                                ctx.run({ $: 'closeContainingPopup' });
+                                            return closeFloatingInput(ctx);
                                         }
                                     };
                                     jb_ui.wrapWithLauchingElement(ctx.params.action, ctx.setVars({ suggestionContext: suggestionContext }), e.input)();
@@ -156,6 +184,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                             function getProbe() {
                                 cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
                                 return cmp.probeResult;
+                            }
+                            function closeFloatingInput(ctx) {
+                                if (ctx.params.floatingInput)
+                                    ctx.run({ $: 'closeContainingPopup' });
+                                ctx.vars.regainFocus && ctx.vars.regainFocus();
                             }
                         }
                     });
@@ -261,10 +294,24 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                 },
                 type: 'action',
                 impl: function (ctx, path) {
-                    var suggestions = ctx.vars.suggestionContext.suggestionObj;
-                    if (suggestions.inputVal.indexOf('=') == 0)
-                        ctx.vars.suggestionContext.closeFloatingInput();
-                    suggestions.paste(ctx.data);
+                    var suggestionsCtx = ctx.vars.suggestionContext;
+                    suggestionsCtx.suggestionObj.paste(ctx.data);
+                    //suggestionsCtx.cmp.probeResult = null; // recalc
+                    if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
+                        ctx.vars.field.writeValue('=' + ctx.data.toPaste); // need to write from here as we close the popup
+                        //      ctx.run({$:'closeContainingPopup'});
+                        suggestionCtx.closeFloatingInput();
+                        var tree = ctx.vars.$tree;
+                        tree.expanded[tree.selected] = true;
+                        jb_core_1.jb.delay(1).then(function () {
+                            var firstChild = tree.nodeModel.children(tree.selected)[0];
+                            if (firstChild) {
+                                tree.selected = firstChild;
+                                jb_ui.apply(ctx);
+                            }
+                        });
+                    }
+                    //jb_ui.apply(ctx);
                 }
             });
         }

@@ -14,7 +14,8 @@ export class suggestions {
     this.text_with_open_close = this.text.replace(/%([^%;{}\s><"']*)%/g, (match,contents) =>
       '{' + contents + '}');
     this.exp = rev((rev(this.text_with_open_close).match(/([^\}%]*%)/) || ['',''])[1]);
-    this.tail = rev((rev(this.exp).match(/([^%.\/]*)(\/|\.|%)/)||['',''])[1]);
+    this.exp = this.exp || rev((rev(this.text_with_open_close).match(/([^\}=]*=)/) || ['',''])[1]);
+    this.tail = rev((rev(this.exp).match(/([^%.\/=]*)(\/|\.|%|=)/)||['',''])[1]);
     this.tailSymbol = this.text_with_open_close.slice(-1-this.tail.length).slice(0,1); // % or /
     if (this.tailSymbol == '%' && this.exp.slice(0,2) == '%$')
       this.tailSymbol = '%$';
@@ -37,38 +38,55 @@ export class suggestions {
     this.options = [];
     if (!probeCtx)
       return this;
-    var vars = jb.entries(probeCtx.vars).map(x=>({text: '$' + x[0], value: x[1]}))
-        .concat(jb.entries(probeCtx.resources).map(x=>({text: '$' + x[0], value: x[1]})))
+    var vars = jb.entries(probeCtx.vars).map(x=>({toPaste: '$' + x[0], value: x[1]}))
+        .concat(jb.entries(probeCtx.resources).map(x=>({toPaste: '$' + x[0], value: x[1]})))
 
-    if (this.inputVal == '=')
-      this.options = studio.model.PTsOfPath(path).map(compName=>
-            ({text: compName.substring(compName.indexOf('.')+1), value: compName }))
+    if (this.inputVal.indexOf('=') == 0)
+      this.options = studio.model.PTsOfPath(path).map(compName=> {
+            var name = compName.substring(compName.indexOf('.')+1);
+            var ns = compName.substring(0,compName.indexOf('.'));
+            return { 
+              text: ns ? `${name} (${ns})` : name, 
+              value: compName,
+              toPaste: compName,
+          }
+        })
     else if (this.tailSymbol == '%') 
       this.options = [].concat.apply([],jb.toarray(probeCtx.exp('%%'))
         .map(x=>
           jb.entries(x).map(x=>
-            ({text: x[0], value: x[1]}))))
+            ({toPaste: x[0], value: x[1]}))))
         .concat(vars)
     else if (this.tailSymbol == '%$') 
       this.options = vars
     else if (this.tailSymbol == '/' || this.tailSymbol == '.')
       this.options = [].concat.apply([],
         jb.toarray(probeCtx.exp(this.base))
-          .map(x=>jb.entries(x).map(x=>({text: x[0], value: x[1]}))) )
+          .map(x=>jb.entries(x).map(x=>({toPaste: x[0], value: x[1]}))) )
 
     this.options = this.options
-        .filter( jb_onlyUniqueFunc(x=>x.text) )
-        .filter(x=> x.text != this.tail)
-        .filter(x=> x.text.indexOf('$$') != 0)
-        .filter(x=>['$ngZone','$window'].indexOf(x.text) == -1)
+        .filter( jb_onlyUniqueFunc(x=>x.toPaste) )
+        .filter(x=> x.toPaste != this.tail)
+        .filter(x=> x.toPaste.indexOf('$$') != 0)
+        .filter(x=>['$ngZone','$window'].indexOf(x.toPaste) == -1)
         .filter(x=>
-          this.tail == '' || typeof x.text != 'string' || x.text.indexOf(this.tail) == 0); 
+          this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.indexOf(this.tail) == 0)
+        .map(x=>
+          jb.extend(x,{ text: x.text || x.toPaste + this.valAsText(x.value) }))
 
     return this;
   }
 
+  valAsText(val) {
+    if (typeof val == 'string' && val.length > 20)
+      return ` (${val.substring(0,20)}...)`;
+    else if (typeof val == 'string' || typeof val == 'number' || typeof val == 'boolean')
+      return ` (${val})`;
+    return ``;
+  }
+
   paste(selection) {
-    var toPaste = selection.text + (typeof selection.value == 'object' ? '/' : '%');
+    var toPaste = selection.toPaste + (typeof selection.value == 'object' ? '/' : '%');
     var input = this.input;
     var pos = this.pos + 1;
     input.value = input.value.substr(0,this.pos-this.tail.length) + toPaste + input.value.substr(pos);
@@ -90,11 +108,16 @@ jb.component('editable-text.suggestions-input-feature', {
   }, 
   impl: ctx => 
     ({
+      observable: () => {}, // register jbEmitter
       init: cmp=> {
         var input = $(cmp.elementRef.nativeElement).findIncludeSelf('input')[0];
         if (!input)
           return;
-        cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown');
+        var inputClosed = cmp.jbEmitter.filter(x=>x=='destroy');
+
+        cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
+          .takeUntil(inputClosed);
+
         cmp.keyEm.filter(e=> e.keyCode == 38 || e.keyCode == 40)
             .subscribe(e=>
                 e.preventDefault())
@@ -105,9 +128,18 @@ jb.component('editable-text.suggestions-input-feature', {
                 ctx.params.onEnter()
               })
 
-        var suggestionEm = cmp.keyEm.filter(e=> {// has % or = sign - look for suggestion
+        cmp.keyEm.filter(e=> e.keyCode == 27)
+            .subscribe(e=> {
+              if (!$(input).hasClass('dialog-open'))
+                closeFloatingInput(ctx)
+              })
+
+        var suggestionEm = cmp.keyEm
+          .debounceTime(30)
+          .takeUntil(inputClosed) // sensitive timing of closing the floating input
+          .filter(e=> {// has % or = sign - look for suggestion
             var inpValue  = e.srcElement.value + (e.key.length == 1 ? e.key : '');
-            return inpValue.indexOf('%') != -1; // || inpValue.indexOf('=') == 0;
+            return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;
           })
           .flatMap(e=>
             getProbe().then(probeResult=>
@@ -128,10 +160,9 @@ jb.component('editable-text.suggestions-input-feature', {
                       suggestionContext.suggestionObj = e),
                 suggestionObj: e, 
                 keyEm: cmp.keyEm,
-                closeFloatingInput: () => {
-                  if (ctx.params.floatingInput)
-                    ctx.run({$:'closeContainingPopup'});
-                }
+                cmp: cmp,
+                closeFloatingInput: () => 
+                  closeFloatingInput(ctx)
               };
               jb_ui.wrapWithLauchingElement(ctx.params.action,ctx.setVars({suggestionContext: suggestionContext}), e.input)()
             }
@@ -140,6 +171,11 @@ jb.component('editable-text.suggestions-input-feature', {
         function getProbe() {
           cmp.probeResult = cmp.probeResult || ctx.run({$: 'studio.probe', path: ctx.params.path });
           return cmp.probeResult;
+        }
+        function closeFloatingInput(ctx) {
+            if (ctx.params.floatingInput)
+              ctx.run({$:'closeContainingPopup'});
+            ctx.vars.regainFocus && ctx.vars.regainFocus();
         }
       }
   })
@@ -245,9 +281,23 @@ jb.component('studio.jb-paste-suggestion', {
   },
   type: 'action',
   impl: (ctx,path) => {
-    var suggestions = ctx.vars.suggestionContext.suggestionObj;
-    if (suggestions.inputVal.indexOf('=') == 0)
-      ctx.vars.suggestionContext.closeFloatingInput();
-    suggestions.paste(ctx.data);
+    var suggestionsCtx = ctx.vars.suggestionContext;
+    suggestionsCtx.suggestionObj.paste(ctx.data);
+    //suggestionsCtx.cmp.probeResult = null; // recalc
+    if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
+      ctx.vars.field.writeValue('='+ctx.data.toPaste); // need to write from here as we close the popup
+//      ctx.run({$:'closeContainingPopup'});
+      suggestionCtx.closeFloatingInput();
+      var tree = ctx.vars.$tree;
+      tree.expanded[tree.selected] = true;
+      jb.delay(1).then(()=>{
+        var firstChild = tree.nodeModel.children(tree.selected)[0];
+        if (firstChild) {
+          tree.selected = firstChild;
+          jb_ui.apply(ctx);
+        }
+      })
+    }
+    //jb_ui.apply(ctx);
   }
 })

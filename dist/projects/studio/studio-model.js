@@ -94,6 +94,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         if (jbart.comps[id])
             return jbart;
     }
+    exports_1("findjBartToLook", findjBartToLook);
     function evalProfile(prof_str) {
         try {
             return eval('(' + prof_str + ')');
@@ -183,6 +184,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return profileValFromPath(path);
                 };
                 ControlModel.prototype.subNodes = function (path, childrenType) {
+                    if (childrenType == 'jb-editor')
+                        return this.jbEditorSubNodes(path);
                     var val = profileValFromPath(path);
                     if (childrenType == 'controls') {
                         var prop = this.controlParam(path);
@@ -201,9 +204,6 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         else
                             return val.map(function (inner, i) { return path + '~' + i; });
                     }
-                    else if (childrenType == 'jb-editor') {
-                        return this.jbEditorSubNodes(path);
-                    }
                     function childPath(prop) {
                         if (Array.isArray(val[prop]))
                             return val[prop].map(function (inner, i) { return path + '~' + prop + '~' + i; });
@@ -216,12 +216,13 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var comp = getComp(jb_core_1.jb.compName(val || {}));
                     if (Array.isArray(val))
                         return Object.getOwnPropertyNames(val)
-                            .map(function (x) { return x == 'length' ? '+' : x; })
+                            .map(function (x) { return x == 'length' ? val.length : x; })
                             .map(function (k) { return path + '~' + k; });
                     else if (comp)
                         return jb_core_1.jb.entries(comp.params)
-                            .map(function (p) { return path + '~' + p[0]; })
-                            .filter(function (p) { return profileValFromPath(p) != null; }); // only with values
+                            .map(function (p) { return ({ path: path + '~' + p[0], param: p[1] }); })
+                            .filter(function (e) { return profileValFromPath(e.path) != null || e.param.essential; })
+                            .map(function (e) { return e.path; });
                     // return Array.prototype.concat.apply([], // flatmap - flatting array values
                     // 	jb.entries(comp.params)
                     // 		.map(p=> path + '~' + p[0])
@@ -241,14 +242,14 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var val = profileValFromPath(path);
                     var compName = jb_core_1.jb.compName(val || {});
                     var prop = path.split('~').pop();
-                    if (!isNaN(Number(prop)) || prop == '+')
+                    if (!isNaN(Number(prop)))
                         prop = path.split('~').slice(-2).join('[') + ']';
                     if (Array.isArray(val) && this.paramType(path) == 'data')
                         compName = "pipeline (" + val.length + ")";
                     if (Array.isArray(val) && this.paramType(path) == 'action')
                         compName = "actions (" + val.length + ")";
                     if (compName)
-                        return prop + (collapsed ? "= <span class=\"treenode-val\">" + compName + "</span>" : '');
+                        return prop + ("= <span class=\"treenode-val\">" + compName + "</span>");
                     else if (typeof val == 'string')
                         return prop + (collapsed ? ": <span class=\"treenode-val\" title=\"" + val + "\">" + val + "</span>" : '');
                     return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
@@ -262,9 +263,10 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return (val && val.title) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
                 };
                 ControlModel.prototype.icon = function (path) {
-                    if (path.split('~').pop() == '+')
+                    var parentVal = profileValFromPath(parentPath(path));
+                    if (Array.isArray(parentVal) && path.split('~').pop() == parentVal.length)
                         return 'add';
-                    if (this.controlParam(path)) {
+                    if (this.paramType(path) == 'control') {
                         if (this.compName(path + '~style') == 'layout.horizontal')
                             return 'view_column';
                         return 'folder_open'; //'view_headline' , 'folder_open'
@@ -427,6 +429,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return this.cache[path];
                 };
                 ControlModel.prototype.paramDef = function (path) {
+                    if (!parentPath(path))
+                        return;
                     if (!isNaN(Number(path.split('~').pop())))
                         path = parentPath(path);
                     var parent_prof = profileValFromPath(parentPath(path));
@@ -482,9 +486,9 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         val[prop] = [val[prop]];
                     return val[prop];
                 };
-                ControlModel.prototype.addArrayItem = function (path) {
+                ControlModel.prototype.addArrayItem = function (path, args) {
                     var val = profileValFromPath(path);
-                    var toAdd = { $: '' };
+                    var toAdd = args.toAdd || { $: '' };
                     if (Array.isArray(val))
                         val.push(toAdd);
                     else if (!val)
