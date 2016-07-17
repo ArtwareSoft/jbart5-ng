@@ -196,6 +196,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                         init: function (cmp) {
                             var tree = cmp.tree;
                             cmp.keydown = cmp.keydown || new Rx_1.Subject();
+                            var keyDownNoAlts = cmp.keydown.filter(function (e) {
+                                return !e.ctrlKey && !e.altKey;
+                            });
                             cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
                                 cmp.elementRef.nativeElement.focus();
                                 return false;
@@ -204,14 +207,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 setTimeout(function () {
                                     return cmp.elementRef.nativeElement.focus();
                                 }, 1);
-                            cmp.keydown.filter(function (e) {
+                            keyDownNoAlts
+                                .filter(function (e) {
                                 return e.keyCode == 13;
                             })
                                 .subscribe(function (e) {
                                 jb_ui.wrapWithLauchingElement(context.params.onEnter, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
                             });
                             //context.params.onEnter(context.setData(tree.selected))})
-                            cmp.keydown.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
+                            keyDownNoAlts.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
                                 .map(function (event) {
                                 event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
@@ -222,7 +226,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 return tree.selectionEmitter.next(x);
                             });
                             // expand collapse
-                            cmp.keydown.filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; }).subscribe(function (event) {
+                            keyDownNoAlts.filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; }).subscribe(function (event) {
                                 event.stopPropagation();
                                 if (tree.selected)
                                     tree.expanded[tree.selected] = (event.keyCode == 39);
@@ -258,6 +262,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 var keyCode = key.split('+').pop().charCodeAt(0);
                                 if (key == 'Delete')
                                     keyCode = 46;
+                                if (key.match(/\+Up$/))
+                                    keyCode = 38;
+                                if (key.match(/\+Down$/))
+                                    keyCode = 40;
                                 var helper = (key.match('([A-Za-z]*)+') || ['', ''])[1];
                                 if (helper == 'Ctrl' && !event.ctrlKey)
                                     return;

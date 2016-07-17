@@ -381,6 +381,16 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                     return studio.model.modify(studio.model.duplicate, path, {}, context);
                 }
             });
+            jb_core_1.jb.component('studio.moveInArray', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' },
+                    moveUp: { type: 'boolean', as: 'boolean' }
+                },
+                impl: function (context, path, moveUp) {
+                    return studio.model.modify(studio.model.moveInArray, path, { moveUp: moveUp }, context);
+                }
+            });
             jb_core_1.jb.component('studio.newArrayItem', {
                 type: 'action',
                 params: { path: { as: 'string' } },

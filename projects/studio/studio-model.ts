@@ -298,6 +298,18 @@ export class ControlModel {
 		}
 	}
 
+	moveInArray(path,args) { // drag & drop
+		var arr = profileValFromPath(parentPath(path));
+		if (Array.isArray(arr)) {
+			var index = Number(path.split('~').pop());
+			var base = args.moveUp ? index -1 : index; 
+			if (base <0 || base >= arr.length-1) 
+				return; // the + elem
+			arr.splice(base,2,arr[base+1],arr[base]);
+			fixReplacingPaths(parentPath(path)+'~'+base,parentPath(path)+'~'+(base+1));
+		}
+	}
+
 	writeValue(path,args) {
 		jb.writeValue(profileRefFromPath(path),args.value);
 	}
@@ -529,6 +541,22 @@ function fixIndexPaths(path,diff) {
 		return fixIndexOfPath(pathToFix,path,diff)
 	})
 } 
+
+function fixReplacingPaths(path1,path2) {
+	pathChangesEm.next(new FixReplacingPaths(path1,path2))
+} 
+
+class FixReplacingPaths {
+	constructor(private path1,private  path2) {}
+	fix(pathToFix) {
+		if (pathToFix.indexOf(this.path1) == 0)
+			return pathToFix.replace(this.path1,this.path2)
+		else if (pathToFix.indexOf(this.path2) == 0)
+			return pathToFix.replace(this.path2,this.path1)
+		return pathToFix;
+	}
+}
+
 
 function fixArrayWrapperPath() {
 	pathChangesEm.next(function(pathToFix) {

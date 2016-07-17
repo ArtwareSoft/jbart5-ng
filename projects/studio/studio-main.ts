@@ -376,6 +376,17 @@ jb.component('studio.duplicate',{
 		studio.model.modify(studio.model.duplicate, path, {},context)
 })
 
+jb.component('studio.moveInArray',{
+	type: 'action',
+	params: { 
+		path: { as: 'string' },
+		moveUp: { type: 'boolean', as: 'boolean'} 
+	},
+	impl: (context,path,moveUp) => 
+		studio.model.modify(studio.model.moveInArray, 
+					path, { moveUp: moveUp },context)
+})
+
 jb.component('studio.newArrayItem',{
 	type: 'action',
 	params: { path: { as: 'string' } },

@@ -30,19 +30,27 @@ jb.component('studio.jb-editor', {
           }, 
           {$: 'tree.drag-and-drop' }, 
           {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl-C', 
+            key: 'Ctrl+Up', 
+            action :{$: 'studio.moveInArray', path: '%%',moveUp: true }
+          }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Ctrl+Down', 
+            action :{$: 'studio.moveInArray', path: '%%',moveUp: false }
+          }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Ctrl+C', 
             action :{$: 'studio.copy', path: '%%' }
           }, 
           {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl-V', 
+            key: 'Ctrl+V', 
             action :{$: 'studio.paste', path: '%%' }
           }, 
           {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl-Z', 
+            key: 'Ctrl+Z', 
             action :{$: 'studio.undo', path: '%%' }
           }, 
           {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl-Y', 
+            key: 'Ctrl+Y', 
             action :{$: 'studio.redo', path: '%%' }
           }, 
           {$: 'tree.keyboard-shortcut', 

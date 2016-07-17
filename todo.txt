@@ -1,8 +1,9 @@
+jb editor
+	ctrl - up&down
+	ctrl-left context menu
+	comp sugar - $filter, $if
+
 build the jbart.io site like https://material.angular.io/
-
-file-save indication
-
-make the material tabs work
 
 wrap as group should open group and select inner
 	control-tree context menu as tree aspect
@@ -10,7 +11,6 @@ wrap as group should open group and select inner
 			control-tree-expand(path)
 			control-tree-select(path,focus)
 
-feature.var
 animation in expand/collapse
 select with groups (look at select2 for css)
 
@@ -19,46 +19,9 @@ fix theme var name
  default theme with empty values
 
 
-tgp pt selection - sort into groups (add group property in tgp?) - sort groups according to context
-	features
-		sort features by name according to context (use groups in select2)
-	controls
-	actions?
-
-dialog-ok-cancel
-	fix button positions
-
-create control dialog (maybe dragable from menu)
-	controls
-	---------
-	button,label
-
-	fields
-	---------
-	text,number,boolean
-	
-	layout
-	--------
-	vertical,horizontal,flex,responsive
-
-
-	group
-	----------
-	section, propertySheet,tabs,itemlist,
-
-	duplicate: ctrl-drag
 
 studio
 ======
-property editor
-  style toolbar
-  use material fields
-
-custom style editor
-indication
-	with emitter api
-'xtml' inteliscript editor
-  preview probe
 
 bugs
  make local with icon

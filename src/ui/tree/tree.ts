@@ -177,6 +177,9 @@ jb.component('tree.keyboard-selection', {
 			init: cmp=> {
 				var tree = cmp.tree;
 				cmp.keydown = cmp.keydown || new Subject();
+				var keyDownNoAlts = cmp.keydown.filter(e=> 
+					!e.ctrlKey && !e.altKey);
+
 				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {
 					cmp.elementRef.nativeElement.focus(); 
 					return false;
@@ -186,8 +189,9 @@ jb.component('tree.keyboard-selection', {
 					setTimeout(() => 
 						cmp.elementRef.nativeElement.focus(), 1);
 
-				cmp.keydown.filter(e=> 
-					e.keyCode == 13)
+				keyDownNoAlts
+					.filter(e=> 
+						e.keyCode == 13)
 						.subscribe(e => {
 							jb_ui.wrapWithLauchingElement(context.params.onEnter, 
 								context.setData(tree.selected).setVars({regainFocus: cmp.getKeyboardFocus }), 
@@ -195,7 +199,7 @@ jb.component('tree.keyboard-selection', {
 					})
 							//context.params.onEnter(context.setData(tree.selected))})
 
-				cmp.keydown.filter(e=> e.keyCode == 38 || e.keyCode == 40)
+				keyDownNoAlts.filter(e=> e.keyCode == 38 || e.keyCode == 40)
 					.map(event => {
 						event.stopPropagation();
 						var diff = event.keyCode == 40 ? 1 : -1;
@@ -205,7 +209,7 @@ jb.component('tree.keyboard-selection', {
 					}).subscribe(x=> 
 						tree.selectionEmitter.next(x))
 				// expand collapse
-				cmp.keydown.filter(e=> e.keyCode == 37 || e.keyCode == 39).subscribe(event => {
+				keyDownNoAlts.filter(e=> e.keyCode == 37 || e.keyCode == 39).subscribe(event => {
 						event.stopPropagation();
 						if (tree.selected) 
 							tree.expanded[tree.selected] = (event.keyCode == 39);
@@ -242,6 +246,8 @@ jb.component('tree.keyboard-shortcut', {
 				cmp.keydown.subscribe(event=>{
 	              var keyCode = key.split('+').pop().charCodeAt(0);
 	              if (key == 'Delete') keyCode = 46;
+	              if (key.match(/\+Up$/)) keyCode = 38;
+	              if (key.match(/\+Down$/)) keyCode = 40;
 
 	              var helper = (key.match('([A-Za-z]*)+') || ['',''])[1];
 	              if (helper == 'Ctrl' && !event.ctrlKey) return

@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx;
-    var modifyOperationsEm, pathChangesEm, ControlModel, model;
+    var modifyOperationsEm, pathChangesEm, ControlModel, model, FixReplacingPaths;
     function jbart_base() {
         return jbart.previewjbart || jbart;
     }
@@ -143,6 +143,9 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         pathChangesEm.next(function (pathToFix) {
             return fixIndexOfPath(pathToFix, path, diff);
         });
+    }
+    function fixReplacingPaths(path1, path2) {
+        pathChangesEm.next(new FixReplacingPaths(path1, path2));
     }
     function fixArrayWrapperPath() {
         pathChangesEm.next(function (pathToFix) {
@@ -346,6 +349,17 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         this.fixArray(path);
                     }
                 };
+                ControlModel.prototype.moveInArray = function (path, args) {
+                    var arr = profileValFromPath(parentPath(path));
+                    if (Array.isArray(arr)) {
+                        var index = Number(path.split('~').pop());
+                        var base = args.moveUp ? index - 1 : index;
+                        if (base < 0 || base >= arr.length - 1)
+                            return; // the + elem
+                        arr.splice(base, 2, arr[base + 1], arr[base]);
+                        fixReplacingPaths(parentPath(path) + '~' + base, parentPath(path) + '~' + (base + 1));
+                    }
+                };
                 ControlModel.prototype.writeValue = function (path, args) {
                     jb_core_1.jb.writeValue(profileRefFromPath(path), args.value);
                 };
@@ -521,6 +535,20 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             }());
             exports_1("ControlModel", ControlModel);
             exports_1("model", model = new ControlModel(''));
+            FixReplacingPaths = (function () {
+                function FixReplacingPaths(path1, path2) {
+                    this.path1 = path1;
+                    this.path2 = path2;
+                }
+                FixReplacingPaths.prototype.fix = function (pathToFix) {
+                    if (pathToFix.indexOf(this.path1) == 0)
+                        return pathToFix.replace(this.path1, this.path2);
+                    else if (pathToFix.indexOf(this.path2) == 0)
+                        return pathToFix.replace(this.path2, this.path1);
+                    return pathToFix;
+                };
+                return FixReplacingPaths;
+            }());
         }
     }
 });
