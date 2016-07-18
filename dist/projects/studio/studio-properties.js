@@ -383,7 +383,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             // 							{ $: 'button' ,
             // 								title: 'open sublime',
             // 								style :{$: 'button.studio-properties-toolbar', icon: 'code' },
-            // 								action :{$: 'studio.openSublime', path: '%$path%' },
+            // 								action :{$: 'studio.goto-sublime', path: '%$path%' },
             // 							},
             // 							{ $: 'button' ,
             // 								title: 'edit custom style',

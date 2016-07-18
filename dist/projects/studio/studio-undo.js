@@ -32,6 +32,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     var _this = this;
                     this.history = [];
                     this.index = 0;
+                    this.clipboard = null;
                     studio.modifyOperationsEm.subscribe(function (change) {
                         _this.history.push(change);
                         _this.index = _this.history.length;
@@ -53,6 +54,15 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                         jb_ui.apply(ctx);
                     }
                 };
+                Undo.prototype.copy = function (ctx, path) {
+                    this.clipboard = ctx.run({ $: 'studio.profile-as-text', path: path }, { as: 'string' });
+                };
+                Undo.prototype.paste = function (ctx, path) {
+                    if (this.clipboard != null) {
+                        var ref = ctx.run({ $: 'studio.profile-as-text', path: path });
+                        jb_core_1.jb.writeValue(ref, this.clipboard);
+                    }
+                };
                 return Undo;
             }());
             undo = new Undo();
@@ -61,6 +71,18 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             });
             jb_core_1.jb.component('studio.redo', {
                 impl: function (ctx) { return undo.redo(ctx); }
+            });
+            jb_core_1.jb.component('studio.copy', {
+                params: { path: { as: 'string' } },
+                impl: function (ctx, path) {
+                    return undo.copy(ctx, path);
+                }
+            });
+            jb_core_1.jb.component('studio.paste', {
+                params: { path: { as: 'string' } },
+                impl: function (ctx, path) {
+                    return undo.paste(ctx, path);
+                }
             });
         }
     }

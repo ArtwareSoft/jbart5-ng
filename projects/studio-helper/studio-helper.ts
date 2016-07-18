@@ -71,7 +71,6 @@ jb.component('studio-helper.jb-editor', {
   }
 })
 
-
 jb.component('studio-helper.sample-control', {
   type: 'control', 
   impl: {$: 'group', 
@@ -86,7 +85,6 @@ jb.component('studio-helper.sample-control', {
     {$: 'label', title: '1.0' },
   ]}
 })
-
 
 jb.component('studio-helper.edit-style', {
   type: 'control', 
@@ -140,6 +138,7 @@ jb.component('studio-helper.expandable', {
 jb.component('studio-helper-dummy.label', {
   type: 'control', 
   impl :{$: 'label', 
+        title1: {$filter: '%age% == 42'},
         title: [ '%$people/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'
@@ -198,4 +197,18 @@ jb.component('studio-helper.itemlist-with-find', {
       }
     ]
   }
+})
+
+jb.component('studio-helper.menu-selection', {
+  type: 'control', 
+  impl: {$: 'group', 
+    title: 'menu selection', 
+    features :{$: 'group.menu-keyboard-selection', autoFocus: true }, 
+    controls :[
+        { $: 'pulldown.menu-item', title: '1', icon: 'code', action: ctx => 
+          ctx.resources.window.console.log(1) },
+        { $: 'pulldown.menu-item', title: '2', action: ctx => ctx.resources.window.console.log(2) },
+        { $: 'pulldown.menu-item', title: '3', icon: 'delete', action: ctx => ctx.resources.window.console.log(3) },
+    ]
+  },
 })

@@ -40,7 +40,7 @@ jb.component('studio.profile-as-text', {
 		})
 })
 
-jb.component('studio.openSublime', {
+jb.component('studio.goto-sublime', {
 	type: 'action',
 	params: {
 		path: { as: 'string'}

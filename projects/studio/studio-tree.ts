@@ -52,7 +52,7 @@ jb.component('studio.open-tree-menu', {
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Goto sublime', 
-          action :{$: 'studio.openSublime', path: '%$path%' }
+          action :{$: 'studio.goto-sublime', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item-separator' }, 
         {$: 'pulldown.menu-item', 

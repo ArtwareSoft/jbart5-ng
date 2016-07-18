@@ -16,7 +16,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: [
                         { $: 'dialogFeature.maxZIndexOnClick' },
                         { $: 'dialogFeature.closeWhenClickingOutside' },
-                        { $: 'dialogFeature.cssClassOnLaunchingControl' },
                         { $: 'dialogFeature.nearLauncherLocation' },
                         { $: 'dialogFeature.uniqueDialog', id: 'studio-jb-editor-popup' },
                         { $: 'css.box-shadow',

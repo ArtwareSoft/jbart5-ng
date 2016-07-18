@@ -25,7 +25,6 @@ jb.component('dialog.studio-jb-editor-popup', {
       features: [
         { $: 'dialogFeature.maxZIndexOnClick' },
         { $: 'dialogFeature.closeWhenClickingOutside' },
-        { $: 'dialogFeature.cssClassOnLaunchingControl' },
         { $: 'dialogFeature.nearLauncherLocation' },
         { $: 'dialogFeature.uniqueDialog', id: 'studio-jb-editor-popup' },
         {$: 'css.box-shadow', 

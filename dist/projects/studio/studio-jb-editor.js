@@ -34,6 +34,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     onEnter: { $: 'studio.open-jb-edit-property',
                                         path: '%$globals/jb_editor_selection%'
                                     },
+                                    onRightClickOfExpanded: { $: 'studio.open-jb-editor-menu', path: '%%' },
                                     autoFocus: true
                                 },
                                 { $: 'tree.drag-and-drop' },
@@ -186,6 +187,39 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         }
                     }
                 }); }
+            });
+            jb_core_1.jb.component('studio.open-jb-editor-menu', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'openDialog',
+                    style: { $: 'pulldownPopup.contextMenuPopup' },
+                    content: { $: 'group',
+                        features: { $: 'group.menu-keyboard-selection', autoFocus: true },
+                        controls: [
+                            { $: 'pulldown.menu-item',
+                                title: 'Javascript editor',
+                                icon: 'code',
+                                action: { $: 'studio.editSource', path: '%$path%' }
+                            },
+                            { $: 'pulldown.menu-item',
+                                title: 'Goto sublime',
+                                action: { $: 'studio.goto-sublime', path: '%$path%' }
+                            },
+                            { $: 'pulldown.menu-item',
+                                title: 'Delete',
+                                icon: 'delete',
+                                shortcut: 'Delete',
+                                action: [
+                                    { $: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false },
+                                    { $: 'studio.delete', path: '%$path%' }
+                                ]
+                            }
+                        ]
+                    },
+                    features: { $: 'css.margin', top: '17', left: '31' }
+                }
             });
         }
     }

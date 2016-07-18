@@ -84,8 +84,8 @@ jb.component('studio.open-property-menu', {
           action :{$: 'studio.editSource', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
-          title: 'Open sublime', 
-          action :{$: 'studio.openSublime', path: '%$path%' }
+          title: 'Goto sublime', 
+          action :{$: 'studio.goto-sublime', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Delete', 

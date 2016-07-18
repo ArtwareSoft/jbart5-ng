@@ -106,7 +106,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    var css = studio.profileValFromPath(path);
+                    var css = studio.profileFromPath(path);
                     if (!typeof css == 'string')
                         return css;
                     return css

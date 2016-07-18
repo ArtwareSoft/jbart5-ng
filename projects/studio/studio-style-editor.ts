@@ -99,7 +99,7 @@ jb.component('studio.format-css', {
     path: { as: 'string' }
   }, 
   impl: (ctx,path) => {
-    var css = studio.profileValFromPath(path);
+    var css = studio.profileFromPath(path);
     if (!typeof css == 'string') 
       return css;
     return css

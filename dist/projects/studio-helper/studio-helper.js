@@ -128,6 +128,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('studio-helper-dummy.label', {
                 type: 'control',
                 impl: { $: 'label',
+                    title1: { $filter: '%age% == 42' },
                     title: ['%$people/people%',
                         { $filter: '%age% == 42' },
                         '%name%'
@@ -184,6 +185,20 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         }
                     ]
                 }
+            });
+            jb_1.jb.component('studio-helper.menu-selection', {
+                type: 'control',
+                impl: { $: 'group',
+                    title: 'menu selection',
+                    features: { $: 'group.menu-keyboard-selection', autoFocus: true },
+                    controls: [
+                        { $: 'pulldown.menu-item', title: '1', icon: 'code', action: function (ctx) {
+                                return ctx.resources.window.console.log(1);
+                            } },
+                        { $: 'pulldown.menu-item', title: '2', action: function (ctx) { return ctx.resources.window.console.log(2); } },
+                        { $: 'pulldown.menu-item', title: '3', icon: 'delete', action: function (ctx) { return ctx.resources.window.console.log(3); } },
+                    ]
+                },
             });
         }
     }

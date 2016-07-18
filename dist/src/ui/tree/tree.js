@@ -184,6 +184,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                 params: {
                     onKeyboardSelection: { type: 'action', dynamic: true },
                     onEnter: { type: 'action', dynamic: true },
+                    onRightClickOfExpanded: { type: 'action', dynamic: true },
                     autoFocus: { type: 'boolean' }
                 },
                 impl: function (context) {
@@ -208,16 +209,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                     return cmp.elementRef.nativeElement.focus();
                                 }, 1);
                             keyDownNoAlts
-                                .filter(function (e) {
-                                return e.keyCode == 13;
-                            })
+                                .filter(function (e) { return e.keyCode == 13; })
                                 .subscribe(function (e) {
-                                jb_ui.wrapWithLauchingElement(context.params.onEnter, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
+                                return runActionInTreeContext(context.params.onEnter);
                             });
-                            //context.params.onEnter(context.setData(tree.selected))})
                             keyDownNoAlts.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
                                 .map(function (event) {
-                                event.stopPropagation();
+                                //						event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
                                 var nodes = Array.from(tree.el.querySelectorAll('.treenode'));
                                 var selected = tree.el.querySelector('.treenode.selected');
@@ -226,11 +224,19 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 return tree.selectionEmitter.next(x);
                             });
                             // expand collapse
-                            keyDownNoAlts.filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; }).subscribe(function (event) {
-                                event.stopPropagation();
-                                if (tree.selected)
+                            keyDownNoAlts
+                                .filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; })
+                                .subscribe(function (event) {
+                                //						event.stopPropagation();
+                                var isArray = tree.nodeModel.isArray(tree.selected);
+                                if (!isArray || (tree.expanded[tree.selected] && event.keyCode == 39))
+                                    runActionInTreeContext(context.params.onRightClickOfExpanded);
+                                if (isArray && tree.selected)
                                     tree.expanded[tree.selected] = (event.keyCode == 39);
                             });
+                            function runActionInTreeContext(action) {
+                                jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
+                            }
                         }
                     };
                 }

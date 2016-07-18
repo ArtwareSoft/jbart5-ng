@@ -15,10 +15,6 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         return path.split('~').slice(0, -1).join('~');
     }
     exports_1("parentPath", parentPath);
-    function profileValFromPath(path) {
-        return profileFromPath(path);
-    }
-    exports_1("profileValFromPath", profileValFromPath);
     function compAsStrFromPath(path) {
         return compAsStr(path.split('~')[0]);
     }
@@ -80,7 +76,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 jb_core_1.jb.logError('profileFromPath: non existing path ' + path + ' property: ' + p);
             if (obj && p == '0' && obj[p] == null)
                 return obj;
-            return obj && obj[p];
+            return obj && (obj[p] || obj['$' + p]);
         }, comp);
     }
     function getComp(id) {
@@ -184,12 +180,12 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     this.childrenType = childrenType;
                 }
                 ControlModel.prototype.val = function (path) {
-                    return profileValFromPath(path);
+                    return profileFromPath(path);
                 };
                 ControlModel.prototype.subNodes = function (path, childrenType) {
                     if (childrenType == 'jb-editor')
                         return this.jbEditorSubNodes(path);
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     if (childrenType == 'controls') {
                         var prop = this.controlParam(path);
                         if (!prop || !val[prop])
@@ -215,7 +211,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     }
                 };
                 ControlModel.prototype.jbEditorSubNodes = function (path) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     var comp = getComp(jb_core_1.jb.compName(val || {}));
                     if (Array.isArray(val))
                         return Object.getOwnPropertyNames(val)
@@ -224,25 +220,11 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     else if (comp)
                         return jb_core_1.jb.entries(comp.params)
                             .map(function (p) { return ({ path: path + '~' + p[0], param: p[1] }); })
-                            .filter(function (e) { return profileValFromPath(e.path) != null || e.param.essential; })
+                            .filter(function (e) { return profileFromPath(e.path) != null || e.param.essential; })
                             .map(function (e) { return e.path; });
-                    // return Array.prototype.concat.apply([], // flatmap - flatting array values
-                    // 	jb.entries(comp.params)
-                    // 		.map(p=> path + '~' + p[0])
-                    // 		.map(p=>({ p: p, val: profileValFromPath(p)}))
-                    // 		.filter(x=>x.val != null) // only with values
-                    // 		.map(x=> { // flatten array exculding data (pipeline) and action (actions)
-                    // 			if (Array.isArray(x.val) && ['data','action'].indexOf(this.paramType(x.p)) == -1)
-                    // 				return Object.getOwnPropertyNames(x.val)
-                    // 					.map(x=>x=='length'? '+' : x)
-                    // 					.map(k=>
-                    // 						x.p +'~'+k) 
-                    // 			return [x.p];
-                    // 		})
-                    // )
                 };
                 ControlModel.prototype.jbEditorTitle = function (path, collapsed) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     var compName = jb_core_1.jb.compName(val || {});
                     var prop = path.split('~').pop();
                     if (!isNaN(Number(prop)))
@@ -258,7 +240,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
                 };
                 ControlModel.prototype.title = function (path, collapsed) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     if (path.indexOf('~') == -1)
                         return path;
                     if (this.childrenType == 'jb-editor')
@@ -266,9 +248,11 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return (val && val.title) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
                 };
                 ControlModel.prototype.icon = function (path) {
-                    var parentVal = profileValFromPath(parentPath(path));
-                    if (Array.isArray(parentVal) && path.split('~').pop() == parentVal.length)
-                        return 'add';
+                    if (parentPath(path)) {
+                        var parentVal = profileFromPath(parentPath(path));
+                        if (Array.isArray(parentVal) && path.split('~').pop() == parentVal.length)
+                            return 'add';
+                    }
                     if (this.paramType(path) == 'control') {
                         if (this.compName(path + '~style') == 'layout.horizontal')
                             return 'view_column';
@@ -292,11 +276,11 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return 'radio_button_unchecked';
                 };
                 ControlModel.prototype.compName = function (path) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     return val && jb_core_1.jb.compName(val);
                 };
                 ControlModel.prototype.isOfType = function (path, type) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     var name = val && jb_core_1.jb.compName(val);
                     if (name && jbart.comps[name])
                         return (jbart.comps[name].type || '').indexOf(type) == 0;
@@ -305,13 +289,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return this.title(path, false);
                 };
                 ControlModel.prototype.isArray = function (path) {
-                    if (this.childrenType == 'jb-editor') {
-                        var val = profileValFromPath(path);
-                        if (path.split('~').pop() == '+')
-                            return false;
-                        if (typeof val == 'object')
-                            return true;
-                    }
+                    if (this.childrenType == 'jb-editor')
+                        return typeof profileFromPath(path) == 'object';
                     return this.controlParam(path);
                 };
                 ControlModel.prototype.modify = function (op, path, args, ctx) {
@@ -322,7 +301,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 };
                 ControlModel.prototype._delete = function (path) {
                     var prop = path.split('~').pop();
-                    var parent = profileValFromPath(parentPath(path));
+                    var parent = profileFromPath(parentPath(path));
                     if (Array.isArray(parent)) {
                         var index = Number(prop);
                         parent.splice(index, 1);
@@ -330,7 +309,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     else {
                         if (parent[prop] === undefined) {
                             var pathToDelete = parentPath(path);
-                            var parent = profileValFromPath(parentPath(pathToDelete));
+                            var parent = profileFromPath(parentPath(pathToDelete));
                             var prop = pathToDelete.split('~').pop();
                         }
                         delete parent[prop];
@@ -338,7 +317,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 };
                 // modify operations - must have same interface: path,args
                 ControlModel.prototype.move = function (path, args) {
-                    var dragged = profileValFromPath(args.dragged);
+                    var dragged = profileFromPath(args.dragged);
                     var arr = this.asArray(path);
                     if (arr) {
                         var ctrlParam = this.controlParam(path);
@@ -350,7 +329,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     }
                 };
                 ControlModel.prototype.moveInArray = function (path, args) {
-                    var arr = profileValFromPath(parentPath(path));
+                    var arr = profileFromPath(parentPath(path));
                     if (Array.isArray(arr)) {
                         var index = Number(path.split('~').pop());
                         var base = args.moveUp ? index - 1 : index;
@@ -367,13 +346,13 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
                 };
                 ControlModel.prototype.wrapWithGroup = function (path) {
-                    var result = { $: 'group', controls: [profileValFromPath(path)] };
+                    var result = { $: 'group', controls: [profileFromPath(path)] };
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);
                 };
                 ControlModel.prototype.duplicate = function (path) {
                     var prop = path.split('~').pop();
-                    var val = profileValFromPath(path);
-                    var arr = profileValFromPath(parentPath(path));
+                    var val = profileFromPath(path);
+                    var arr = profileFromPath(parentPath(path));
                     if (Array.isArray(arr)) {
                         var clone = evalProfile(jb_core_1.jb.prettyPrint(val));
                         var index = Number(prop);
@@ -387,7 +366,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     if (!compName || !comp)
                         return;
                     var result = { $: compName };
-                    var existing = profileValFromPath(path);
+                    var existing = profileFromPath(path);
                     // copy properties from existing & default values
                     if (existing && typeof existing == 'object')
                         jb_core_1.jb.entries(comp.params).forEach(function (p) {
@@ -427,7 +406,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         return;
                     var res = JSON.stringify(comp.impl, function (key, val) { return typeof val === 'function' ? '' + val : val; }, 4);
                     // inject param values - only primitives
-                    var profile = profileValFromPath(path);
+                    var profile = profileFromPath(path);
                     jb_core_1.jb.entries(comp.params)
                         .forEach(function (p) {
                         res = res.replace(new RegExp("%\\$" + p[0] + "%", 'g'), '' + (profile[p[0]] || p[1].defaultValue || ''));
@@ -447,7 +426,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         return;
                     if (!isNaN(Number(path.split('~').pop())))
                         path = parentPath(path);
-                    var parent_prof = profileValFromPath(parentPath(path));
+                    var parent_prof = profileFromPath(parentPath(path));
                     var compDef = parent_prof && getComp(jb_core_1.jb.compName(parent_prof));
                     var params = (compDef || {}).params;
                     var paramName = path.split('~').pop();
@@ -462,7 +441,13 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return this.PTsOfType(this.paramType(path), findjBartToLook(path));
                 };
                 ControlModel.prototype.PTsOfType = function (type, jbartToLook) {
-                    var types = (type || '').split(',').map(function (x) { return x.match(/([^\[]*)([])?/)[1]; });
+                    var types = [].concat.apply([], (type || '').split(',')
+                        .map(function (x) {
+                        return x.match(/([^\[]*)([])?/)[1];
+                    })
+                        .map(function (x) {
+                        return x == 'data' ? ['data', 'aggregator'] : [x];
+                    }));
                     var comp_arr = types.map(function (t) { return jb_entries((jbartToLook || jbart_base()).comps)
                         .filter(function (c) {
                         return (c[1].type || 'data').split(',').indexOf(t) != -1
@@ -472,14 +457,14 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return comp_arr.reduce(function (all, ar) { return all.concat(ar); }, []);
                 };
                 ControlModel.prototype.controlParam = function (path) {
-                    var prof = profileValFromPath(path);
+                    var prof = profileFromPath(path);
                     if (!prof)
                         return [];
                     var params = (getComp(jb_core_1.jb.compName(prof)) || {}).params;
                     return jb_core_1.jb.entries(params).filter(function (p) { return (p[1].type || '').indexOf('control') != -1; }).map(function (p) { return p[0]; })[0];
                 };
                 ControlModel.prototype.nonControlParams = function (path) {
-                    var prof = profileValFromPath(path);
+                    var prof = profileFromPath(path);
                     if (!prof)
                         return [];
                     var params = (getComp(jb_core_1.jb.compName(prof)) || {}).params;
@@ -490,7 +475,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         .map(function (p) { return p[0]; });
                 };
                 ControlModel.prototype.asArray = function (path) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     var prop = this.controlParam(path);
                     if (!prop)
                         return console.log('pushing to non array');
@@ -501,7 +486,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return val[prop];
                 };
                 ControlModel.prototype.addArrayItem = function (path, args) {
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     var toAdd = args.toAdd || { $: '' };
                     if (Array.isArray(val))
                         val.push(toAdd);
@@ -511,7 +496,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         jb_core_1.jb.writeValue(profileRefFromPath(path), [val].concat(toAdd));
                 };
                 ControlModel.prototype.fixArray = function (path) {
-                    // var val = profileValFromPath(path);
+                    // var val = profileFromPath(path);
                     // var prop = controlParam(path);
                     // if (!prop) return;
                     // var arr = val[prop];
@@ -523,7 +508,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     if (!isNaN(Number(path.split('~').pop())))
                         return parentPath(path).split('~').pop().replace(/s$/, '');
                     var paramDef = this.paramDef(path);
-                    var val = profileValFromPath(path);
+                    var val = profileFromPath(path);
                     if ((paramDef.type || '').indexOf('[]') != -1) {
                         var length = this.subNodes(path, 'array').length;
                         if (length)

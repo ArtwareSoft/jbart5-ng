@@ -1,7 +1,8 @@
 jb editor
-	ctrl - up&down
-	ctrl-left context menu
-	comp sugar - $filter, $if
+	right context menu
+	copy-paste
+
+	refresh probe without changing the path
 
 build the jbart.io site like https://material.angular.io/
 
@@ -12,7 +13,6 @@ wrap as group should open group and select inner
 			control-tree-select(path,focus)
 
 animation in expand/collapse
-select with groups (look at select2 for css)
 
 fix theme var name
  editable-text.default-style-profile => them.editable-text

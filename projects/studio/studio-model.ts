@@ -17,10 +17,6 @@ export function parentPath(path) {
 	return path.split('~').slice(0,-1).join('~');
 }
 
-export function profileValFromPath(path) {
-	return profileFromPath(path);
-}
-
 export function compAsStrFromPath(path) {
 	return compAsStr(path.split('~')[0])
 }
@@ -85,7 +81,7 @@ function profileFromPath(path) {
 			jb.logError('profileFromPath: non existing path '+ path+ ' property: ' + p);
 		if (obj && p == '0' && obj[p] == null) // flatten one-item array
 			return obj;
-		return obj && obj[p] 
+		return obj && (obj[p] || obj['$'+p]); 
 	}, comp);
 }
 
@@ -115,14 +111,14 @@ export class ControlModel {
 	constructor(public rootPath, private childrenType) { }
 
 	val(path) { 
-		return profileValFromPath(path) 
+		return profileFromPath(path) 
 	}
 
 	subNodes(path,childrenType) {
 		if (childrenType == 'jb-editor')
 			return this.jbEditorSubNodes(path);
 
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		if (childrenType == 'controls') {
 			var prop = this.controlParam(path);
 			if (!prop || !val[prop]) return [];
@@ -147,7 +143,7 @@ export class ControlModel {
 	}
 
 	jbEditorSubNodes(path) {
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		var comp = getComp(jb.compName(val||{}));
 		if (Array.isArray(val))
 			return Object.getOwnPropertyNames(val)
@@ -156,27 +152,13 @@ export class ControlModel {
 		else if (comp)
 			return jb.entries(comp.params)
 					.map(p=> ({ path: path + '~' + p[0], param: p[1]}))
-					.filter(e=>profileValFromPath(e.path) != null || e.param.essential)
+					.filter(e=>profileFromPath(e.path) != null || e.param.essential)
 					.map(e=>e.path)
 
-			// return Array.prototype.concat.apply([], // flatmap - flatting array values
-			// 	jb.entries(comp.params)
-			// 		.map(p=> path + '~' + p[0])
-			// 		.map(p=>({ p: p, val: profileValFromPath(p)}))
-			// 		.filter(x=>x.val != null) // only with values
-			// 		.map(x=> { // flatten array exculding data (pipeline) and action (actions)
-			// 			if (Array.isArray(x.val) && ['data','action'].indexOf(this.paramType(x.p)) == -1)
-			// 				return Object.getOwnPropertyNames(x.val)
-			// 					.map(x=>x=='length'? '+' : x)
-			// 					.map(k=>
-			// 						x.p +'~'+k) 
-			// 			return [x.p];
-			// 		})
-			// )
 	}
 
 	jbEditorTitle(path, collapsed) { 
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		var compName = jb.compName(val||{});
 		var prop = path.split('~').pop();
 		if (!isNaN(Number(prop))) // array value - title as a[i]
@@ -193,7 +175,7 @@ export class ControlModel {
 	}
 
 	title(path, collapsed) {
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		if (path.indexOf('~') == -1)
 			return path;
 
@@ -204,9 +186,11 @@ export class ControlModel {
 	}
 
 	icon(path) {
-		var parentVal = profileValFromPath(parentPath(path));
-		if (Array.isArray(parentVal) && path.split('~').pop() == parentVal.length)
-			return 'add';
+		if (parentPath(path)) {
+			var parentVal = profileFromPath(parentPath(path));
+			if (Array.isArray(parentVal) && path.split('~').pop() == parentVal.length)
+				return 'add';
+		}
 		if (this.paramType(path) == 'control') {
 			if (this.compName(path+'~style') == 'layout.horizontal')
 				return 'view_column'
@@ -233,12 +217,12 @@ export class ControlModel {
 	}
 
 	compName(path) {
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		return val && jb.compName(val);
 	}
 
 	isOfType(path,type) {
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		var name = val && jb.compName(val);
 		if (name && jbart.comps[name])
 			return (jbart.comps[name].type || '').indexOf(type) == 0;
@@ -249,13 +233,9 @@ export class ControlModel {
 	}
 
 	isArray(path) {
-		if (this.childrenType == 'jb-editor') {
-			var val = profileValFromPath(path);
-			if (path.split('~').pop() == '+')
-				return false;
-			if (typeof val == 'object')
-				return true;
-		}
+		if (this.childrenType == 'jb-editor')
+			return typeof profileFromPath(path) == 'object';
+		
 		return this.controlParam(path);
 	}
 
@@ -268,7 +248,7 @@ export class ControlModel {
 
 	_delete(path) {
 		var prop = path.split('~').pop();
-		var parent = profileValFromPath(parentPath(path))
+		var parent = profileFromPath(parentPath(path))
 		if (Array.isArray(parent)) {
 			var index = Number(prop);
 			parent.splice(index, 1);
@@ -277,7 +257,7 @@ export class ControlModel {
 		} else { 
 			if (parent[prop] === undefined) { // array type with one element
 				var pathToDelete = parentPath(path);
-				var parent = profileValFromPath(parentPath(pathToDelete));
+				var parent = profileFromPath(parentPath(pathToDelete));
 				var prop = pathToDelete.split('~').pop();
 			}
 			delete parent[prop]
@@ -286,7 +266,7 @@ export class ControlModel {
 	// modify operations - must have same interface: path,args
 
 	move(path,args) { // drag & drop
-		var dragged = profileValFromPath(args.dragged);
+		var dragged = profileFromPath(args.dragged);
 		var arr = this.asArray(path);
 		if (arr) {
 			var ctrlParam = this.controlParam(path);
@@ -299,7 +279,7 @@ export class ControlModel {
 	}
 
 	moveInArray(path,args) { // drag & drop
-		var arr = profileValFromPath(parentPath(path));
+		var arr = profileFromPath(parentPath(path));
 		if (Array.isArray(arr)) {
 			var index = Number(path.split('~').pop());
 			var base = args.moveUp ? index -1 : index; 
@@ -319,14 +299,14 @@ export class ControlModel {
 	}
 
 	wrapWithGroup(path) {
-		var result = { $: 'group', controls: [ profileValFromPath(path) ] };
+		var result = { $: 'group', controls: [ profileFromPath(path) ] };
 		jb.writeValue(profileRefFromPath(path),result);
 	}
 
 	duplicate(path) {
 		var prop = path.split('~').pop();
-		var val = profileValFromPath(path);
-		var arr = profileValFromPath(parentPath(path));
+		var val = profileFromPath(path);
+		var arr = profileFromPath(parentPath(path));
 		if (Array.isArray(arr)) {
 			var clone = evalProfile(jb.prettyPrint(val));
 			var index = Number(prop);
@@ -340,7 +320,7 @@ export class ControlModel {
 		var comp = compName && getComp(compName);
 		if (!compName || !comp) return;
 		var result = { $: compName };
-		var existing = profileValFromPath(path);
+		var existing = profileFromPath(path);
 		// copy properties from existing & default values
 		if (existing && typeof existing == 'object')
 			jb.entries(comp.params).forEach(p=>{
@@ -381,7 +361,7 @@ export class ControlModel {
 		var res = JSON.stringify(comp.impl, (key, val) => typeof val === 'function' ? ''+val : val , 4);
 
 		// inject param values - only primitives
-		var profile = profileValFromPath(path);
+		var profile = profileFromPath(path);
 		jb.entries(comp.params)
 			.forEach(p=>{ 
 				res = res.replace(new RegExp(`%\\$${p[0]}%`,'g') , ''+(profile[p[0]] || p[1].defaultValue || '') ) })
@@ -404,7 +384,7 @@ export class ControlModel {
 			return;
 		if (!isNaN(Number(path.split('~').pop()))) // array elements
 			path = parentPath(path);
-		var parent_prof = profileValFromPath(parentPath(path));
+		var parent_prof = profileFromPath(parentPath(path));
 		var compDef = parent_prof && getComp(jb.compName(parent_prof));
 		var params = (compDef || {}).params;
 		var paramName = path.split('~').pop();
@@ -420,7 +400,11 @@ export class ControlModel {
 		return this.PTsOfType(this.paramType(path),findjBartToLook(path))
 	}
 	PTsOfType(type,jbartToLook) {
-		var types = (type||'').split(',').map(x=>x.match(/([^\[]*)([])?/)[1]);
+		var types = [].concat.apply([],(type||'').split(',')
+			.map(x=>
+				x.match(/([^\[]*)([])?/)[1])
+			.map(x=> 
+				x=='data' ? ['data','aggregator'] : [x]);
 		var comp_arr = types.map(t=>jb_entries((jbartToLook || jbart_base()).comps)
 			.filter(c=>
 				(c[1].type||'data').split(',').indexOf(t) != -1
@@ -430,13 +414,13 @@ export class ControlModel {
 		return comp_arr.reduce((all,ar)=>all.concat(ar),[]);
 	}
 	controlParam(path) {
-		var prof = profileValFromPath(path);
+		var prof = profileFromPath(path);
 		if (!prof) return [];
 		var params = (getComp(jb.compName(prof)) || {}).params;
 		return jb.entries(params).filter(p=>(p[1].type||'').indexOf('control')!=-1).map(p=>p[0])[0]
 	}
 	nonControlParams(path) {
-		var prof = profileValFromPath(path);
+		var prof = profileFromPath(path);
 		if (!prof) return [];
 		var params = (getComp(jb.compName(prof)) || {}).params;
 		return jb.entries(params)
@@ -446,7 +430,7 @@ export class ControlModel {
 	}
 
 	asArray(path) {
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		var prop = this.controlParam(path);
 		if (!prop)
 			return console.log('pushing to non array');
@@ -458,7 +442,7 @@ export class ControlModel {
 	}
 
 	addArrayItem(path,args) {
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		var toAdd = args.toAdd || {$:''};
 		if (Array.isArray(val))
 			val.push(toAdd)
@@ -469,7 +453,7 @@ export class ControlModel {
 	}
 
 	fixArray(path) { // turn arrays with single element into single object
-		// var val = profileValFromPath(path);
+		// var val = profileFromPath(path);
 		// var prop = controlParam(path);
 		// if (!prop) return;
 		// var arr = val[prop];
@@ -483,7 +467,7 @@ export class ControlModel {
 			return parentPath(path).split('~').pop().replace(/s$/,'');
 
 		var paramDef = this.paramDef(path);
-		var val = profileValFromPath(path);
+		var val = profileFromPath(path);
 		if ((paramDef.type ||'').indexOf('[]') != -1) {
 			var length = this.subNodes(path,'array').length;
 			if (length)

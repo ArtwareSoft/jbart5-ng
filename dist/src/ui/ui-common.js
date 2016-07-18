@@ -88,7 +88,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-ui-utils'], function(exports_1, c
                 impl: function (context, text) {
                     var htmlText = context.data;
                     if (context.data.innerHTML) {
-                        $htmlText = $(htmlText).clone();
+                        var $htmlText = $(htmlText).clone();
                         $htmlText.find('input,textarea').each(function () {
                             this.setAttribute('jb-test-val', this.value);
                         });

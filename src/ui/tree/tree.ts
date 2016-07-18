@@ -4,15 +4,18 @@ import * as jb_rx from 'jb-ui/jb-rx';
 import * as ui_utils from 'jb-ui/jb-ui-utils';
 import {NgClass} from 'angular2/common';
 import {Observable,Subject} from 'rxjs/Rx';
-import {Directive, Component, View, ElementRef, Injector, Input, NgZone} from '@angular/core';
+import {Directive, Component, ElementRef, Injector, Input, NgZone} from '@angular/core';
 
 jb.type('tree.nodeModel');
 jb.type('tree.style'); 
 
+declare var $: any;
+declare var dragula: any;
+
 export interface jbTree {
 	el: any,
 	// injected by TreeSelection feature
-	selectedNode() : NodeModel,
+	selectedNode() : any,
 	triggerOnSelected(string),
 	moveSelection(number), 
 }
@@ -67,6 +70,10 @@ jb.component('tree.ul-li', {
 class TreeNodeLine {
 	@Input('path') path;
 	@Input('tree') tree;
+	model: any;
+	icon: string;
+	title: string;
+
 	ngOnInit() {
 //		this.tree = tree;
 		this.model = this.tree.nodeModel;
@@ -165,6 +172,7 @@ jb.component('tree.keyboard-selection', {
 	params: {
 		onKeyboardSelection: { type: 'action', dynamic: true },
 		onEnter: { type: 'action', dynamic: true },
+		onRightClickOfExpanded: { type: 'action', dynamic: true },
 		autoFocus: { type: 'boolean' }
 	},
 	impl: function(context) {
@@ -190,18 +198,13 @@ jb.component('tree.keyboard-selection', {
 						cmp.elementRef.nativeElement.focus(), 1);
 
 				keyDownNoAlts
-					.filter(e=> 
-						e.keyCode == 13)
-						.subscribe(e => {
-							jb_ui.wrapWithLauchingElement(context.params.onEnter, 
-								context.setData(tree.selected).setVars({regainFocus: cmp.getKeyboardFocus }), 
-								tree.el.querySelector('.treenode.selected'))()
-					})
-							//context.params.onEnter(context.setData(tree.selected))})
+					.filter(e=> e.keyCode == 13)
+						.subscribe(e =>
+							runActionInTreeContext(context.params.onEnter))
 
 				keyDownNoAlts.filter(e=> e.keyCode == 38 || e.keyCode == 40)
 					.map(event => {
-						event.stopPropagation();
+//						event.stopPropagation();
 						var diff = event.keyCode == 40 ? 1 : -1;
 						var nodes = Array.from(tree.el.querySelectorAll('.treenode'));
 						var selected = tree.el.querySelector('.treenode.selected');
@@ -209,11 +212,22 @@ jb.component('tree.keyboard-selection', {
 					}).subscribe(x=> 
 						tree.selectionEmitter.next(x))
 				// expand collapse
-				keyDownNoAlts.filter(e=> e.keyCode == 37 || e.keyCode == 39).subscribe(event => {
-						event.stopPropagation();
-						if (tree.selected) 
+				keyDownNoAlts
+					.filter(e=> e.keyCode == 37 || e.keyCode == 39)
+					.subscribe(event => {
+//						event.stopPropagation();
+						var isArray = tree.nodeModel.isArray(tree.selected);
+						if (!isArray || (tree.expanded[tree.selected] && event.keyCode == 39))
+							runActionInTreeContext(context.params.onRightClickOfExpanded);	
+						if (isArray && tree.selected) 
 							tree.expanded[tree.selected] = (event.keyCode == 39);
 					});
+
+				function runActionInTreeContext(action) {
+					jb_ui.wrapWithLauchingElement(action, 
+						context.setData(tree.selected).setVars({regainFocus: cmp.getKeyboardFocus }), 
+						tree.el.querySelector('.treenode.selected'))()
+				}
 			}
 		}
 	}

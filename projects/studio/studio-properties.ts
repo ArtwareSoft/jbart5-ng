@@ -395,7 +395,7 @@ i { font-size: 16px; margin-right: 1px; color: #909090 }`
 // 							{ $: 'button' ,
 // 								title: 'open sublime',
 // 								style :{$: 'button.studio-properties-toolbar', icon: 'code' },
-// 								action :{$: 'studio.openSublime', path: '%$path%' },
+// 								action :{$: 'studio.goto-sublime', path: '%$path%' },
 // 							},
 // 							{ $: 'button' ,
 // 								title: 'edit custom style',

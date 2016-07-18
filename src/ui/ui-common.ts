@@ -2,6 +2,9 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as ui_utils from 'jb-ui/jb-ui-utils';
 
+declare var $: any;
+declare var jbart: any;
+
 jb.component('addCssClass',{
 	type: 'action',
 	params: {
@@ -81,7 +84,7 @@ jb.component('htmlContainsText',{
 	impl: function(context,text) {
 		var htmlText = context.data;
 		if (context.data.innerHTML) {
-			$htmlText = $(htmlText).clone();
+			var $htmlText = $(htmlText).clone();
 			$htmlText.find('input,textarea').each(function() { 
 				this.setAttribute('jb-test-val',this.value); 
 			});

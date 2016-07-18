@@ -5,6 +5,7 @@ import * as studio from './studio-model';
 class Undo {
 	history = [];
 	index = 0;
+	clipboard = null;
 	constructor() {
 		studio.modifyOperationsEm.subscribe(change=>{
 			this.history.push(change);
@@ -27,17 +28,39 @@ class Undo {
 			jb_ui.apply(ctx);
 		}
 	}
+	copy(ctx,path) {
+		this.clipboard = ctx.run({$:'studio.profile-as-text', path: path}, {as: 'string'});
+	}
+	paste(ctx,path) {
+		if (this.clipboard != null) {
+			var ref = ctx.run({$:'studio.profile-as-text', path: path});
+			jb.writeValue(ref,this.clipboard)
+		}
+	}
 }
 
 var undo = new Undo();
 
-jb.component('studio.undo',{
+jb.component('studio.undo', {
 	impl: ctx => undo.undo(ctx)
 })
 
-jb.component('studio.redo',{
+jb.component('studio.redo', {
 	impl: ctx => undo.redo(ctx)
 })
+
+jb.component('studio.copy', {
+	params: { path: { as: 'string' } },
+	impl: (ctx,path) => 
+		undo.copy(ctx,path)
+})
+
+jb.component('studio.paste', {
+	params: { path: { as: 'string' } },
+	impl: (ctx,path) => 
+		undo.paste(ctx,path)
+})
+
 
 function doSetComp(jbart_base,id,comp) {
 	jbart_base.comps[id] = comp;

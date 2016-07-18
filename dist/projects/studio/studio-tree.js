@@ -60,7 +60,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             },
                             { $: 'pulldown.menu-item',
                                 title: 'Goto sublime',
-                                action: { $: 'studio.openSublime', path: '%$path%' }
+                                action: { $: 'studio.goto-sublime', path: '%$path%' }
                             },
                             { $: 'pulldown.menu-item-separator' },
                             { $: 'pulldown.menu-item',

@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui;
+    var jb_core_1, jb_ui, jb_rx;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,6 +9,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
+            },
+            function (jb_rx_1) {
+                jb_rx = jb_rx_1;
             }],
         execute: function() {
             jb_core_1.jb.component('pulldown.menu-item-separator', {
@@ -65,7 +68,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 },
                 impl: { $: 'customStyle',
                     template: "<div><div class=\"line noselect\" (click)=\"clicked()\">\n  \t\t<i class=\"material-icons\">{{icon}}</i><span class=\"title\">{{title}}</span><span class=\"shortcut\">{{shortcut}}</span>\n  \t\t</div></div>",
-                    css: ".line { display: flex; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}\n\t\t  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }\n\t\t  span { padding-top: 3px }\n          .title { display: block; text-align: left; } \n\t\t  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }\n\t\t  .line:hover { background: #eee; }\n\t\t"
+                    css: ".line { display: flex; width1: 100%; cursor: pointer; background: #fff; font: 13px Arial; height: 24px}\n\t\t  .line.selected { background: #d8d8d8 }\t\n\t\t  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }\n\t\t  span { padding-top: 3px }\n          .title { display: block; text-align: left; } \n\t\t  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }\n\t\t  .line:hover { background: #eee; }\n\t\t"
                 }
             });
             jb_core_1.jb.component('pulldown.topMenuItem', {
@@ -136,6 +139,55 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         { $: 'dialogFeature.cssClassOnLaunchingControl' },
                         { $: 'dialogFeature.nearLauncherLocation' }
                     ]
+                }
+            });
+            jb_core_1.jb.component('group.menu-keyboard-selection', {
+                type: 'feature',
+                params: {
+                    autoFocus: { type: 'boolean' }
+                },
+                impl: function (ctx) {
+                    return ({
+                        init: function (cmp) {
+                            cmp.keydown = new jb_rx.Subject();
+                            if (ctx.params.autoFocus)
+                                setTimeout(function () {
+                                    cmp.elementRef.nativeElement.focus();
+                                    $(cmp.elementRef.nativeElement).find('>*').first()
+                                        .addClass('selected')
+                                        .find('>*').addClass('selected'); // adding selected class at the inner componenet level
+                                });
+                            cmp.keydown
+                                .filter(function (e) { return e.keyCode == 13; })
+                                .subscribe(function (e) {
+                                var selected = $(cmp.elementRef.nativeElement).find('>.selected');
+                                var selectedCtx = (cmp.ctrls[selected.index()] || {}).comp.ctx;
+                                if (selectedCtx && selectedCtx.params.action)
+                                    jb_ui.wrapWithLauchingElement(selectedCtx.params.action, selectedCtx, $(cmp.elementRef.nativeElement).find('>.selected')[0])();
+                            });
+                            cmp.keydown
+                                .filter(function (e) { return e.keyCode == 27; })
+                                .subscribe(function (e) {
+                                return ctx.run({ $: 'closeContainingPopup' });
+                            });
+                            cmp.keydown
+                                .filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
+                                .subscribe(function (e) {
+                                e.stopPropagation();
+                                var diff = event.keyCode == 40 ? 1 : -1;
+                                var elems = $(cmp.elementRef.nativeElement).find('>*');
+                                var selected = $(cmp.elementRef.nativeElement).find('>.selected');
+                                var newSelected = elems[selected.index() + diff] || selected;
+                                $(cmp.elementRef.nativeElement).find('>*,>*>*').removeClass('selected');
+                                $(newSelected).addClass('selected');
+                                $(newSelected).find('>*').addClass('selected'); /// adding the selected class at the inner componenet level
+                            });
+                        },
+                        host: {
+                            '(keydown)': 'keydown.next($event)',
+                            'tabIndex': '0',
+                        }
+                    });
                 }
             });
         }

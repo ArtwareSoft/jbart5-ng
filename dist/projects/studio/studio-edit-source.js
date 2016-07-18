@@ -49,7 +49,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     }
                 }); }
             });
-            jb_core_1.jb.component('studio.openSublime', {
+            jb_core_1.jb.component('studio.goto-sublime', {
                 type: 'action',
                 params: {
                     path: { as: 'string' }
