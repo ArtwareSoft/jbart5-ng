@@ -551,26 +551,36 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     this.ngZone = ngZone;
                 }
                 jBartWidget.prototype.ngOnInit = function () {
+                    var _this = this;
                     this.compId = this.elementRef.nativeElement.getAttribute('compID');
                     this.dialogs = jb_dialog.jb_dialogs.dialogs;
                     if (this.compId)
                         jbart.zones[this.compId] = this.ngZone;
-                    this.draw();
-                    this.initRedrawEm();
+                    if (this.compId == 'studio.all')
+                        jbart.redrawStudio = function () {
+                            return _this.draw();
+                        };
+                    jb_core_1.jb.delay(1).then(function () {
+                        if (jbart.modifyOperationsEm) {
+                            var compIdEm = jbart.studioActivityEm
+                                .map(function () {
+                                return _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
+                            })
+                                .distinctUntilChanged();
+                            jbart.modifyOperationsEm
+                                .debounceTime(300)
+                                .merge(compIdEm)
+                                .subscribe(function () {
+                                return _this.draw();
+                            });
+                        }
+                        else {
+                            _this.draw();
+                        }
+                    });
                 };
                 jBartWidget.prototype.ngAfterViewInit = function () {
                     jbart.widgetLoaded = true; // indication for waitForIframeLoad
-                };
-                jBartWidget.prototype.ngDoCheck = function () {
-                    var _this = this;
-                    if (this.compId == 'studio.all' && !jbart.redrawStudio)
-                        jbart.redrawStudio = function () {
-                            _this.draw(); // this.redrawEm.next(this.compId);
-                        };
-                    if (jbart.studioGlobals) {
-                        this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
-                        this.redrawEm.next(this.compId);
-                    }
                 };
                 jBartWidget.prototype.draw = function () {
                     this.comps = [];
@@ -580,39 +590,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     }
                     catch (e) {
                         jb_core_1.jb.logException(e, '');
-                    }
-                };
-                jBartWidget.prototype.initRedrawEm = function () {
-                    var _this = this;
-                    var cmp = this;
-                    this.redrawEm = new jb_rx.Subject();
-                    this.ngZone.runOutsideAngular(function () {
-                        setInterval(function () {
-                            return _this.redrawEm.next(_this.compId);
-                        }, 600);
-                    });
-                    this.redrawEm
-                        .map(function (id) {
-                        return relevantSource(id);
-                    })
-                        .distinctUntilChanged()
-                        .debounceTime(300) // unify fast changes wait before draw
-                        .skip(1)
-                        .subscribe(function (x) {
-                        return cmp.draw();
-                    });
-                    this.ngZone.onUnstable
-                        .map(function () { return _this.compId; }) // widget to show changed - no need to wait
-                        .distinctUntilChanged()
-                        .skip(1)
-                        .subscribe(function (x) {
-                        return cmp.draw();
-                    });
-                    function relevantSource(compID) {
-                        if (compID == 'studio.all')
-                            return '';
-                        var ns = compID.split('.')[0];
-                        return '' + jbart.previewRefreshCounter + Object.getOwnPropertyNames(jb_core_1.jb.comps).filter(function (id) { return id.indexOf(ns + '.') == 0; }).map(function (id) { return jb_core_1.jb.prettyPrint(jb_core_1.jb.comps[id].impl); }).join('');
                     }
                 };
                 jBartWidget.prototype.getOrCreateInitialCtx = function () {

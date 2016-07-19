@@ -1,8 +1,9 @@
 jb editor
 	right context menu
-	copy-paste
-
+	  more params
+	  vars (for object)
 	refresh probe without changing the path
+	$object
 
 build the jbart.io site like https://material.angular.io/
 

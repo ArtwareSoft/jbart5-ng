@@ -22,7 +22,7 @@ jb_component('call',{
 jb_component('pipeline',{
 	type: "data",
 	params: {
-		items: { type: "data,aggreagtor[]", ignore: true, essential: true }
+		items: { type: "data,aggregator[]", ignore: true, essential: true }
 	},
 	impl: function(context,items) {
 		var data = jb_toarray(context.data);
@@ -249,7 +249,7 @@ jb_component('toggleBooleanValue',{
 	}
 });
 
-jb_component('addToArray',{
+jb_component('addToArray', {
 	type: 'action',
 	params: {
 		array: {},
@@ -273,7 +273,7 @@ jb_component('removeFromArray',{
 	}
 });
 
-jb_component('remove',{
+jb_component('remove', {
 	type: 'action',
 	params: {	value: {}	},
 	impl: function(context,value) {
@@ -282,10 +282,10 @@ jb_component('remove',{
 });
 
 
-jb_component('slice',{
+jb_component('slice', {
 	params: {
-		start: { as: 'number', defaultValue: 0, description: '0-based index' },
-		end: { as: 'number', description: '0-based index of where to end the selection (not including itself)' }
+		start: { as: 'number', defaultValue: 0, description: '0-based index', essential: true },
+		end: { as: 'number', essential: true, description: '0-based index of where to end the selection (not including itself)' }
 	},
 	type: 'aggregator',
 	impl: function(context,begin,end) {
@@ -296,7 +296,9 @@ jb_component('slice',{
 
 jb_component('not',{
 	type: 'boolean',
-	params: { of: { type: 'boolean', as: 'boolean'} },
+	params: { 
+		of: { type: 'boolean', as: 'boolean', essential: true} 
+	},
 	impl: function(context, of) {
 		return !of;
 	}
@@ -304,7 +306,9 @@ jb_component('not',{
 
 jb_component('and',{
 	type: 'boolean',
-	params: { items: { type: 'boolean[]', ignore: true } },
+	params: { 
+		items: { type: 'boolean[]', ignore: true, essential: true } 
+	},
 	impl: function(context) {
 		var items = context.profile.$and || context.profile.items || [];
 		for(var i=0;i<items.length;i++) {
@@ -317,7 +321,9 @@ jb_component('and',{
 
 jb_component('or',{
 	type: 'boolean',
-	params: { items: { type: 'boolean[]', ignore: true } },
+	params: { 
+		items: { type: 'boolean[]', ignore: true, essential: true } 
+	},
 	impl: function(context) {
 		var items = context.profile.$or || context.profile.items || [];
 		for(var i=0;i<items.length;i++) {
@@ -331,7 +337,7 @@ jb_component('or',{
 jb_component('contains',{
 	type: 'boolean',
 	params: {
-		text: { type: 'data[]', as: 'array' },
+		text: { type: 'data[]', as: 'array', essential: true },
 		allText: { defaultValue: '%%', as:'array'}
 	},
 	impl: function(context,text,allText) {
@@ -353,7 +359,7 @@ jb_component('contains',{
 jb_component('startsWith',{
 	type: 'boolean',
 	params: {
-		startsWith: { as: 'string' },
+		startsWith: { as: 'string', essential: true },
 		text: { defaultValue: '%%', as:'string'}
 	},
 	impl: function(context,startsWith,text) {
@@ -364,7 +370,7 @@ jb_component('startsWith',{
 jb_component('endsWith',{
 	type: 'boolean',
 	params: {
-		endsWith: { as: 'string' },
+		endsWith: { as: 'string', essential: true },
 		text: { defaultValue: '%%', as:'string'}
 	},
 	impl: function(context,endsWith,text) {
@@ -376,7 +382,7 @@ jb_component('endsWith',{
 jb_component('filter',{
 	type: 'aggregator',
 	params: {
-		filter: { type: 'boolean', as: 'boolean', dynamic: true }
+		filter: { type: 'boolean', as: 'boolean', dynamic: true, essential: true }
 	},
 	impl: (context,filter) =>
 		jb_toarray(context.data).filter(item =>
@@ -402,7 +408,7 @@ jb_component('toUpperCase',{
 
 jb_component('join',{
 	params: {
-		separator: { as: 'string', defaultValue:',' },
+		separator: { as: 'string', defaultValue:',', essential: true },
 		prefix: { as: 'string' },
 		suffix: { as: 'string' },
 		items: { as: 'array', defaultValue: '%%'},

@@ -188,6 +188,8 @@ jb.component('studio.renderWidget',{
 					waitForIframeLoad(iframe).then(function() {
 						var w = iframe.contentWindow;
 						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
+						w.jbart.modifyOperationsEm = studio.modifyOperationsEm;
+						w.jbart.studioActivityEm = studio.studioActivityEm;
 						jbart.previewWindow = w;
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;
@@ -198,6 +200,8 @@ jb.component('studio.renderWidget',{
 						jb_ui.getZone('studio.all').then(zone=> {
 							zone.onStable.subscribe(function(){
 								w.jbart.studioGlobals = ctx.exp('{%$globals%}');
+								studio.studioActivityEm.next();
+								//console.log('studio.all stable');
 								// refresh preview
 								jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
 								//w.setTimeout(()=>{},1); 

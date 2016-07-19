@@ -491,22 +491,30 @@ export class jBartWidget {
 		this.dialogs = jb_dialog.jb_dialogs.dialogs;
 		if (this.compId)
 			jbart.zones[this.compId] = this.ngZone;
-		this.draw();
-		this.initRedrawEm();
+
+		if (this.compId == 'studio.all') // assign redrawStudio function
+			jbart.redrawStudio = () =>
+				this.draw();
+		jb.delay(1).then(()=>{
+			if (jbart.modifyOperationsEm) { // studio source changes
+				var compIdEm = jbart.studioActivityEm
+					.map(()=>
+							this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
+					.distinctUntilChanged();
+
+				jbart.modifyOperationsEm
+					.debounceTime(300)
+					.merge(compIdEm)
+					.subscribe(()=>
+							this.draw())
+			} else { // no studio
+				this.draw();
+			}
+		})
 	}
+
 	ngAfterViewInit() {
 		jbart.widgetLoaded = true; // indication for waitForIframeLoad
-	}
-	ngDoCheck() {
-		if (this.compId == 'studio.all' && !jbart.redrawStudio) // assign redrawStudio function
-			jbart.redrawStudio = () => {
-				this.draw(); // this.redrawEm.next(this.compId);
-			}
-
-		if (jbart.studioGlobals) { // preview
-			this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
-			this.redrawEm.next(this.compId);
-		}
 	}
 
 	private draw() {
@@ -516,41 +524,6 @@ export class jBartWidget {
 				this.comps = [this.getOrCreateInitialCtx().run({ $: this.compId })];
 		} catch(e) { 
 			jb.logException(e,'') 
-		}
-	}
-
-	private initRedrawEm() {
-		var cmp = this;
-		this.redrawEm = new jb_rx.Subject();
-
-		this.ngZone.runOutsideAngular(() => {
-			setInterval(()=>
-				this.redrawEm.next(this.compId),600)
-		})
-			
-		this.redrawEm 
-//			  .debounceTime(600) // fast user reaction - must be run outside angular - see solution above
-			  .map(id=>
-			  	relevantSource(id))
-			  .distinctUntilChanged()
-			  .debounceTime(300) // unify fast changes wait before draw
-			  .skip(1)
-			  .subscribe(x => 
-			  	cmp.draw())
-
-			this.ngZone.onUnstable
-			  	.map(()=>this.compId) // widget to show changed - no need to wait
-			  	.distinctUntilChanged()
-				.skip(1)
-				.subscribe(
-				  	x => 
-				  	cmp.draw())
-
-		function relevantSource(compID) {
-			if (compID == 'studio.all') 
-				return '';
-			var ns = compID.split('.')[0];
-			return '' + jbart.previewRefreshCounter + Object.getOwnPropertyNames(jb.comps).filter(id => id.indexOf(ns + '.') == 0).map(id => jb.prettyPrint(jb.comps[id].impl)).join('');
 		}
 	}
 

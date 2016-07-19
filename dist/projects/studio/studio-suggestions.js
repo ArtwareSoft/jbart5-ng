@@ -300,7 +300,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                     if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
                         ctx.vars.field.writeValue('=' + ctx.data.toPaste); // need to write from here as we close the popup
                         //      ctx.run({$:'closeContainingPopup'});
-                        suggestionCtx.closeFloatingInput();
+                        suggestionsCtx.closeFloatingInput();
                         var tree = ctx.vars.$tree;
                         tree.expanded[tree.selected] = true;
                         jb_core_1.jb.delay(1).then(function () {

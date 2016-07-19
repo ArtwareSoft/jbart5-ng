@@ -3,6 +3,7 @@ import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 export var modifyOperationsEm = new jb_rx.Subject();
+export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
 export function jbart_base() {
@@ -175,6 +176,7 @@ export class ControlModel {
 	}
 
 	title(path, collapsed) {
+		collapsed = collapsed || this.isArray(path);
 		var val = profileFromPath(path);
 		if (path.indexOf('~') == -1)
 			return path;
@@ -404,7 +406,7 @@ export class ControlModel {
 			.map(x=>
 				x.match(/([^\[]*)([])?/)[1])
 			.map(x=> 
-				x=='data' ? ['data','aggregator'] : [x]);
+				x=='data' ? ['data','aggregator'] : [x]));
 		var comp_arr = types.map(t=>jb_entries((jbartToLook || jbart_base()).comps)
 			.filter(c=>
 				(c[1].type||'data').split(',').indexOf(t) != -1

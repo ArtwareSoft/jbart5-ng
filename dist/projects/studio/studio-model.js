@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx;
-    var modifyOperationsEm, pathChangesEm, ControlModel, model, FixReplacingPaths;
+    var modifyOperationsEm, studioActivityEm, pathChangesEm, ControlModel, model, FixReplacingPaths;
     function jbart_base() {
         return jbart.previewjbart || jbart;
     }
@@ -172,6 +172,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             }],
         execute: function() {
             exports_1("modifyOperationsEm", modifyOperationsEm = new jb_rx.Subject());
+            exports_1("studioActivityEm", studioActivityEm = new jb_rx.Subject());
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
             // The jbart control model return string paths and methods to fix them on change
             ControlModel = (function () {
@@ -240,6 +241,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
                 };
                 ControlModel.prototype.title = function (path, collapsed) {
+                    collapsed = collapsed || this.isArray(path);
                     var val = profileFromPath(path);
                     if (path.indexOf('~') == -1)
                         return path;

@@ -287,7 +287,7 @@ jb.component('studio.jb-paste-suggestion', {
     if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
       ctx.vars.field.writeValue('='+ctx.data.toPaste); // need to write from here as we close the popup
 //      ctx.run({$:'closeContainingPopup'});
-      suggestionCtx.closeFloatingInput();
+      suggestionsCtx.closeFloatingInput();
       var tree = ctx.vars.$tree;
       tree.expanded[tree.selected] = true;
       jb.delay(1).then(()=>{
