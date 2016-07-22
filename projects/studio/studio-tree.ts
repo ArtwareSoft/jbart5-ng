@@ -9,8 +9,7 @@ jb.component('studio.open-control-tree', {
 		style :{$: 'dialog.studio-floating', id: 'studio outline', width: 300 },
 		content :{$: 'studio.control-tree' },
 		menu :{$: 'button', 
-			style :{$: 'button.md-icon', icon: 'menu', 
-			css1: '{position: fixed; margin-top: -10px; margin-left: 230px; }' },
+			style :{$: 'button.md-icon', icon: 'menu' },
 			action :{$: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
 		} 
 	}
@@ -39,15 +38,19 @@ jb.component('studio.open-tree-menu', {
         }, 
         {$: 'pulldown.menu-item-separator' }, 
         {$: 'pulldown.menu-item', 
+          title: 'inteliscript editor', 
+          action :{$: 'studio.open-jb-editor', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
           title: 'javascript editor', 
           action :{$: 'studio.editSource', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
           $vars: {
-            compName: {$: 'studio.compName', path : '%$path%'}
-          },
+            compName :{$: 'studio.compName', path: '%$path%' }
+          }, 
           title: 'Goto %$compName%', 
-          features :{$: 'hidden', showCondition: '%$compName%' },
+          features :{$: 'hidden', showCondition: '%$compName%' }, 
           action :{$: 'studio.goto-path', path: '%$compName%' }
         }, 
         {$: 'pulldown.menu-item', 

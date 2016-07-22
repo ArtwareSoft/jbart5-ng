@@ -216,6 +216,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                 w.jbart.studioGlobals = ctx.exp('{%$globals%}');
                                 w.jbart.modifyOperationsEm = studio.modifyOperationsEm;
                                 w.jbart.studioActivityEm = studio.studioActivityEm;
+                                w.jbart.modifiedCtrlsEm = studio.modifiedCtrlsEm;
                                 jbart.previewWindow = w;
                                 jbart.previewjbart = w.jbart;
                                 jbart.preview_jbart_widgets = w.jbart_widgets;
@@ -294,7 +295,9 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             });
             jb_core_1.jb.component('studio.ref', {
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return studio.profileRefFromPath(path); }
+                impl: function (context, path) {
+                    return studio.profileRefFromPathWithNotification(path, context);
+                }
             });
             jb_core_1.jb.component('studio.val', {
                 params: { path: { as: 'string' } },
@@ -344,6 +347,12 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                     return studio.model.propName(path);
                 }
             });
+            jb_core_1.jb.component('studio.more-params', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return studio.model.jbEditorMoreParams(path);
+                }
+            });
             jb_core_1.jb.component('studio.compName-ref', {
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
@@ -369,11 +378,23 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             });
             jb_core_1.jb.component('studio.wrapWithGroup', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: { path: { as: 'string' } },
                 impl: function (context, path) {
                     return studio.model.modify(studio.model.wrapWithGroup, path, {}, context);
+                }
+            });
+            jb_core_1.jb.component('studio.addProperty', {
+                type: 'action',
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return studio.model.modify(studio.model.addProperty, path, {}, context);
+                }
+            });
+            jb_core_1.jb.component('studio.wrapWithPipeline', {
+                type: 'action',
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return studio.model.modify(studio.model.wrapWithPipeline, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.duplicate', {

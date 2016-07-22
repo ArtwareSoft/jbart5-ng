@@ -6,7 +6,7 @@ import * as jb_rx from 'jb-ui/jb-rx';
 jb.component('editable-number.slider', {
 	type: 'editable-number.style',
 	params: {
-		width: { as: 'string', defaultValue: '200px' },
+		width: { as: 'number', defaultValue: '200' },
 	},
 	impl :{$:'customStyle',
 		template: `<div class="jb-slider">
@@ -17,7 +17,7 @@ jb.component('editable-number.slider', {
 						</div>
 					</div>`,
 		css: `{ height: 30px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 12px; }
-			.slider_scale { position:relative; float: left; background-color:#aaa; width: %$width%; 
+			.slider_scale { position:relative; float: left; background-color:#aaa; width: %$width%px; 
 			  height: 1px; border-radius: 3px; margin-top: 13px; margin-right: 6px; 
 			  margin-bottom: 13px; margin-left: 6px; 
 			  border-bottom: 1px solid #efefef; }

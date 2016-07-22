@@ -16,6 +16,13 @@ export function apply(ctx) {
 	ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{})
 }
 
+export function applyPreview(ctx) {
+    var _win = jbart.previewWindow || window;
+    jb.delay(1).then(()=>
+		jb.entries(_win.jbart.zones).forEach(x=>x[1].run(()=>{}))
+	)
+}
+
 var factory_hash = {}, cssFixes_hash = {};
 class jbComponent {
 	constructor(private ctx) {
@@ -39,8 +46,11 @@ class jbComponent {
 		if (factory_hash[this.hashkey()])
 			this.factory = factory_hash[this.hashkey()];
 		else
+			try { 
 			this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
-
+		} catch (e) {
+			jb.logError('ng compilation error',this, e);
+		}
 		return this.factory;
 	}
 	registerMethods(cmp_ref,parent) { // should be called by the instantiator
@@ -116,10 +126,10 @@ class jbComponent {
 			this.jbEmitter && this.jbEmitter.next('destroy');
 		}
 
-		Cmp.prototype.wait = function () {
+		Cmp.prototype.jbWait = function () {
 			this.readyCounter = (this.readyCounter || 0)+1;
-			if (this.parentCmp && this.parentCmp.wait)
-				this.parentWaiting = this.parentCmp.wait();
+			if (this.parentCmp && this.parentCmp.jbWait)
+				this.parentWaiting = this.parentCmp.jbWait();
 			return {
 				ready: () => {
 					this.readyCounter--;
@@ -341,8 +351,6 @@ function profilePath(profile) {
 	}
 }
 
-
-
 @Component({
     selector: 'jb_comp',
     template: '<div #jb_comp></div>',
@@ -353,21 +361,40 @@ export class jbComp {
   @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
   constructor(private componentResolver:ComponentResolver) {}
 
-  ngOnChanges(changes) {
-  	if (!this.comp) return;
+  ngOnInit() {
+  	// redraw if script changed at studio
+		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+				.flatMap(e=> {
+					if (e.path == this.comp.ctx.path)
+						return [this.comp.ctx.run()];
+					return [];
+				})
+				.filter(x=>x)
+				.startWith(this.comp)
+				.subscribe(comp=> {
+					this.draw(comp);
+					if (comp != this.comp)
+						applyPreview(this.comp.ctx);
+				})
+	
+  }
 
-  	if (this.prev && !this.flatten) { // dynamically changing the component via user interaction
-  		this.prev.destroy();
-  		console.log('jb_comp: dynamically changing the component');
+//ngOnChanges(changes) {
+  draw(comp) {
+  	if (!comp) return;
+
+  	if (this.jbDispose) {
+  		this.jbDispose();
+  		console.log('jb_comp: replacing existing component');
   	}
-  	if (this.comp && this.comp.compile)
-  		var compiled = this.comp.compile(this.componentResolver)
+  	if (comp && comp.compile)
+  		var compiled = comp.compile(this.componentResolver)
   	else
-  		var compiled = this.componentResolver.resolveComponent(this.comp);
+  		var compiled = this.componentResolver.resolveComponent(comp);
 
     compiled.then(componentFactory => {
     	var cmp_ref = this.childView.createComponent(componentFactory);
-    	_this.comp.registerMethods && this.comp.registerMethods(cmp_ref,this);
+    	comp.registerMethods && comp.registerMethods(cmp_ref,this);
         this.flattenjBComp(cmp_ref)
     });
   }
@@ -375,14 +402,16 @@ export class jbComp {
 // very ugly: flatten the structure and pushing the dispose function to the group parent.
   flattenjBComp(cmp_ref) {
   	var cmp = this;
-  	cmp.prev = cmp_ref;
+  	cmp.jbDispose = () => 
+  		cmp_ref.destroy();
+
   	if (!cmp.flatten) 
   		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
 	var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4;
-  	if (cmp._deleted_parent)
+  	if (!parentCmp)
   		return jb.logError('flattenjBComp: can not get parent component');
-  	if (cmp._deleted_parent || !parentCmp)
+  	if (cmp._deleted_parent)
   		return jb.logError('flattenjBComp: deleted parent exists');
 
   	var to_keep = cmp_ref._hostElement.nativeElement;
@@ -397,20 +426,33 @@ export class jbComp {
   		)
 	$(to_delete).replaceWith(to_keep);
   	parentCmp.jb_disposable = parentCmp.jb_disposable || [];
-  	parentCmp.jb_disposable.push(() => { // put it back as it was, then dispose
+  	
+  	cmp.jbDispose = () => { // put it back as it was, then dispose
+  		if (!cmp._deleted_parent) return; // already deleted
   		try {
 			$(to_keep).replaceWith(cmp._deleted_parent);
 			cmp._deleted_parent.appendChild(to_keep);
 		} catch(e) {}
 		cmp._deleted_parent = null;
 		cmp_ref.destroy();
-	})
+  	}
+  	parentCmp.jb_disposable.push(cmp.jbDispose)
   }
 }
 
 export function controlsToGroupEmitter(controlsFunc, cmp) { 
-	var controlsFuncAsObservable = ctx=> jb_rx.Observable.of(controlsFunc(ctx));
-	return cmp.methodHandler.ctrlsEmFunc ? ctx => cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable,ctx,cmp) : controlsFuncAsObservable;
+	var controlsFuncAsObservable = ctx =>
+		(jbart.modifyOperationsEm || jb_rx.Observable.of())
+				.flatMap(e=> {
+					// if (e.path.indexOf(ctx.path) == 0)
+					// 	return [controlsFunc(ctx)]
+					// else
+						return []
+				})
+				.startWith(controlsFunc(ctx))
+
+	return cmp.methodHandler.ctrlsEmFunc ? ctx => 
+		cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable,ctx,cmp) : controlsFuncAsObservable;
 }
 
 export function ngRef(ref,cmp) {
@@ -488,13 +530,14 @@ export class jBartWidget {
 	constructor(private elementRef: ElementRef, public ngZone: NgZone) { }
 	ngOnInit() { 
 		this.compId = this.elementRef.nativeElement.getAttribute('compID');
-		this.dialogs = jb_dialog.jb_dialogs.dialogs;
+		this.dialogs = jbart.jb_dialogs.dialogs;
 		if (this.compId)
 			jbart.zones[this.compId] = this.ngZone;
 
 		if (this.compId == 'studio.all') // assign redrawStudio function
 			jbart.redrawStudio = () =>
 				this.draw();
+
 		jb.delay(1).then(()=>{
 			if (jbart.modifyOperationsEm) { // studio source changes
 				var compIdEm = jbart.studioActivityEm
@@ -502,10 +545,10 @@ export class jBartWidget {
 							this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
 					.distinctUntilChanged();
 
-				jbart.modifyOperationsEm
-					.debounceTime(300)
-					.merge(compIdEm)
-					.subscribe(()=>
+				// jbart.modifyOperationsEm
+				// 	.debounceTime(300)
+				// 	.merge(compIdEm)
+				compIdEm.subscribe(()=>
 							this.draw())
 			} else { // no studio
 				this.draw();

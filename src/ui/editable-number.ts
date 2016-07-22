@@ -14,12 +14,12 @@ jb.component('editable-number',{
     max: { as: 'number' },
     displayString: { as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
     dataString: { as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
-    features: { type: 'feature[]', dynamic: true },
 
     step: { as: 'number', defaultValue: 1, description: 'used by slider' },
     initialPixelsPerUnit: { as: 'number', description: 'used by slider' },
+    features: { type: 'feature[]', dynamic: true },
   },
-  impl: (context,databind,title,style,symbol,min,max,displayString,dataString,features,step,initialPixelsPerUnit) => {
+  impl: (context,databind,title,style,symbol,min,max,displayString,dataString,step,initialPixelsPerUnit) => {
     var ctx = context.setVars({ 
       editableNumber: new editableNumber(symbol,min,max,displayString,dataString,step||1,initialPixelsPerUnit),
       field: jb_ui.twoWayBind(databind)

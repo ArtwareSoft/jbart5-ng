@@ -61,22 +61,29 @@ jb.component('studio.open-property-menu', {
           icon: 'build', 
           action :{$: 'studio.makeLocal', path: '%$path%' }, 
           features :{$: 'hidden', 
-            showCondition :{ $and: [ 
-            		{$: 'endsWith', endsWith: '~style', text: '%$path%' },
-            		{$: 'notEquals', 
-            			item1 :{$: 'studio.compName', path : '%$path%'},
-            			item2: 'customStyle' 
-            		}
-            ]}
+            showCondition :{
+              $and: [
+                {$: 'endsWith', endsWith: '~style', text: '%$path%' }, 
+                {$: 'notEquals', 
+                  item1 :{$: 'studio.compName', path: '%$path%' }, 
+                  item2: 'customStyle'
+                }
+              ]
+            }
           }
         }, 
         {$: 'pulldown.menu-item', 
           $vars: {
-          	compName: {$: 'studio.compName', path : '%$path%'}
-          },
+            compName :{$: 'studio.compName', path: '%$path%' }
+          }, 
           title: 'Goto %$compName%', 
-          features :{$: 'hidden', showCondition: '%$compName%' },
+          features :{$: 'hidden', showCondition: '%$compName%' }, 
           action :{$: 'studio.goto-path', path: '%$compName%' }
+        }, 
+        {$: 'pulldown.menu-item', 
+          title: 'Inteliscript editor', 
+          icon: 'code', 
+          action :{$: 'studio.open-jb-editor', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Javascript editor', 

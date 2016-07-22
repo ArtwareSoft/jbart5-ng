@@ -1,4 +1,4 @@
-System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', 'jb-ui/dialog'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, core_1, common_1, jb_rx, jb_dialog;
+    var jb_core_1, core_1, common_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, directivesObj;
     function apply(ctx) {
         //	console.log('apply');
@@ -18,6 +18,13 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
     }
     exports_1("apply", apply);
+    function applyPreview(ctx) {
+        var _win = jbart.previewWindow || window;
+        jb_core_1.jb.delay(1).then(function () {
+            return jb_core_1.jb.entries(_win.jbart.zones).forEach(function (x) { return x[1].run(function () { }); });
+        });
+    }
+    exports_1("applyPreview", applyPreview);
     function ctrl(context) {
         var ctx = context.setVars({ $model: context.params });
         var styleOptions = defaultStyle(ctx);
@@ -114,8 +121,19 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
         }
     }
     function controlsToGroupEmitter(controlsFunc, cmp) {
-        var controlsFuncAsObservable = function (ctx) { return jb_rx.Observable.of(controlsFunc(ctx)); };
-        return cmp.methodHandler.ctrlsEmFunc ? function (ctx) { return cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable, ctx, cmp); } : controlsFuncAsObservable;
+        var controlsFuncAsObservable = function (ctx) {
+            return (jbart.modifyOperationsEm || jb_rx.Observable.of())
+                .flatMap(function (e) {
+                // if (e.path.indexOf(ctx.path) == 0)
+                // 	return [controlsFunc(ctx)]
+                // else
+                return [];
+            })
+                .startWith(controlsFunc(ctx));
+        };
+        return cmp.methodHandler.ctrlsEmFunc ? function (ctx) {
+            return cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable, ctx, cmp);
+        } : controlsFuncAsObservable;
     }
     exports_1("controlsToGroupEmitter", controlsToGroupEmitter);
     function ngRef(ref, cmp) {
@@ -224,9 +242,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
             },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
-            },
-            function (jb_dialog_1) {
-                jb_dialog = jb_dialog_1;
             }],
         execute: function() {
             core_1.enableProdMode();
@@ -254,7 +269,12 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     if (factory_hash[this.hashkey()])
                         this.factory = factory_hash[this.hashkey()];
                     else
-                        this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
+                        try {
+                            this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
+                        }
+                        catch (e) {
+                            jb_core_1.jb.logError('ng compilation error', this, e);
+                        }
                     return this.factory;
                 };
                 jbComponent.prototype.registerMethods = function (cmp_ref, parent) {
@@ -334,11 +354,11 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     Cmp.prototype.ngOnDestroy = function () {
                         this.jbEmitter && this.jbEmitter.next('destroy');
                     };
-                    Cmp.prototype.wait = function () {
+                    Cmp.prototype.jbWait = function () {
                         var _this = this;
                         this.readyCounter = (this.readyCounter || 0) + 1;
-                        if (this.parentCmp && this.parentCmp.wait)
-                            this.parentWaiting = this.parentCmp.wait();
+                        if (this.parentCmp && this.parentCmp.jbWait)
+                            this.parentWaiting = this.parentCmp.jbWait();
                         return {
                             ready: function () {
                                 _this.readyCounter--;
@@ -471,35 +491,55 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 function jbComp(componentResolver) {
                     this.componentResolver = componentResolver;
                 }
-                jbComp.prototype.ngOnChanges = function (changes) {
+                jbComp.prototype.ngOnInit = function () {
                     var _this = this;
-                    if (!this.comp)
+                    // redraw if script changed at studio
+                    (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+                        .flatMap(function (e) {
+                        if (e.path == _this.comp.ctx.path)
+                            return [_this.comp.ctx.run()];
+                        return [];
+                    })
+                        .filter(function (x) { return x; })
+                        .startWith(this.comp)
+                        .subscribe(function (comp) {
+                        _this.draw(comp);
+                        if (comp != _this.comp)
+                            applyPreview(_this.comp.ctx);
+                    });
+                };
+                //ngOnChanges(changes) {
+                jbComp.prototype.draw = function (comp) {
+                    var _this = this;
+                    if (!comp)
                         return;
-                    if (this.prev && !this.flatten) {
-                        this.prev.destroy();
-                        console.log('jb_comp: dynamically changing the component');
+                    if (this.jbDispose) {
+                        this.jbDispose();
+                        console.log('jb_comp: replacing existing component');
                     }
-                    if (this.comp && this.comp.compile)
-                        var compiled = this.comp.compile(this.componentResolver);
+                    if (comp && comp.compile)
+                        var compiled = comp.compile(this.componentResolver);
                     else
-                        var compiled = this.componentResolver.resolveComponent(this.comp);
+                        var compiled = this.componentResolver.resolveComponent(comp);
                     compiled.then(function (componentFactory) {
                         var cmp_ref = _this.childView.createComponent(componentFactory);
-                        _this.comp.registerMethods && _this.comp.registerMethods(cmp_ref, _this);
+                        comp.registerMethods && comp.registerMethods(cmp_ref, _this);
                         _this.flattenjBComp(cmp_ref);
                     });
                 };
                 // very ugly: flatten the structure and pushing the dispose function to the group parent.
                 jbComp.prototype.flattenjBComp = function (cmp_ref) {
                     var cmp = this;
-                    cmp.prev = cmp_ref;
+                    cmp.jbDispose = function () {
+                        return cmp_ref.destroy();
+                    };
                     if (!cmp.flatten)
                         return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
                     var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4;
-                    if (cmp._deleted_parent)
+                    if (!parentCmp)
                         return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
-                    if (cmp._deleted_parent || !parentCmp)
+                    if (cmp._deleted_parent)
                         return jb_core_1.jb.logError('flattenjBComp: deleted parent exists');
                     var to_keep = cmp_ref._hostElement.nativeElement;
                     var to_delete = to_keep.parentNode;
@@ -513,7 +553,9 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                     });
                     $(to_delete).replaceWith(to_keep);
                     parentCmp.jb_disposable = parentCmp.jb_disposable || [];
-                    parentCmp.jb_disposable.push(function () {
+                    cmp.jbDispose = function () {
+                        if (!cmp._deleted_parent)
+                            return; // already deleted
                         try {
                             $(to_keep).replaceWith(cmp._deleted_parent);
                             cmp._deleted_parent.appendChild(to_keep);
@@ -521,7 +563,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                         catch (e) { }
                         cmp._deleted_parent = null;
                         cmp_ref.destroy();
-                    });
+                    };
+                    parentCmp.jb_disposable.push(cmp.jbDispose);
                 };
                 __decorate([
                     core_1.Input(), 
@@ -553,7 +596,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                 jBartWidget.prototype.ngOnInit = function () {
                     var _this = this;
                     this.compId = this.elementRef.nativeElement.getAttribute('compID');
-                    this.dialogs = jb_dialog.jb_dialogs.dialogs;
+                    this.dialogs = jbart.jb_dialogs.dialogs;
                     if (this.compId)
                         jbart.zones[this.compId] = this.ngZone;
                     if (this.compId == 'studio.all')
@@ -567,10 +610,10 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx', '
                                 return _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
                             })
                                 .distinctUntilChanged();
-                            jbart.modifyOperationsEm
-                                .debounceTime(300)
-                                .merge(compIdEm)
-                                .subscribe(function () {
+                            // jbart.modifyOperationsEm
+                            // 	.debounceTime(300)
+                            // 	.merge(compIdEm)
+                            compIdEm.subscribe(function () {
                                 return _this.draw();
                             });
                         }

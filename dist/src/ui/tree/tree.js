@@ -149,7 +149,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 .subscribe(function (x) {
                                 jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)();
                             });
-                            tree.selectionEmitter.subscribe(function (selected) {
+                            var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind, context)
+                                .distinctUntilChanged()) || jb_rx.Observable.of();
+                            tree.selectionEmitter
+                                .merge(databindObs)
+                                .subscribe(function (selected) {
                                 if (tree.selected == selected)
                                     return;
                                 tree.selected = selected;

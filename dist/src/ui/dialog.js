@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx, core_1;
-    var jb_dialogs;
+    var jbDialogs;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -23,7 +23,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 params: {
                     id: { as: 'string' },
                     style: { type: 'dialog.style', dynamic: true, defaultValue: { $: 'dialog.default' } },
-                    content: { type: 'control', dynamic: true },
+                    content: { type: 'control', dynamic: true, defaultValue: { $: 'group' }, forceDefaultCreation: true },
                     menu: { type: 'control', dynamic: true },
                     title: { as: 'string', dynamic: true },
                     onOK: { type: 'action', dynamic: true },
@@ -48,7 +48,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             cmp.dialog.em.next({ type: 'attach' });
                         }
                     });
-                    jb_dialogs.addDialog(dialog, ctx);
+                    jbart.jb_dialogs.addDialog(dialog, ctx);
                 }
             });
             jb_core_1.jb.component('closeContainingPopup', {
@@ -210,7 +210,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                         }
                     });
                     function setAsMaxZIndex() {
-                        var maxIndex = jb_dialogs.dialogs.reduce(function (max, d) {
+                        var maxIndex = jbart.jb_dialogs.dialogs.reduce(function (max, d) {
                             return Math.max(max, (d.$el && parseInt(d.$el.css('z-index')) || 100) + 1);
                         }, minZIndex || 100);
                         dialog.$el.css('z-index', maxIndex);
@@ -266,27 +266,26 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                     };
                 }
             });
-            exports_1("jb_dialogs", jb_dialogs = {
-                dialogs: [],
-                _initDialogs: function () {
-                },
-                addDialog: function (dialog, context) {
-                    this._initDialogs();
+            jbDialogs = (function () {
+                function jbDialogs() {
+                    this.dialogs = [];
+                }
+                jbDialogs.prototype.addDialog = function (dialog, context) {
+                    var self = this;
                     dialog.context = context;
-                    var dialogs = this.dialogs;
-                    dialogs.forEach(function (d) {
+                    this.dialogs.forEach(function (d) {
                         return d.em.next({ type: 'new-dialog', dialog: dialog });
                     });
-                    dialogs.push(dialog);
+                    this.dialogs.push(dialog);
                     if (dialog.modal)
                         $('body').prepend('<div class="modal-overlay"></div>');
                     jb_ui.apply(context);
                     dialog.close = function (args) {
                         dialog.em.next({ type: 'close' });
                         dialog.em.complete();
-                        var index = dialogs.indexOf(dialog);
+                        var index = self.dialogs.indexOf(dialog);
                         if (index != -1)
-                            dialogs.splice(index, 1);
+                            self.dialogs.splice(index, 1);
                         if (dialog.onOK && args && args.OK)
                             try {
                                 dialog.onOK(context);
@@ -298,13 +297,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             $('.modal-overlay').first().remove();
                         jb_ui.apply(context);
                     };
-                },
-                closeAll: function () {
+                };
+                jbDialogs.prototype.closeAll = function () {
                     this.dialogs.forEach(function (d) {
                         return d.close();
                     });
-                }
-            });
+                };
+                return jbDialogs;
+            }());
+            jbart.jb_dialogs = new jbDialogs;
         }
     }
 });

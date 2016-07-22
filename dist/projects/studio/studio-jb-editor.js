@@ -11,6 +11,25 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 studio = studio_1;
             }],
         execute: function() {
+            jb_core_1.jb.component('studio.open-jb-editor', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'openDialog',
+                    content: { $: 'studio.jb-editor', path: '%$path%' },
+                    style: { $: 'dialog.studio-floating',
+                        id: 'jb editor',
+                        width: '700',
+                        height: '400'
+                    },
+                    menu: { $: 'button',
+                        style: { $: 'button.md-icon', icon: 'menu' },
+                        action: { $: 'studio.open-jb-editor-menu', path: '%$globals/jb_editor_selection%' }
+                    },
+                    title: 'Inteliscript'
+                }
+            });
             jb_core_1.jb.component('studio.jb-editor', {
                 type: 'control',
                 params: {
@@ -195,30 +214,93 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: { $: 'openDialog',
                     style: { $: 'pulldownPopup.contextMenuPopup' },
-                    content: { $: 'group',
-                        features: { $: 'group.menu-keyboard-selection', autoFocus: true },
-                        controls: [
-                            { $: 'pulldown.menu-item',
-                                title: 'Javascript editor',
-                                icon: 'code',
-                                action: { $: 'studio.editSource', path: '%$path%' }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Goto sublime',
-                                action: { $: 'studio.goto-sublime', path: '%$path%' }
-                            },
-                            { $: 'pulldown.menu-item',
-                                title: 'Delete',
-                                icon: 'delete',
-                                shortcut: 'Delete',
+                    content: { $: 'studio.jb-editor-menu', path: '%$path%' },
+                    features: { $: 'css.margin', top: '17', left: '31' }
+                }
+            });
+            jb_core_1.jb.component('studio.jb-editor-menu', {
+                type: 'control',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'group',
+                    features: { $: 'group.menu-keyboard-selection', autoFocus: true },
+                    controls: [
+                        { $: 'dynamic-controls',
+                            controlItems: { $: 'studio.more-params', path: '%$path%' },
+                            genericControl: { $: 'pulldown.menu-item',
+                                title: [
+                                    '%$controlItem%',
+                                    { $: 'suffix', separator: '~' }
+                                ],
                                 action: [
-                                    { $: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false },
-                                    { $: 'studio.delete', path: '%$path%' }
+                                    { $: 'studio.addProperty', path: '%$controlItem%' },
+                                    { $: 'writeValue',
+                                        to: '%$globals/jb_editor_selection%',
+                                        value: '%$controlItem%'
+                                    },
+                                    { $: 'closeContainingPopup' },
+                                    { $: 'tree.regain-focus' }
                                 ]
                             }
-                        ]
-                    },
-                    features: { $: 'css.margin', top: '17', left: '31' }
+                        },
+                        { $: 'divider',
+                            style: { $: 'divider.br' },
+                            title: 'divider'
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Javascript editor',
+                            icon: 'code',
+                            action: { $: 'studio.editSource', path: '%$path%' }
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Goto sublime',
+                            action: { $: 'studio.goto-sublime', path: '%$path%' }
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Delete',
+                            icon: 'delete',
+                            shortcut: 'Delete',
+                            action: [
+                                { $: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false },
+                                { $: 'studio.delete', path: '%$path%' }
+                            ]
+                        },
+                        { $: 'divider',
+                            style: { $: 'divider.br' },
+                            title: 'divider'
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Wrap with pipeline',
+                            icon: '',
+                            shortcut: '',
+                            action: { $: 'studio.wrapWithPipeline', path: '%$path%' }
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Add property',
+                            icon: '',
+                            shortcut: '',
+                            action: { $: 'openDialog',
+                                id: 'add property',
+                                modal: true,
+                                title: 'Add Property',
+                                content: { $: 'group',
+                                    controls: [
+                                        { $: 'editable-text',
+                                            style: { $: 'editable-text.md-input' },
+                                            title: 'name',
+                                            databind: ''
+                                        }
+                                    ],
+                                    features: { $: 'css.padding', top: '9', left: '19' }
+                                },
+                                style: { $: 'dialog.md-dialog-ok-cancel',
+                                    okLabel: 'OK',
+                                    cancelLabel: 'Cancel'
+                                }
+                            }
+                        }
+                    ]
                 }
             });
         }

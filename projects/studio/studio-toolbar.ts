@@ -17,7 +17,7 @@ jb.component('studio.pickAndOpen', {
 })
 
 jb.component('studio.toolbar', {
-  type: 'control',
+  type: 'control', 
   impl :{$: 'group', 
     style :{$: 'studio-toolbar' }, 
     controls: [
@@ -60,7 +60,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'jbEditor', 
-        action :{$: 'studio.openjbEditor' }, 
+        action :{$: 'studio.open-jb-editor', path: '%$globals/profile_path%' }, 
         style :{$: 'button.md-icon', icon: 'build' }
       }, 
       {$: 'button', 

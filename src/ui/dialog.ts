@@ -8,7 +8,7 @@ jb.component('openDialog', {
 	params: {
 		id: { as: 'string' },
 		style: { type: 'dialog.style', dynamic: true, defaultValue: { $:'dialog.default' }	},
-		content: { type: 'control', dynamic: true },
+		content: { type: 'control', dynamic: true, defaultValue :{$: 'group'}, forceDefaultCreation: true },
 		menu: { type: 'control', dynamic: true },
 		title: { as: 'string', dynamic: true  },
 		onOK: { type: 'action', dynamic: true },
@@ -34,7 +34,7 @@ jb.component('openDialog', {
 				cmp.dialog.em.next({ type: 'attach' });
 			}
 		});
-		jb_dialogs.addDialog(dialog,ctx);
+		jbart.jb_dialogs.addDialog(dialog,ctx);
 	}
 })
 
@@ -210,7 +210,7 @@ jb.component('dialogFeature.maxZIndexOnClick', {
 		})
 
 		function setAsMaxZIndex() {
-			var maxIndex = jb_dialogs.dialogs.reduce(function(max,d) { 
+			var maxIndex = jbart.jb_dialogs.dialogs.reduce(function(max,d) { 
 				return Math.max(max,(d.$el && parseInt(d.$el.css('z-index')) || 100)+1)
 			}, minZIndex || 100)
 
@@ -274,17 +274,16 @@ jb.component('dialogFeature.dragTitle', {
 });
 
 
-export var jb_dialogs = {
-	dialogs: [],
-	_initDialogs: function() {
-	},
-	addDialog: function(dialog,context) {
-		this._initDialogs();
+class jbDialogs {
+	constructor() {
+	 	this.dialogs = []
+	}
+	addDialog(dialog,context) {
+		var self = this;
 		dialog.context = context;
-		var dialogs = this.dialogs;
-		dialogs.forEach(d=>
+		this.dialogs.forEach(d=>
 			d.em.next({ type: 'new-dialog', dialog: dialog }));
-		dialogs.push(dialog);
+		this.dialogs.push(dialog);
 		if (dialog.modal)
 			$('body').prepend('<div class="modal-overlay"></div>');
 
@@ -293,9 +292,9 @@ export var jb_dialogs = {
 		dialog.close = function(args) {
 			dialog.em.next({type: 'close'});
 			dialog.em.complete();
-			var index = dialogs.indexOf(dialog);
+			var index = self.dialogs.indexOf(dialog);
 			if (index != -1)
-				dialogs.splice(index, 1);
+				self.dialogs.splice(index, 1);
 			if (dialog.onOK && args && args.OK) 
 				try { 
 					dialog.onOK(context);
@@ -306,9 +305,11 @@ export var jb_dialogs = {
 				$('.modal-overlay').first().remove();
 			jb_ui.apply(context);
 		}
-	},
-	closeAll: function() {
+	}
+	closeAll() {
 		this.dialogs.forEach(d=>
 			d.close());
 	}
 }
+
+jbart.jb_dialogs = new jbDialogs;

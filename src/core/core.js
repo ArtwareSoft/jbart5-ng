@@ -3,18 +3,17 @@ function jb_run(context,parentParam,settings) {
     var profile = context.profile;
     // if (jbart.trace_paths)
     //   console.log('path: ' +context.path);
-    if (jbart.probe && context.path && jbart.probe.trace == context.path && !(settings || {}).noprobe ) {
-        var input = new jbCtx(context,{});
-        var out = jb_run(context,parentParam,{ noprobe: true })
-        jbart.probe[context.path].push({in: input, out: jb_val(out)});
-        return out;
+    if (jbart.probe && jbart.probe.pathToTrace && !(settings || {}).noprobe) {
+      jbart.probe.traceGaps(context,parentParam);
+      if (context.path && jbart.probe.pathToTrace == context.path )
+          return jbart.probe.record(context,parentParam)
     }
     if (profile === null) return;
     if (profile.$debugger == 0) debugger;
     if (profile.$asIs) return profile.$asIs;
     if (typeof profile === 'object' && Object.getOwnPropertyNames(profile).length == 0)
       return;
-    var run = prepare();
+    var run = jb_prepare(context,parentParam);
     var jstype = parentParam && parentParam.as;
     switch (run.type) {
       case 'booleanExp': return jb_bool_expression(profile, context);
@@ -63,84 +62,85 @@ function jb_run(context,parentParam,settings) {
     jb_logException(e,'exception while running jb_run');
   }
 
-  function prepare() {
-    var profile = context.profile;
-    var profile_jstype = typeof profile;
-    var parentParam_type = parentParam && parentParam.type;
-    var jstype = parentParam && parentParam.as;
-    var isArray = Array.isArray(profile);
-    var firstProp = !isArray && profile_jstype === 'object' && jb_firstProp(profile);
-
-    if (profile_jstype === 'string' && parentParam_type === 'boolean') return { type: 'booleanExp' };
-    if (profile_jstype === 'boolean' || profile_jstype === 'number' || parentParam_type == 'asIs') return { type: 'asIs' };// native primitives
-    if (profile_jstype === 'string' && jstype === 'ref') return { type: 'expressionRef' };
-    if (profile_jstype === 'object' && jstype === 'object') return { type: 'object' };
-    if (profile_jstype === 'string') return { type: 'expression' };
-    if (profile_jstype === 'function') return { type: 'function' };
-    if (firstProp && firstProp.indexOf('$') != 0) return { type: 'asIs' };
-    if (profile_jstype === 'object' && (profile instanceof RegExp)) return { type: 'asIs' };
-    if (!profile) return { type: 'asIs' };
-
-    if (isArray) {
-      if (!profile.length) return { type: 'null' };
-      if (!parentParam || !parentParam.type || parentParam.type === 'data' || parentParam.type === 'boolean' ) // pipeline as default for array
-        return { type: (parentParam && parentParam.as === 'observable') ? 'rx-pipeline' : 'pipeline' };
-      if (parentParam_type === 'action' || parentParam_type === 'action[]' && profile.isArray)
-        return { type: 'foreach' };
-    } else if (profile.$if) 
-    return {
-        type: 'if',
-        ifContext: jb_ctx(context,{profile: profile.$if, path: '$if'}),
-        IfParentParam: { type: 'boolean', as:'boolean' },
-        thenContext: jb_ctx(context,{profile: profile.then || 0 , path: '~then'}),
-        thenParentParam: { type: parentParam_type, as:jstype },
-        elseContext: jb_ctx(context,{profile: profile['else'] || 0 , path: '~else'}),
-        elseParentParam: { type: parentParam_type, as:jstype }
-      }
-    var comp_name = jb_compName(profile);
-    if (!comp_name) 
-      return { type: 'ignore' }
-    var comp = jbart.comps[comp_name];
-    if (!comp && comp_name) { jb_logError('component ' + comp_name + ' is not defined'); return { type:'null' } }
-    if (!comp.impl) { jb_logError('component ' + comp_name + ' has no implementation'); return { type:'null' } }
-
-    var ctx = new jbCtx(context,{});
-    ctx.parentParam = parentParam;
-    ctx.params = {};
-    paramsArray = [];
-    var first = true;
-
-    for (var p in comp.params) {
-      var param = comp.params[p];
-      var val = profile[p];
-      if (!val && first && firstProp != '$') // $comp sugar
-        val = profile[firstProp]; 
-      if (val != null && (param.type||'').indexOf('[]') > -1 && !Array.isArray(val)) // fix to array value. e.g. single feature not in array
-         val = [val];
-      var valOrDefault = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : [];
-
-      if (!param.ignore) {
-        if (param.dynamic) {
-          var func = jb_funcDynamicParam(ctx,valOrDefault,param,p);
-          func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
-          paramsArray.push( { name: p, type: 'function', func: func } );
-        } else if (param.type && param.type.indexOf('[]') > -1 && jb_isArray(valOrDefault)) // array of profiles
-          paramsArray.push( { name: p, type: 'array', array: valOrDefault, param: {} } );
-        else paramsArray.push( { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault, path: p}), param: param } );
-      }
-      first = false;
-    }
-
-    if (typeof comp.impl === 'function')
-      return { type: 'profile', impl: jb_func(comp_name.replace(/[^a-zA-Z0-9]/g,'_'),comp.impl), ctx: ctx, paramsArray: paramsArray }
-    else
-      return { type:'profile', ctx: jb_ctx(ctx,{profile: comp.impl, comp: comp_name, path: ''}), paramsArray: paramsArray };
-  }
-
   function prepareGCArgs(ctx) {
     return [ctx].concat(jb_map(ctx.params, function(p) {return [p]}));
   }
 }
+
+function jb_prepare(context,parentParam) {
+  var profile = context.profile;
+  var profile_jstype = typeof profile;
+  var parentParam_type = parentParam && parentParam.type;
+  var jstype = parentParam && parentParam.as;
+  var isArray = Array.isArray(profile);
+  var firstProp = !isArray && profile_jstype === 'object' && jb_firstProp(profile);
+
+  if (profile_jstype === 'string' && parentParam_type === 'boolean') return { type: 'booleanExp' };
+  if (profile_jstype === 'boolean' || profile_jstype === 'number' || parentParam_type == 'asIs') return { type: 'asIs' };// native primitives
+  if (profile_jstype === 'string' && jstype === 'ref') return { type: 'expressionRef' };
+  if (profile_jstype === 'object' && jstype === 'object') return { type: 'object' };
+  if (profile_jstype === 'string') return { type: 'expression' };
+  if (profile_jstype === 'function') return { type: 'function' };
+  if (firstProp && firstProp.indexOf('$') != 0) return { type: 'asIs' };
+  if (profile_jstype === 'object' && (profile instanceof RegExp)) return { type: 'asIs' };
+  if (!profile) return { type: 'asIs' };
+
+  if (isArray) {
+    if (!profile.length) return { type: 'null' };
+    if (!parentParam || !parentParam.type || parentParam.type === 'data' || parentParam.type === 'boolean' ) // pipeline as default for array
+      return { type: (parentParam && parentParam.as === 'observable') ? 'rx-pipeline' : 'pipeline' };
+    if (parentParam_type === 'action' || parentParam_type === 'action[]' && profile.isArray)
+      return { type: 'foreach' };
+  } else if (profile.$if) 
+  return {
+      type: 'if',
+      ifContext: jb_ctx(context,{profile: profile.$if, path: '$if'}),
+      IfParentParam: { type: 'boolean', as:'boolean' },
+      thenContext: jb_ctx(context,{profile: profile.then || 0 , path: '~then'}),
+      thenParentParam: { type: parentParam_type, as:jstype },
+      elseContext: jb_ctx(context,{profile: profile['else'] || 0 , path: '~else'}),
+      elseParentParam: { type: parentParam_type, as:jstype }
+    }
+  var comp_name = jb_compName(profile);
+  if (!comp_name) 
+    return { type: 'ignore' }
+  var comp = jbart.comps[comp_name];
+  if (!comp && comp_name) { jb_logError('component ' + comp_name + ' is not defined'); return { type:'null' } }
+  if (!comp.impl) { jb_logError('component ' + comp_name + ' has no implementation'); return { type:'null' } }
+
+  var ctx = new jbCtx(context,{});
+  ctx.parentParam = parentParam;
+  ctx.params = {};
+  paramsArray = [];
+  var first = true;
+
+  for (var p in comp.params) {
+    var param = comp.params[p];
+    var val = profile[p];
+    if (!val && first && firstProp != '$') // $comp sugar
+      val = profile[firstProp]; 
+    if (val != null && (param.type||'').indexOf('[]') > -1 && !Array.isArray(val)) // fix to array value. e.g. single feature not in array
+       val = [val];
+    var valOrDefault = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : [];
+
+    if (!param.ignore) {
+      if (param.dynamic) {
+        var func = jb_funcDynamicParam(ctx,valOrDefault,param,p);
+        func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
+        paramsArray.push( { name: p, type: 'function', func: func } );
+      } else if (param.type && param.type.indexOf('[]') > -1 && jb_isArray(valOrDefault)) // array of profiles
+        paramsArray.push( { name: p, type: 'array', array: valOrDefault, param: {} } );
+      else paramsArray.push( { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault, path: p}), param: param } );
+    }
+    first = false;
+  }
+
+  if (typeof comp.impl === 'function')
+    return { type: 'profile', impl: jb_func(comp_name.replace(/[^a-zA-Z0-9]/g,'_'),comp.impl), ctx: ctx, paramsArray: paramsArray }
+  else
+    return { type:'profile', ctx: jb_ctx(ctx,{profile: comp.impl, comp: comp_name, path: ''}), paramsArray: paramsArray };
+}
+
 
 function jb_funcDynamicParam(ctx,profileToRun,param,paramName) {
    if (param && param.type && param.type.indexOf('[') != -1 && jb_isArray(profileToRun)) // array

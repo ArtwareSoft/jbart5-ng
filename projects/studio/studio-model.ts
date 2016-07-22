@@ -6,6 +6,17 @@ export var modifyOperationsEm = new jb_rx.Subject();
 export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
+export var modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
+    var path_parts = x.path.split('~');
+    var sub_paths = path_parts.map((e,i)=>
+      path_parts.slice(0,i+1).join('~')).reverse();
+    var firstCtrl = sub_paths
+      .filter(p=>
+      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
+      [0];
+     return firstCtrl ? [{ path: firstCtrl}] : [];
+})
+
 export function jbart_base() {
 	return jbart.previewjbart || jbart;
 }
@@ -35,6 +46,21 @@ export function message(message,error) {
 		$('.studio-message').css('animation','slide_from_top 5s ease')
 	)
 
+}
+
+export function profileRefFromPathWithNotification(path,ctx) {
+	var _ref = profileRefFromPath(path);
+	return {
+		$jb_val: function(value) {
+			if (typeof value == 'undefined') 
+				return _ref.$jb_val(value);
+			if (_ref.$jb_val() == value) return;
+			var comp = path.split('~')[0];
+			var before = compAsStr(comp);
+			_ref.$jb_val(value);
+			notifyModifcation(path,before,ctx);
+		}
+	}
 }
 
 export function profileRefFromPath(path) {
@@ -122,8 +148,11 @@ export class ControlModel {
 		var val = profileFromPath(path);
 		if (childrenType == 'controls') {
 			var prop = this.controlParam(path);
-			if (!prop || !val[prop]) return [];
-			return childPath(prop);
+			if (!prop || !val[prop]) 
+				var out = [];
+			else
+				var out = childPath(prop);
+			return out.concat(this.innerControlPaths(path));
 		} else if (childrenType == 'non-controls') {
 			return this.nonControlParams(path).map(prop=>path + '~' + prop)
 		} else if (childrenType == 'array') {
@@ -143,6 +172,15 @@ export class ControlModel {
 		}
 	}
 
+	innerControlPaths(path) {
+		var out = ['action~content'] // add more inner paths here
+			.map(x=>path+'~'+x)
+			.filter(p=>
+				this.paramType(p) == 'control');
+		return out;
+	}
+
+
 	jbEditorSubNodes(path) {
 		var val = profileFromPath(path);
 		var comp = getComp(jb.compName(val||{}));
@@ -155,8 +193,20 @@ export class ControlModel {
 					.map(p=> ({ path: path + '~' + p[0], param: p[1]}))
 					.filter(e=>profileFromPath(e.path) != null || e.param.essential)
 					.map(e=>e.path)
-
 	}
+
+	jbEditorMoreParams(path) {
+		var val = profileFromPath(path);
+		var comp = getComp(jb.compName(val||{}));
+		if (comp) {
+			var existing = this.jbEditorSubNodes(path);
+			return jb.entries(comp.params)
+					.map(p=> path + '~' + p[0])
+					.filter(p=> existing.indexOf(p) == -1)
+		}
+		return [];
+	}
+
 
 	jbEditorTitle(path, collapsed) { 
 		var val = profileFromPath(path);
@@ -224,21 +274,27 @@ export class ControlModel {
 	}
 
 	isOfType(path,type) {
-		var val = profileFromPath(path);
-		var name = val && jb.compName(val);
-		if (name && jbart.comps[name])
-			return (jbart.comps[name].type || '').indexOf(type) == 0;
+		return this.isCompNameOfType(this.compName(path),type);
+	}
+	isCompNameOfType(name,type) {
+		var _jbart = jbart_base().comps[name] ? jbart_base() : jbart;
+		if (name && _jbart.comps[name]) {
+			while (!_jbart.comps[name].type && jb.compName(jbart.comps[name].impl))
+				name = jb.compName(_jbart.comps[name].impl);
+			return (_jbart.comps[name].type || '').indexOf(type) == 0;
+		}
 	}
 
 	shortTitle(path) {
 		return this.title(path,false);
 	}
 
+	// differnt from children() == 0, beacuse in the control tree you can drop into empty group
 	isArray(path) {
 		if (this.childrenType == 'jb-editor')
-			return typeof profileFromPath(path) == 'object';
+			return (this.children(path)||[]).length > 0;
 		
-		return this.controlParam(path);
+		return this.controlParam(path) || this.innerControlPaths(path).length > 0;
 	}
 
 	modify(op,path,args,ctx) {
@@ -300,9 +356,21 @@ export class ControlModel {
         jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
 	}
 
+	wrapWithPipeline(path) {
+		jb.writeValue(profileRefFromPath(path),[ profileFromPath(path) ]);
+	}
+
 	wrapWithGroup(path) {
 		var result = { $: 'group', controls: [ profileFromPath(path) ] };
 		jb.writeValue(profileRefFromPath(path),result);
+	}
+
+	addProperty(path) {
+		var parent = profileFromPath(parentPath(path));
+		if (this.paramType(path) == 'data')
+			return jb.writeValue(profileRefFromPath(path),'');
+		var param = this.paramDef(path);
+		jb.writeValue(profileRefFromPath(path),param.defaultValue || {$: ''});
 	}
 
 	duplicate(path) {
@@ -330,6 +398,8 @@ export class ControlModel {
 					result[p[0]] = existing[p[0]];
 				if (typeof p[1].defaultValue != 'object')
 					result[p[0]] = p[1].defaultValue
+				if (typeof p[1].defaultValue == 'object' && p[1].forceDefaultCreation)
+					result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue));
 			})
 		jb.writeValue(profileRefFromPath(path),result);
 	}

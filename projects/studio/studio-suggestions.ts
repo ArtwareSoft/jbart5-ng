@@ -113,7 +113,7 @@ jb.component('editable-text.suggestions-input-feature', {
         var input = $(cmp.elementRef.nativeElement).findIncludeSelf('input')[0];
         if (!input)
           return;
-        var inputClosed = cmp.jbEmitter.filter(x=>x=='destroy');
+        var inputClosed = cmp.jbEmitter.filter(x=>x =='destroy');
 
         cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
           .takeUntil(inputClosed);

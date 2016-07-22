@@ -14,7 +14,7 @@ jb.component('group.wait', {
   impl: function(context,waitFor,loading,error) { 
     return {
       ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
-        var waiting = cmp.wait();
+        var waiting = cmp.jbWait();
         return jb_rx.observableFromCtx(ctx.setData(waitFor))
           .flatMap(x=>{
               var data = context.params.mapToResource(x);

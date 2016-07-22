@@ -16,13 +16,19 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: { $: 'openDialog',
                     title: [
                         { $: 'object',
-                            title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
-                            comp: { $: 'studio.compName', path: { $: 'studio.currentProfilePath' } }
+                            title: { $: 'studio.short-title',
+                                path: { $: 'studio.currentProfilePath' }
+                            },
+                            comp: { $: 'studio.compName',
+                                path: { $: 'studio.currentProfilePath' }
+                            }
                         },
                         'Properties of %comp% %title%'
                     ],
-                    style: { $: 'dialog.studio-floating', id: 'studio properties' },
-                    content: { $: 'studio.properties', path: { $: 'studio.currentProfilePath' } }
+                    style: { $: 'dialog.studio-floating', id: 'studio properties', width: '500' },
+                    content: { $: 'studio.properties',
+                        path: { $: 'studio.currentProfilePath' }
+                    },
                 }
             });
             jb_core_1.jb.component('studio.openSourceDialog', {
@@ -127,15 +133,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ],
                     controls: { $: 'button',
                         title: { $: 'studio.data-script-summary', path: '%$path%' },
-                        action: { $: 'openDialog',
-                            content: { $: 'studio.jb-editor', path: '%$path%' },
-                            style: { $: 'dialog.studio-floating',
-                                id: 'jb editor',
-                                width: '700',
-                                height: '400'
-                            },
-                            title: 'Inteliscript'
-                        },
+                        action: { $: 'studio.open-jb-editor', path: '%$path%' },
                         style: { $: 'button.studio-data-script' }
                     }
                 }
@@ -187,7 +185,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
-                    style: { $: 'editable-number.slider', width: '120px' },
+                    style: { $: 'editable-number.slider', width: '120' },
                     min: '%$paramDef/min%',
                     max: '%$paramDef/max%',
                     step: '%$paramDef/step%',

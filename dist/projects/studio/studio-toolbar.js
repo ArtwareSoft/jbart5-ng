@@ -66,7 +66,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'jbEditor',
-                            action: { $: 'studio.openjbEditor' },
+                            action: { $: 'studio.open-jb-editor', path: '%$globals/profile_path%' },
                             style: { $: 'button.md-icon', icon: 'build' }
                         },
                         { $: 'button',

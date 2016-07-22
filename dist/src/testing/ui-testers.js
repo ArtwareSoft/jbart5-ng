@@ -90,7 +90,6 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
                     runBefore: { type: 'action', dynamic: true },
                     cleanAfter: { type: 'action', dynamic: true },
-                    checkAfterCmpEvent: { as: 'string', defaultValue: 'ready' },
                     waitFor: {},
                 },
                 impl: function (ctx) {
@@ -98,11 +97,8 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         ctx.run({ $: 'openDialog', content: ctx.profile.control,
                             features: function (ctx2) { return ({
                                 observable: function (observable, cmp) {
-                                    return observable.map(function (x) {
-                                        return x.data || x;
-                                    }) // maybe ctx
-                                        .filter(function (x) {
-                                        return x == ctx.params.checkAfterCmpEvent;
+                                    return observable.filter(function (x) {
+                                        return x == 'ready';
                                     })
                                         .catch(function (e) {
                                         resolve({ id: ctx.vars.testID, success: false });

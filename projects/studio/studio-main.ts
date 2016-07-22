@@ -190,6 +190,7 @@ jb.component('studio.renderWidget',{
 						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 						w.jbart.modifyOperationsEm = studio.modifyOperationsEm;
 						w.jbart.studioActivityEm = studio.studioActivityEm;
+						w.jbart.modifiedCtrlsEm = studio.modifiedCtrlsEm;
 						jbart.previewWindow = w;
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;
@@ -285,7 +286,8 @@ jb.component('studio.short-title',{
 
 jb.component('studio.ref',{
 	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.profileRefFromPath(path)
+	impl: (context,path) => 
+		studio.profileRefFromPathWithNotification(path,context)
 });
 
 jb.component('studio.val',{
@@ -339,6 +341,13 @@ jb.component('studio.prop-name',{
 		studio.model.propName(path)
 })
 
+jb.component('studio.more-params',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+        studio.model.jbEditorMoreParams(path)
+})
+
+
 jb.component('studio.compName-ref',{
 	params: { path: { as: 'string' } },
 	impl: (context,path) => { return {
@@ -362,13 +371,25 @@ jb.component('studio.insertComp',{
 		studio.model.modify(studio.model.insertComp, path, { comp: comp },context)
 })
 
-jb.component('studio.wrapWithGroup',{
+jb.component('studio.wrapWithGroup', {
 	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
+	params: { path: { as: 'string' } },
 	impl: (context,path) => 
 		studio.model.modify(studio.model.wrapWithGroup, path, {},context)
+})
+
+jb.component('studio.addProperty', {
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		studio.model.modify(studio.model.addProperty, path, {},context)
+})
+
+jb.component('studio.wrapWithPipeline', {
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		studio.model.modify(studio.model.wrapWithPipeline, path, {},context)
 })
 
 jb.component('studio.duplicate',{

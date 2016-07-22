@@ -3,18 +3,24 @@ import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
 jb.component('studio.openProperties', {
-	type: 'action',
-	impl :{$: 'openDialog',
-		title: [
-			{ $: 'object', 
-				title: { $: 'studio.short-title', path: { $: 'studio.currentProfilePath' } },
-				comp: { $: 'studio.compName', path: { $: 'studio.currentProfilePath' } }
-			},
-			'Properties of %comp% %title%'
-		],
-		style :{$: 'dialog.studio-floating', id: 'studio properties' },
-		content :{$: 'studio.properties', path: { $: 'studio.currentProfilePath' } }
-	}
+  type: 'action', 
+  impl :{$: 'openDialog', 
+    title: [
+      {$: 'object', 
+        title :{$: 'studio.short-title', 
+          path :{$: 'studio.currentProfilePath' }
+        }, 
+        comp :{$: 'studio.compName', 
+          path :{$: 'studio.currentProfilePath' }
+        }
+      }, 
+      'Properties of %comp% %title%'
+    ], 
+    style :{$: 'dialog.studio-floating', id: 'studio properties', width: '500' }, 
+    content :{$: 'studio.properties', 
+      path :{$: 'studio.currentProfilePath' }
+    }, 
+  }
 })
 
 jb.component('studio.openSourceDialog', {
@@ -128,15 +134,7 @@ jb.component('studio.property-data-script', {
     ],
     controls :{$: 'button', 
         title :{$: 'studio.data-script-summary', path: '%$path%' }, 
-        action :{$: 'openDialog', 
-          content :{$: 'studio.jb-editor', path: '%$path%' }, 
-          style :{$: 'dialog.studio-floating', 
-            id: 'jb editor', 
-            width: '700', 
-            height: '400'
-          }, 
-          title: 'Inteliscript'
-        }, 
+        action :{$: 'studio.open-jb-editor',path: '%$path%' } ,
         style :{$: 'button.studio-data-script'}
     }
   }
@@ -191,7 +189,7 @@ jb.component('studio.property-slider', {
 		},
 		title :{$: 'studio.prop-name', path: '%$path%' },
 		databind :{$: 'studio.ref', path: '%$path%' },
-		style :{$: 'editable-number.slider', width: '120px' },
+		style :{$: 'editable-number.slider', width: '120' },
 		min: '%$paramDef/min%',
 		max: '%$paramDef/max%',
 		step: '%$paramDef/step%',

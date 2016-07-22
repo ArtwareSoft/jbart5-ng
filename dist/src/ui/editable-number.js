@@ -25,11 +25,11 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                     max: { as: 'number' },
                     displayString: { as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
                     dataString: { as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
-                    features: { type: 'feature[]', dynamic: true },
                     step: { as: 'number', defaultValue: 1, description: 'used by slider' },
                     initialPixelsPerUnit: { as: 'number', description: 'used by slider' },
+                    features: { type: 'feature[]', dynamic: true },
                 },
-                impl: function (context, databind, title, style, symbol, min, max, displayString, dataString, features, step, initialPixelsPerUnit) {
+                impl: function (context, databind, title, style, symbol, min, max, displayString, dataString, step, initialPixelsPerUnit) {
                     var ctx = context.setVars({
                         editableNumber: new editableNumber(symbol, min, max, displayString, dataString, step || 1, initialPixelsPerUnit),
                         field: jb_ui.twoWayBind(databind)

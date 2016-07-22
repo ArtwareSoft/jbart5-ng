@@ -2,7 +2,6 @@ import { jb } from 'jb-core/jb';
 import * as jb_ui from 'jb-ui/jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
-import {jb_dialogs} from 'jb-ui/dialog';
 import {Observable,Subject} from 'rxjs/Rx';
 
 var testModules = ['ng-ui-tests','md-ui-tests']
@@ -92,7 +91,6 @@ jb.component('ng2-ui-test', {
 		expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
 		runBefore: { type: 'action', dynamic: true },
 		cleanAfter: { type: 'action', dynamic: true },
-		checkAfterCmpEvent: { as: 'string', defaultValue: 'ready' },
 		waitFor: {},
 	},
 	impl: ctx=>
@@ -100,10 +98,8 @@ jb.component('ng2-ui-test', {
 			ctx.run({$:'openDialog', content: ctx.profile.control, 
 			features: ctx2 => ({
 					observable: (observable,cmp) =>
-						observable.map(x=>
-							x.data||x) // maybe ctx
-						.filter(x=>
-							x==ctx.params.checkAfterCmpEvent)
+						observable.filter(x=>
+							x == 'ready')
 						.catch(e=>{ 
 							resolve({ id: ctx.vars.testID, success:false }) })
 						.subscribe(x=>{

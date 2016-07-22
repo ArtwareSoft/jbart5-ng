@@ -212,3 +212,35 @@ jb.component('studio-helper.menu-selection', {
     ]
   },
 })
+
+jb.component('studio-helper.jb-editor-menu', {
+  type: 'control', 
+  impl :{$: 'studio.jb-editor-menu', path: 'studio-helper-dummy.label' }
+})
+
+jb.component('studio-helper.open-dialog', {
+  type: 'control', 
+  impl :{$: 'group', 
+    controls: [
+      {$: 'button', 
+        title: 'open dialog', 
+        action :{$: 'openDialog', 
+          style :{$: 'dialog.md-dialog-ok-cancel' }, 
+          content :{$: 'group', 
+            controls: [
+              {$: 'editable-text', 
+                style :{$: 'editable-text.md-input' }, 
+                features :{$: 'css.margin', top: '19', left: '23' }, 
+                title: 'name'
+              }
+            ], 
+            features :{$: 'css.margin', top: '', left: '' }, 
+            title: ''
+          }, 
+          modal: false, 
+          title: 'new property'
+        }
+      }
+    ]
+  }
+})

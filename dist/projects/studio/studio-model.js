@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx;
-    var modifyOperationsEm, studioActivityEm, pathChangesEm, ControlModel, model, FixReplacingPaths;
+    var modifyOperationsEm, studioActivityEm, pathChangesEm, modifiedCtrlsEm, ControlModel, model, FixReplacingPaths;
     function jbart_base() {
         return jbart.previewjbart || jbart;
     }
@@ -33,6 +33,22 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
         });
     }
     exports_1("message", message);
+    function profileRefFromPathWithNotification(path, ctx) {
+        var _ref = profileRefFromPath(path);
+        return {
+            $jb_val: function (value) {
+                if (typeof value == 'undefined')
+                    return _ref.$jb_val(value);
+                if (_ref.$jb_val() == value)
+                    return;
+                var comp = path.split('~')[0];
+                var before = compAsStr(comp);
+                _ref.$jb_val(value);
+                notifyModifcation(path, before, ctx);
+            }
+        };
+    }
+    exports_1("profileRefFromPathWithNotification", profileRefFromPathWithNotification);
     function profileRefFromPath(path) {
         if (path.indexOf('~') == -1)
             return {
@@ -174,6 +190,17 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             exports_1("modifyOperationsEm", modifyOperationsEm = new jb_rx.Subject());
             exports_1("studioActivityEm", studioActivityEm = new jb_rx.Subject());
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
+            exports_1("modifiedCtrlsEm", modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
+                var path_parts = x.path.split('~');
+                var sub_paths = path_parts.map(function (e, i) {
+                    return path_parts.slice(0, i + 1).join('~');
+                }).reverse();
+                var firstCtrl = sub_paths
+                    .filter(function (p) {
+                    return model.isCompNameOfType(jb_core_1.jb.compName(profileFromPath(p)), 'control');
+                })[0];
+                return firstCtrl ? [{ path: firstCtrl }] : [];
+            }));
             // The jbart control model return string paths and methods to fix them on change
             ControlModel = (function () {
                 function ControlModel(rootPath, childrenType) {
@@ -190,8 +217,10 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     if (childrenType == 'controls') {
                         var prop = this.controlParam(path);
                         if (!prop || !val[prop])
-                            return [];
-                        return childPath(prop);
+                            var out = [];
+                        else
+                            var out = childPath(prop);
+                        return out.concat(this.innerControlPaths(path));
                     }
                     else if (childrenType == 'non-controls') {
                         return this.nonControlParams(path).map(function (prop) { return path + '~' + prop; });
@@ -211,6 +240,15 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             return [path + '~' + prop];
                     }
                 };
+                ControlModel.prototype.innerControlPaths = function (path) {
+                    var _this = this;
+                    var out = ['action~content'] // add more inner paths here
+                        .map(function (x) { return path + '~' + x; })
+                        .filter(function (p) {
+                        return _this.paramType(p) == 'control';
+                    });
+                    return out;
+                };
                 ControlModel.prototype.jbEditorSubNodes = function (path) {
                     var val = profileFromPath(path);
                     var comp = getComp(jb_core_1.jb.compName(val || {}));
@@ -223,6 +261,17 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             .map(function (p) { return ({ path: path + '~' + p[0], param: p[1] }); })
                             .filter(function (e) { return profileFromPath(e.path) != null || e.param.essential; })
                             .map(function (e) { return e.path; });
+                };
+                ControlModel.prototype.jbEditorMoreParams = function (path) {
+                    var val = profileFromPath(path);
+                    var comp = getComp(jb_core_1.jb.compName(val || {}));
+                    if (comp) {
+                        var existing = this.jbEditorSubNodes(path);
+                        return jb_core_1.jb.entries(comp.params)
+                            .map(function (p) { return path + '~' + p[0]; })
+                            .filter(function (p) { return existing.indexOf(p) == -1; });
+                    }
+                    return [];
                 };
                 ControlModel.prototype.jbEditorTitle = function (path, collapsed) {
                     var val = profileFromPath(path);
@@ -282,18 +331,24 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return val && jb_core_1.jb.compName(val);
                 };
                 ControlModel.prototype.isOfType = function (path, type) {
-                    var val = profileFromPath(path);
-                    var name = val && jb_core_1.jb.compName(val);
-                    if (name && jbart.comps[name])
-                        return (jbart.comps[name].type || '').indexOf(type) == 0;
+                    return this.isCompNameOfType(this.compName(path), type);
+                };
+                ControlModel.prototype.isCompNameOfType = function (name, type) {
+                    var _jbart = jbart_base().comps[name] ? jbart_base() : jbart;
+                    if (name && _jbart.comps[name]) {
+                        while (!_jbart.comps[name].type && jb_core_1.jb.compName(jbart.comps[name].impl))
+                            name = jb_core_1.jb.compName(_jbart.comps[name].impl);
+                        return (_jbart.comps[name].type || '').indexOf(type) == 0;
+                    }
                 };
                 ControlModel.prototype.shortTitle = function (path) {
                     return this.title(path, false);
                 };
+                // differnt from children() == 0, beacuse in the control tree you can drop into empty group
                 ControlModel.prototype.isArray = function (path) {
                     if (this.childrenType == 'jb-editor')
-                        return typeof profileFromPath(path) == 'object';
-                    return this.controlParam(path);
+                        return (this.children(path) || []).length > 0;
+                    return this.controlParam(path) || this.innerControlPaths(path).length > 0;
                 };
                 ControlModel.prototype.modify = function (op, path, args, ctx) {
                     var comp = path.split('~')[0];
@@ -347,9 +402,19 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 ControlModel.prototype.newComp = function (path, args) {
                     jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
                 };
+                ControlModel.prototype.wrapWithPipeline = function (path) {
+                    jb_core_1.jb.writeValue(profileRefFromPath(path), [profileFromPath(path)]);
+                };
                 ControlModel.prototype.wrapWithGroup = function (path) {
                     var result = { $: 'group', controls: [profileFromPath(path)] };
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);
+                };
+                ControlModel.prototype.addProperty = function (path) {
+                    var parent = profileFromPath(parentPath(path));
+                    if (this.paramType(path) == 'data')
+                        return jb_core_1.jb.writeValue(profileRefFromPath(path), '');
+                    var param = this.paramDef(path);
+                    jb_core_1.jb.writeValue(profileRefFromPath(path), param.defaultValue || { $: '' });
                 };
                 ControlModel.prototype.duplicate = function (path) {
                     var prop = path.split('~').pop();
@@ -376,6 +441,8 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                                 result[p[0]] = existing[p[0]];
                             if (typeof p[1].defaultValue != 'object')
                                 result[p[0]] = p[1].defaultValue;
+                            if (typeof p[1].defaultValue == 'object' && p[1].forceDefaultCreation)
+                                result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue));
                         });
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);
                 };

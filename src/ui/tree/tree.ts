@@ -133,7 +133,12 @@ jb.component('tree.selection', {
 					jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)()
   				})
 
-		  tree.selectionEmitter.subscribe(selected=> { // .distinctUntilChanged()
+  		  var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind,context)
+        	.distinctUntilChanged()) || jb_rx.Observable.of();
+
+		  tree.selectionEmitter
+		  	.merge(databindObs)
+		  	.subscribe(selected=> { // .distinctUntilChanged()
 		  	  if (tree.selected == selected)
 		  	  	return;
 			  tree.selected = selected;
