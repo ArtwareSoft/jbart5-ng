@@ -6,16 +6,25 @@ export var modifyOperationsEm = new jb_rx.Subject();
 export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
-export var modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
-    var path_parts = x.path.split('~');
-    var sub_paths = path_parts.map((e,i)=>
-      path_parts.slice(0,i+1).join('~')).reverse();
-    var firstCtrl = sub_paths
-      .filter(p=>
-      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
-      [0];
-     return firstCtrl ? [{ path: firstCtrl}] : [];
-})
+export var modifiedCtrlsEm;
+
+// very strange bug after upgrading to rc4 - no flatmap at init phase
+var intervalID = window.setInterval(()=> {
+		if (modifyOperationsEm.flatMap) {
+			window.clearInterval(intervalID);
+			modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
+			    var path_parts = x.path.split('~');
+			    var sub_paths = path_parts.map((e,i)=>
+			      path_parts.slice(0,i+1).join('~')).reverse();
+			    var firstCtrl = sub_paths
+			      .filter(p=>
+			      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
+			      [0];
+			     return firstCtrl ? [{ path: firstCtrl}] : [];
+				})
+		}
+	}
+,30);
 
 export function jbart_base() {
 	return jbart.previewjbart || jbart;

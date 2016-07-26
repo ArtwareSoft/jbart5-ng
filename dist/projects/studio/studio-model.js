@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx;
-    var modifyOperationsEm, studioActivityEm, pathChangesEm, modifiedCtrlsEm, ControlModel, model, FixReplacingPaths;
+    var modifyOperationsEm, studioActivityEm, pathChangesEm, modifiedCtrlsEm, intervalID, ControlModel, model, FixReplacingPaths;
     function jbart_base() {
         return jbart.previewjbart || jbart;
     }
@@ -190,17 +190,23 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             exports_1("modifyOperationsEm", modifyOperationsEm = new jb_rx.Subject());
             exports_1("studioActivityEm", studioActivityEm = new jb_rx.Subject());
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
-            exports_1("modifiedCtrlsEm", modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
-                var path_parts = x.path.split('~');
-                var sub_paths = path_parts.map(function (e, i) {
-                    return path_parts.slice(0, i + 1).join('~');
-                }).reverse();
-                var firstCtrl = sub_paths
-                    .filter(function (p) {
-                    return model.isCompNameOfType(jb_core_1.jb.compName(profileFromPath(p)), 'control');
-                })[0];
-                return firstCtrl ? [{ path: firstCtrl }] : [];
-            }));
+            // very strange bug after upgrading to rc4 - no flatmap at init phase
+            intervalID = window.setInterval(function () {
+                if (modifyOperationsEm.flatMap) {
+                    window.clearInterval(intervalID);
+                    exports_1("modifiedCtrlsEm", modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
+                        var path_parts = x.path.split('~');
+                        var sub_paths = path_parts.map(function (e, i) {
+                            return path_parts.slice(0, i + 1).join('~');
+                        }).reverse();
+                        var firstCtrl = sub_paths
+                            .filter(function (p) {
+                            return model.isCompNameOfType(jb_core_1.jb.compName(profileFromPath(p)), 'control');
+                        })[0];
+                        return firstCtrl ? [{ path: firstCtrl }] : [];
+                    }));
+                }
+            }, 30);
             // The jbart control model return string paths and methods to fix them on change
             ControlModel = (function () {
                 function ControlModel(rootPath, childrenType) {

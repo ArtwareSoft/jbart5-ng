@@ -13,7 +13,7 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(['projects/material-demo/material-demo']))
+jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/material-demo/material-demo']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

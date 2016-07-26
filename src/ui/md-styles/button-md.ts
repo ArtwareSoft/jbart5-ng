@@ -1,9 +1,11 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import {MdButton} from '@angular2-material/button/button.js';
+import {MdIcon} from '@angular2-material/icon/icon.js';
+import {MdIconRegistry} from '@angular2-material/icon/icon-registry';
 
-jb_ui.registerDirectives({MdButton: MdButton});
-
+jb_ui.registerDirectives({MdButton: MdButton,MdIcon: MdIcon });
+jb_ui.registerProviders({MdIconRegistry: MdIconRegistry});
 
 jb.component('button.md-flat', {
   type: 'button.style',

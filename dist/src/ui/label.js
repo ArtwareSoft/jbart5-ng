@@ -15,7 +15,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 type: "control",
                 params: {
                     title: { essential: true, defaultValue: 'label', as: 'ref' },
-                    style: { type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
+                    style: { type: 'label.style', defaultValue: { $: 'label.p' }, dynamic: true },
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (ctx) {
@@ -34,6 +34,13 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<span>%$title%</span>'
+                }
+            });
+            jb_core_1.jb.component('label.p', {
+                type: 'label.style',
+                impl: { $: 'customStyle',
+                    template: '<p>{{title}}</p>',
+                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
                 }
             });
             jb_core_1.jb.component('label.h1', {

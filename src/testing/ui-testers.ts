@@ -6,65 +6,66 @@ import {Observable,Subject} from 'rxjs/Rx';
 
 var testModules = ['ng-ui-tests','md-ui-tests']
 var allTestModules = ['ng-ui-tests','md-ui-tests','studio-tests','rx-tests'];
-//var testModules = ['ng-ui-tests','rx-tests'];
+
+var testModules = ['ng-ui-tests','rx-tests'];
 //testModules = allTestModules;
 //testModules = ['studio-tests'];
 
-// function testComp(compID,ngZone) {
-// 	var ns = 'ui-tests';
-// 	var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
-// 	jb.extend(resources, { window: window, globals: {} });
-// 	var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: ngZone},  }, {});
-// 	// Object.getOwnPropertyNames(resources).forEach(id=> {
-// 	// 	var r = resources[id];
-// 	// 	if (r && r.$) resources[id] = ctx.run(r);
-// 	// })
-// 	var profile = allTestModules.reduce((found,module) => found || jb.widgets[module].tests[compID],false);
-// 	if (!profile)
-// 		console.log('can not find a test ' + compID);
-// 	else if (profile.control && profile.$ == 'studio-test') {
-// 		return ctx.run(jb.extend({},profile,{$:'run-studio-test'}));
-// 	}
-// 	else if (profile.control)
-// 		return ctx.run(profile.control);
-// 	else if (profile.result)
-// 		return jb_ui.Comp({ 
-// 			template: '<div>{{result}}</div>',
-// 			methods: {
-// 				init: function(cmp) {
-// 					cmp.result = 'start: ';
-// 					ctx.run(profile.result,{ as: 'observable'}).map(ctx=>ctx.data).subscribe(x=>cmp.result += x + ', ');
-// 				}
-// 			}
-// 		},ctx)
-// }
+function testComp(compID,ngZone) {
+	var ns = 'ui-tests';
+	var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
+	jb.extend(resources, { window: window, globals: {} });
+	var ctx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: ngZone},  }, {});
+	// Object.getOwnPropertyNames(resources).forEach(id=> {
+	// 	var r = resources[id];
+	// 	if (r && r.$) resources[id] = ctx.run(r);
+	// })
+	var profile = allTestModules.reduce((found,module) => found || (jb.widgets[module]||{}).tests[compID],false);
+	if (!profile)
+		console.log('can not find a test ' + compID);
+	else if (profile.control && profile.$ == 'studio-test') {
+		return ctx.run(jb.extend({},profile,{$:'run-studio-test'}));
+	}
+	else if (profile.control)
+		return ctx.run(profile.control);
+	else if (profile.result)
+		return jb_ui.Comp({ 
+			template: '<div>{{result}}</div>',
+			methods: {
+				init: function(cmp) {
+					cmp.result = 'start: ';
+					ctx.run(profile.result,{ as: 'observable'}).map(ctx=>ctx.data).subscribe(x=>cmp.result += x + ', ');
+				}
+			}
+		},ctx)
+}
 
 
-// @Component({
-//     selector: 'jBartSingleTest',
-// 	template: '<div #single_test></div>',
-// })
-// export class jBartSingleTest {
-//   @ViewChild('single_test', {read: ViewContainerRef}) childView;
-//   constructor(private componentResolver:ComponentResolver, private ngZone: NgZone, private elementRef: ElementRef) {
-// 		window.ngZone = this.ngZone;
-// 		jbart.zones['single-test'] = this.ngZone;
-// 		if ((this.elementRef.nativeElement.getAttribute('compID')||'').indexOf('studio') == 0)
-// 			jbart.zones['studio.all'] = this.ngZone;
-// 	}
+@Component({
+    selector: 'jBartSingleTest',
+	template: '<div #single_test></div>',
+})
+export class jBartSingleTest {
+  @ViewChild('single_test', {read: ViewContainerRef}) childView;
+  constructor(private componentResolver:ComponentResolver, private ngZone: NgZone, private elementRef: ElementRef) {
+		window.ngZone = this.ngZone;
+		jbart.zones['single-test'] = this.ngZone;
+		if ((this.elementRef.nativeElement.getAttribute('compID')||'').indexOf('studio') == 0)
+			jbart.zones['studio.all'] = this.ngZone;
+	}
 
-//   ngOnInit() {
-// 	this.counter = 0;
-//   	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
-//   	comp.compile(this.componentResolver).then(componentFactory => 
-//   		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
-//     );
-//     // this.componentResolver.resolveComponent(comp)
-//     //   .then(componentFactory => {
-//     //     this.childView.createComponent(componentFactory);
-//     //   });
-//   }
-// }
+  ngOnInit() {
+	this.counter = 0;
+  	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
+  	comp.compile(this.componentResolver).then(componentFactory => 
+  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
+    );
+    // this.componentResolver.resolveComponent(comp)
+    //   .then(componentFactory => {
+    //     this.childView.createComponent(componentFactory);
+    //   });
+  }
+}
 
 // @Component({
 //     selector: 'jbartTests',

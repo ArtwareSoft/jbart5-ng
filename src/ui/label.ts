@@ -5,7 +5,7 @@ jb.component('label', {
     type: "control",
     params: {
         title: { essential: true, defaultValue: 'label', as: 'ref' },
-        style: { type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
+        style: { type: 'label.style', defaultValue: { $: 'label.p' }, dynamic: true },
         features: { type: 'feature[]', dynamic: true },
     },
     impl: ctx => 
@@ -26,6 +26,14 @@ jb.component('label.static-span', {
     type: 'label.style',
     impl :{$: 'customStyle', 
         template: '<span>%$title%</span>'
+    }
+})
+
+jb.component('label.p', {
+    type: 'label.style',
+    impl :{$: 'customStyle', 
+        template: '<p>{{title}}</p>',
+        features :{$: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
     }
 })
 

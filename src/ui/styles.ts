@@ -28,25 +28,19 @@ jb.component('customStyle', {
 	}
 })
 
-// jb.component('customCssStyle', {
-// 	typePattern: /.*-style/,
-// 	params: {
-// 		basedOn: {},
-// 		css: { as: 'string'},
-// 	},
-// 	impl: function (context,basedOn,css) {
-// 		return jb.extend({},basedOn, { css: css })
-// 	}
-// })
-
 jb.component('custom-control', {
 	type: 'control',
 	params: {
 		title: { as: 'string', dynamic: true },
 		html: { as: 'string', essential: true, defaultValue: '<div></div>'},
 		css: { as: 'string'},
-		methods: { as: 'object'},
+		options: { as: 'object'},
 	},
-	impl: (ctx,html,css) => 
-		jb_ui.Comp({ template: html, css: css, methods: methods },ctx)
+	impl: (ctx,title,html,css,options) => {
+		var defaultOptions = {directives: jb.entries(jbart.ng.directives)
+			.map(x=>x[0])
+//			.filter(x=>x.indexOf('Md') == 0)
+		};
+		return jb_ui.Comp(jb.extend({ template: html, css: css},defaultOptions,options),ctx)
+	}
 })

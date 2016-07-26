@@ -1,4 +1,4 @@
-System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', '@angular/common', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, core_1, common_1, jb_rx;
-    var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, directivesObj;
+    var jb_core_1, core_1, forms_1, http_1, common_1, jb_rx;
+    var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget;
     function apply(ctx) {
         //	console.log('apply');
         jb_core_1.jb.delay(1);
@@ -226,9 +226,13 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
     }
     exports_1("getZone", getZone);
     function registerDirectives(obj) {
-        jb_core_1.jb.extend(directivesObj, obj);
+        jb_core_1.jb.extend(jbart.ng.directives, obj);
     }
     exports_1("registerDirectives", registerDirectives);
+    function registerProviders(obj) {
+        jb_core_1.jb.extend(jbart.ng.providers, obj);
+    }
+    exports_1("registerProviders", registerProviders);
     return {
         setters:[
             function (jb_core_1_1) {
@@ -236,6 +240,12 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
             },
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (forms_1_1) {
+                forms_1 = forms_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
             },
             function (common_1_1) {
                 common_1 = common_1_1;
@@ -274,6 +284,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
                         }
                         catch (e) {
                             jb_core_1.jb.logError('ng compilation error', this, e);
+                            throw e;
                         }
                     return this.factory;
                 };
@@ -438,7 +449,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
                         annotations.changeDetection = core_1.ChangeDetectionStrategy.OnPush;
                     if (options.directives !== undefined)
                         annotations.directives = (annotations.directives || []).concat(jb_core_1.jb.toarray(options.directives).map(function (x) {
-                            return typeof x == 'string' ? directivesObj[x] : x;
+                            return typeof x == 'string' ? jbart.ng.directives[x] : x;
                         }));
                     options.atts = jb_core_1.jb.extend({}, options.atts, options.host); // atts is equvivalent to host
                     if (options.cssClass)
@@ -595,6 +606,7 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
                 }
                 jBartWidget.prototype.ngOnInit = function () {
                     var _this = this;
+                    jbart.widgetLoaded = true; // indication for waitForIframeLoad
                     this.compId = this.elementRef.nativeElement.getAttribute('compID');
                     this.dialogs = jbart.jb_dialogs.dialogs;
                     if (this.compId)
@@ -603,16 +615,18 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
                         jbart.redrawStudio = function () {
                             return _this.draw();
                         };
-                    jb_core_1.jb.delay(1).then(function () {
+                };
+                jBartWidget.prototype.ngAfterViewInit = function () {
+                    var _this = this;
+                    jb_core_1.jb.delay(100).then(function () {
                         if (jbart.modifyOperationsEm) {
+                            _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
                             var compIdEm = jbart.studioActivityEm
                                 .map(function () {
                                 return _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
                             })
-                                .distinctUntilChanged();
-                            // jbart.modifyOperationsEm
-                            // 	.debounceTime(300)
-                            // 	.merge(compIdEm)
+                                .distinctUntilChanged()
+                                .startWith(_this.compId);
                             compIdEm.subscribe(function () {
                                 return _this.draw();
                             });
@@ -621,9 +635,6 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
                             _this.draw();
                         }
                     });
-                };
-                jBartWidget.prototype.ngAfterViewInit = function () {
-                    jbart.widgetLoaded = true; // indication for waitForIframeLoad
                 };
                 jBartWidget.prototype.draw = function () {
                     this.comps = [];
@@ -657,7 +668,14 @@ System.register(['jb-core', '@angular/core', '@angular/common', 'jb-ui/jb-rx'], 
                 return jBartWidget;
             }());
             exports_1("jBartWidget", jBartWidget);
-            directivesObj = {};
+            jbart.ng = {
+                providers: {
+                    provideForms: forms_1.provideForms(),
+                    disableDeprecatedForms: forms_1.disableDeprecatedForms(),
+                    HTTP_PROVIDERS: http_1.HTTP_PROVIDERS
+                },
+                directives: {}
+            };
         }
     }
 });

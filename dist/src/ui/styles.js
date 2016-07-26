@@ -38,26 +38,19 @@ System.register(['jb-core', 'jb-ui', '@angular/core'], function(exports_1, conte
                     return options;
                 }
             });
-            // jb.component('customCssStyle', {
-            // 	typePattern: /.*-style/,
-            // 	params: {
-            // 		basedOn: {},
-            // 		css: { as: 'string'},
-            // 	},
-            // 	impl: function (context,basedOn,css) {
-            // 		return jb.extend({},basedOn, { css: css })
-            // 	}
-            // })
             jb_core_1.jb.component('custom-control', {
                 type: 'control',
                 params: {
                     title: { as: 'string', dynamic: true },
                     html: { as: 'string', essential: true, defaultValue: '<div></div>' },
                     css: { as: 'string' },
-                    methods: { as: 'object' },
+                    options: { as: 'object' },
                 },
-                impl: function (ctx, html, css) {
-                    return jb_ui.Comp({ template: html, css: css, methods: methods }, ctx);
+                impl: function (ctx, title, html, css, options) {
+                    var defaultOptions = { directives: jb_core_1.jb.entries(jbart.ng.directives)
+                            .map(function (x) { return x[0]; })
+                    };
+                    return jb_ui.Comp(jb_core_1.jb.extend({ template: html, css: css }, defaultOptions, options), ctx);
                 }
             });
         }

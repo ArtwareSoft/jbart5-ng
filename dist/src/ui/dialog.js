@@ -3,6 +3,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx, core_1;
     var jbDialogs;
+    function fixDialogOverflow($control, $dialog, offsetLeft, offsetTop) {
+        var padding = 2, top, left;
+        if ($control.offset().top + $dialog.height() + padding + (offsetTop || 0) > window.innerHeight + window.pageYOffset)
+            top = $control.offset().top - $dialog.height();
+        if ($control.offset().left + $dialog.width() + padding + (offsetLeft || 0) > window.innerWidth + window.pageXOffset)
+            left = $control.offset().left - $dialog.width();
+        if (top || left)
+            return { top: top || 0, left: left || 0 };
+    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -112,9 +121,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             var $control = context.vars.$launchingElement.$el;
                             var pos = $control.offset();
                             var $jbDialog = $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-dialog');
-                            $jbDialog.css('left', (pos.left + offsetLeft) + "px")
-                                .css('top', (pos.top + $control.outerHeight() + offsetTop) + "px")
-                                .css('display', 'block');
+                            var fixedPosition = fixDialogOverflow($control, $jbDialog, offsetLeft, offsetTop);
+                            if (fixedPosition)
+                                $jbDialog.css('left', fixedPosition.left + "px")
+                                    .css('top', fixedPosition.top + "px")
+                                    .css('display', 'block');
+                            else
+                                $jbDialog.css('left', (pos.left + offsetLeft) + "px")
+                                    .css('top', (pos.top + $control.outerHeight() + offsetTop) + "px")
+                                    .css('display', 'block');
                         }
                     };
                 }

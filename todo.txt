@@ -1,9 +1,6 @@
-jb editor
-	right context menu
-	  more params
-	  vars (for object)
-	refresh probe without changing the path
-	$object
+menu -
+  open inside screen - move up and left
+
 
 build the jbart.io site like https://material.angular.io/
 
@@ -23,6 +20,15 @@ fix theme var name
 
 studio
 ======
+properties
+   features - jumping menu handles not at the same column
+
+jb editor
+	right context menu
+	  vars (for object)
+	refresh probe without changing the path
+	$object
+
 
 bugs
  make local with icon
@@ -30,3 +36,12 @@ bugs
 tests
 ======
 move core tests to project
+
+
+
+~action~content
+options:
+1. spilt('~action~content')
+2. split('~action')
+   how to preview the component actions
+    - all actions that activate component actions will be probed

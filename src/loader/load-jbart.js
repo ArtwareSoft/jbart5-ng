@@ -102,8 +102,8 @@ jb_modules =
 'jb-ui/md-styles/dialog-md',
 'jb-ui/md-styles/input-md',
 'jb-ui/md-styles/editable-boolean-md',
-'jb-ui/md-styles/group-md',
 'jb-ui/md-styles/tabs-md',
+'jb-ui/md-styles/card-md',
 
 'testing/ui-testers'
 ];
@@ -147,6 +147,7 @@ jb_system_config = {
         '@angular/core': { main: 'bundles/core.umd.js', defaultExtension: 'js' },
         '@angular/common': { main: 'bundles/common.umd.js', defaultExtension: 'js' },
         '@angular/http': { main: 'bundles/http.umd.js', defaultExtension: 'js' },
+        '@angular/forms': { main: 'bundles/forms.umd.js', defaultExtension: 'js' },
         '@angular/compiler': { main: 'bundles/compiler.umd.js', defaultExtension: 'js' },
         '@angular/platform-browser': { main: 'bundles/platform-browser.umd.js', defaultExtension: 'js' },
         '@angular/platform-browser-dynamic': { main: 'bundles/platform-browser-dynamic.umd.js', defaultExtension: 'js' },
@@ -176,5 +177,8 @@ function jbLoadModules(modules) {
 
 function jbBootstrap(loadedModules) {
   var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
-  bootstrap(loadedModules['jb-ui'].jBartWidget);
+  bootstrap(loadedModules['jb-ui'].jBartWidget, jb_entries(jbart.ng.providers).map(e=>e[1]))
+    .catch(err => console.error(err))
+    .then(()=>
+      jbart.afterBootsrtap = true);
 }

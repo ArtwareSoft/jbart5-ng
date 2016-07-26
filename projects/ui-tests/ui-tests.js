@@ -718,7 +718,7 @@ picklist :{$: 'ng2-ui-test',
   control :{$: 'group',
       style :{$: 'property-sheet.titles-left' },
       controls :{$: 'dynamic-controls', 
-          controlItems: ['name','age'],
+          controlItems: {$list: ['name','age']},
           genericControl: { $: 'editable-text', databind: '%$person/{%$controlItem%}%', title: '%$controlItem%' }
       }
   },

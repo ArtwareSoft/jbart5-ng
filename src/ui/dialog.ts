@@ -92,6 +92,16 @@ jb.component('dialogFeature.uniqueDialog', {
 	}
 })
 
+function fixDialogOverflow($control,$dialog,offsetLeft,offsetTop) {
+	var padding = 2,top,left;
+	if ($control.offset().top + $dialog.height() + padding + (offsetTop||0) > window.innerHeight + window.pageYOffset)
+		top = $control.offset().top - $dialog.height();
+	if ($control.offset().left + $dialog.width() + padding + (offsetLeft||0) > window.innerWidth + window.pageXOffset)
+		left = $control.offset().left - $dialog.width();
+	if (top || left)
+		return { top: top || 0 , left: left || 0}
+}
+
 jb.component('dialogFeature.nearLauncherLocation', {
 	type: 'dialogFeature',
 	params: {
@@ -106,9 +116,15 @@ jb.component('dialogFeature.nearLauncherLocation', {
 				var $control = context.vars.$launchingElement.$el;
 				var pos = $control.offset();
 				var $jbDialog = $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-dialog');
-				$jbDialog.css('left', `${pos.left + offsetLeft}px`)
-					.css('top', `${pos.top + $control.outerHeight() + offsetTop}px`)
-					.css('display','block');
+				var fixedPosition = fixDialogOverflow($control,$jbDialog,offsetLeft,offsetTop);
+				if (fixedPosition)
+					$jbDialog.css('left', `${fixedPosition.left}px`)
+						.css('top', `${fixedPosition.top}px`)
+						.css('display','block');
+				else
+					$jbDialog.css('left', `${pos.left + offsetLeft}px`)
+						.css('top', `${pos.top + $control.outerHeight() + offsetTop}px`)
+						.css('display','block');
 			}
 		}
 	}

@@ -60,7 +60,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 return Observable.of([originalCtrlsEmFunc(ctxWithItemVar(ctx.setData(val), val))]);
                             }
                             return cmp.jbEmitter
-                                .map(function () { return jb_core_1.jb.val(ref()); })
+                                .map(function () {
+                                return jb_core_1.jb.val(ref());
+                            })
                                 .distinctUntilChanged()
                                 .filter(function (x) { return x && x != 'undefined'; })
                                 .flatMap(function (val) {

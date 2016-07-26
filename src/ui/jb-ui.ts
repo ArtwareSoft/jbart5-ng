@@ -1,6 +1,10 @@
 import {jb} from 'jb-core';
 import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
-import {NgForm,FORM_DIRECTIVES,NgClass,NgStyle} from '@angular/common';
+import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDeprecatedForms, provideForms } from '@angular/forms';
+import {HTTP_PROVIDERS} from '@angular/http';
+
+import {NgClass,NgStyle} from '@angular/common';
+// NgForm,FORM_DIRECTIVES,
 
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 
@@ -50,6 +54,7 @@ class jbComponent {
 			this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
 		} catch (e) {
 			jb.logError('ng compilation error',this, e);
+			throw e;
 		}
 		return this.factory;
 	}
@@ -210,7 +215,7 @@ class jbComponent {
 		if (options.directives !== undefined)
 				annotations.directives = (annotations.directives || []).concat(
 					jb.toarray(options.directives).map(x=>
-						typeof x == 'string' ? directivesObj[x] : x)
+						typeof x == 'string' ? jbart.ng.directives[x] : x)
 					)
 
 		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
@@ -529,6 +534,7 @@ export function addAttribute(element, attrName, attrValue) {
 export class jBartWidget {
 	constructor(private elementRef: ElementRef, public ngZone: NgZone) { }
 	ngOnInit() { 
+		jbart.widgetLoaded = true; // indication for waitForIframeLoad
 		this.compId = this.elementRef.nativeElement.getAttribute('compID');
 		this.dialogs = jbart.jb_dialogs.dialogs;
 		if (this.compId)
@@ -537,27 +543,24 @@ export class jBartWidget {
 		if (this.compId == 'studio.all') // assign redrawStudio function
 			jbart.redrawStudio = () =>
 				this.draw();
+	}
 
-		jb.delay(1).then(()=>{
+	ngAfterViewInit() {
+		jb.delay(100).then(()=>{
 			if (jbart.modifyOperationsEm) { // studio source changes
+				this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
 				var compIdEm = jbart.studioActivityEm
 					.map(()=>
 							this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
-					.distinctUntilChanged();
+					.distinctUntilChanged()
+					.startWith(this.compId);
 
-				// jbart.modifyOperationsEm
-				// 	.debounceTime(300)
-				// 	.merge(compIdEm)
 				compIdEm.subscribe(()=>
 							this.draw())
 			} else { // no studio
 				this.draw();
 			}
 		})
-	}
-
-	ngAfterViewInit() {
-		jbart.widgetLoaded = true; // indication for waitForIframeLoad
 	}
 
 	private draw() {
@@ -567,7 +570,7 @@ export class jBartWidget {
 				this.comps = [this.getOrCreateInitialCtx().run({ $: this.compId })];
 		} catch(e) { 
 			jb.logException(e,'') 
-		}
+		}	
 	}
 
     private getOrCreateInitialCtx() {
@@ -606,7 +609,18 @@ export function getZone(zoneId) {
 	})
 }
 
-var directivesObj = {};
+jbart.ng = {
+	providers: {
+		provideForms: provideForms(), 
+		disableDeprecatedForms: disableDeprecatedForms(),
+		HTTP_PROVIDERS: HTTP_PROVIDERS
+	},
+	directives: {}
+}
+
 export function registerDirectives(obj) {
-	jb.extend(directivesObj,obj)
+	jb.extend(jbart.ng.directives,obj)
+}
+export function registerProviders(obj) {
+	jb.extend(jbart.ng.providers,obj)
 }

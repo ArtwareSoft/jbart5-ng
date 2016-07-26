@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@angular2-material/icon/icon.js', '@angular2-material/icon/icon-registry'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, button_js_1;
+    var jb_core_1, jb_ui, button_js_1, icon_js_1, icon_registry_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -12,9 +12,16 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js'], fun
             },
             function (button_js_1_1) {
                 button_js_1 = button_js_1_1;
+            },
+            function (icon_js_1_1) {
+                icon_js_1 = icon_js_1_1;
+            },
+            function (icon_registry_1_1) {
+                icon_registry_1 = icon_registry_1_1;
             }],
         execute: function() {
-            jb_ui.registerDirectives({ MdButton: button_js_1.MdButton });
+            jb_ui.registerDirectives({ MdButton: button_js_1.MdButton, MdIcon: icon_js_1.MdIcon });
+            jb_ui.registerProviders({ MdIconRegistry: icon_registry_1.MdIconRegistry });
             jb_core_1.jb.component('button.md-flat', {
                 type: 'button.style',
                 impl: { $: 'customStyle',

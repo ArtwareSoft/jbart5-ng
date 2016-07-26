@@ -1,4 +1,4 @@
-import {jb} from 'jb-core/jb';;
+import {jb} from 'jb-core/jb';
 
 jb.resource('material-demo','person',{
   "company": "google",
@@ -91,9 +91,44 @@ jb.component('material-demo.sidenav', {
   }
 })
 
+jb.component('material-demo.buttons', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'buttons', 
+    controls: [
+      {$: 'group', 
+        style :{$: 'group.section' }
+      }, 
+      {$: 'group', 
+        controls: [
+          {$: 'custom-control', 
+            html: '<div>%$sources/button%</div>', 
+            title: 'buttons', 
+            css: '  button, a {     margin: 8px;     text-transform: uppercase;   }    section {     display: flex;     align-items: center;     background-color: #f7f7f7;     margin: 8px;   }    p {     padding:5px 15px;   }'
+          }
+        ], 
+        features: [
+          {$: 'group.data', data: '%$sources/button%', watch: true }, 
+          {$: 'css.width', width: '400' }
+        ], 
+        title: 'buttons', 
+        style :{$: 'group.md-card' }
+      }, 
+      {$: 'editable-text', 
+        style :{$: 'editable-text.codemirror', 
+          debounceTime: '100', 
+          mode: 'htmlmixed', 
+          height: '600'
+        }, 
+        databind: '%$sources/button%'
+      }
+    ], 
+    style :{$: 'layout.horizontal', spacing: 3 }
+  }
+})
 
-`
-
+jb.resource('material-demo','sources',{
+button: `
 <button md-button>FLAT</button>
 <button md-raised-button>RAISED</button>
 <button md-icon-button>
@@ -113,14 +148,12 @@ jb.component('material-demo.sidenav', {
 <button md-button disabled>off</button>
 <button md-raised-button [disabled]="isDisabled">off</button>
 <button md-mini-fab [disabled]="isDisabled">check circle</button>
-
-
+`,
+card:`
 <md-card>
    Basic card.
 </md-card>
 
-preset actions
-======
 <md-card>
    <md-card-subtitle>Subtitle first</md-card-subtitle>
    <md-card-title>Card with title</md-card-title>   
@@ -135,8 +168,6 @@ preset actions
    </md-card-actions>
 </md-card>
 
-preset layout
-======
 <md-card>
    <md-card-header>
       <img md-card-avatar src="path/to/img.png">
@@ -148,7 +179,9 @@ preset layout
       <p>Here is some more content</p>
    </md-card-content>
 </md-card>
+`});
 
+`
 title group
 ==============
 <md-card>
@@ -185,3 +218,4 @@ intermediate
   I come after my label.
 </md-checkbox>
 `
+

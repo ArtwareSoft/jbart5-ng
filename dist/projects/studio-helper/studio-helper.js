@@ -215,7 +215,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 content: { $: 'group',
                                     controls: [
                                         { $: 'editable-text',
-                                            style: { $: 'editable-text.md-input' },
+                                            style: { $: 'editable-text.md-input', width: '230' },
                                             features: { $: 'css.margin', top: '19', left: '23' },
                                             title: 'name'
                                         }

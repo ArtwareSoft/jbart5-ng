@@ -47,7 +47,8 @@ jb.component('group.data', {
         }
 
         return cmp.jbEmitter
-          .map(()=> jb.val(ref())) 
+          .map(()=> 
+            jb.val(ref())) 
           .distinctUntilChanged()
           .filter(x=>x && x!='undefined')
 //          .map(x=>{console.log('group.data: ref changed',x);return x})

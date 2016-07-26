@@ -229,7 +229,7 @@ jb.component('studio-helper.open-dialog', {
           content :{$: 'group', 
             controls: [
               {$: 'editable-text', 
-                style :{$: 'editable-text.md-input' }, 
+                style :{$: 'editable-text.md-input', width: '230' }, 
                 features :{$: 'css.margin', top: '19', left: '23' }, 
                 title: 'name'
               }

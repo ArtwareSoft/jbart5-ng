@@ -57,7 +57,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
                     height: { as: 'number' },
                     mode: { as: 'string' },
-                    debounceTime: { as: 'number', defaultValue: 1000 },
+                    debounceTime: { as: 'number', defaultValue: 300 },
                     lineWrapping: { as: 'boolean' },
                 },
                 impl: function (context, cm_settings, resizer, height, mode, debounceTime, lineWrapping) {
