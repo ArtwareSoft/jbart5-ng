@@ -17,6 +17,15 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     toolbar: { $: 'studio.property-toobar', path: '%$path%' }
                 }
             });
+            jb_core_1.jb.component('studio.property-toobar-feature2', {
+                type: 'feature',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'field.toolbar', $trace: true,
+                    toolbar: { $: 'studio.property-toobar', path: '%$path%', $trace: true }
+                }
+            });
             jb_core_1.jb.component('studio.property-toobar', {
                 type: 'control',
                 params: {
@@ -45,7 +54,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             action: { $: 'studio.open-multiline-edit', path: '%$path%' }
                         },
                         { $: 'button',
-                            title: 'more',
+                            title: 'more...',
                             style: { $: 'button.md-icon-12', icon: 'more_vert' },
                             action: { $: 'studio.open-property-menu', path: '%$path%' }
                         }

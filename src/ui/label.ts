@@ -5,7 +5,7 @@ jb.component('label', {
     type: "control",
     params: {
         title: { essential: true, defaultValue: 'label', as: 'ref' },
-        style: { type: 'label.style', defaultValue: { $: 'label.p' }, dynamic: true },
+        style: { type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
         features: { type: 'feature[]', dynamic: true },
     },
     impl: ctx => 

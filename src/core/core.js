@@ -53,7 +53,7 @@ function jb_run(context,parentParam,settings) {
         if (profile.$log)
           jbart.comps.log.impl(context, (profile.$log == true) ? out : jb_run( jb_ctx(context, { profile: profile.$log, data: out, vars: { data: context.data } })));
 
-        if (profile.$trace) console.log('trace: ' + jb_compName(profile),context,out,run);
+        if (profile.$trace) console.log('trace: ' + context.path, jb_compName(profile),context,out,run);
           
         return jb_tojstype(out,jstype, context);
     }
@@ -369,6 +369,7 @@ function jb_profileType(profile) {
 }
 
 function jb_compName(profile) {
+  if (!profile) return;
   if (profile.$) return profile.$;
   var f = jb_firstProp(profile);
   return (f.indexOf('$') == 0 && f.indexOf('$jb_') != 0 && jb_firstProp(profile).split('$').pop()); // $comp sugar  

@@ -36,8 +36,13 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 params: {
                     path: { defaultValue: 'studio-helper-dummy.label' }
                 },
-                impl: { $: 'studio.properties', path: '%$path%',
-                    $vars: { circuit: 'studio-helper-dummy.label' },
+                impl: { $: 'group',
+                    controls: [
+                        { $: 'studio.properties',
+                            path: '%$path%',
+                            $vars: { circuit: 'studio-helper-dummy.label' }
+                        }
+                    ]
                 }
             });
             jb_1.jb.component('studio-helper.control-tree', {
@@ -128,7 +133,6 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('studio-helper-dummy.label', {
                 type: 'control',
                 impl: { $: 'label',
-                    title1: { $filter: '%age% == 42' },
                     title: ['%$people/people%',
                         { $filter: '%age% == 42' },
                         '%name%'

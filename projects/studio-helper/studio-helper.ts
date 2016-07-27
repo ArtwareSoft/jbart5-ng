@@ -37,10 +37,15 @@ jb.component('studio-helper.properties', {
   type: 'control', 
   params: {
     path: { defaultValue: 'studio-helper-dummy.label' }
-  },
-  impl :{$: 'studio.properties', path: '%$path%',
-      $vars: { circuit: 'studio-helper-dummy.label' }, 
-  } 
+  }, 
+  impl :{$: 'group', 
+    controls: [
+      {$: 'studio.properties', 
+        path: '%$path%', 
+        $vars: { circuit: 'studio-helper-dummy.label' }
+      }
+    ]
+  }
 })
 
 jb.component('studio-helper.control-tree', {
@@ -138,7 +143,6 @@ jb.component('studio-helper.expandable', {
 jb.component('studio-helper-dummy.label', {
   type: 'control', 
   impl :{$: 'label', 
-        title1: {$filter: '%age% == 42'},
         title: [ '%$people/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'

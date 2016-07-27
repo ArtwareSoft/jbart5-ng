@@ -106,13 +106,14 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'field.toolbar',
-                            toolbar: { $: 'button',
-                                title: 'more',
-                                style: { $: 'button.md-icon-12', icon: 'more_vert' },
-                                action: { $: 'studio.open-property-menu', path: '%$path%' }
-                            }
-                        },
+                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        // {$: 'field.toolbar', 
+                        //   toolbar :{$: 'button', 
+                        //     title: 'more', 
+                        //     style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                        //     action :{$: 'studio.open-property-menu', path: '%$path%' }
+                        //   }
+                        // }, 
                         { $: 'editable-text.suggestions-input-feature',
                             path: '%$path%',
                             action: { $: 'studio.jb-open-suggestions', path: '%$path%' }
@@ -200,7 +201,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         tgpCtrl: { $: 'object', expanded: true }
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    features: { $: 'studio.property-toobar-feature', path: '%$path%' },
+                    features: [
+                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        { $: 'studio.bindto-modifyOperations', data: '%$tgpCtrl/expanded%', path: '%$path%' },
+                    ],
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
@@ -225,7 +229,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     style: { $: 'picklist.groups' },
                                     features: { $: 'css',
                                         css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
-                                    }
+                                    },
                                 }
                             ],
                             features: { $: 'css', css: '{ position: relative }' }
@@ -254,7 +258,13 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     $vars: {
                         tgpCtrl: { $: 'object', expanded: false }
                     },
-                    features: { $: 'studio.property-toobar-feature', path: '%$path%' },
+                    features: [
+                        { $: 'studio.bindto-modifyOperations',
+                            data: '%$tgpCtrl/expanded%',
+                            path: '%$path%'
+                        },
+                        { $: 'css', css: '{ position: relative; margin-left: -80px }' }
+                    ],
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
@@ -277,12 +287,17 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     databind: { $: 'studio.compName-ref', path: '%$path%' },
                                     options: { $: 'studio.tgp-path-options', path: '%$path%' },
                                     style: { $: 'picklist.groups' },
-                                    features: { $: 'css',
-                                        css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
-                                    }
+                                    features: [
+                                        { $: 'css',
+                                            css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
+                                        },
+                                        { $: 'studio.property-toobar-feature2', path: '%$path%' }
+                                    ]
                                 }
                             ],
-                            features: { $: 'css', css: '{ position: relative; margin-left: -80px }' }
+                            features: [
+                                { $: 'css', css: '{ position: relative; margin-left2: -80px }' },
+                            ]
                         },
                         { $: 'group',
                             controls: { $: 'studio.properties', path: '%$path%' },
@@ -292,7 +307,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 },
                                 { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
                                 { $: 'css',
-                                    css: '{ margin-top: 9px; margin-left: -100px; margin-bottom: 4px;}'
+                                    css: '{ margin-top: 9px; margin-left2: -100px; margin-bottom: 4px;}'
                                 }
                             ]
                         }
@@ -337,7 +352,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     ],
                     features: [
                         { $: 'css',
-                            css: "{ position: relative; width: 400px; margin-left: -110px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 16px; margin-right: 1px; color: #909090 }"
+                            css: "{ position: relative; width: 400px; margin-left: -100px; margin-top: -5px }\n.header {  background: #F9F9F9; } \ni { font-size: 16px; margin-right: 1px; color: #909090 }"
                         }
                     ],
                     style: { $: 'group.expandable' }
@@ -529,6 +544,22 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 });
                             }
                         }
+                    });
+                }
+            });
+            jb_core_1.jb.component('studio.bindto-modifyOperations', {
+                type: 'feature',
+                params: {
+                    path: { essential: true, as: 'string' },
+                    data: { as: 'ref' }
+                },
+                impl: function (context, path, _data) {
+                    studio.modifyOperationsEm
+                        .filter(function (e) {
+                        return e.path == path;
+                    })
+                        .subscribe(function (e) {
+                        return jb_core_1.jb.writeValue(_data, true);
                     });
                 }
             });

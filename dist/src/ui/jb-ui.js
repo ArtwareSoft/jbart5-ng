@@ -507,7 +507,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     // redraw if script changed at studio
                     (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
                         .flatMap(function (e) {
-                        if (e.path == _this.comp.ctx.path)
+                        if (_this.comp && e.path == _this.comp.ctx.path)
                             return [_this.comp.ctx.run()];
                         return [];
                     })
@@ -621,11 +621,15 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     jb_core_1.jb.delay(100).then(function () {
                         if (jbart.modifyOperationsEm) {
                             _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
+                            var counterChange = jbart.studioActivityEm
+                                .map(function (x) { return jbart.previewRefreshCounter; })
+                                .distinctUntilChanged();
                             var compIdEm = jbart.studioActivityEm
                                 .map(function () {
                                 return _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
                             })
                                 .distinctUntilChanged()
+                                .merge(counterChange)
                                 .startWith(_this.compId);
                             compIdEm.subscribe(function () {
                                 return _this.draw();

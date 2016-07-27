@@ -182,6 +182,7 @@ export class ControlModel {
 	}
 
 	innerControlPaths(path) {
+
 		var out = ['action~content'] // add more inner paths here
 			.map(x=>path+'~'+x)
 			.filter(p=>

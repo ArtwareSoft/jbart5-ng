@@ -370,7 +370,7 @@ export class jbComp {
   	// redraw if script changed at studio
 		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
 				.flatMap(e=> {
-					if (e.path == this.comp.ctx.path)
+					if (this.comp && e.path == this.comp.ctx.path)
 						return [this.comp.ctx.run()];
 					return [];
 				})
@@ -549,10 +549,15 @@ export class jBartWidget {
 		jb.delay(100).then(()=>{
 			if (jbart.modifyOperationsEm) { // studio source changes
 				this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
+				var counterChange = jbart.studioActivityEm
+					.map(x=>jbart.previewRefreshCounter)
+					.distinctUntilChanged()
+
 				var compIdEm = jbart.studioActivityEm
 					.map(()=>
 							this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
 					.distinctUntilChanged()
+					.merge(counterChange)
 					.startWith(this.compId);
 
 				compIdEm.subscribe(()=>

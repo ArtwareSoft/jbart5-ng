@@ -10,6 +10,16 @@ jb.component('studio.property-toobar-feature', {
     }
 }) 
 
+jb.component('studio.property-toobar-feature2', {
+  type: 'feature', 
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl :{$: 'field.toolbar', $trace:true,
+        toolbar :{$: 'studio.property-toobar', path: '%$path%', $trace:true } 
+    }
+}) 
+
 jb.component('studio.property-toobar', {
   type: 'control', 
   params: {
@@ -39,7 +49,7 @@ jb.component('studio.property-toobar', {
         }, 
 
 	        {$: 'button', 
-	          title: 'more', 
+	          title: 'more...', 
 	          style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
 	          action :{$: 'studio.open-property-menu', path: '%$path%' }
 	        }
