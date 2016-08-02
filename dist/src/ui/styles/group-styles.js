@@ -32,24 +32,59 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: { $: 'group.initGroup' }
                 },
             });
-            jb_core_1.jb.component('group.expandable-subgroups', {
+            jb_core_1.jb.component('group.accordion', {
                 type: 'group.style',
-                params: {
-                    icon: { as: 'string ', defaultValue: 'code' }
-                },
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <button md-icon-button md-button (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </button>\n        </div>\n        <jb_comp *ngIf=\"ctrl.show\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n  </section>",
                     methods: {
                         init: function (ctx) { return function (cmp) {
-                            cmp.selected = cmp.ctrls[0];
-                            cmp.select = function (ctrl) {
-                                cmp.selected = ctrl;
+                            cmp.expand_title = function (ctrl) {
+                                return ctrl.show ? 'collapse' : 'expand';
+                            };
+                            cmp.toggle = function (newCtrl) {
+                                return cmp.ctrls.forEach(function (ctrl) {
+                                    return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
+                                });
                             };
                         }; }
                     },
-                    template: "<section class=\"jb-group\">\n        <section *ngFor=\"let ctrl of ctrls\" class=\"md-whiteframe-z3\" [ngClass]=\"{'open': selected==ctrl}\">\n          <md-toolbar class=\"md-primary\">\n            <div class=\"md-toolbar-tools\">\n              <h3>{{ ctrl.title }}</h3>\n              <span flex></span>\n              <button md-button\n                      class=\"md-icon-button\"\n                      aria-label=\"Open\"\n                      (click)=\"select(ctrl)\">\n                <i md-icon>%$icon%</i>\n              </button>\n            </div>\n          </md-toolbar>\n          <jb_comp *ngIf=\"selected==ctrl\" [comp]=\"ctrl.comp\"></jb_comp>\n      </section></section>",
-                }
+                    css: ".header { display: flex; flex-direction: row; }\n        button:hover { background: none }\n        button { margin-left: auto }\n        i { color: #}\n        .title { margin: 5px }",
+                    features: { $: 'group.initGroup' }
+                },
             });
+            // jb.component('group.expandable-subgroups-old', {
+            //   type: 'group.style',
+            //   params: {
+            //     icon: { as: 'string ', defaultValue: 'code' }
+            //   },
+            //   impl :{$: 'customStyle', 
+            //       features :{$: 'group.initGroup' },
+            //       methods: {
+            //         init: ctx => cmp => {
+            //           cmp.selected = cmp.ctrls[0];
+            //           cmp.select = function(ctrl) {
+            //             cmp.selected = ctrl;
+            //           }
+            //         }
+            //     },
+            //     template: `<section class="jb-group">
+            //         <section *ngFor="let ctrl of ctrls" class="md-whiteframe-z3" [ngClass]="{'open': selected==ctrl}">
+            //           <md-toolbar class="md-primary">
+            //             <div class="md-toolbar-tools">
+            //               <h3>{{ ctrl.title }}</h3>
+            //               <span flex></span>
+            //               <button md-button
+            //                       class="md-icon-button"
+            //                       aria-label="Open"
+            //                       (click)="select(ctrl)">
+            //                 <i md-icon>%$icon%</i>
+            //               </button>
+            //             </div>
+            //           </md-toolbar>
+            //           <jb_comp *ngIf="selected==ctrl" [comp]="ctrl.comp"></jb_comp>
+            //       </section></section>`,
+            //   }
+            // })
             jb_core_1.jb.component('toolbar.simple', {
                 type: 'group.style',
                 impl: { $: 'customStyle',

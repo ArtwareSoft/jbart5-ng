@@ -34,7 +34,8 @@ jb.component('picklist', {
           })
         }
         cmp.recalcOptions();
-      }
+      },
+     observable: () => {} // to create jbEmitter
     },ctx);
   }
 })
@@ -44,6 +45,20 @@ function groupOfOpt(opt) {
     return '';
   return opt.group || opt.text.split('.').shift();
 }
+
+jb.component('picklist.dynamic-options', {
+  type: 'feature',
+  params: {
+    recalcEm: { as: 'observable'}
+  },
+  impl: (ctx,recalcEm) => ({
+    init: cmp => 
+      recalcEm
+        .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+        .subscribe(e=>
+            cmp.recalcOptions()) 
+  })
+})
 
 // ********* options
 

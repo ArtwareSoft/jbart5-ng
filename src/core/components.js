@@ -584,7 +584,7 @@ jb_component('notEmpty',{
 jb_component('equals',{
 	type: 'boolean',
 	params: {
-		item1: { as: 'single'},
+		item1: { as: 'single', essential: true },
 		item2: { defaultValue: '%%', as: 'single' }
 	},
 	impl: function(context, item1, item2) {
@@ -600,7 +600,7 @@ jb_component('equals',{
 jb_component('notEquals',{
 	type: 'boolean',
 	params: {
-		item1: { as: 'single'},
+		item1: { as: 'single', essential: true },
 		item2: { defaultValue: '%%', as: 'single' }
 	},
 	impl: { $not: { $: 'equals', item1: '%$item1%', item2: '%$item2%'} }

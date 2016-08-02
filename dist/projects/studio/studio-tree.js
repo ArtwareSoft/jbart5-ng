@@ -116,11 +116,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 path: { $: 'studio.currentProfilePath' }
                             },
                             onDoubleClick: [
-                                { $: 'studio.openProperties' },
+                                { $: 'studio.open-properties' },
                                 { $: 'studio.highlight-in-preview' },
                             ],
                         },
-                        { $: 'tree.keyboard-selection', onEnter: { $: 'studio.openProperties' } },
+                        { $: 'tree.keyboard-selection', onEnter: { $: 'studio.open-properties' } },
                         { $: 'tree.drag-and-drop' },
                         { $: 'tree.keyboard-shortcut', key: 'Ctrl+C', action: { $: 'studio.copy', path: '%%' } },
                         { $: 'tree.keyboard-shortcut', key: 'Ctrl+V', action: { $: 'studio.paste', path: '%%' } },

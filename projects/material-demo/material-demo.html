@@ -5,6 +5,9 @@
     <title>Material2 Demo with jBart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
   <script type="text/javascript" src="/src/loader/load-jbart.js"></script>
+
+    <link rel="stylesheet" href="/projects/studio/css/studio.css">
+
   </head>
 
 
@@ -13,7 +16,8 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/material-demo/material-demo']))
+// .concat(jb_studio_modules)
+jbLoadModules(jb_modules.concat(['projects/material-demo/material-demo']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

@@ -177,7 +177,7 @@ export class ControlModel {
 			if (Array.isArray(val[prop]))
 				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
 			else
-				return [path + '~' + prop]
+				return [path + '~' + prop + '~0']
 		}
 	}
 
@@ -309,9 +309,18 @@ export class ControlModel {
 
 	modify(op,path,args,ctx) {
 		var comp = path.split('~')[0];
-		var before = compAsStr(comp);
+		var before = getComp(comp) && compAsStr(comp);
 		op.call(this,path,args);
-		modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, args: args, ctx: ctx, jbart: findjBartToLook(path) });
+		modifyOperationsEm.next({ 
+			comp: comp, 
+			before: before, 
+			after: compAsStr(comp), 
+			path: path, 
+			args: args, 
+			ctx: ctx, 
+			jbart: findjBartToLook(path),
+			newComp: before ? false: true
+		});
 	}
 
 	_delete(path) {
@@ -335,7 +344,7 @@ export class ControlModel {
 
 	move(path,args) { // drag & drop
 		var dragged = profileFromPath(args.dragged);
-		var arr = this.asArray(path);
+		var arr = this.getOrCreateArray(path);
 		if (arr) {
 			var ctrlParam = this.controlParam(path);
 			this._delete(args.dragged);
@@ -375,6 +384,16 @@ export class ControlModel {
 		jb.writeValue(profileRefFromPath(path),result);
 	}
 
+	getStyleComp(path) {
+	    var style = this.val(path);
+	    var compName = jb.compName(style);
+	    if (compName == 'customStyle')
+	      return { type: 'inner', path: path, style : style }
+		var comp = compName && getComp(compName);
+		if (jb.compName(comp.impl) == 'customStyle') 
+	      return { type: 'global', path: compName, style: comp.impl }
+	}
+
 	addProperty(path) {
 		var parent = profileFromPath(parentPath(path));
 		if (this.paramType(path) == 'data')
@@ -386,12 +405,13 @@ export class ControlModel {
 	duplicate(path) {
 		var prop = path.split('~').pop();
 		var val = profileFromPath(path);
-		var arr = profileFromPath(parentPath(path));
+		var arr = this.getOrCreateArray(parentPath(parentPath(path)));
 		if (Array.isArray(arr)) {
 			var clone = evalProfile(jb.prettyPrint(val));
 			var index = Number(prop);
 			arr.splice(index, 0,clone);
-			fixIndexPaths(path,1);
+			if (index < arr.length-2)
+				fixIndexPaths(path,1);
 		}
 	}
 
@@ -428,7 +448,7 @@ export class ControlModel {
 		var group_path = path;
 		while (!this.controlParam(group_path) && group_path)
 			group_path = parentPath(group_path);
-		var arr = this.asArray(group_path);
+		var arr = this.getOrCreateArray(group_path);
 		if (arr) {
 			arr.push(result);
 			args.modifiedPath = [group_path,this.controlParam(group_path),arr.length-1].join('~');
@@ -511,7 +531,7 @@ export class ControlModel {
 			.map(p=>p[0])
 	}
 
-	asArray(path) {
+	getOrCreateArray(path) {
 		var val = profileFromPath(path);
 		var prop = this.controlParam(path);
 		if (!prop)

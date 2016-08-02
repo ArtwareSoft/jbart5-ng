@@ -45,18 +45,20 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     methods: {
-                        afterViewInit: function (ctx) { return function (cmp) {
-                            return jb_core_1.jb.delay(1).then(function () {
-                                return $(cmp.elementRef.nativeElement).find('input,select')
-                                    .focus(function (e) {
-                                    $(e.target).parents().filter('.property').siblings().find('input').removeClass('focused');
-                                    $(e.target).addClass('focused');
+                        afterViewInit: function (ctx) {
+                            return function (cmp) {
+                                return jb_core_1.jb.delay(1).then(function () {
+                                    return $(cmp.elementRef.nativeElement).find('input,select')
+                                        .focus(function (e) {
+                                        $(e.target).parents().filter('.property').siblings().find('input').removeClass('focused');
+                                        $(e.target).addClass('focused');
+                                    });
                                 });
-                            });
-                        }; }
+                            };
+                        }
                     },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\" \n          (mouseenter)=\"ctrl.hover=true\" (mouseleave)=\"ctrl.hover=false\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [hidden]=\"!ctrl.hover\" [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
-                    css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n      },\n      .property>*:last-child { margin-right:0 }"
+                    css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
             // jb.component('button.studio-properties-toolbar', {
@@ -150,6 +152,34 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 .css('display', 'block');
                         }
                     };
+                }
+            });
+            jb_core_1.jb.component('group.studio-properties-accordion', {
+                type: 'group.style',
+                impl: { $: 'customStyle',
+                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div>\n          <jb_comp *ngIf=\"ctrl.show\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n  </section>",
+                    methods: {
+                        init: function (ctx) {
+                            return function (cmp) {
+                                cmp.expand_title = function (ctrl) {
+                                    return ctrl.show ? 'collapse' : 'expand';
+                                };
+                                cmp.toggle = function (newCtrl) {
+                                    return cmp.ctrls.forEach(function (ctrl) {
+                                        return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
+                                    });
+                                };
+                            };
+                        },
+                        afterViewInit: function (ctx) {
+                            return function (cmp) {
+                                if (cmp.ctrls && cmp.ctrls[0])
+                                    cmp.ctrls[0].show = true;
+                            };
+                        }
+                    },
+                    css: ".header { display: flex; flex-direction: row; }\nbutton:hover { background: none }\nbutton { margin-left: auto }\ni { color: #; cursor: pointer }\n.title { margin: 5px }  \n.header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } \n",
+                    features: { $: 'group.initGroup' }
                 }
             });
         }

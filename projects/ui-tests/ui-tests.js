@@ -735,16 +735,16 @@ picklist :{$: 'ng2-ui-test',
   expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
 },
 
-// 'tabs.accordion' :{$: 'ng2-ui-test', 
-//   control :{$: 'tabs',
-//       style :{$: 'tabs.accordion'},
-//       tabs:[
-//         {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
-//         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
-//     ]
-//   },
-//   expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
-// },
+'group.accordion' :{$: 'ng2-ui-test', 
+  control :{$: 'group',
+      style :{$: 'group.accordion'},
+      controls:[
+        {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
+        {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
+    ]
+  },
+  expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
+},
 
 'inner-label' :{$: 'ng2-ui-test',  
   control :{$: 'inner-label3-tst', title: 'Hello World2' },

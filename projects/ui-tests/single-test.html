@@ -19,9 +19,7 @@ jbLoadModules(jb_modules.concat(['testing/ui-testers','/projects/ui-tests/ui-tes
     if (test)
         document.querySelector('jBartSingleTest').setAttribute('compID',test);
     var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
-    bootstrap(loadedModules['testing/ui-testers'].jBartSingleTest, [
-    jbart.directivesObj.provideForms(),
-  ]).catch(err => console.error(err));
+    bootstrap(loadedModules['testing/ui-testers'].jBartSingleTest, jb_entries(jbart.ng.providers).map(e=>e[1])).catch(err => console.error(err));
 })
   
 </script>

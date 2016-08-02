@@ -155,7 +155,7 @@ class jbComponent {
 
 		jb.path(options, ['atts','jb-path'], profilePath(context.profile)||''); // for the studio
 
-		context.params.features && context.params.features(context).forEach(f => this.jbExtend(f,context))
+		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
 			jb.toarray(context.params.style.profile.features)
 				.forEach(f=>this.jbExtend(context.run(f),context))

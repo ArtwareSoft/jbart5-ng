@@ -10,7 +10,7 @@ jb.component('studio.pickAndOpen', {
 		from: '%$from%',
 	  	onSelect: [
 			{$: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
-			{$: 'studio.openProperties'},
+			{$: 'studio.open-properties'},
 			{$: 'studio.open-control-tree'},
  		],
 	} 
@@ -55,7 +55,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'Properties', 
-        action :{$: 'studio.openProperties' }, 
+        action :{$: 'studio.open-properties' }, 
         style :{$: 'button.md-icon', icon: 'storage' }
       }, 
       {$: 'button', 
@@ -92,22 +92,22 @@ jb.component('studio.toolbar', {
         key: 'Alt+N', 
         action :{$: 'studio.pickAndOpen', from: 'studio' }
       }, 
-      {$: 'feature.keyboard-shortcut', 
-        key: 'Ctrl+C', 
-        action :{$: 'studio.copy', path: '%$path%' }
-      }, 
-      {$: 'feature.keyboard-shortcut', 
-        key: 'Ctrl+V', 
-        action :{$: 'studio.paste', path: '%$path%' }
-      }, 
-      {$: 'feature.keyboard-shortcut', 
-        key: 'Ctrl+Z', 
-        action :{$: 'studio.undo' }
-      }, 
-      {$: 'feature.keyboard-shortcut', 
-        key: 'Ctrl+Y', 
-        action :{$: 'studio.redo' }
-      }
+      // {$: 'feature.keyboard-shortcut', 
+      //   key: 'Ctrl+C', 
+      //   action :{$: 'studio.copy', path: '%$path%' }
+      // }, 
+      // {$: 'feature.keyboard-shortcut', 
+      //   key: 'Ctrl+V', 
+      //   action :{$: 'studio.paste', path: '%$path%' }
+      // }, 
+      // {$: 'feature.keyboard-shortcut', 
+      //   key: 'Ctrl+Z', 
+      //   action :{$: 'studio.undo' }
+      // }, 
+      // {$: 'feature.keyboard-shortcut', 
+      //   key: 'Ctrl+Y', 
+      //   action :{$: 'studio.redo' }
+      // }
     ]
   }
 })

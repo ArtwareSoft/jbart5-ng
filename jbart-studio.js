@@ -131,7 +131,7 @@ extend(op_post_handlers, {
         else
           var projDirs = ['projects/' + project];
 
-        if (comp.indexOf('studio.') == 0)
+        if (comp.indexOf('studio.') == 0 || comp.indexOf('.studio-') != -1)
           projDirs.push('projects/studio');
 
         if (!clientReq.original) { // new comp

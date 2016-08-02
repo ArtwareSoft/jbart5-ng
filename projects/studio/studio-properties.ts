@@ -2,7 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as studio from './studio-model';
 
-jb.component('studio.openProperties', {
+jb.component('studio.open-properties', {
   type: 'action', 
   impl :{$: 'openDialog', 
     title: [
@@ -36,17 +36,79 @@ jb.component('studio.openSourceDialog', {
 		}
 })
 
-jb.component('studio.properties',{
-	type: 'control',
-	params: { path: { as: 'string' } },
-	impl :{$: 'group',
-		style :{$: 'property-sheet.studio-properties'},
-		features :{$: 'group.studio-watch-path', path: '%$path%'},
-		controls :{$: 'dynamic-controls', 
-		    controlItems :{$: 'studio.non-control-children', path: '%$path%' },
-		    genericControl :{$: 'studio.property-field', path: '%$controlItem%' } 
-		}
-	}
+jb.component('studio.properties', {
+  type: 'control', 
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl :{$: 'group', 
+    style :{$: 'group.studio-properties-accordion' }, 
+    controls: [
+      {$: 'group', 
+        title: [
+          {$: 'studio.val', path: '%$path%' }, 
+          {$: 'count', 
+            items: [
+              {$: 'objectProperties' }, 
+              {$: 'filter', 
+                filter :{$: 'notEquals', item1: '%%', item2: 'features' }
+              }, 
+              {$: 'filter', 
+                filter :{$: 'notEquals', item1: '%%', item2: '$' }
+              }, 
+              {$: 'filter', 
+                filter :{$: 'notEquals', item1: '%%', item2: 'controls' }
+              }
+            ]
+          }, 
+          'Properties (%%)'
+        ], 
+        style :{$: 'property-sheet.studio-properties' }, 
+        controls :{$: 'dynamic-controls', 
+          controlItems: [
+            {$: 'studio.non-control-children', path: '%$path%' }, 
+            {$: 'filter', 
+              filter :{$: 'not', 
+                of :{$: 'endsWith', endsWith: '~features', text: '%%' }
+              }
+            }
+          ], 
+          genericControl :{$: 'studio.property-field', path: '%$controlItem%' }
+        }, 
+        features :{$: 'group.studio-watch-path', path: '%$path%' }
+      }, 
+      {$: 'group', 
+        title: [
+          {$: 'studio.val', path: '%$path%' }, 
+          {$: 'count', items: '%features%' }, 
+          'Features (%%)'
+        ], 
+        features :{$: 'group.studio-watch-path', path: '%$path%' }, 
+        controls: [{$: 'studio.property-array', path: '%$path%~features' }]
+      }
+    ], 
+    features: [
+      {$: 'css.width', width: '502' }, 
+      {$: 'group.dynamic-sub-titles' }, 
+      {$: 'css.margin', left: '-10' }, 
+      {$: 'hidden', 
+        showCondition :{$: 'studio.has-param', param: 'features', path: '%$path%' }
+      }
+    ]
+  }
+})
+
+jb.component('studio.properties-in-tgp',{
+  type: 'control',
+  params: { path: { as: 'string' } },
+  impl :{$: 'group',
+    style :{$: 'property-sheet.studio-properties'},
+    features :{$: 'group.studio-watch-path', path: '%$path%'},
+    controls :{$: 'dynamic-controls', 
+        controlItems :{$: 'studio.non-control-children', path: '%$path%' },
+        genericControl :{$: 'studio.property-field', path: '%$controlItem%' } 
+    }
+  }
 })
 
 jb.component('studio.property-field',{
@@ -232,15 +294,20 @@ jb.component('studio.property-tgp', {
             databind :{$: 'studio.compName-ref', path: '%$path%' }, 
             options :{$: 'studio.tgp-path-options', path: '%$path%' }, 
             style :{$: 'picklist.groups' }, 
-            features : {$: 'css', 
+            features : [{$: 'css', 
               css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
             },
+            { $: 'picklist.dynamic-options', 
+              recalcEm: ctx => 
+                studio.modifyOperationsEm.filter(e=>e.newComp)
+            }
+            ],
           }
         ], 
         features :{$: 'css', css: '{ position: relative }' }
       }, 
       {$: 'group', 
-        controls :{$: 'studio.properties', path: '%$path%' }, 
+        controls :{$: 'studio.properties-in-tgp', path: '%$path%' }, 
         features: [
           {$: 'group.watch', 
             data :{$: 'studio.compName', path: '%$path%' }
@@ -269,7 +336,8 @@ jb.component('studio.property-tgp-in-array', {
         data: '%$tgpCtrl/expanded%', 
         path: '%$path%'
       }, 
-      {$: 'css', css: '{ position: relative; margin-left: -80px }' }
+      {$: 'css', css: '{ position: relative; margin-left: -80px }' },
+              {$: 'studio.property-toobar-feature', path: '%$path%' }
     ], 
     controls: [
       {$: 'group', 
@@ -297,7 +365,6 @@ jb.component('studio.property-tgp-in-array', {
               {$: 'css', 
                 css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
               }, 
-              {$: 'studio.property-toobar-feature2', path: '%$path%' }
             ]
           }
         ], 
@@ -306,7 +373,7 @@ jb.component('studio.property-tgp-in-array', {
         ]
       }, 
       {$: 'group', 
-        controls :{$: 'studio.properties', path: '%$path%' }, 
+        controls :{$: 'studio.properties-in-tgp', path: '%$path%' }, 
         features: [
           {$: 'group.watch', 
             data :{$: 'studio.compName', path: '%$path%' }
@@ -321,7 +388,6 @@ jb.component('studio.property-tgp-in-array', {
   }
 })
 
-
 jb.component('studio.property-array', {
   type: 'control', 
   params: {
@@ -331,44 +397,85 @@ jb.component('studio.property-array', {
     $vars: {
       arrayCtrl :{$: 'object', expanded: true }
     }, 
-    title :{$: 'studio.prop-name', path: '%$path%' }, 
     controls: [
-      {$: 'button', 
-        title: 'add', 
-        action :{$: 'studio.newArrayItem', path: '%$path%' }, 
-        style :{$: 'button.md-icon', icon: 'add', size: '12', aria: undefined }, 
-        features: [
-          {$: 'css', 
-            css: `{ position: absolute;   top: 0px;   right: 30px }
-button:hover {  background: none }`
-          }, 
-        ]
+      {$: 'group', 
+        controls: [
+          {$: 'itemlist', 
+            items :{$: 'studio.array-children', path: '%$path%' }, 
+            controls :{$: 'group', 
+              style :{$: 'property-sheet.studio-properties' }, 
+              controls :{$: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
+            }, 
+            itemVariable: 'arrayItem', 
+            features: [
+              {$: 'hidden', showCondition: true }, 
+              {$: 'itemlist.divider' }, 
+              {$: 'itemlist.drag-and-drop' }
+            ]
+          }
+        ], 
+        title: 'items'
       }, 
-      {$: 'itemlist', 
-        items :{$: 'studio.array-children', path: '%$path%' }, 
-        controls :{$: 'group', 
-          style :{$: 'property-sheet.studio-properties' }, 
-          controls :{$: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
-        }, 
-        itemVariable: 'arrayItem', 
-        features: [
-          {$: 'hidden', showCondition: true }, 
-          {$: 'css', css: '{ margin-left: 10px}' }, 
-          {$: 'itemlist.divider' }, 
-          {$: 'itemlist.drag-and-drop' }
-        ]
+      {$: 'button', 
+        title: 'new feature', 
+        action :{$: 'studio.newArrayItem', path: '%$path%' }, 
+        style :{$: 'button.md-raised' }, 
+        features :{$: 'css.margin', top: '20', left: '20' }
       }
     ], 
-    features: [
-      {$: 'css', 
-        css: `{ position: relative; width: 400px; margin-left: -100px; margin-top: -5px }
-.header {  background: #F9F9F9; } 
-i { font-size: 16px; margin-right: 1px; color: #909090 }`
-      }
-    ], 
-    style :{$: 'group.expandable' }
+    features: [], 
+    style :{$: 'layout.vertical', spacing: '7' }
   }
 })
+
+
+// jb.component('studio.property-array', {
+//   type: 'control', 
+//   params: {
+//     path: { as: 'string' }
+//   }, 
+//   impl :{$: 'group', 
+//     $vars: {
+//       arrayCtrl :{$: 'object', expanded: true }
+//     }, 
+//     title :{$: 'studio.prop-name', path: '%$path%' }, 
+//     controls: [
+//       {$: 'button', 
+//         title: 'add', 
+//         action :{$: 'studio.newArrayItem', path: '%$path%' }, 
+//         style :{$: 'button.md-icon', icon: 'add', size: '12', aria: undefined }, 
+//         features: [
+//           {$: 'css', 
+//             css: `{ position: absolute;   top: 0px;   right: 30px }
+// button:hover {  background: none }`
+//           }, 
+//         ]
+//       }, 
+//       {$: 'itemlist', 
+//         items :{$: 'studio.array-children', path: '%$path%' }, 
+//         controls :{$: 'group', 
+//           style :{$: 'property-sheet.studio-properties' }, 
+//           controls :{$: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
+//         }, 
+//         itemVariable: 'arrayItem', 
+//         features: [
+//           {$: 'hidden', showCondition: true }, 
+//           {$: 'css', css: '{ margin-left: 10px}' }, 
+//           {$: 'itemlist.divider' }, 
+//           {$: 'itemlist.drag-and-drop' }
+//         ]
+//       }
+//     ], 
+//     features: [
+//       {$: 'css', 
+//         css: `{ position: relative; width: 400px; margin-left: -100px; margin-top: -5px }
+// .header {  background: #F9F9F9; } 
+// i { font-size: 16px; margin-right: 1px; color: #909090 }`
+//       }
+//     ], 
+//     style :{$: 'group.expandable' }
+//   }
+// })
 
 // jb.component('studio.property-Style',{
 // 	type: 'control',

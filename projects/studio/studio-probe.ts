@@ -10,6 +10,8 @@ class Probe {
   }
 
   traceGaps(context,parentParam) {
+    // if (context.path.indexOf('studio-helper') == 0)
+    //   console.log('trace-gaps',context.path, 'looking for ' + this.pathToTrace);
     if (typeof context.profile == 'object' && jb.compName(context.profile))
       jb.entries(context.profile)
         .filter(p=>

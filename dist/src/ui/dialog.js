@@ -158,10 +158,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                     var dialog = context.vars.$dialog;
                     jb_core_1.jb.delay(10).then(function () {
                         var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
-                            .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'mousedown')).
-                            filter(function (e) {
+                            .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'mousedown'))
+                            .filter(function (e) {
                             return $(e.target).closest(dialog.$el[0]).length == 0;
-                        });
+                        })
+                            .takeUntil(dialog.em.filter(function (e) { return e.type == 'close'; }));
                         clickoutEm.take(1)
                             .subscribe(function () {
                             return dialog.close();

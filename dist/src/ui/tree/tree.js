@@ -324,11 +324,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                             if (tree.drake) {
                                 tree.drake.containers =
                                     $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-array-node').children().filter('.treenode-children').get();
-                                // make a place for drop in empty containers
-                                tree.drake.containers.forEach(function (el) {
-                                    if ($(el).height() < 3)
-                                        $(el).height(7);
-                                });
                             }
                         }
                     };

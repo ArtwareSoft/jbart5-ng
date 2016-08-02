@@ -321,8 +321,8 @@ jb.component('tree.drag-and-drop', {
 			  tree.drake.containers = 
 				  $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-array-node').children().filter('.treenode-children').get();
 			// make a place for drop in empty containers
-	  		  tree.drake.containers.forEach(el=>{
-	  		  	if ($(el).height() < 3) $(el).height(7)})
+	  		//   tree.drake.containers.forEach(el=>{
+	  		//   	if ($(el).height() < 3) $(el).height(7)})
 		  	}
   		}
 

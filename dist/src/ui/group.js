@@ -51,6 +51,16 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     });
                 }
             });
+            jb_core_1.jb.component('group.dynamic-sub-titles', {
+                type: 'feature',
+                impl: function (ctx) { return ({
+                    doCheck: function (cmp) {
+                        return (cmp.ctrls || []).forEach(function (ctrl) {
+                            return ctrl.title = ctrl.comp.jb_title ? ctrl.comp.jb_title() : '';
+                        });
+                    }
+                }); }
+            });
             jb_core_1.jb.component('dynamic-controls', {
                 type: 'control',
                 params: {

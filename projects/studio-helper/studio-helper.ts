@@ -39,14 +39,83 @@ jb.component('studio-helper.properties', {
     path: { defaultValue: 'studio-helper-dummy.label' }
   }, 
   impl :{$: 'group', 
+    $vars: { circuit: 'studio-helper-dummy.label' }, 
+    style :{$: 'group.studio-properties-accordion' }, 
     controls: [
-      {$: 'studio.properties', 
-        path: '%$path%', 
-        $vars: { circuit: 'studio-helper-dummy.label' }
+      {$: 'group', 
+        title: 'Properties', 
+        style :{$: 'property-sheet.studio-properties' }, 
+        controls :{$: 'dynamic-controls', 
+          controlItems: [
+            {$: 'studio.non-control-children', path: '%$path%' }, 
+            {$: 'filter', 
+              filter :{$: 'not', 
+                of :{$: 'endsWith', endsWith: '~features', text: '%%' }
+              }
+            }
+          ], 
+          genericControl :{$: 'studio.property-field', path: '%$controlItem%' }
+        }, 
+        features :{$: 'group.studio-watch-path', path: '%$path%' }
+      }, 
+      {$: 'group', 
+        title: [
+          {$: 'studio.val', path: '%$path%' }, 
+          {$: 'count', items: '%features%' }, 
+          'Features (%%)'
+        ], 
+        features :{$: 'group.studio-watch-path', path: '%$path%' }, 
+        controls: [{$: 'studio-helper.property-array', path: '%$path%~features' }]
       }
-    ]
+    ], 
+    features: [
+      {$: 'css.width', width: '540' }, 
+      {$: 'group.dynamic-sub-titles' }
+    ], 
+    title: ''
   }
 })
+
+jb.component('studio-helper.property-array', {
+  type: 'control', 
+  params: {
+    path: { as: 'string' }
+  }, 
+  impl :{$: 'group', 
+    $vars: {
+      arrayCtrl :{$: 'object', expanded: true }
+    }, 
+    controls: [
+      {$: 'group', 
+        controls: [
+          {$: 'itemlist', 
+            items :{$: 'studio.array-children', path: '%$path%' }, 
+            controls :{$: 'group', 
+              style :{$: 'property-sheet.studio-properties' }, 
+              controls :{$: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
+            }, 
+            itemVariable: 'arrayItem', 
+            features: [
+              {$: 'hidden', showCondition: true }, 
+              {$: 'itemlist.divider' }, 
+              {$: 'itemlist.drag-and-drop' }
+            ]
+          }
+        ], 
+        title: 'items'
+      }, 
+      {$: 'button', 
+        title: 'new feature', 
+        action :{$: 'studio.newArrayItem', path: '%$path%' }, 
+        style :{$: 'button.md-raised' }, 
+        features :{$: 'css.margin', top: '20', left: '20' }
+      }
+    ], 
+    features: [], 
+    style :{$: 'layout.vertical', spacing: '7' }
+  }
+})
+
 
 jb.component('studio-helper.control-tree', {
   type: 'control', 
@@ -158,6 +227,7 @@ jb.component('studio-helper-dummy.label', {
       }, 
 })
 
+
 jb.component('studio-helper.group-with-label', {
   type: 'control', 
   impl :{$: 'group', 
@@ -248,3 +318,4 @@ jb.component('studio-helper.open-dialog', {
     ]
   }
 })
+

@@ -66,10 +66,10 @@ function jb_itemlist_comp(model,context) {
 jb.component('itemlist.ul-li', {
   type: 'itemlist.style',
   impl :{$: 'customStyle',
-    template: '<ul class="jb-itemlist"><li *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></li></ul>',
+    template: '<div><ul class="jb-itemlist"><li *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></li></ul></div>',
     css: `[jb-item].selected { background: #337AB7; color: #fff ;}
     li { list-style: none; padding: 0; margin: 0;}
-    { list-style: none; padding: 0; margin: 0;}
+    ul { list-style: none; padding: 0; margin: 0;}
     `
   }
 })
@@ -83,8 +83,11 @@ jb.component('itemlist.div', {
 
 jb.component('itemlist.divider', {
   type: 'feature',
-  impl : ctx =>
-    ({css: `[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: 5px }`})
+  params: {
+    space: { as: 'number', defaultValue: 5}
+  },
+  impl : (ctx,space) =>
+    ({css: `[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: ${space}px }`})
 })
 
 // ****************** Selection ******************

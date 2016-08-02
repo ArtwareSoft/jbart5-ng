@@ -88,21 +88,21 @@ select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
 
 
 jb.component('property-sheet.studio-properties', {
-  type: 'group.style',
-  impl :{$: 'customStyle',
-    features :{$: 'group.initGroup' },
+  type: 'group.style', 
+  impl :{$: 'customStyle', 
+    features :{$: 'group.initGroup' }, 
     methods: {
-        afterViewInit: ctx => cmp =>
-          jb.delay(1).then(() =>
-            $(cmp.elementRef.nativeElement).find('input,select')
-              .focus(e=> {
-              	$(e.target).parents().filter('.property').siblings().find('input').removeClass('focused');
-              	$(e.target).addClass('focused');
-              })
-          )
-    },
-
-  	template: `<div>
+      afterViewInit: function (ctx) { return function (cmp) {
+                            return jb.delay(1).then(function () {
+                                return $(cmp.elementRef.nativeElement).find('input,select')
+                                    .focus(function (e) {
+                                    $(e.target).parents().filter('.property').siblings().find('input').removeClass('focused');
+                                    $(e.target).addClass('focused');
+                                });
+                            });
+                        }; }
+    }, 
+    template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property" 
           (mouseenter)="ctrl.hover=true" (mouseleave)="ctrl.hover=false">
         <label class="property-title">{{ctrl.comp.jb_title()}}</label>
@@ -112,7 +112,7 @@ jb.component('property-sheet.studio-properties', {
         </div>
       </div>
       </div>
-    `,
+    `, 
     css: `.property { margin-bottom: 5px; display: flex }
       .property:last-child { margin-bottom:0px }
       .input-and-toolbar { display: flex; }
@@ -126,6 +126,7 @@ jb.component('property-sheet.studio-properties', {
         margin-top:2px;
         font-size:14px;
         margin-right: 10px;
+        margin-left: 7px;
       },
       .property>*:last-child { margin-right:0 }`
   }
@@ -256,4 +257,51 @@ jb.component('dialogFeature.studio-position-under-property', {
 			}
 		}
 	}
+})
+
+jb.component('group.studio-properties-accordion', {
+  type: 'group.style', 
+  impl :{$: 'customStyle', 
+    template: `<section class="jb-group">
+      <div *ngFor="let ctrl of ctrls" class="accordion-section">
+        <div class="header">
+          <div class="title">{{ctrl.title}}</div>
+          <div class="expand" (click)="toggle(ctrl)" title="{{expand_title(ctrl)}}">
+                <i *ngIf="ctrl.show" class="material-icons">keyboard_arrow_down</i>
+                <i *ngIf="!ctrl.show" class="material-icons">keyboard_arrow_right</i>
+          </div>
+        </div>
+          <jb_comp *ngIf="ctrl.show" [comp]="ctrl.comp"></jb_comp>
+      </div>
+  </section>`, 
+    methods: {
+      init: function (ctx) {
+                                return function (cmp) {
+                                    cmp.expand_title = function (ctrl) {
+                                        return ctrl.show ? 'collapse' : 'expand';
+                                    };
+                                    cmp.toggle = function (newCtrl) {
+                                        return cmp.ctrls.forEach(function (ctrl) {
+                                            return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
+                                        });
+                                    };
+                                };
+                            },
+      afterViewInit: function (ctx) {
+                return function (cmp) {
+                  if (cmp.ctrls && cmp.ctrls[0])
+                   cmp.ctrls[0].show = true;
+                }
+      }
+
+    }, 
+    css: `.header { display: flex; flex-direction: row; }
+button:hover { background: none }
+button { margin-left: auto }
+i { color: #; cursor: pointer }
+.title { margin: 5px }  
+.header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } 
+`, 
+    features :{$: 'group.initGroup' }
+  }
 })

@@ -134,7 +134,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                             onDoubleClick: { $: 'onNextTimer',
                                                 action: [
                                                     { $: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' },
-                                                    { $: 'studio.openProperties' },
+                                                    { $: 'studio.open-properties' },
                                                     { $: 'studio.open-control-tree' },
                                                 ]
                                             },
@@ -301,7 +301,9 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             });
             jb_core_1.jb.component('studio.val', {
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return studio.model.val(path); }
+                impl: function (context, path) {
+                    return studio.model.val(path);
+                }
             });
             jb_core_1.jb.component('studio.is-primitive-value', {
                 params: { path: { as: 'string' } },
@@ -313,6 +315,15 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
                     return studio.model.shortTitle(path);
+                }
+            });
+            jb_core_1.jb.component('studio.has-param', {
+                params: {
+                    path: { as: 'string' },
+                    param: { as: 'string' },
+                },
+                impl: function (context, path, param) {
+                    return studio.model.paramDef(path + '~' + param);
                 }
             });
             jb_core_1.jb.component('studio.non-control-children', {
@@ -485,7 +496,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 },
                 impl: { $runActions: [
                         { $: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' },
-                        { $: 'studio.openProperties' },
+                        { $: 'studio.open-properties' },
                         { $: 'studio.open-control-tree' }
                     ] }
             });

@@ -64,6 +64,3 @@ jb.component('tabs.simple', {
 // 	}
 // }) 
 
-
-
-

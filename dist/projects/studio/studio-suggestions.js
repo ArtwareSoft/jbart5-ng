@@ -51,10 +51,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                 suggestions.prototype.extendWithOptions = function (probeCtx, path) {
                     var _this = this;
                     this.options = [];
-                    if (!probeCtx)
-                        return this;
-                    var vars = jb_core_1.jb.entries(probeCtx.vars).map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); })
-                        .concat(jb_core_1.jb.entries(probeCtx.resources).map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); }));
+                    probeCtx = probeCtx || (jbart.previewjbart || jbart).initialCtx;
+                    var vars = jb_core_1.jb.entries(jb_core_1.jb.extend({}, (probeCtx.componentContext || {}).params, probeCtx.vars, probeCtx.resources))
+                        .map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); });
                     if (this.inputVal.indexOf('=') == 0)
                         this.options = studio.model.PTsOfPath(path).map(function (compName) {
                             var name = compName.substring(compName.indexOf('.') + 1);
@@ -152,7 +151,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                             })
                                 .flatMap(function (e) {
                                 return getProbe().then(function (probeResult) {
-                                    return ({ keyEv: e, ctx: probeResult[0] && probeResult[0].in });
+                                    return ({ keyEv: e, ctx: probeResult && probeResult[0] && probeResult[0].in });
                                 });
                             })
                                 .delay(1) // we use keydown - let the input fill itself
@@ -299,19 +298,22 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                     //suggestionsCtx.cmp.probeResult = null; // recalc
                     if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
                         ctx.vars.field.writeValue('=' + ctx.data.toPaste); // need to write from here as we close the popup
-                        //      ctx.run({$:'closeContainingPopup'});
                         suggestionsCtx.closeFloatingInput();
                         var tree = ctx.vars.$tree;
                         tree.expanded[tree.selected] = true;
-                        jb_core_1.jb.delay(1).then(function () {
+                        jb_core_1.jb.delay(100).then(function () {
                             var firstChild = tree.nodeModel.children(tree.selected)[0];
                             if (firstChild) {
-                                tree.selected = firstChild;
+                                ctx.run({ $: 'writeValue', to: '%$globals/jb_editor_selection%', value: firstChild });
                                 jb_ui.apply(ctx);
+                                jb_core_1.jb.delay(100);
                             }
+                            // if (firstChild) {
+                            //   tree.selected = firstChild;
+                            //   jb_ui.apply(ctx);
+                            // }
                         });
                     }
-                    //jb_ui.apply(ctx);
                 }
             });
         }

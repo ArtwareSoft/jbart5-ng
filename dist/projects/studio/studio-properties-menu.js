@@ -22,8 +22,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 params: {
                     path: { as: 'string' }
                 },
-                impl: { $: 'field.toolbar', $trace: true,
-                    toolbar: { $: 'studio.property-toobar', path: '%$path%', $trace: true }
+                impl: { $: 'field.toolbar', $trace1: true,
+                    toolbar: { $: 'studio.property-toobar', path: '%$path%', $trace1: true }
                 }
             });
             jb_core_1.jb.component('studio.property-toobar', {

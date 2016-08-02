@@ -156,9 +156,10 @@ jb.component('dialogFeature.closeWhenClickingOutside', {
 		jb.delay(10).then(() =>  { // delay - close older before    		
 			var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
 			      			.merge(jb_rx.Observable.fromEvent(
-			      				(jbart.previewWindow || {}).document, 'mousedown')).
-			      			filter(e =>
-			      				$(e.target).closest(dialog.$el[0]).length == 0);
+			      				(jbart.previewWindow || {}).document, 'mousedown'))
+			      			.filter(e =>
+			      				$(e.target).closest(dialog.$el[0]).length == 0)
+   					 		.takeUntil(dialog.em.filter(e => e.type == 'close'));
 
 		 	clickoutEm.take(1)
 		  		.subscribe(()=>

@@ -47,9 +47,25 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                 });
                             };
                             cmp.recalcOptions();
-                        }
+                        },
+                        observable: function () { } // to create jbEmitter
                     }, ctx);
                 }
+            });
+            jb_core_1.jb.component('picklist.dynamic-options', {
+                type: 'feature',
+                params: {
+                    recalcEm: { as: 'observable' }
+                },
+                impl: function (ctx, recalcEm) { return ({
+                    init: function (cmp) {
+                        return recalcEm
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .subscribe(function (e) {
+                            return cmp.recalcOptions();
+                        });
+                    }
+                }); }
             });
             // ********* options
             jb_core_1.jb.component('picklist.optionsByComma', {

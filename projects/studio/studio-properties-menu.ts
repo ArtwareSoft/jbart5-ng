@@ -15,8 +15,8 @@ jb.component('studio.property-toobar-feature2', {
   params: {
     path: { as: 'string' }
   }, 
-  impl :{$: 'field.toolbar', $trace:true,
-        toolbar :{$: 'studio.property-toobar', path: '%$path%', $trace:true } 
+  impl :{$: 'field.toolbar', $trace1:true,
+        toolbar :{$: 'studio.property-toobar', path: '%$path%', $trace1:true } 
     }
 }) 
 

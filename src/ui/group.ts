@@ -45,6 +45,15 @@ jb.component('group',{
   }
 })
 
+jb.component('group.dynamic-sub-titles', {
+  type: 'feature',
+  impl: ctx => ({
+    doCheck: cmp => 
+      (cmp.ctrls || []).forEach(ctrl=>
+        ctrl.title = ctrl.comp.jb_title ? ctrl.comp.jb_title() : '')
+  })
+})
+
 jb.component('dynamic-controls', {
   type: 'control',
   params: {

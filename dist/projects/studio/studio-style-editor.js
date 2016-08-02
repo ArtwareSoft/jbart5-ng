@@ -17,7 +17,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: { $: 'openDialog',
-                    title: 'Style Editor',
+                    $vars: {
+                        styleSource: { $: 'studio.style-source', path: '%$path%' }
+                    },
+                    title: 'Style Editor - %$styleSource/path%',
                     style: { $: 'dialog.studio-floating', id: 'style editor' },
                     content: { $: 'studio.style-editor', path: '%$path%' },
                     menu: { $: 'button',
@@ -37,38 +40,23 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     content: { $: 'group',
                         controls: [
                             { $: 'pulldown.menu-item',
-                                title: 'Customize style',
+                                title: 'Clone as local style',
                                 icon: 'build',
                                 action: { $: 'studio.makeLocal', path: '%$path%' },
-                                features: { $: 'hidden',
-                                    showCondition: {
-                                        $and: [
-                                            { $: 'endsWith', endsWith: '~style', text: '%$path%' },
-                                            { $: 'notEquals',
-                                                item1: { $: 'studio.compName', path: '%$path%' },
-                                                item2: 'customStyle'
-                                            }
-                                        ]
-                                    }
-                                }
+                                features: { $: 'hidden', showCondition: "%$styleSource/type% == 'global'" },
                             },
                             { $: 'pulldown.menu-item',
-                                title: 'Save style for reuse',
+                                title: 'Extract style as a reusable component',
                                 icon: 'build',
-                                action: { $: 'studio.open-save-style', path: '%$path%' },
-                                features: { $: 'hidden',
-                                    showCondition: { $: 'equals',
-                                        item1: { $: 'studio.compName', path: '%$path%' },
-                                        item2: 'customStyle'
-                                    }
-                                }
+                                action: { $: 'studio.open-make-global-style', path: '%$path%' },
+                                features: { $: 'hidden', showCondition: "%$styleSource/type% == 'inner'" },
                             },
                             { $: 'pulldown.menu-item',
                                 title: 'Format css',
                                 icon: '',
                                 action: { $: 'writeValue',
                                     to: { $: 'studio.ref', path: '%$path%~css' },
-                                    value: { $: 'studio.format-css', path: '%$path%~css' }
+                                    value: { $: 'studio.format-css', path: '%styleSource/path%~css' }
                                 }
                             }
                         ]
@@ -81,24 +69,29 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: { $: 'group',
-                    $vars: {
-                        source: { $: 'studio.val', path: '%$path%' }
-                    },
                     style: { $: 'property-sheet.titles-above' },
                     controls: [
                         { $: 'editable-text',
                             title: 'css',
-                            databind: '%$source/css%',
-                            features: { $: 'studio.undo-support', path: '%$path%' },
+                            databind: { $: 'studio.profile-as-text', path: '%$styleSource/path%~css' },
+                            features: { $: 'studio.undo-support', path: '%styleSource/path%' },
                             style: { $: 'editable-text.codemirror', mode: 'css', height: 300 }
                         },
                         { $: 'editable-text',
                             title: 'template',
-                            databind: '%$source/template%',
+                            databind: { $: 'studio.profile-as-text', path: '%$styleSource/path%~template' },
                             style: { $: 'editable-text.codemirror', mode: 'htmlmixed', height: '200' },
-                            features: { $: 'studio.undo-support', path: '%$path%' }
+                            features: { $: 'studio.undo-support', path: '%$styleSource/path%' }
                         }
                     ]
+                }
+            });
+            jb_core_1.jb.component('studio.style-source', {
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: function (ctx, path) {
+                    return studio.model.getStyleComp(path);
                 }
             });
             jb_core_1.jb.component('studio.format-css', {
@@ -114,6 +107,34 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         .replace(/;\s*/g, ';\n')
                         .replace(/}[^$]/mg, '}\n\n')
                         .replace(/^\s*/mg, '');
+                }
+            });
+            jb_core_1.jb.component('studio.open-make-global-style', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' }
+                },
+                impl: { $: 'openDialog',
+                    modal: true,
+                    title: 'Style Name',
+                    style: { $: 'dialog.md-dialog-ok-cancel',
+                        features: { $: 'dialogFeature.autoFocusOnFirstInput' }
+                    },
+                    content: { $: 'editable-text',
+                        databind: '%$dialogData/name%',
+                        features: { $: 'onEnter', action: { $: 'closeContainingPopup' } }
+                    },
+                    onOK: function (ctx) {
+                        debugger;
+                        var path = ctx.componentContext.params.path;
+                        var id = ctx.exp('%$globals/project%.%$dialogData/name%');
+                        var profile = {
+                            type: studio.model.paramDef(path).type,
+                            impl: studio.model.val(path)
+                        };
+                        studio.model.modify(studio.model.newComp, id, { profile: profile }, ctx);
+                        studio.model.modify(studio.model.writeValue, path, { value: { $: id } }, ctx);
+                    }
                 }
             });
         }

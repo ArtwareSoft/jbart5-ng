@@ -100,7 +100,7 @@ jb.component('studio.all', {
                 onDoubleClick :{$: 'onNextTimer', 
                   action : [
                   	{$: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' },
-            		{$: 'studio.openProperties'},
+            		{$: 'studio.open-properties'},
             		{$: 'studio.open-control-tree'},
             	  ]
                 }, 
@@ -292,7 +292,8 @@ jb.component('studio.ref',{
 
 jb.component('studio.val',{
 	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.val(path)
+	impl: (context,path) => 
+		studio.model.val(path)
 })
 
 jb.component('studio.is-primitive-value', {
@@ -305,6 +306,15 @@ jb.component('studio.short-title', {
 	params: { path: { as: 'string' } },
 	impl: (context,path) => 
 		studio.model.shortTitle(path)
+})
+
+jb.component('studio.has-param', {
+	params: { 
+		path: { as: 'string' }, 
+		param: { as: 'string' }, 
+	},
+	impl: (context,path,param) => 
+		studio.model.paramDef(path+'~'+param)
 })
 
 jb.component('studio.non-control-children',{
@@ -486,7 +496,7 @@ jb.component('studio.goto-path',{
 	},
 	impl :{$runActions: [ 
 		{$: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' }, 
-		{$: 'studio.openProperties'},
+		{$: 'studio.open-properties'},
 		{$: 'studio.open-control-tree'}
 	]}
 })

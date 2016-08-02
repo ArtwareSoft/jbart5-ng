@@ -333,7 +333,7 @@ function jb_initJstypes() {
     },
     'array': function(value) {
       if (jb_isArray(value)) return value;
-      if (!value) return [];
+      if (value == null) return [];
       return [value];
     },
     'boolean': function(value) {

@@ -142,10 +142,12 @@ function jb_isArray(obj) {
 
 function jb_extend(obj,obj1,obj2,obj3) {
   if (!obj) return;
-  // similar to jQuery.extend but much faster for simple cases
-  for(var i in obj1) obj[i] = obj1[i];
-  if (obj2) for(var i in obj2) obj[i] = obj2[i];
-  if (obj3) for(var i in obj3) obj[i] = obj3[i];
+  Object.getOwnPropertyNames(obj1||{})
+    .forEach(function(p) { obj[p] = obj1[p] })
+  Object.getOwnPropertyNames(obj2||{})
+    .forEach(function(p) { obj[p] = obj2[p] })
+  Object.getOwnPropertyNames(obj3||{})
+    .forEach(function(p) { obj[p] = obj3[p] })
 
   return obj;
 }

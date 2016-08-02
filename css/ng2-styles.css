@@ -136,7 +136,7 @@ padding: 10px 10px 10px 27px; color: #6D6E71; min-height: 12px; border-bottom: 1
 /*** tree *******/
 .jb-control-tree { margin: 0; padding: 0; }
 .jb-control-tree:focus { outline: none; }
-.jb-control-tree .treenode-children { margin: 0; padding: 0 0 0 10px; }
+.jb-control-tree .treenode-children { margin: 0; padding: 0 0 0 10px; min-height: 7px}
 .jb-control-tree ul,li { list-style: none; padding: 1px 0;}
 .jb-control-tree .treenode-line { width:300px; display: flex; box-orient: horizontal; padding-bottom: 3px; }
 .jb-control-tree .treenode-label { display: block; color: #3D443D; font-size: 12px; vertical-align: top; padding: 0; 

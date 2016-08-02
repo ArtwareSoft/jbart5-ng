@@ -36,10 +36,9 @@ export class suggestions {
 
   extendWithOptions(probeCtx,path) {
     this.options = [];
-    if (!probeCtx)
-      return this;
-    var vars = jb.entries(probeCtx.vars).map(x=>({toPaste: '$' + x[0], value: x[1]}))
-        .concat(jb.entries(probeCtx.resources).map(x=>({toPaste: '$' + x[0], value: x[1]})))
+    probeCtx = probeCtx || (jbart.previewjbart || jbart).initialCtx;
+    var vars = jb.entries(jb.extend({},(probeCtx.componentContext||{}).params,probeCtx.vars,probeCtx.resources))
+          .map(x=>({toPaste: '$' + x[0], value: x[1]}))
 
     if (this.inputVal.indexOf('=') == 0)
       this.options = studio.model.PTsOfPath(path).map(compName=> {
@@ -143,7 +142,7 @@ jb.component('editable-text.suggestions-input-feature', {
           })
           .flatMap(e=>
             getProbe().then(probeResult=>
-              ({ keyEv: e, ctx: probeResult[0] && probeResult[0].in})))
+              ({ keyEv: e, ctx: probeResult && probeResult[0] && probeResult[0].in})))
           .delay(1) // we use keydown - let the input fill itself
           .map(e=> 
             new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx,ctx.params.path))
@@ -286,18 +285,21 @@ jb.component('studio.jb-paste-suggestion', {
     //suggestionsCtx.cmp.probeResult = null; // recalc
     if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
       ctx.vars.field.writeValue('='+ctx.data.toPaste); // need to write from here as we close the popup
-//      ctx.run({$:'closeContainingPopup'});
       suggestionsCtx.closeFloatingInput();
       var tree = ctx.vars.$tree;
       tree.expanded[tree.selected] = true;
-      jb.delay(1).then(()=>{
+      jb.delay(100).then(()=>{
         var firstChild = tree.nodeModel.children(tree.selected)[0];
         if (firstChild) {
-          tree.selected = firstChild;
+          ctx.run({$:'writeValue', to: '%$globals/jb_editor_selection%', value: firstChild });
           jb_ui.apply(ctx);
+          jb.delay(100);
         }
+        // if (firstChild) {
+        //   tree.selected = firstChild;
+        //   jb_ui.apply(ctx);
+        // }
       })
     }
-    //jb_ui.apply(ctx);
   }
 })

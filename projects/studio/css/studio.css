@@ -219,10 +219,6 @@ border: 1px solid rgb(213, 213, 213);}
 }
 .CodeMirror-hints { z-index: 200 !important; }
 
-/* .studio-control-tree 
-.studio-control-tree { margin: 0; padding: 0; max-height: 260px; overflow-y: scroll;}
-.studio-control-tree:focus { outline: none; }
-*/
 .studio-control-tree .treenode-children { margin: 0; padding: 1px 0 3px 10px; }
 .studio-control-tree .treenode { list-style: none; padding: 1px 0;}
 .studio-control-tree .treenode-line { display: -webkit-box; -webkit-box-orient: horizontal; width:100px;  }
@@ -297,18 +293,6 @@ border: 1px solid rgb(213, 213, 213);}
 .jb-studio-select-pt-item { cursor: pointer; font-size: 13px; padding: 3px 7px; color: #000; border: none; -webkit-user-select: none;}
 .jb-studio-select-pt-item:hover { background: #eee; }
 
-/* .studio-properties-in-dialog 
-.studio-properties-in-dialog {
-	padding: 8px;
-}
-.studio-properties-in-dialog #newDirective { margin-top: 10px; padding: 2px 5px; }
-.studio-properties-in-dialog {
-	padding: 8px;
-	width: 400px;
-	max-height: 500px;
-	overflow-y: scroll;
-}
-*/
 /* .studio-propertySheet */
 .studio-propertySheet {}
 .studio-propertySheet>.property {
