@@ -42,7 +42,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             { $: 'pulldown.menu-item',
                                 title: 'Clone as local style',
                                 icon: 'build',
-                                action: { $: 'studio.makeLocal', path: '%$path%' },
+                                action: [
+                                    { $: 'studio.make-local', path: '%$path%' },
+                                    { $: 'studio.open-style-editor', path: '%$styleSource/innerPath%' },
+                                    { $: 'studio.open-properties' },
+                                ],
                                 features: { $: 'hidden', showCondition: "%$styleSource/type% == 'global'" },
                             },
                             { $: 'pulldown.menu-item',
@@ -53,10 +57,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             },
                             { $: 'pulldown.menu-item',
                                 title: 'Format css',
-                                icon: '',
                                 action: { $: 'writeValue',
-                                    to: { $: 'studio.ref', path: '%$path%~css' },
-                                    value: { $: 'studio.format-css', path: '%styleSource/path%~css' }
+                                    to: { $: 'studio.profile-as-text', path: '%$styleSource/path%~css', stringOnly: true },
+                                    value: { $: 'studio.format-css',
+                                        css: { $: 'studio.profile-as-text', path: '%$styleSource/path%~css' }
+                                    }
                                 }
                             }
                         ]
@@ -73,13 +78,13 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     controls: [
                         { $: 'editable-text',
                             title: 'css',
-                            databind: { $: 'studio.profile-as-text', path: '%$styleSource/path%~css' },
+                            databind: { $: 'studio.profile-as-text', path: '%$styleSource/path%~css', stringOnly: true },
                             features: { $: 'studio.undo-support', path: '%styleSource/path%' },
                             style: { $: 'editable-text.codemirror', mode: 'css', height: 300 }
                         },
                         { $: 'editable-text',
                             title: 'template',
-                            databind: { $: 'studio.profile-as-text', path: '%$styleSource/path%~template' },
+                            databind: { $: 'studio.profile-as-text', path: '%$styleSource/path%~template', stringOnly: true },
                             style: { $: 'editable-text.codemirror', mode: 'htmlmixed', height: '200' },
                             features: { $: 'studio.undo-support', path: '%$styleSource/path%' }
                         }
@@ -96,12 +101,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.format-css', {
                 params: {
-                    path: { as: 'string' }
+                    css: { as: 'string' }
                 },
-                impl: function (ctx, path) {
-                    var css = studio.profileFromPath(path);
-                    if (!typeof css == 'string')
-                        return css;
+                impl: function (ctx, css) {
                     return css
                         .replace(/{\s*/g, '{ ')
                         .replace(/;\s*/g, ';\n')

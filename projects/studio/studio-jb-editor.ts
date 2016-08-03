@@ -272,16 +272,22 @@ jb.component('studio.jb-editor-menu', {
         style :{$: 'divider.br' }, 
         title: 'divider'
       }, 
-      {$: 'pulldown.menu-item', 
-        title: 'Wrap with pipeline', 
-        icon: '', 
-        shortcut: '', 
-        action :{$: 'studio.wrapWithPipeline', path: '%$path%' }
+      // {$: 'pulldown.menu-item', 
+      //   title: 'Wrap with pipeline', 
+      //   action :{$: 'studio.wrapWithPipeline', path: '%$path%' }
+      // }, 
+      {$: 'pulldown.studio-wrap-with', 
+        type: 'data',
+        path: '%$path%',
+        components :{$: 'list', items: [ 'pipeline', 'list', 'firstSucceeding'] }
+      }, 
+      {$: 'pulldown.studio-wrap-with', 
+        type: 'boolean', 
+        path: '%$path%',
+        components :{$: 'list', items: [ 'and', 'or', 'not'] }
       }, 
       {$: 'pulldown.menu-item', 
         title: 'Add property', 
-        icon: '', 
-        shortcut: '', 
         action :{$: 'openDialog', 
           id: 'add property', 
           modal: true, 
@@ -304,4 +310,24 @@ jb.component('studio.jb-editor-menu', {
       }
     ]
   }
+})
+
+jb.component('pulldown.studio-wrap-with', {
+  type: 'control', 
+  params: {
+    path: { as: 'string'},
+    type: { as: 'string' },
+    components: { as: 'array' },
+  }, 
+  impl :{$: 'dynamic-controls',
+            controlItems : { 
+              $if: {$: 'studio.is-of-type', path: '%$path%', type: '%$type%' }, 
+              then: '%$components%', 
+              else: [] 
+            },
+            genericControl :{$: 'pulldown.menu-item', 
+              title: 'Wrap with %$controlItem%',
+              action :{$: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' }
+        },
+      }
 })

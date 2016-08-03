@@ -32,7 +32,7 @@ jb.component('studio.main-menu', {
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Source ...', 
-            action :{$: 'studio.openSourceDialog' }
+            action :{$: 'studio.open-source-dialog' }
           }
         ]
       }, 

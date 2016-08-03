@@ -258,15 +258,33 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 ControlModel.prototype.jbEditorSubNodes = function (path) {
                     var val = profileFromPath(path);
                     var comp = getComp(jb_core_1.jb.compName(val || {}));
+                    //		var param = this.paramDef(path);
+                    // if (Array.isArray(val) && (param.type == 'data' || param.type == null)) // pipeline
+                    // 	return Object.getOwnPropertyNames(val)
+                    // 		.map(x=>x=='length'? val.length : x)
+                    // 		.map(k=> path +'~items~'+k)
                     if (Array.isArray(val))
                         return Object.getOwnPropertyNames(val)
                             .map(function (x) { return x == 'length' ? val.length : x; })
                             .map(function (k) { return path + '~' + k; });
-                    else if (comp)
-                        return jb_core_1.jb.entries(comp.params)
+                    else if (comp) {
+                        var composite = jb_core_1.jb.entries(comp.params)
+                            .filter(function (p) {
+                            return p[1].composite;
+                        })
+                            .map(function (p) { return flattenArray(p[0]); })[0];
+                        return (composite || []).concat(jb_core_1.jb.entries(comp.params)
+                            .filter(function (p) { return !p[1].composite; })
                             .map(function (p) { return ({ path: path + '~' + p[0], param: p[1] }); })
                             .filter(function (e) { return profileFromPath(e.path) != null || e.param.essential; })
-                            .map(function (e) { return e.path; });
+                            .map(function (e) { return e.path; }));
+                    }
+                    function flattenArray(prop) {
+                        if (Array.isArray(val[prop]))
+                            return val[prop].map(function (inner, i) { return path + '~' + prop + '~' + i; });
+                        else
+                            return [path + '~' + prop + '~0'];
+                    }
                 };
                 ControlModel.prototype.jbEditorMoreParams = function (path) {
                     var val = profileFromPath(path);
@@ -424,6 +442,14 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     var result = { $: 'group', controls: [profileFromPath(path)] };
                     jb_core_1.jb.writeValue(profileRefFromPath(path), result);
                 };
+                ControlModel.prototype.wrap = function (path, args) {
+                    var compDef = getComp(args.compName);
+                    var paramNames = Object.getOwnPropertyNames((compDef || {}).params);
+                    if (paramNames[0]) {
+                        var result = jb_core_1.jb.extend({ $: args.compName }, jb_core_1.jb.obj(paramNames[0], [profileFromPath(path)]));
+                        jb_core_1.jb.writeValue(profileRefFromPath(path), result);
+                    }
+                };
                 ControlModel.prototype.getStyleComp = function (path) {
                     var style = this.val(path);
                     var compName = jb_core_1.jb.compName(style);
@@ -431,7 +457,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         return { type: 'inner', path: path, style: style };
                     var comp = compName && getComp(compName);
                     if (jb_core_1.jb.compName(comp.impl) == 'customStyle')
-                        return { type: 'global', path: compName, style: comp.impl };
+                        return { type: 'global', path: compName, style: comp.impl, innerPath: path };
                 };
                 ControlModel.prototype.addProperty = function (path) {
                     var parent = profileFromPath(parentPath(path));
@@ -493,7 +519,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         this.fixArray(group_path);
                     }
                 };
-                ControlModel.prototype.makeLocal = function (path) {
+                ControlModel.prototype.makeLocal = function (path, ctx) {
                     var compName = this.compName(path);
                     var comp = compName && getComp(compName);
                     if (!compName || !comp || typeof comp.impl != 'object')
@@ -505,7 +531,16 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         .forEach(function (p) {
                         res = res.replace(new RegExp("%\\$" + p[0] + "%", 'g'), '' + (profile[p[0]] || p[1].defaultValue || ''));
                     });
-                    jb_core_1.jb.writeValue(profileRefFromPath(path), evalProfile(res));
+                    var res_profile = evalProfile(res);
+                    // if (compName == 'customStyle' && ctx) {
+                    // 	try {
+                    // 		var comp = ctx.run(profile);
+                    // 		var annotations = Reflect.getMetadata('annotations', comp)[0];
+                    // 		res_profile.css = comp.css;
+                    // 		res_profile.template = comp.jbTemplate;
+                    // 	} catch(e) {}
+                    // }
+                    jb_core_1.jb.writeValue(profileRefFromPath(path), res_profile);
                 };
                 ControlModel.prototype.children = function (path, childrenType) {
                     childrenType = childrenType || this.childrenType || 'controls';

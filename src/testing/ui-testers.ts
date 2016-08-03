@@ -154,7 +154,7 @@ jb.component('ui-tests.show-project-tests', {
 			// { $rxParallelKeepOrder: ctx => 
 			// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
 		],
-		controls :{$: 'ui-tests.show-one-test' } 
+		controls :{$: 'ui-tests.show-one-test-in-project' } 
 	}
 })
 
@@ -205,3 +205,32 @@ jb.component('ui-tests.show-one-test', {
 	}
 })
 
+jb.component('ui-tests.show-one-test-in-project', {
+	type: 'control',
+	impl :{$: 'group',
+		layout :{$: 'md-layout', layout: 'row',  },
+		controls: 
+			[
+				{	$: 'button', title: '%id%',
+					style :{$: 'button.href' },
+					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
+  					action :{$: 'studio.open-jb-editor', 
+  						$vars: { circuit: '%id%' }, 
+  						path: '%id%',
+  					}, 
+				},
+				{ $: 'label', title: 'success', 
+					features: [
+						{$: 'hidden', showCondition: '"%success%" == "true"'},
+						{$: 'css', css: '{ color: green; font-weight: bold }'}
+					]
+				},
+				{ $: 'label', title: 'failure', 
+					features: [
+						{$: 'hidden', showCondition: '"%success%" != "true"'},
+						{$: 'css', css: '{ color: red; font-weight: bold }'}
+					]
+				},
+			]
+	}
+})

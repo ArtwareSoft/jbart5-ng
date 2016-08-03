@@ -23,7 +23,7 @@ jb.component('studio.open-properties', {
   }
 })
 
-jb.component('studio.openSourceDialog', {
+jb.component('studio.open-source-dialog', {
 	type: 'action',
 	impl :{$: 'openDialog',
 			modal: true,
@@ -142,6 +142,8 @@ jb.component('studio.property-field',{
 			fieldPT = 'studio.property-array';
 		// else if ( (paramDef.type || '').indexOf('.style') > -1 )
 		//  	fieldPT = 'studio.property-Style';
+    else if ( studio.model.compName(path) == 'customStyle')
+      fieldPT = 'studio.property-custom-style';
 		else 
 			fieldPT = 'studio.property-tgp';
 
@@ -169,13 +171,6 @@ jb.component('studio.property-primitive', {
     features: [
       {$: 'studio.undo-support', path: '%$path%' }, 
       {$: 'studio.property-toobar-feature', path: '%$path%'},
-      // {$: 'field.toolbar', 
-      //   toolbar :{$: 'button', 
-      //     title: 'more', 
-      //     style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
-      //     action :{$: 'studio.open-property-menu', path: '%$path%' }
-      //   }
-      // }, 
       {$: 'editable-text.suggestions-input-feature', 
         path: '%$path%', 
         action :{$: 'studio.jb-open-suggestions', path: '%$path%' }
@@ -322,6 +317,32 @@ jb.component('studio.property-tgp', {
   }
 })
 
+jb.component('studio.property-custom-style', {
+  type: 'control', 
+  params: { path: { as: 'string' } }, 
+  impl :{$: 'group', 
+    title :{$: 'studio.prop-name', path: '%$path%' }, 
+    features : [
+      {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+    ],
+    controls :{$: 'picklist', 
+            databind :{$: 'studio.compName-ref', path: '%$path%' }, 
+            options :{$: 'studio.tgp-path-options', path: '%$path%' }, 
+            style :{$: 'picklist.groups' }, 
+            features : [
+            {$: 'css', 
+              css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
+            },
+            { $: 'picklist.dynamic-options', 
+              recalcEm: ctx => 
+                studio.modifyOperationsEm.filter(e=>e.newComp)
+            }
+         ],
+    }
+  }
+})
+
+
 jb.component('studio.property-tgp-in-array', {
   type: 'control', 
   params: {
@@ -429,196 +450,6 @@ jb.component('studio.property-array', {
 })
 
 
-// jb.component('studio.property-array', {
-//   type: 'control', 
-//   params: {
-//     path: { as: 'string' }
-//   }, 
-//   impl :{$: 'group', 
-//     $vars: {
-//       arrayCtrl :{$: 'object', expanded: true }
-//     }, 
-//     title :{$: 'studio.prop-name', path: '%$path%' }, 
-//     controls: [
-//       {$: 'button', 
-//         title: 'add', 
-//         action :{$: 'studio.newArrayItem', path: '%$path%' }, 
-//         style :{$: 'button.md-icon', icon: 'add', size: '12', aria: undefined }, 
-//         features: [
-//           {$: 'css', 
-//             css: `{ position: absolute;   top: 0px;   right: 30px }
-// button:hover {  background: none }`
-//           }, 
-//         ]
-//       }, 
-//       {$: 'itemlist', 
-//         items :{$: 'studio.array-children', path: '%$path%' }, 
-//         controls :{$: 'group', 
-//           style :{$: 'property-sheet.studio-properties' }, 
-//           controls :{$: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
-//         }, 
-//         itemVariable: 'arrayItem', 
-//         features: [
-//           {$: 'hidden', showCondition: true }, 
-//           {$: 'css', css: '{ margin-left: 10px}' }, 
-//           {$: 'itemlist.divider' }, 
-//           {$: 'itemlist.drag-and-drop' }
-//         ]
-//       }
-//     ], 
-//     features: [
-//       {$: 'css', 
-//         css: `{ position: relative; width: 400px; margin-left: -100px; margin-top: -5px }
-// .header {  background: #F9F9F9; } 
-// i { font-size: 16px; margin-right: 1px; color: #909090 }`
-//       }
-//     ], 
-//     style :{$: 'group.expandable' }
-//   }
-// })
-
-// jb.component('studio.property-Style',{
-// 	type: 'control',
-// 	params: { path: { as: 'string' } },
-// 	impl :{$: 'group',
-// 		title :{$: 'studio.prop-name', path: '%$path%' },
-// 		$vars: {
-// 			'TgpTypeCtrl' :{$: 'object' , expanded: true }
-// 		},
-// 		controls: [
-// 			{ $: 'group',
-// 			  style :{$: 'layout.horizontal' },
-// 			  controls: [
-// 					{ $: 'picklist',
-// 						cssClass: 'jb-studio-tgpType-picklist',
-// 						databind :{$: 'studio.compName-ref', path: '%$path%' },
-// 						options :{$: 'studio.tgp-path-options', path: '%$path%' },
-// 					},
-// 					{ $: 'group',
-// 			  			style :{$: 'layout.horizontal' },
-// 			  			controls:
-// 			  			[
-// 			  				{ $: 'editable-boolean',
-// 								style :{$: 'editable-boolean.expand-collapse'},
-// 								databind: '%$TgpTypeCtrl/expanded%',
-// 								features :{$: 'hidden', showCondition :{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }}
-// 							},
-// 							{ $: 'button' ,
-// 								title: 'customize style',
-// 								style :{$: 'button.studio-properties-toolbar', icon: 'build' }, 
-// 								action : [ 
-// 									{$: 'studio.makeLocal', path: '%$path%' },
-// 									{$: 'studio.openEditStyle', path: '%$path%' },
-// 								],
-// 								features :{$: 'hidden', showCondition :{$not :{$: 'studio.isCustomStyle', path: '%$path%' } }}
-// 							},
-// 							{ $: 'button' ,
-// 								title: 'open sublime',
-// 								style :{$: 'button.studio-properties-toolbar', icon: 'code' },
-// 								action :{$: 'studio.goto-sublime', path: '%$path%' },
-// 							},
-// 							{ $: 'button' ,
-// 								title: 'edit custom style',
-// 								style :{$: 'button.md-icon', icon: 'input' }, 
-// 								action :{$: 'studio.openEditStyle', path: '%$path%' },
-// 								features :{$: 'hidden', showCondition :{$: 'studio.isCustomStyle', path: '%$path%' } }
-// 							},
-// 							{ $: 'button' ,
-// 								title: 'share style',
-// 								style :{$: 'button.md-icon', icon: 'add' }, 
-// 								action :{$: 'studio.shareStyle', path: '%$path%' },
-// 								features :{$: 'hidden', showCondition : false } //{$: 'studio.isCustomStyle', path: '%$path%' } }
-// 							},
-// 					  ]
-// 					},
-// 				]
-// 			},
-// 			{ $: 'group',
-// 				controls :{$: 'studio.properties', 	path: '%$path%' },
-// 				features : [ 
-// 					{$: 'group.watch', data :{$: 'studio.compName', path: '%$path%' }},
-// 					{$: 'hidden', showCondition: {$and: 
-// 						[
-// 							'%$TgpTypeCtrl.expanded%', 
-// 							{$not: { $: 'studio.isCustomStyle', path: '%$path%' } }
-// 						] 
-// 					}},
-// 					{$: 'css', css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'},
-// 				],
-// 			}
-// 		]
-// 	}
-// })
-
-// jb.component('studio.property-JBEditor',{
-// 	type: 'control',
-// 	params: { path: { as: 'string'} },
-// 	impl :{$: 'group',
-// 		title :{$: 'studio.prop-name', path: '%$path%' },
-// 		controls: [
-// 			{ $: 'button',
-// 				title: '(..)',
-// //				cssStyle: 'jb-studio-primitive-jbeditor',
-// 				action :{$: 'studio.openjbEditor', path: '%$path%'} 
-// 			},
-// 			{ $: 'button', 
-// 				style: {$: 'button.popup-menu' },
-// 				action: { $: 'studio.openPrimitiveArrowPopup', 
-// 					path: '%$path%', 
-// 					isPrimitive: false 
-// 				}
-// 			}
-// 		]
-// 	}
-// })
-
-// jb.component('studio.property-Javascript',{
-// 	type: 'control',
-// 	params: { path: { as: 'string'} },
-// 	impl :{$: 'group',
-// 		title :{$: 'studio.prop-name', path: '%$path%' },
-// 		controls: [
-// 			{ $: 'button',
-// 				text: '(..)',
-// 				cssClass: 'jb-studio-primitive-javascript',
-// 				action: { $: 'studio.openjsEditor', path: '%$path%'	}
-// 			},
-// 			{ $: 'button' ,
-// 				title: 'more',
-// 				style :{$: 'button.studio-properties-toolbar', icon: 'more_vert' }, 
-// 				action :{$: 'studio.open-property-menu', path: '%$path%' },
-// 			},
-// 		]
-// 	}
-// })
-
-// jb.component('studio.openPrimitiveArrowPopup',{
-// 	type: 'action',
-// 	params: { 
-// 		path: { as: 'string' },
-// 		isPrimitive: { type: 'boolean', as: 'boolean'}
-// 	},
-// 	impl :{$: 'openDialog',
-// 		style :{$: 'pulldownPopup.contextMenuPopup' },
-// 		cssClass: 'jb-popup pulldown-mainmenu-popup',
-// 		content :{$: 'group',
-// 			controls: [
-// 	 		    { $: 'pulldown.menu-item', title: 'Edit in jbEditor', spritePosition: '6,0', 
-// 				    action :{$: 'studio.openjbEditor', path: '%$path%' }
-// 	 		    },
-// 			    { $: 'pulldown.menu-item', title: 'Delete script', 
-// 			    	atts: { '[hidden]' : '%$isPrimitive%' },
-// 				    action: [
-// 				      { $: 'closeContainingPopup' },
-// 				      { $: 'studio.delete', path: '%$path%' }
-// 				    ],
-// 	 		    }
-// 			]
-// 		}
-// 	}
-// })
-
-
 jb.component('studio.tgp-path-options',{
 	type: 'picklist.options',
 	params: { 
@@ -715,13 +546,4 @@ jb.component('group.studio-watch-path', {
   }
 })
 
-
-// function jb_studioCopyDefaultValue(profile,param) {
-// 	if (profile[param]) return;
-// 	var comp = jb_compName(profile);
-// 	if (!comp) return;
-// 	var params = ((jb_jbart().comps[comp] || {}).params || {});
-// 	if (params[param] && typeof params[param].defaultValue != 'undefined')
-// 		profile[param] = jb_cloneData(params[param].defaultValue)
-// }
 

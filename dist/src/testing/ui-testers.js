@@ -179,7 +179,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                             return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
                         },
                     ],
-                    controls: { $: 'ui-tests.show-one-test' }
+                    controls: { $: 'ui-tests.show-one-test-in-project' }
                 }
             });
             jb_1.jb.component('ui-tests.show-tests', {
@@ -208,6 +208,34 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                             style: { $: 'button.href' },
                             features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
                             action: { $: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%id%' }
+                        },
+                        { $: 'label', title: 'success',
+                            features: [
+                                { $: 'hidden', showCondition: '"%success%" == "true"' },
+                                { $: 'css', css: '{ color: green; font-weight: bold }' }
+                            ]
+                        },
+                        { $: 'label', title: 'failure',
+                            features: [
+                                { $: 'hidden', showCondition: '"%success%" != "true"' },
+                                { $: 'css', css: '{ color: red; font-weight: bold }' }
+                            ]
+                        },
+                    ]
+                }
+            });
+            jb_1.jb.component('ui-tests.show-one-test-in-project', {
+                type: 'control',
+                impl: { $: 'group',
+                    layout: { $: 'md-layout', layout: 'row', },
+                    controls: [
+                        { $: 'button', title: '%id%',
+                            style: { $: 'button.href' },
+                            features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
+                            action: { $: 'studio.open-jb-editor',
+                                $vars: { circuit: '%id%' },
+                                path: '%id%',
+                            },
                         },
                         { $: 'label', title: 'success',
                             features: [

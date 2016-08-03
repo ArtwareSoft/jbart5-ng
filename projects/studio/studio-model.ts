@@ -182,7 +182,6 @@ export class ControlModel {
 	}
 
 	innerControlPaths(path) {
-
 		var out = ['action~content'] // add more inner paths here
 			.map(x=>path+'~'+x)
 			.filter(p=>
@@ -194,15 +193,37 @@ export class ControlModel {
 	jbEditorSubNodes(path) {
 		var val = profileFromPath(path);
 		var comp = getComp(jb.compName(val||{}));
+//		var param = this.paramDef(path);
+		// if (Array.isArray(val) && (param.type == 'data' || param.type == null)) // pipeline
+		// 	return Object.getOwnPropertyNames(val)
+		// 		.map(x=>x=='length'? val.length : x)
+		// 		.map(k=> path +'~items~'+k)
 		if (Array.isArray(val))
 			return Object.getOwnPropertyNames(val)
 				.map(x=>x=='length'? val.length : x)
 				.map(k=> path +'~'+k)
-		else if (comp)
-			return jb.entries(comp.params)
+		else if (comp) {
+			var composite = jb.entries(comp.params)
+				.filter(p=>
+					p[1].composite)
+				.map(p=>flattenArray(p[0]))
+				[0];
+
+			return (composite || []).concat(jb.entries(comp.params)
+					.filter(p=>!p[1].composite)
 					.map(p=> ({ path: path + '~' + p[0], param: p[1]}))
 					.filter(e=>profileFromPath(e.path) != null || e.param.essential)
 					.map(e=>e.path)
+				)
+		}
+
+		function flattenArray(prop) {
+			if (Array.isArray(val[prop]))
+				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
+			else
+				return [path + '~' + prop + '~0']
+		}
+
 	}
 
 	jbEditorMoreParams(path) {
@@ -383,6 +404,14 @@ export class ControlModel {
 		var result = { $: 'group', controls: [ profileFromPath(path) ] };
 		jb.writeValue(profileRefFromPath(path),result);
 	}
+	wrap(path,args) {
+		var compDef = getComp(args.compName);
+		var paramNames = Object.getOwnPropertyNames((compDef || {}).params);
+		if (paramNames[0]) {
+			var result = jb.extend({$: args.compName}, jb.obj(paramNames[0],[ profileFromPath(path) ]));
+			jb.writeValue(profileRefFromPath(path),result);
+		}
+	}
 
 	getStyleComp(path) {
 	    var style = this.val(path);
@@ -391,7 +420,7 @@ export class ControlModel {
 	      return { type: 'inner', path: path, style : style }
 		var comp = compName && getComp(compName);
 		if (jb.compName(comp.impl) == 'customStyle') 
-	      return { type: 'global', path: compName, style: comp.impl }
+	      return { type: 'global', path: compName, style: comp.impl, innerPath: path }
 	}
 
 	addProperty(path) {
@@ -456,7 +485,7 @@ export class ControlModel {
 		}
 	}
 
-	makeLocal(path) {
+	makeLocal(path,ctx) {
 		var compName = this.compName(path);
 		var comp = compName && getComp(compName);
 		if (!compName || !comp || typeof comp.impl != 'object') return;
@@ -467,8 +496,17 @@ export class ControlModel {
 		jb.entries(comp.params)
 			.forEach(p=>{ 
 				res = res.replace(new RegExp(`%\\$${p[0]}%`,'g') , ''+(profile[p[0]] || p[1].defaultValue || '') ) })
+		var res_profile = evalProfile(res);
+		// if (compName == 'customStyle' && ctx) {
+		// 	try {
+		// 		var comp = ctx.run(profile);
+		// 		var annotations = Reflect.getMetadata('annotations', comp)[0];
+		// 		res_profile.css = comp.css;
+		// 		res_profile.template = comp.jbTemplate;
+		// 	} catch(e) {}
+		// }
 
-		jb.writeValue(profileRefFromPath(path),evalProfile(res));
+		jb.writeValue(profileRefFromPath(path),res_profile);
 	}
 
 	children(path,childrenType) {

@@ -73,7 +73,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             { $: 'pulldown.menu-item',
                                 title: 'Customize style',
                                 icon: 'build',
-                                action: { $: 'studio.makeLocal', path: '%$path%' },
+                                action: { $: 'studio.make-local', path: '%$path%' },
                                 features: { $: 'hidden',
                                     showCondition: {
                                         $and: [

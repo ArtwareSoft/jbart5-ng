@@ -196,6 +196,9 @@ function jb_expression(expression, context, jstype) {
   expression = expression.replace(/{%(.*?)%}/g, function(match,contents) {
       return jb_tostring(expPart(contents,context,'string'));
   })
+  expression = expression.replace(/{\?(.*?)\?}/g, function(match,contents) {
+      return jb_tostring(conditionalExp(contents));
+  })
   if (expression.match(/^%[^%;{}\s><"']*%$/)) // must be after the {% replacer
     return expPart(expression.substring(1,expression.length-1),context,jstype);
 
@@ -203,12 +206,22 @@ function jb_expression(expression, context, jstype) {
       return jb_tostring(expPart(contents,context,'string'));
   })
 
+  function conditionalExp(expression) {
+    // check variable value - if not empty return all expression, otherwise empty
+    var match = expression.match(/%([^%;{}\s><"']*)%/);
+    if (match && jb_tostring(expPart(match[1],context,'string')))
+      return jb_expression(expression, context, 'string');
+    else
+      return '';
+  }
+
   function expPart(expressionPart,context,jstype) {
     return jb_resolveFinishedPromise(jb_evalExpressionPart(expressionPart,context,jstype))
   }
 
   return expression;
 }
+
 
 function jb_evalExpressionPart(expressionPart,context,jstype) {
   if (!jbart.jstypes) jb_initJstypes();

@@ -302,6 +302,15 @@ jb.component('studio.is-primitive-value', {
       typeof studio.model.val(path) == 'string'
 })
 
+jb.component('studio.is-of-type', {
+  params: { 
+  	path: { as: 'string' },
+  	type: { as: 'string' },
+  },
+  impl: (context,path,_type) => 
+      studio.model.isOfType(path,_type)
+})
+
 jb.component('studio.short-title', {
 	params: { path: { as: 'string' } },
 	impl: (context,path) => 
@@ -381,6 +390,16 @@ jb.component('studio.insertComp',{
 		studio.model.modify(studio.model.insertComp, path, { comp: comp },context)
 })
 
+jb.component('studio.wrap', {
+	type: 'action',
+	params: { 
+		path: { as: 'string' }, 
+		compName: { as: 'string' } 
+	},
+	impl: (context,path,compName) => 
+		studio.model.modify(studio.model.wrap, path, {compName: compName},context)
+})
+
 jb.component('studio.wrapWithGroup', {
 	type: 'action',
 	params: { path: { as: 'string' } },
@@ -436,7 +455,7 @@ jb.component('studio.delete',{
 	impl: (context,path) => studio.model.modify(studio.model._delete,path,{},context)
 })
 
-jb.component('studio.makeLocal',{
+jb.component('studio.make-local',{
 	type: 'action',
 	params: { path: { as: 'string' } },
 	impl: (context,path) => studio.model.modify(studio.model.makeLocal,path,{},context)

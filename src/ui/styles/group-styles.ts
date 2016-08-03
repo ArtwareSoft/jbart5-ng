@@ -66,7 +66,11 @@ jb.component('group.accordion', {
                 cmp.toggle = newCtrl => 
                   cmp.ctrls.forEach(ctrl=>
                     ctrl.show = ctrl == newCtrl ? !ctrl.show : false)
-            }
+            },
+        afterViewInit: ctx => cmp => {
+                if (cmp.ctrls && cmp.ctrls[0])
+                   cmp.ctrls[0].show = true;
+            },
       }, 
       css: `.header { display: flex; flex-direction: row; }
         button:hover { background: none }

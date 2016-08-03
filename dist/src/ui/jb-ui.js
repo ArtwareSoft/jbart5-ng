@@ -457,12 +457,12 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     //		if (options.cssStyle) jb.path(options, ['atts', 'style'], options.cssStyle);
                     Object.getOwnPropertyNames(options.atts || {})
                         .forEach(function (att) {
-                        var val = context.exp(options.atts[att]);
+                        var val = context.exp(options.atts[att]).trim();
                         if (att == 'ngIf')
                             return jb_core_1.jb.path(annotations, ['host', 'template'], 'ngIf ' + val);
                         if (att == 'class' && jb_core_1.jb.path(annotations, ['host', 'class']))
                             val = jb_core_1.jb.path(annotations, ['host', 'class']) + ' ' + val;
-                        if (att == 'style' && jb_core_1.jb.path(annotations, ['host', 'style']))
+                        if (att == 'style' && (jb_core_1.jb.path(annotations, ['host', 'style']) || '').indexOf(val) == -1)
                             val = jb_core_1.jb.path(annotations, ['host', 'style']) + '; ' + val;
                         jb_core_1.jb.path(annotations, ['host', att], val);
                     });

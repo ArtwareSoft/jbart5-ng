@@ -46,7 +46,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
                                 });
                             };
-                        }; }
+                        }; },
+                        afterViewInit: function (ctx) { return function (cmp) {
+                            if (cmp.ctrls && cmp.ctrls[0])
+                                cmp.ctrls[0].show = true;
+                        }; },
                     },
                     css: ".header { display: flex; flex-direction: row; }\n        button:hover { background: none }\n        button { margin-left: auto }\n        i { color: #}\n        .title { margin: 5px }",
                     features: { $: 'group.initGroup' }

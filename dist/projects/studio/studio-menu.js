@@ -39,7 +39,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 },
                                 { $: 'pulldown.menu-item',
                                     title: 'Source ...',
-                                    action: { $: 'studio.openSourceDialog' }
+                                    action: { $: 'studio.open-source-dialog' }
                                 }
                             ]
                         },

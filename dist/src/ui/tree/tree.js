@@ -321,10 +321,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                         },
                         doCheck: function (cmp) {
                             var tree = cmp.tree;
-                            if (tree.drake) {
+                            if (tree.drake)
                                 tree.drake.containers =
                                     $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-array-node').children().filter('.treenode-children').get();
-                            }
                         }
                     };
                 }

@@ -22,9 +22,9 @@ jb.component('studio.editSource', {
 jb.component('studio.profile-as-text', {
 	type: 'data',
 	params: {
-		path: { as: 'string' }
+		path: { as: 'string' },
 	},
-	impl: (context,path) => ({
+	impl: (context,path,stringOnly) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') {
 					var val = studio.model.val(path);
@@ -39,6 +39,26 @@ jb.component('studio.profile-as-text', {
 			}
 		})
 })
+
+jb.component('studio.custom-style-as-text', {
+	type: 'data',
+	params: {
+		path: { as: 'string' },
+		property: { as: 'string' }
+	},
+	impl: (context,path,stringOnly) => ({
+			$jb_val: function(value) {
+				if (typeof value == 'undefined') {
+
+					var annotations = Reflect.getMetadata('annotations', studio.model.val(path))[0];
+					return annotations.css;
+				} else {
+						studio.model.modify(studio.model.writeValue, path, { value: newVal },context);
+				}
+			}
+		})
+})
+
 
 jb.component('studio.goto-sublime', {
 	type: 'action',

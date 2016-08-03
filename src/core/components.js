@@ -22,7 +22,7 @@ jb_component('call',{
 jb_component('pipeline',{
 	type: "data",
 	params: {
-		items: { type: "data,aggregator[]", ignore: true, essential: true }
+		items: { type: "data,aggregator[]", ignore: true, essential: true, composite: true }
 	},
 	impl: function(context,items) {
 		var data = jb_toarray(context.data);
@@ -56,7 +56,7 @@ jb_component('run',{
 jb_component('list',{
 	type: "data",
 	params: {
-		items: { type: "data[]", as: 'array' }
+		items: { type: "data[]", as: 'array', composite: true }
 	},
 	impl: function(context,items) {
 		var out = [];

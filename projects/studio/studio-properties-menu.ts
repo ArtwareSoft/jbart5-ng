@@ -69,7 +69,7 @@ jb.component('studio.open-property-menu', {
         {$: 'pulldown.menu-item', 
           title: 'Customize style', 
           icon: 'build', 
-          action :{$: 'studio.makeLocal', path: '%$path%' }, 
+          action :{$: 'studio.make-local', path: '%$path%' }, 
           features :{$: 'hidden', 
             showCondition :{
               $and: [

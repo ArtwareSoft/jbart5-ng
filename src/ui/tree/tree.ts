@@ -317,13 +317,9 @@ jb.component('tree.drag-and-drop', {
   		},
   		doCheck: function(cmp) {
   			var tree = cmp.tree;
-		  	if (tree.drake) {
+		  	if (tree.drake)
 			  tree.drake.containers = 
 				  $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-array-node').children().filter('.treenode-children').get();
-			// make a place for drop in empty containers
-	  		//   tree.drake.containers.forEach(el=>{
-	  		//   	if ($(el).height() < 3) $(el).height(7)})
-		  	}
   		}
 
   	}

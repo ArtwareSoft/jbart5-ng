@@ -311,6 +311,15 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                     return typeof studio.model.val(path) == 'string';
                 }
             });
+            jb_core_1.jb.component('studio.is-of-type', {
+                params: {
+                    path: { as: 'string' },
+                    type: { as: 'string' },
+                },
+                impl: function (context, path, _type) {
+                    return studio.model.isOfType(path, _type);
+                }
+            });
             jb_core_1.jb.component('studio.short-title', {
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
@@ -387,6 +396,16 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                     return studio.model.modify(studio.model.insertComp, path, { comp: comp }, context);
                 }
             });
+            jb_core_1.jb.component('studio.wrap', {
+                type: 'action',
+                params: {
+                    path: { as: 'string' },
+                    compName: { as: 'string' }
+                },
+                impl: function (context, path, compName) {
+                    return studio.model.modify(studio.model.wrap, path, { compName: compName }, context);
+                }
+            });
             jb_core_1.jb.component('studio.wrapWithGroup', {
                 type: 'action',
                 params: { path: { as: 'string' } },
@@ -439,7 +458,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 params: { path: { as: 'string' } },
                 impl: function (context, path) { return studio.model.modify(studio.model._delete, path, {}, context); }
             });
-            jb_core_1.jb.component('studio.makeLocal', {
+            jb_core_1.jb.component('studio.make-local', {
                 type: 'action',
                 params: { path: { as: 'string' } },
                 impl: function (context, path) { return studio.model.modify(studio.model.makeLocal, path, {}, context); }
