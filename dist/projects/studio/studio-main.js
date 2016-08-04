@@ -461,7 +461,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             jb_core_1.jb.component('studio.make-local', {
                 type: 'action',
                 params: { path: { as: 'string' } },
-                impl: function (context, path) { return studio.model.modify(studio.model.makeLocal, path, {}, context); }
+                impl: function (context, path) { return studio.model.modify(studio.model.makeLocal, path, { ctx: context }, context); }
             });
             jb_core_1.jb.component('studio.projectSource', {
                 params: {

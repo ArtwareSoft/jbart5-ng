@@ -35,11 +35,19 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     style: { $: 'layout.horizontal' },
                     controls: [
                         { $: 'button',
-                            title: 'style editor',
-                            action: { $: 'studio.open-style-editor', path: '%$path%' },
+                            title: 'Customize style',
                             style: { $: 'button.md-icon-12', icon: 'build' },
+                            action: [{ $: 'studio.make-local', path: '%$path%' }, { $: 'studio.open-style-editor', path: '%$path%' }],
                             features: { $: 'hidden',
-                                showCondition: { $: 'endsWith', endsWith: '~style', text: '%$path%' }
+                                showCondition: {
+                                    $and: [
+                                        { $: 'endsWith', endsWith: '~style', text: '%$path%' },
+                                        { $: 'notEquals',
+                                            item1: { $: 'studio.compName', path: '%$path%' },
+                                            item2: 'customStyle'
+                                        }
+                                    ]
+                                }
                             }
                         },
                         { $: 'button',
@@ -70,20 +78,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',
                         controls: [
-                            { $: 'pulldown.menu-item',
-                                title: 'Customize style',
-                                icon: 'build',
-                                action: { $: 'studio.make-local', path: '%$path%' },
+                            { $: 'button',
+                                title: 'style editor',
+                                action: { $: 'studio.open-style-editor', path: '%$path%' },
+                                style: { $: 'button.md-icon-12', icon: 'build' },
                                 features: { $: 'hidden',
-                                    showCondition: {
-                                        $and: [
-                                            { $: 'endsWith', endsWith: '~style', text: '%$path%' },
-                                            { $: 'notEquals',
-                                                item1: { $: 'studio.compName', path: '%$path%' },
-                                                item2: 'customStyle'
-                                            }
-                                        ]
-                                    }
+                                    showCondition: { $: 'endsWith', endsWith: '~style', text: '%$path%' }
                                 }
                             },
                             { $: 'pulldown.menu-item',

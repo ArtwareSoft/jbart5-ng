@@ -458,7 +458,7 @@ jb.component('studio.delete',{
 jb.component('studio.make-local',{
 	type: 'action',
 	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.modify(studio.model.makeLocal,path,{},context)
+	impl: (context,path) => studio.model.modify(studio.model.makeLocal,path,{ctx: context},context)
 })
 
 jb.component('studio.projectSource',{

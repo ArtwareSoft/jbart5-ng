@@ -133,3 +133,11 @@ jb.component('studio.open-make-global-style', {
     }
   }
 })
+
+jb.component('studio.custom-style-make-local', {
+  params: {
+    template: { as: 'string'},
+    css: { as: 'string'},
+  },
+  impl: {$: 'object', template: '%$template%', css: '%$css%' }
+})

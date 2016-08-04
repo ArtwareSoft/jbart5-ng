@@ -485,28 +485,32 @@ export class ControlModel {
 		}
 	}
 
-	makeLocal(path,ctx) {
+	makeLocal(path) {
 		var compName = this.compName(path);
 		var comp = compName && getComp(compName);
 		if (!compName || !comp || typeof comp.impl != 'object') return;
 		var res = JSON.stringify(comp.impl, (key, val) => typeof val === 'function' ? ''+val : val , 4);
 
-		// inject param values - only primitives
 		var profile = profileFromPath(path);
+		// inject conditional param values
 		jb.entries(comp.params)
 			.forEach(p=>{ 
-				res = res.replace(new RegExp(`%\\$${p[0]}%`,'g') , ''+(profile[p[0]] || p[1].defaultValue || '') ) })
-		var res_profile = evalProfile(res);
-		// if (compName == 'customStyle' && ctx) {
-		// 	try {
-		// 		var comp = ctx.run(profile);
-		// 		var annotations = Reflect.getMetadata('annotations', comp)[0];
-		// 		res_profile.css = comp.css;
-		// 		res_profile.template = comp.jbTemplate;
-		// 	} catch(e) {}
-		// }
+				var pUsage = '%$'+p[0]+'%';
+				var pVal = '' + (profile[p[0]] || p[1].defaultValue || '');
+				res = res.replace(new RegExp('{\\?(.*?)\\?}','g'),(match,condition_exp)=>{ // conditional exp
+						if (condition_exp.indexOf(pUsage) != -1)
+							return pVal ? condition_exp : '';
+						return match;
+					});
+			})
+		// inject param values 
+		jb.entries(comp.params)
+			.forEach(p=>{ 
+				var pVal = '' + (profile[p[0]] || p[1].defaultValue || ''); // only primitives
+				res = res.replace(new RegExp(`%\\$${p[0]}%`,'g') , pVal);
+			})
 
-		jb.writeValue(profileRefFromPath(path),res_profile);
+		jb.writeValue(profileRefFromPath(path),evalProfile(res));
 	}
 
 	children(path,childrenType) {

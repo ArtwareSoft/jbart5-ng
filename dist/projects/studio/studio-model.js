@@ -519,28 +519,31 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         this.fixArray(group_path);
                     }
                 };
-                ControlModel.prototype.makeLocal = function (path, ctx) {
+                ControlModel.prototype.makeLocal = function (path) {
                     var compName = this.compName(path);
                     var comp = compName && getComp(compName);
                     if (!compName || !comp || typeof comp.impl != 'object')
                         return;
                     var res = JSON.stringify(comp.impl, function (key, val) { return typeof val === 'function' ? '' + val : val; }, 4);
-                    // inject param values - only primitives
                     var profile = profileFromPath(path);
+                    // inject conditional param values
                     jb_core_1.jb.entries(comp.params)
                         .forEach(function (p) {
-                        res = res.replace(new RegExp("%\\$" + p[0] + "%", 'g'), '' + (profile[p[0]] || p[1].defaultValue || ''));
+                        var pUsage = '%$' + p[0] + '%';
+                        var pVal = '' + (profile[p[0]] || p[1].defaultValue || '');
+                        res = res.replace(new RegExp('{\\?(.*?)\\?}', 'g'), function (match, condition_exp) {
+                            if (condition_exp.indexOf(pUsage) != -1)
+                                return pVal ? condition_exp : '';
+                            return match;
+                        });
                     });
-                    var res_profile = evalProfile(res);
-                    // if (compName == 'customStyle' && ctx) {
-                    // 	try {
-                    // 		var comp = ctx.run(profile);
-                    // 		var annotations = Reflect.getMetadata('annotations', comp)[0];
-                    // 		res_profile.css = comp.css;
-                    // 		res_profile.template = comp.jbTemplate;
-                    // 	} catch(e) {}
-                    // }
-                    jb_core_1.jb.writeValue(profileRefFromPath(path), res_profile);
+                    // inject param values 
+                    jb_core_1.jb.entries(comp.params)
+                        .forEach(function (p) {
+                        var pVal = '' + (profile[p[0]] || p[1].defaultValue || ''); // only primitives
+                        res = res.replace(new RegExp("%\\$" + p[0] + "%", 'g'), pVal);
+                    });
+                    jb_core_1.jb.writeValue(profileRefFromPath(path), evalProfile(res));
                 };
                 ControlModel.prototype.children = function (path, childrenType) {
                     childrenType = childrenType || this.childrenType || 'controls';

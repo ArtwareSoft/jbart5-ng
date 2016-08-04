@@ -139,6 +139,13 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     }
                 }
             });
+            jb_core_1.jb.component('studio.custom-style-make-local', {
+                params: {
+                    template: { as: 'string' },
+                    css: { as: 'string' },
+                },
+                impl: { $: 'object', template: '%$template%', css: '%$css%' }
+            });
         }
     }
 });

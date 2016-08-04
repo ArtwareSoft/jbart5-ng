@@ -38,26 +38,26 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 params: {
                     align: { as: 'string', options: ',flex-start,flex-end,center,space-between,space-around' },
                     direction: { as: 'string', options: ',row,row-reverse,column,column-reverse' },
-                    wrap: { type: 'boolean', as: 'boolean' },
+                    wrap: { as: 'string', options: ',wrap' },
                 },
                 impl: { $: 'customStyle',
-                    $vars: {
-                        flexProps: function (ctx) {
-                            var params = ctx.componentContext.params;
-                            return [
-                                ['display', 'flex'],
-                                ['justify-content', params.align],
-                                ['flex-direction', params.direction],
-                                ['flex-wrap', params.wrap ? 'wrap' : ''],
-                            ].filter(function (x) {
-                                return x[1] != '';
-                            })
-                                .map(function (x) { return (x[0] + ": " + x[1]); })
-                                .join('; ');
-                        }
-                    },
+                    // $vars: {
+                    //    flexProps: ctx => {
+                    //       var params = ctx.componentContext.params;
+                    //       return [
+                    //         ['display','flex'],
+                    //         ['justify-content', params.align], 
+                    //         ['flex-direction', params.direction], 
+                    //         ['flex-wrap', params.wrap ? 'wrap' : ''], 
+                    //       ].filter(x
+                    //         =>x[1] != '')
+                    //       .map(x=> `${x[0]}: ${x[1]}` )
+                    //       .join('; ')
+                    //    }
+                    // },
                     template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
-                    css: '{ %$flexProps% }',
+                    //    css: '{ %$flexProps% }',
+                    css: '{ display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
                     features: { $: 'group.initGroup' }
                 }
             });
