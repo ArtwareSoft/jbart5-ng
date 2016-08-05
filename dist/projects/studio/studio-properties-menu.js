@@ -51,6 +51,17 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             }
                         },
                         { $: 'button',
+                            title: 'style editor',
+                            action: { $: 'studio.open-style-editor', path: '%$path%' },
+                            style: { $: 'button.md-icon-12', icon: 'build' },
+                            features: { $: 'hidden',
+                                showCondition: { $: 'equals',
+                                    item1: { $: 'studio.compName', path: '%$path%' },
+                                    item2: 'customStyle'
+                                }
+                            }
+                        },
+                        { $: 'button',
                             title: 'multiline edit',
                             style: { $: 'button.md-icon-12', icon: 'build' },
                             features: { $: 'hidden',
@@ -75,21 +86,20 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: { $: 'openDialog',
+                    $vars: {
+                        compName: { $: 'studio.compName', path: '%$path%' }
+                    },
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',
                         controls: [
-                            { $: 'button',
+                            { $: 'pulldown.menu-item',
                                 title: 'style editor',
                                 action: { $: 'studio.open-style-editor', path: '%$path%' },
-                                style: { $: 'button.md-icon-12', icon: 'build' },
                                 features: { $: 'hidden',
                                     showCondition: { $: 'endsWith', endsWith: '~style', text: '%$path%' }
                                 }
                             },
                             { $: 'pulldown.menu-item',
-                                $vars: {
-                                    compName: { $: 'studio.compName', path: '%$path%' }
-                                },
                                 title: 'Goto %$compName%',
                                 features: { $: 'hidden', showCondition: '%$compName%' },
                                 action: { $: 'studio.goto-path', path: '%$compName%' }

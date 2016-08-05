@@ -142,8 +142,8 @@ jb.component('studio.property-field',{
 			fieldPT = 'studio.property-array';
 		// else if ( (paramDef.type || '').indexOf('.style') > -1 )
 		//  	fieldPT = 'studio.property-Style';
-    else if ( studio.model.compName(path) == 'customStyle')
-      fieldPT = 'studio.property-custom-style';
+    // else if ( studio.model.compName(path) == 'customStyle')
+    //   fieldPT = 'studio.property-custom-style';
 		else 
 			fieldPT = 'studio.property-tgp';
 
@@ -257,16 +257,21 @@ jb.component('studio.property-slider', {
 
 jb.component('studio.property-tgp', {
   type: 'control', 
-  params: { path: { as: 'string' } }, 
+  params: {
+    path: { as: 'string' }
+  }, 
   impl :{$: 'group', 
     $vars: {
       tgpCtrl :{$: 'object', expanded: true }
     }, 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
-    features : [
+    features: [
       {$: 'studio.property-toobar-feature', path: '%$path%' }, 
-      {$: 'studio.bindto-modifyOperations', data: '%$tgpCtrl/expanded%', path: '%$path%' },
-    ],
+      {$: 'studio.bindto-modifyOperations', 
+        data: '%$tgpCtrl/expanded%', 
+        path: '%$path%'
+      }
+    ], 
     controls: [
       {$: 'group', 
         style :{$: 'layout.horizontal' }, 
@@ -279,24 +284,34 @@ jb.component('studio.property-tgp', {
                 css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
               }, 
               {$: 'hidden', 
-                showCondition :{
-                  $notEmpty :{$: 'studio.non-control-children', path: '%$path%' }
+                showCondition :{ 
+                  $and: 
+                  [
+                    { $notEmpty :{$: 'studio.non-control-children', path: '%$path%' } },
+                    { $notEmpty :{$: 'studio.val', path: '%$path%' } },
+                    { $: 'notEquals', 
+                      item1 :{$: 'studio.compName', path: '%$path%' }, 
+                      item2: 'customStyle'
+                    }
+                  ]
                 }
-              }
+              }  
             ]
           }, 
           {$: 'picklist', 
             databind :{$: 'studio.compName-ref', path: '%$path%' }, 
             options :{$: 'studio.tgp-path-options', path: '%$path%' }, 
             style :{$: 'picklist.groups' }, 
-            features : [{$: 'css', 
-              css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
-            },
-            { $: 'picklist.dynamic-options', 
-              recalcEm: ctx => 
-                studio.modifyOperationsEm.filter(e=>e.newComp)
-            }
-            ],
+            features: [
+              {$: 'css', 
+                css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
+              }, 
+              {$: 'picklist.dynamic-options', 
+                recalcEm: function (ctx) {
+                                                return studio.modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                            }
+              }
+            ]
           }
         ], 
         features :{$: 'css', css: '{ position: relative }' }
@@ -307,9 +322,22 @@ jb.component('studio.property-tgp', {
           {$: 'group.watch', 
             data :{$: 'studio.compName', path: '%$path%' }
           }, 
-          {$: 'hidden', showCondition: '%$tgpCtrl.expanded%' }, 
+          {$: 'hidden', 
+          showCondition :{ 
+            $and: 
+            [
+              '%$tgpCtrl.expanded%',
+              { $notEmpty :{$: 'studio.non-control-children', path: '%$path%' } },
+              { $notEmpty :{$: 'studio.val', path: '%$path%' } },
+              { $: 'notEquals', 
+                item1 :{$: 'studio.compName', path: '%$path%' }, 
+                item2: 'customStyle'
+              }
+            ]
+          }
+        },  
           {$: 'css', 
-            css : '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
+            css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
           }
         ]
       }
@@ -358,7 +386,7 @@ jb.component('studio.property-tgp-in-array', {
         path: '%$path%'
       }, 
       {$: 'css', css: '{ position: relative; margin-left: -80px }' },
-              {$: 'studio.property-toobar-feature', path: '%$path%' }
+      //{$: 'studio.property-toobar-feature', path: '%$path%' }
     ], 
     controls: [
       {$: 'group', 
@@ -387,7 +415,8 @@ jb.component('studio.property-tgp-in-array', {
                 css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
               }, 
             ]
-          }
+          },
+          {$: 'studio.property-toobar', path: '%$path%' }
         ], 
         features: [
           {$: 'css', css: '{ position: relative; margin-left2: -80px }' }, 
@@ -424,7 +453,7 @@ jb.component('studio.property-array', {
           {$: 'itemlist', 
             items :{$: 'studio.array-children', path: '%$path%' }, 
             controls :{$: 'group', 
-              style :{$: 'property-sheet.studio-properties' }, 
+              style :{$: 'property-sheet.studio-plain' }, 
               controls :{$: 'studio.property-tgp-in-array', path: '%$arrayItem%' }
             }, 
             itemVariable: 'arrayItem', 
@@ -440,7 +469,7 @@ jb.component('studio.property-array', {
       {$: 'button', 
         title: 'new feature', 
         action :{$: 'studio.newArrayItem', path: '%$path%' }, 
-        style :{$: 'button.md-raised' }, 
+        style :{$: 'button.href' }, 
         features :{$: 'css.margin', top: '20', left: '20' }
       }
     ], 

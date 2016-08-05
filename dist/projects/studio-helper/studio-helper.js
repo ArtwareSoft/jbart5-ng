@@ -143,13 +143,16 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 impl: { $: 'group',
                     title: 'main',
                     controls: [
-                        { $: 'group', title: '2.0', controls: [
+                        { $: 'group',
+                            title: '2.0',
+                            controls: [
                                 { $: 'label', title: '2.1' },
-                                { $: 'button', title: '2.2' },
+                                { $: 'button', title: '2.2' }
                             ]
                         },
-                        { $: 'label', title: '1.0' },
-                    ] }
+                        { $: 'label', title: '1.0' }
+                    ]
+                }
             });
             jb_1.jb.component('studio-helper.edit-style', {
                 type: 'control',

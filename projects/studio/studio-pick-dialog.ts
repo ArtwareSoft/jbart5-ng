@@ -40,6 +40,7 @@ jb.component('dialog.studio-pick-dialog', {
 </div>`, 
 			css: `
 .edge { 
+	z-index: 6001;
 	position: absolute;
 	background: red;
 	box-shadow: 0 0 1px 1px gray;

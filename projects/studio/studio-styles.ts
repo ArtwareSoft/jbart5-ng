@@ -6,7 +6,7 @@ jb.component('editable-text.studio-primitive-text',{
       features :{$: 'editable-text.bindField' },
       template: `<div><input %$field.modelExp%></div>`,
 	  css: `
-input { display: block; width: 149px; height: 16px; padding-left: 2px;
+input { display: block; width: 146px; height: 19px; padding-left: 2px;
 	font-size: 12px; color: #555555; background-color: #fff; 
 	border: 1px solid #ccc; border-radius: 4px;
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
@@ -109,6 +109,39 @@ jb.component('property-sheet.studio-properties', {
         <div class="input-and-toolbar">
           <jb_comp [comp]="ctrl.comp"></jb_comp>
           <jb_comp [hidden]="!ctrl.hover" [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+        </div>
+      </div>
+      </div>
+    `, 
+    css: `.property { margin-bottom: 5px; display: flex }
+      .property:last-child { margin-bottom:0px }
+      .input-and-toolbar { display: flex; }
+      .toolbar { height: 16px; margin-left: 10px }
+      .property>.property-title {
+        min-width: 90px;
+        width: 90px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        vertical-align:top;
+        margin-top:2px;
+        font-size:14px;
+        margin-right: 10px;
+        margin-left: 7px;
+      },
+      .property>*:last-child { margin-right:0 }`
+  }
+})
+
+jb.component('property-sheet.studio-plain', {
+  type: 'group.style', 
+  impl :{$: 'customStyle', 
+    features :{$: 'group.initGroup' }, 
+    template: `<div>
+      <div *ngFor="let ctrl of ctrls" class="property">
+        <label class="property-title">{{ctrl.comp.jb_title()}}</label>
+        <div class="input-and-toolbar">
+          <jb_comp [comp]="ctrl.comp"></jb_comp>
+          <jb_comp [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
         </div>
       </div>
       </div>
@@ -270,36 +303,37 @@ jb.component('group.studio-properties-accordion', {
                 <i *ngIf="ctrl.show" class="material-icons">keyboard_arrow_down</i>
                 <i *ngIf="!ctrl.show" class="material-icons">keyboard_arrow_right</i>
           </div>
-        </div>
+        </div><div class="content">
           <jb_comp *ngIf="ctrl.show" [comp]="ctrl.comp"></jb_comp>
+        </div>
       </div>
   </section>`, 
     methods: {
       init: function (ctx) {
-                                return function (cmp) {
-                                    cmp.expand_title = function (ctrl) {
-                                        return ctrl.show ? 'collapse' : 'expand';
-                                    };
-                                    cmp.toggle = function (newCtrl) {
-                                        return cmp.ctrls.forEach(function (ctrl) {
-                                            return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
-                                        });
-                                    };
+                            return function (cmp) {
+                                cmp.expand_title = function (ctrl) {
+                                    return ctrl.show ? 'collapse' : 'expand';
                                 };
-                            },
+                                cmp.toggle = function (newCtrl) {
+                                    return cmp.ctrls.forEach(function (ctrl) {
+                                        return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
+                                    });
+                                };
+                            };
+                        }, 
       afterViewInit: function (ctx) {
-                return function (cmp) {
-                  if (cmp.ctrls && cmp.ctrls[0])
-                   cmp.ctrls[0].show = true;
-                }
-      }
-
+                            return function (cmp) {
+                                if (cmp.ctrls && cmp.ctrls[0])
+                                    cmp.ctrls[0].show = true;
+                            };
+                        }
     }, 
     css: `.header { display: flex; flex-direction: row; }
 button:hover { background: none }
 button { margin-left: auto }
 i { color: #; cursor: pointer }
-.title { margin: 5px }  
+.title { margin: 5px } 
+.content { padding-top: 2px }
 .header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } 
 `, 
     features :{$: 'group.initGroup' }

@@ -13,7 +13,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     features: { $: 'editable-text.bindField' },
                     template: "<div><input %$field.modelExp%></div>",
-                    css: "\ninput { display: block; width: 149px; height: 16px; padding-left: 2px;\n\tfont-size: 12px; color: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\ninput:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\ninput::placeholder { color: #999; opacity: 1; }\ninput[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }\n\t  \tinput.focused {width: 300px; transition: width: 1s}"
+                    css: "\ninput { display: block; width: 146px; height: 19px; padding-left: 2px;\n\tfont-size: 12px; color: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\ninput:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\ninput::placeholder { color: #999; opacity: 1; }\ninput[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }\n\t  \tinput.focused {width: 300px; transition: width: 1s}"
                 }
             });
             jb_core_1.jb.component('button.studio-data-script', {
@@ -58,6 +58,14 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         }
                     },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\" \n          (mouseenter)=\"ctrl.hover=true\" (mouseleave)=\"ctrl.hover=false\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [hidden]=\"!ctrl.hover\" [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
+                }
+            });
+            jb_core_1.jb.component('property-sheet.studio-plain', {
+                type: 'group.style',
+                impl: { $: 'customStyle',
+                    features: { $: 'group.initGroup' },
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
@@ -157,7 +165,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('group.studio-properties-accordion', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div>\n          <jb_comp *ngIf=\"ctrl.show\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n  </section>",
+                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div><div class=\"content\">\n          <jb_comp *ngIf=\"ctrl.show\" [comp]=\"ctrl.comp\"></jb_comp>\n        </div>\n      </div>\n  </section>",
                     methods: {
                         init: function (ctx) {
                             return function (cmp) {
@@ -178,7 +186,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             };
                         }
                     },
-                    css: ".header { display: flex; flex-direction: row; }\nbutton:hover { background: none }\nbutton { margin-left: auto }\ni { color: #; cursor: pointer }\n.title { margin: 5px }  \n.header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } \n",
+                    css: ".header { display: flex; flex-direction: row; }\nbutton:hover { background: none }\nbutton { margin-left: auto }\ni { color: #; cursor: pointer }\n.title { margin: 5px } \n.content { padding-top: 2px }\n.header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } \n",
                     features: { $: 'group.initGroup' }
                 }
             });
