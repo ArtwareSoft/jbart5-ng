@@ -149,6 +149,20 @@ jb.component('dialogFeature.launcherLocationNearSelectedNode', {
 	}
 })
 
+jb.component('dialogFeature.onClose', {
+	type: 'dialogFeature',
+	params: {
+		action: { type: 'action', dynamic: true}
+	},
+	impl: function(context,action) { 
+		context.vars.$dialog.em
+			.filter(e => e.type == 'close')
+			.take(1)
+			.subscribe(()=>
+				action())
+	}
+})
+
 jb.component('dialogFeature.closeWhenClickingOutside', {
 	type: 'dialogFeature',
 	impl: function(context) { 

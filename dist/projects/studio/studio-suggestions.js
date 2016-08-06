@@ -142,9 +142,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                 if (!$(input).hasClass('dialog-open'))
                                     closeFloatingInput(ctx);
                             });
-                            var suggestionEm = cmp.keyEm
-                                .debounceTime(30)
-                                .takeUntil(inputClosed) // sensitive timing of closing the floating input
+                            var suggestionEm = jb_rx.Observable.fromEvent(input, 'keydown')
+                                .debounceTime(30) // solves timing of closing the floating input
+                                .takeUntil(inputClosed)
+                                .filter(function (e) { return e.keyCode != 38 && e.keyCode != 40; })
                                 .filter(function (e) {
                                 var inpValue = e.srcElement.value + (e.key.length == 1 ? e.key : '');
                                 return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;

@@ -47,17 +47,17 @@ jb.component('studio.jb-editor', {
             onEnter :{$: 'studio.open-jb-edit-property', 
               path: '%$globals/jb_editor_selection%'
             }, 
-            onRightClickOfExpanded :{$: 'studio.open-jb-editor-menu' , path: '%%'},
+            onRightClickOfExpanded :{$: 'studio.open-jb-editor-menu', path: '%%' }, 
             autoFocus: true
           }, 
           {$: 'tree.drag-and-drop' }, 
           {$: 'tree.keyboard-shortcut', 
             key: 'Ctrl+Up', 
-            action :{$: 'studio.moveInArray', path: '%%',moveUp: true }
+            action :{$: 'studio.moveInArray', path: '%%', moveUp: true }
           }, 
           {$: 'tree.keyboard-shortcut', 
             key: 'Ctrl+Down', 
-            action :{$: 'studio.moveInArray', path: '%%',moveUp: false }
+            action :{$: 'studio.moveInArray', path: '%%', moveUp: false }
           }, 
           {$: 'tree.keyboard-shortcut', 
             key: 'Ctrl+C', 
@@ -85,7 +85,10 @@ jb.component('studio.jb-editor', {
       }, 
       {$: 'group', 
         title: 'input-output', 
-        features :{$: 'group.data', data: '%$globals/jb_editor_selection%' }, 
+        features: [
+          {$: 'group.data', data: '%$globals/jb_editor_selection%' }, 
+          {$: 'group.watch', data: '%$globals/jb_preview_result_counter%' }
+        ], 
         controls :{$: 'group', 
           features :{$: 'group.wait', 
             for :{$: 'studio.probe', path: '%$globals/jb_editor_selection%' }, 
@@ -142,7 +145,12 @@ jb.component('studio.open-jb-edit-property', {
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-jb-editor-popup' }, 
     content :{$: 'studio.jb-floating-input', path: '%$path%' }, 
-    features :{$: 'dialogFeature.autoFocusOnFirstInput' }
+    features: [
+      {$: 'dialogFeature.autoFocusOnFirstInput' }, 
+      {$: 'dialogFeature.onClose', 
+        action :{$: 'toggleBooleanValue', of: '%$globals/jb_preview_result_counter%' }
+      }
+    ]
   }
 })
 

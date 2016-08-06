@@ -82,25 +82,24 @@ jb_component('firstSucceeding',{
 	}
 });
 
-jb_component('jsonPath',{
-	type: "data",
-	params: {
-		parent: { defaultValue: '%%', as: 'single' },
-		path: { as: 'string' }
-	},
-	impl: function(context,parent,path) {
-		return parent && jb_run(jb_ctx(context,{ data: parent, profile: '{{' + path + '}}' }));
-	}
-});
+// jb_component('jsonPath',{
+// 	type: "data",
+// 	params: {
+// 		parent: { defaultValue: '%%', as: 'single' },
+// 		path: { as: 'string' }
+// 	},
+// 	impl: function(context,parent,path) {
+// 		return parent && jb_run(jb_ctx(context,{ data: parent, profile: '{{' + path + '}}' }));
+// 	}
+// });
 
 jb_component('objectProperties',{
 	type: "data",
 	params: {
 		object: { defaultValue: '%%', as: 'single' }
 	},
-	impl: function(context,object) {
-		return jb_ownPropertyNames(object); // object && jb_evalExpressionPart('*',jb_ctx(context,{data:object}));
-	}
+	impl: (ctx,object) =>
+		jb_ownPropertyNames(object)
 })
 
 jb_component('extend',{
@@ -220,33 +219,29 @@ jb_component('writeValue',{
 		to: { as: 'ref' },
 		value: {}
 	},
-	impl: function(context,to,value) {
-		jb_writeValue(to,value,true);
-	}
+	impl: (ctx,to,value) =>
+		jb_writeValue(to,value)
 });
 
-jb_component('assign',{
-	type: 'action',
-	params: {
-		parent: { as:'single', defaultValue: '%%'},
-		property: { as:'string'},
-		value: { }
-	},
-	impl: function(context,parent,property,value) {
-		jb_assign(parent,property,value);
-	}
-});
+// jb_component('assign',{
+// 	type: 'action',
+// 	params: {
+// 		parent: { as:'single', defaultValue: '%%'},
+// 		property: { as:'string'},
+// 		value: { }
+// 	},
+// 	impl: function(context,parent,property,value) {
+// 		jb_assign(parent,property,value);
+// 	}
+// });
 
 jb_component('toggleBooleanValue',{
 	type: 'action',
 	params: {
-		parent: { as: 'single' },
-		property: { as: 'string'}
+		of: { as: 'ref' },
 	},
-	impl: function(context,parent,property) {
-		if (!parent || typeof(parent) != 'object') return;
-		parent[property] = parent[property] ? false : true;
-	}
+	impl: (ctx,of) =>
+		jb_writeValue(of,jb_val(of) ? false : true)
 });
 
 jb_component('addToArray', {

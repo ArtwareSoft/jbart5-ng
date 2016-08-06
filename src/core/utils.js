@@ -504,7 +504,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
 }
 
 function jb_entries(obj) {
-  if (!obj) return [];
+  if (!obj || typeof obj != 'object') return [];
   var ret = [];
   for(var i in obj) // keeps definition order
       if (obj.hasOwnProperty(i)) 

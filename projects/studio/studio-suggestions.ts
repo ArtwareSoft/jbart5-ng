@@ -115,7 +115,7 @@ jb.component('editable-text.suggestions-input-feature', {
         var inputClosed = cmp.jbEmitter.filter(x=>x =='destroy');
 
         cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
-          .takeUntil(inputClosed);
+          .takeUntil(inputClosed) 
 
         cmp.keyEm.filter(e=> e.keyCode == 38 || e.keyCode == 40)
             .subscribe(e=>
@@ -133,9 +133,10 @@ jb.component('editable-text.suggestions-input-feature', {
                 closeFloatingInput(ctx)
               })
 
-        var suggestionEm = cmp.keyEm
-          .debounceTime(30)
-          .takeUntil(inputClosed) // sensitive timing of closing the floating input
+        var suggestionEm = jb_rx.Observable.fromEvent(input, 'keydown')
+          .debounceTime(30) // solves timing of closing the floating input
+          .takeUntil(inputClosed) 
+          .filter(e=> e.keyCode != 38 && e.keyCode != 40)
           .filter(e=> {// has % or = sign - look for suggestion
             var inpValue  = e.srcElement.value + (e.key.length == 1 ? e.key : '');
             return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;

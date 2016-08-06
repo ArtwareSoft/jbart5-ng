@@ -152,6 +152,20 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                     };
                 }
             });
+            jb_core_1.jb.component('dialogFeature.onClose', {
+                type: 'dialogFeature',
+                params: {
+                    action: { type: 'action', dynamic: true }
+                },
+                impl: function (context, action) {
+                    context.vars.$dialog.em
+                        .filter(function (e) { return e.type == 'close'; })
+                        .take(1)
+                        .subscribe(function () {
+                        return action();
+                    });
+                }
+            });
             jb_core_1.jb.component('dialogFeature.closeWhenClickingOutside', {
                 type: 'dialogFeature',
                 impl: function (context) {
