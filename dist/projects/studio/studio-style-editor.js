@@ -124,7 +124,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     },
                     content: { $: 'editable-text',
                         databind: '%$dialogData/name%',
-                        features: { $: 'onEnter', action: { $: 'closeContainingPopup' } }
+                        features: { $: 'feature.onEnter', action: { $: 'closeContainingPopup' } }
                     },
                     onOK: function (ctx) {
                         debugger;

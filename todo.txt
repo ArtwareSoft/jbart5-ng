@@ -1,45 +1,26 @@
 
 build the jbart.io site like https://material.angular.io/
 
-wrap as group should open group and select inner
-	control-tree context menu as tree aspect
-		actions
-			control-tree-expand(path)
-			control-tree-select(path,focus)
+picklist.md-input
+
+edit resources
 
 animation in expand/collapse
-
-fix theme var name
- editable-text.default-style-profile => them.editable-text
- default theme with empty values
-
-
+animation on studio refresh component
 
 studio
 ======
-properties
-   features - jumping menu handles not at the same column
-   open newly created feature
 
 jb editor
-	right context menu
-	  vars (for object)
-	refresh probe without changing the path
+    vars (for object)
 	$object
 
 
-bugs
- make local with icon
-
 tests
 ======
-move core tests to project
+run all projects tests
 
 
-
-~action~content
-options:
-1. spilt('~action~content')
-2. split('~action')
-   how to preview the component actions
-    - all actions that activate component actions will be probed
+probe
+======
+issues with pipeline comp sugar

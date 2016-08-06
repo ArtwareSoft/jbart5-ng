@@ -67,9 +67,19 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     style: { $: 'dialog.md-dialog-ok-cancel',
                         features: { $: 'dialogFeature.autoFocusOnFirstInput' }
                     },
-                    content: { $: 'editable-text',
-                        databind: '%$dialogData/name%',
-                        features: { $: 'onEnter', action: { $: 'closeContainingPopup' } }
+                    content: { $: 'group',
+                        controls: [
+                            { $: 'editable-text',
+                                databind: '%$dialogData/name%',
+                                features: { $: 'onEnter',
+                                    action: { $: 'closeContainingPopup' }
+                                },
+                                title: 'page name',
+                                style: { $: 'editable-text.md-input' }
+                            }
+                        ],
+                        features: { $: 'css.padding', top: '14', left: '11' },
+                        style: { $: 'group.div' }
                     },
                     onOK: function (ctx) {
                         var id = ctx.exp('%$globals/project%.%$dialogData/name%');

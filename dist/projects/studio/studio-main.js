@@ -216,7 +216,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                 w.jbart.studioGlobals = ctx.exp('{%$globals%}');
                                 w.jbart.modifyOperationsEm = studio.modifyOperationsEm;
                                 w.jbart.studioActivityEm = studio.studioActivityEm;
-                                w.jbart.modifiedCtrlsEm = studio.modifiedCtrlsEm;
+                                w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm = studio.modifiedCtrlsEm;
                                 jbart.previewWindow = w;
                                 jbart.previewjbart = w.jbart;
                                 jbart.preview_jbart_widgets = w.jbart_widgets;

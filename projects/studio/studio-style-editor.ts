@@ -118,7 +118,7 @@ jb.component('studio.open-make-global-style', {
     }, 
     content :{$: 'editable-text', 
       databind: '%$dialogData/name%',
-      features :{$: 'onEnter', action :{$: 'closeContainingPopup'} }
+      features :{$: 'feature.onEnter', action :{$: 'closeContainingPopup'} }
     }, 
     onOK: ctx => {
         debugger;

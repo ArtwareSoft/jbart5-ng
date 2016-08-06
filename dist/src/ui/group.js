@@ -34,7 +34,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             };
                             cmp.initGroup = function () {
                                 cmp.title = context.params.title(context);
-                                //          var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.controls,cmp);
                                 (cmp.jbGroupChildrenEm || jb_rx.Observable.of(context.params.controls(cmp.ctx)))
                                     .merge(cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
                                     .subscribe(function (comps) {

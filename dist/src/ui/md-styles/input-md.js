@@ -21,19 +21,14 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
                     width: { as: 'number' }
                 },
                 impl: { $: 'customStyle',
-                    $vars: {
-                        widthCss: function (ctx) {
-                            return ctx.componentContext.params.width ? "md-input { width: " + ctx.componentContext.params.width + "px}" : '';
-                        }
-                    },
                     features: { $: 'editable-text.bindField' },
                     template: "<span><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></span>",
                     methods: {
                         init: function (ctx) { return function (cmp) {
-                            cmp.title = ctx.vars.$model.title();
+                            return cmp.title = ctx.vars.$model.title();
                         }; }
                     },
-                    css: '%$widthCss%',
+                    css: 'md-input { {?width: %$width%px?} }',
                     directives: 'MdInput'
                 }
             });

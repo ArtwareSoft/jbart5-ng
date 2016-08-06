@@ -31,7 +31,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
         function defaultStyle(ctx) {
             var profile = context.profile;
-            var defaultVar = '$' + (profile.$ || '') + '.default-style-profile';
+            var defaultVar = '$theme.' + (profile.$ || '');
             if (!profile.style && context.vars[defaultVar])
                 return ctx.run({ $: context.vars[defaultVar] });
             return context.params.style(ctx);
@@ -54,7 +54,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     function mergeOptions(op1, op2) {
         var res = {};
         res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-        //		res.cssStyle = ((op1.cssStyle || '') + ';' + (op2.cssStyle || '')).replace(/^;*/,'').replace(/;*$/,'');
         if (op1.styles || op2.styles)
             res.styles = (op1.styles || []).concat(op2.styles || []);
         return jb_extend({}, op1, op2, res);
@@ -120,22 +119,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
             }).join(''); // only one will succeed
         }
     }
-    function controlsToGroupEmitter(controlsFunc, cmp) {
-        var controlsFuncAsObservable = function (ctx) {
-            return (jbart.modifyOperationsEm || jb_rx.Observable.of())
-                .flatMap(function (e) {
-                // if (e.path.indexOf(ctx.path) == 0)
-                // 	return [controlsFunc(ctx)]
-                // else
-                return [];
-            })
-                .startWith(controlsFunc(ctx));
-        };
-        return cmp.methodHandler.ctrlsEmFunc ? function (ctx) {
-            return cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable, ctx, cmp);
-        } : controlsFuncAsObservable;
-    }
-    exports_1("controlsToGroupEmitter", controlsToGroupEmitter);
     function ngRef(ref, cmp) {
         if (typeof ref == 'string' && ref.match(/{{.*}}/))
             return { $jb_parent: cmp, $jb_property: ref.match(/{{(.*)}}/)[1] };
@@ -320,9 +303,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     ], Cmp);
                     Cmp.prototype.ngOnInit = function () {
                         var _this = this;
-                        // if (this.ngOnInitAlreadyCalled)
-                        // 	debugger;
-                        // this.ngOnInitAlreadyCalled = true;
                         try {
                             if (this.methodHandler.jbObservableFuncs.length) {
                                 this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
@@ -432,7 +412,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]);
                     });
                     (options.styles || [])
-                        .filter(function (x) { return x.match(/^:/m); })
+                        .filter(function (x) { return x.match(/^:/m); }) // for example :hover
                         .forEach(function (x) { return _this.cssFixes.push(x); });
                     var annotations = this.annotations;
                     var overridable_props = ['selector', 'template', 'encapsulation'];
@@ -454,7 +434,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     options.atts = jb_core_1.jb.extend({}, options.atts, options.host); // atts is equvivalent to host
                     if (options.cssClass)
                         jb_core_1.jb.path(options, ['atts', 'class'], options.cssClass);
-                    //		if (options.cssStyle) jb.path(options, ['atts', 'style'], options.cssStyle);
                     Object.getOwnPropertyNames(options.atts || {})
                         .forEach(function (att) {
                         var val = context.exp(options.atts[att]).trim();
@@ -507,8 +486,12 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     // redraw if script changed at studio
                     (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
                         .flatMap(function (e) {
-                        if (_this.comp && e.path == _this.comp.ctx.path)
+                        if (_this.comp && e.path == _this.comp.ctx.path) {
+                            jb_core_1.jb.delay(100).then(function () {
+                                return $(_this._nativeElement).addClass('jb-highlight-comp-changed');
+                            });
                             return [_this.comp.ctx.run()];
+                        }
                         return [];
                     })
                         .filter(function (x) { return x; })
@@ -519,7 +502,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                             applyPreview(_this.comp.ctx);
                     });
                 };
-                //ngOnChanges(changes) {
                 jbComp.prototype.draw = function (comp) {
                     var _this = this;
                     if (!comp)
@@ -544,6 +526,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     cmp.jbDispose = function () {
                         return cmp_ref.destroy();
                     };
+                    this._nativeElement = cmp_ref._hostElement.nativeElement;
                     if (!cmp.flatten)
                         return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions

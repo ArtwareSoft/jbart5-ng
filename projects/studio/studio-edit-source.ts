@@ -40,20 +40,17 @@ jb.component('studio.profile-as-text', {
 		})
 })
 
-jb.component('studio.custom-style-as-text', {
+jb.component('studio.string-property-ref', {
 	type: 'data',
 	params: {
 		path: { as: 'string' },
-		property: { as: 'string' }
 	},
 	impl: (context,path,stringOnly) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') {
-
-					var annotations = Reflect.getMetadata('annotations', studio.model.val(path))[0];
-					return annotations.css;
+					return studio.model.val(path);
 				} else {
-						studio.model.modify(studio.model.writeValue, path, { value: newVal },context);
+					studio.model.modify(studio.model.writeValue, path, { value: newVal },context);
 				}
 			}
 		})

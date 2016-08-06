@@ -60,20 +60,29 @@ jb.component('studio.openNewPage', {
     style :{$: 'dialog.md-dialog-ok-cancel', 
       features :{$: 'dialogFeature.autoFocusOnFirstInput' }
     }, 
-    content :{$: 'editable-text', 
-      databind: '%$dialogData/name%',
-      features :{$: 'onEnter', action :{$: 'closeContainingPopup'} }
-    }, 
-    onOK: ctx => {
-        var id = ctx.exp('%$globals/project%.%$dialogData/name%'); 
-        var profile = {
-          type: 'control', 
-          impl :{$: 'group', title: ctx.exp('%$dialogData/name%') }
+    content :{$: 'group', 
+      controls: [
+        {$: 'editable-text', 
+          databind: '%$dialogData/name%', 
+          features :{$: 'onEnter', 
+            action :{$: 'closeContainingPopup' }
+          }, 
+          title: 'page name', 
+          style :{$: 'editable-text.md-input' }
         }
-        studio.model.modify(studio.model.newComp,id,{profile:profile},ctx);
-
-        ctx.run({ $: 'writeValue', to: '%$globals/page%', value: '%$dialogData/name%' });
-        ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
-    }
+      ], 
+      features :{$: 'css.padding', top: '14', left: '11' }, 
+      style :{$: 'group.div' }
+    }, 
+    onOK: function (ctx) {
+                        var id = ctx.exp('%$globals/project%.%$dialogData/name%');
+                        var profile = {
+                            type: 'control',
+                            impl: { $: 'group', title: ctx.exp('%$dialogData/name%') }
+                        };
+                        studio.model.modify(studio.model.newComp, id, { profile: profile }, ctx);
+                        ctx.run({ $: 'writeValue', to: '%$globals/page%', value: '%$dialogData/name%' });
+                        ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
+                    }
   }
 })

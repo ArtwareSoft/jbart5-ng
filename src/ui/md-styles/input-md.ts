@@ -10,18 +10,14 @@ jb.component('editable-text.md-input',{
     width: { as: 'number' }
   },
   impl :{$: 'customStyle', 
-    $vars: {
-       widthCss: ctx =>
-          ctx.componentContext.params.width ? `md-input { width: ${ctx.componentContext.params.width}px}` : ''
-    },
    features :{$: 'editable-text.bindField' },
    template: `<span><md-input %$field.modelExp% placeholder="{{title}}"></md-input></span>`,
    methods: {
-      	init: ctx => cmp => {
+      	init: ctx => cmp =>
       		cmp.title = ctx.vars.$model.title();
-      	}
       },
-      css: '%$widthCss%',
+      css: 'md-input { {?width: %$width%px?} }',
       directives: 'MdInput'
 	}
 })
+

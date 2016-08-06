@@ -46,7 +46,11 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             title: 'City State',
                             style: { $: 'layout.horizontal' },
                             controls: [
-                                { $: 'editable-text', title: 'City', databind: '%city%' },
+                                { $: 'editable-text',
+                                    title: 'City',
+                                    databind: '%city%',
+                                    style: { $: 'editable-text.md-input', width: '122' }
+                                },
                                 { $: 'editable-text', title: 'State', databind: '%state%' },
                                 { $: 'editable-text', title: 'Postal Code', databind: '%postalCode%' }
                             ]

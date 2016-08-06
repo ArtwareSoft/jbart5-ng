@@ -49,17 +49,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     }
                 }); }
             });
-            jb_core_1.jb.component('studio.custom-style-as-text', {
+            jb_core_1.jb.component('studio.string-property-ref', {
                 type: 'data',
                 params: {
                     path: { as: 'string' },
-                    property: { as: 'string' }
                 },
                 impl: function (context, path, stringOnly) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
-                            var annotations = Reflect.getMetadata('annotations', studio.model.val(path))[0];
-                            return annotations.css;
+                            return studio.model.val(path);
                         }
                         else {
                             studio.model.modify(studio.model.writeValue, path, { value: newVal }, context);

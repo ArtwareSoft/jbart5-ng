@@ -4,7 +4,6 @@ import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDe
 import {HTTP_PROVIDERS} from '@angular/http';
 
 import {NgClass,NgStyle} from '@angular/common';
-// NgForm,FORM_DIRECTIVES,
 
 // import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 
@@ -90,9 +89,6 @@ class jbComponent {
 			Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
 		], Cmp);
 		Cmp.prototype.ngOnInit = function() {
-			// if (this.ngOnInitAlreadyCalled)
-			// 	debugger;
-			// this.ngOnInitAlreadyCalled = true;
 			try {
 				if (this.methodHandler.jbObservableFuncs.length) {
 					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
@@ -193,7 +189,7 @@ class jbComponent {
     			jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]));
 
     	(options.styles || [])
-    		.filter(x=>x.match(/^:/m))
+    		.filter(x=>x.match(/^:/m)) // for example :hover
     		.forEach(x=> this.cssFixes.push(x))
 
     	var annotations = this.annotations;
@@ -220,7 +216,6 @@ class jbComponent {
 
 		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
 		if (options.cssClass) jb.path(options, ['atts', 'class'], options.cssClass);
-//		if (options.cssStyle) jb.path(options, ['atts', 'style'], options.cssStyle);
 		Object.getOwnPropertyNames(options.atts || {})
 			.forEach(att=>{
 				var val = context.exp(options.atts[att]).trim();
@@ -268,7 +263,7 @@ export function ctrl(context) {
 
 	function defaultStyle(ctx) {
 		var profile = context.profile;
-		var defaultVar = '$' + (profile.$ || '')+'.default-style-profile';
+		var defaultVar = '$theme.' + (profile.$ || '');
 		if (!profile.style && context.vars[defaultVar])
 			return ctx.run({$:context.vars[defaultVar]})
 		return context.params.style(ctx);
@@ -291,7 +286,6 @@ function optionsOfProfile(profile) {
 function mergeOptions(op1,op2) {
 	var res = {};
 	res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-//		res.cssStyle = ((op1.cssStyle || '') + ';' + (op2.cssStyle || '')).replace(/^;*/,'').replace(/;*$/,'');
 	if (op1.styles || op2.styles)
 		res.styles = (op1.styles || []).concat(op2.styles || [])
 	return jb_extend({},op1,op2,res);
@@ -370,8 +364,11 @@ export class jbComp {
   	// redraw if script changed at studio
 		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
 				.flatMap(e=> {
-					if (this.comp && e.path == this.comp.ctx.path)
+					if (this.comp && e.path == this.comp.ctx.path) {
+						jb.delay(100).then(() =>
+				  			$(this._nativeElement).addClass('jb-highlight-comp-changed'));
 						return [this.comp.ctx.run()];
+					}
 					return [];
 				})
 				.filter(x=>x)
@@ -381,10 +378,8 @@ export class jbComp {
 					if (comp != this.comp)
 						applyPreview(this.comp.ctx);
 				})
-	
   }
 
-//ngOnChanges(changes) {
   draw(comp) {
   	if (!comp) return;
 
@@ -410,6 +405,7 @@ export class jbComp {
   	cmp.jbDispose = () => 
   		cmp_ref.destroy();
 
+  	this._nativeElement = cmp_ref._hostElement.nativeElement;
   	if (!cmp.flatten) 
   		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
@@ -443,21 +439,6 @@ export class jbComp {
   	}
   	parentCmp.jb_disposable.push(cmp.jbDispose)
   }
-}
-
-export function controlsToGroupEmitter(controlsFunc, cmp) { 
-	var controlsFuncAsObservable = ctx =>
-		(jbart.modifyOperationsEm || jb_rx.Observable.of())
-				.flatMap(e=> {
-					// if (e.path.indexOf(ctx.path) == 0)
-					// 	return [controlsFunc(ctx)]
-					// else
-						return []
-				})
-				.startWith(controlsFunc(ctx))
-
-	return cmp.methodHandler.ctrlsEmFunc ? ctx => 
-		cmp.methodHandler.ctrlsEmFunc(controlsFuncAsObservable,ctx,cmp) : controlsFuncAsObservable;
 }
 
 export function ngRef(ref,cmp) {
