@@ -19,13 +19,14 @@ jb.component('tabs', {
       		[cmp.comps[cmp.selectedTab] || cmp.empty];
 
         cmp.initTabs = function() {
-          var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.tabs,cmp);
-          cmpEmitterFunc(cmp.ctx).subscribe(comps=> {
-          	cmp.comps = comps;
-            cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
-            cmp.titles = comps.map(comp=>
-            	comp.jb_title ? comp.jb_title() : '')
-          })
+          (cmp.jbGroupChildrenEm || jb_rx.Observable.of(context.params.tabs(cmp.ctx)))
+              .merge(cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+              .subscribe(comps=> {
+              	cmp.comps = comps;
+                cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
+                cmp.titles = comps.map(comp=>
+                	comp.jb_title ? comp.jb_title() : '')
+              })
         }
       }
     })

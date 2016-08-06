@@ -24,22 +24,24 @@ jb.component('group',{
 
         cmp.initGroup = function() {
           cmp.title = context.params.title(context);
-          var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.controls,cmp);
-          cmpEmitterFunc(cmp.ctx).subscribe(comps=> {
-            cmp.ctrls = [];
-            cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
-            jb.logPerformance('group-change');
-            comps.forEach((comp,i)=>{
-              if (!comp || comp.invisible)
-                return;
-              if (cmp.jbToExtend[i])
-                 comp.jbExtend(cmp.jbToExtend[i]);
-              if (!comp.jb_title)
-                debugger;
-              cmp.ctrls.push({ title: comp.jb_title ? comp.jb_title() : '' , comp: comp } );
-            })
-          })
-        }
+//          var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.controls,cmp);
+          (cmp.jbGroupChildrenEm || jb_rx.Observable.of(context.params.controls(cmp.ctx)))
+              .merge(cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+              .subscribe(comps=> {
+                  cmp.ctrls = [];
+                  cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
+                  jb.logPerformance('group-change');
+                  comps.forEach((comp,i)=>{
+                    if (!comp || comp.invisible)
+                      return;
+                    if (cmp.jbToExtend[i])
+                       comp.jbExtend(cmp.jbToExtend[i]);
+                    if (!comp.jb_title)
+                      debugger;
+                    cmp.ctrls.push({ title: comp.jb_title ? comp.jb_title() : '' , comp: comp } );
+                  })
+                })
+            }
       }
     })
   }

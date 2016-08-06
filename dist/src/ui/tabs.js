@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui;
+    var jb_core_1, jb_ui, jb_rx;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,6 +9,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
+            },
+            function (jb_rx_1) {
+                jb_rx = jb_rx_1;
             }],
         execute: function() {
             jb_core_1.jb.component('tabs', {
@@ -27,8 +30,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                                 return [cmp.comps[cmp.selectedTab] || cmp.empty];
                             };
                             cmp.initTabs = function () {
-                                var cmpEmitterFunc = jb_ui.controlsToGroupEmitter(context.params.tabs, cmp);
-                                cmpEmitterFunc(cmp.ctx).subscribe(function (comps) {
+                                (cmp.jbGroupChildrenEm || jb_rx.Observable.of(context.params.tabs(cmp.ctx)))
+                                    .merge(cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+                                    .subscribe(function (comps) {
                                     cmp.comps = comps;
                                     cmp.jb_disposable && cmp.jb_disposable.forEach(function (d) { return d(); });
                                     cmp.titles = comps.map(function (comp) {

@@ -13,20 +13,21 @@ jb.component('group.wait', {
   },
   impl: function(context,waitFor,loading,error) { 
     return {
-      ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
-        var waiting = cmp.jbWait();
-        return jb_rx.observableFromCtx(ctx.setData(waitFor))
-          .flatMap(x=>{
-              var data = context.params.mapToResource(x);
-              jb.writeToResource(context.params.resource,data,ctx);
-              return originalCtrlsEmFunc(ctx.setData(data));
-            })
-          .do(x=>
-            waiting.ready())
-          .startWith([loading(ctx)])
-          .catch(e=> 
-            jb_rx.Observable.of([error(ctx.setVars({error:e}))]))
-      }
+      beforeInit: function(cmp) {
+          var waiting = cmp.jbWait();
+          cmp.jbGroupChildrenEm = jb_rx.observableFromCtx(context.setData(waitFor))
+            .flatMap(x=>{
+                var data = context.params.mapToResource(x);
+                jb.writeToResource(context.params.resource,data,context);
+                return [context.vars.$model.controls(cmp.ctx.setData(data))];
+              })
+            .do(x=>
+              waiting.ready())
+            .startWith([loading(context)])
+            .catch(e=> 
+              jb_rx.Observable.of([error(context.setVars({error:e}))]));
+      },
+      observable: () => {} // to create jbEmitter
   }}
 })
 
@@ -38,28 +39,22 @@ jb.component('group.data', {
     itemVariable: { as: 'string' },
     watch: { type: 'boolean', as: 'boolean', defaultValue: true }
   },
-  impl: function(context, ref, itemVariable,watch) {
+  impl: function(context, data, itemVariable,watch) {
     return {
-      ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
-        if (!watch) {
-          var val = jb.val(ref());
-          return Observable.of([originalCtrlsEmFunc(ctxWithItemVar(ctx.setData(val),val))])
-        }
+      beforeInit: function(cmp) {
+          var dataEm = cmp.jbEmitter
+              .filter(x => x == 'check')
+              .map(()=> 
+                jb.val(data())) 
+              .distinctUntilChanged()
+              .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+              .map(val=> {
+                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(val);
+                  var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,val)) : ctx2;
+                  return context.vars.$model.controls(ctx3)
+              })
 
-        return cmp.jbEmitter
-          .map(()=> 
-            jb.val(ref())) 
-          .distinctUntilChanged()
-          .filter(x=>x && x!='undefined')
-//          .map(x=>{console.log('group.data: ref changed',x);return x})
-          .flatMap(function(val) {
-              var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(ctx) : ctx;
-              var ctx3 = ctxWithItemVar(ctx2.setData(val),val);
-              return originalCtrlsEmFunc(ctx3);
-            }
-          );
-
-        function ctxWithItemVar(ctx,val) { return itemVariable ? ctx.setVars(jb.obj(itemVariable,val)) : ctx } 
+          cmp.jbGroupChildrenEm = watch ? dataEm : dataEm.take(1);
       },
       observable: () => {} // to create jbEmitter
   }}
@@ -71,16 +66,19 @@ jb.component('group.watch', {
     data: { essential: true, dynamic: true },
   },
   impl: (context, data) => ({
-      ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
-        return cmp.jbEmitter
-          .map(()=> 
-            jb.val(data())) 
-          .distinctUntilChanged()
-          .flatMap(x=> {
-                var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(ctx) : ctx;
-                return originalCtrlsEmFunc(ctx2)
-              }
-          );
+      beforeInit: function(cmp) {
+          cmp.jbWatchGroupChildrenEm = (cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+              .merge(cmp.jbEmitter
+                .filter(x => x == 'check')
+                .map(()=> 
+                  jb.val(data())) 
+                .distinctUntilChanged()
+                .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+                .map(val=> {
+                    var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+                    return context.vars.$model.controls(ctx2)
+                })
+            )
       },
       observable: () => {} // to create jbEmitter
   })
