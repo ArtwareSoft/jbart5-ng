@@ -145,3 +145,18 @@ jb.component('search-filter',{
 		})
 })
 
+jb.component('new-instance', {
+	type: 'data',
+	params: {
+		module: { as: 'string', essential: true },
+		class: { as: 'string', essential: true},
+		// todo - constructor
+	},
+	impl: (ctx,module,_class) => {
+		try {
+			return new (jb_entries(System._loader.modules).filter(p=>p[0].indexOf(module) != -1)[0][1].module[_class])()
+		} catch (e) {
+			return;
+		}
+	}
+})

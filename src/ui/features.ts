@@ -106,6 +106,18 @@ jb.component('feature.init', {
   })
 })
 
+jb.component('feature.ng-attach-object', {
+  type: 'feature',
+  params: {
+    data: { as: 'single', dynamic: true }
+  },
+  impl: (ctx,data) => ({init: cmp => {
+      var obj = data(cmp.ctx);
+      jb.extend(cmp,obj);
+      jb.extend(cmp.constructor.prototype,obj.constructor.prototype || {});
+  }})
+})
+
 jb.component('feature.disableChangeDetection', {
   type: 'feature',
   impl: (ctx) => ({

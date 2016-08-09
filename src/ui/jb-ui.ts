@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import {enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
+import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
 import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDeprecatedForms, provideForms } from '@angular/forms';
 import {HTTP_PROVIDERS} from '@angular/http';
 
@@ -495,7 +495,16 @@ export function insertComponent(comp, resolver, parentView) {
 export function parseHTML(text) {
 	var res = document.createElement('div');
 	res.innerHTML = text;
+	setNgPath(res,'');
 	return res.firstChild;
+
+	function setNgPath(elem,curPath) {
+		addAttribute(elem, 'ng-path', curPath);
+		Array.from(elem.children).forEach((e,index)=>{
+			if (e.nodeType == 1)
+				setNgPath(e,curPath+'~'+index)
+		})
+	}
 }
 export function addAttribute(element, attrName, attrValue) {
 	var tmpElm = document.createElement('p');

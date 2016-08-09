@@ -35,12 +35,18 @@ jb.component('custom-control', {
 		html: { as: 'string', essential: true, defaultValue: '<div></div>'},
 		css: { as: 'string'},
 		options: { as: 'object'},
+    	features: { type: 'feature[]', dynamic: true },
+		directives: { ignore: true },
 	},
-	impl: (ctx,title,html,css,options) => {
+	impl: (ctx,title,html,css,options,features) => {
 		var defaultOptions = {directives: jb.entries(jbart.ng.directives)
 			.map(x=>x[0])
-//			.filter(x=>x.indexOf('Md') == 0)
 		};
-		return jb_ui.Comp(jb.extend({ template: html, css: css},defaultOptions,options),ctx)
+		return jb_ui.Comp(jb.extend({ 
+			jbTemplate: `<div jb-path="${ctx.path}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
+			css: css, 
+			featuresOptions: features(),
+			directives: ctx.profile.directives,
+		},defaultOptions,options),ctx)
 	}
 })

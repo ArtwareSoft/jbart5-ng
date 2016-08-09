@@ -88,31 +88,33 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     style: { $: 'dialog.studio-floating', id: 'responsive' },
                     content: { $: 'tabs',
                         tabs: { $: 'dynamic-controls',
-                            controlItems: [
-                                {
-                                    width: { min: 320, max: 479, default: 400 },
-                                    height: { min: 300, max: 700, default: 600 },
-                                    id: 'phone'
-                                },
-                                {
-                                    width: { min: 480, max: 1024, default: 600 },
-                                    height: { min: 300, max: 1440, default: 850 },
-                                    id: 'tablet'
-                                },
-                                {
-                                    width: { min: 1024, max: 2048, default: 1280 },
-                                    height: { min: 300, max: 1440, default: 520 },
-                                    id: 'desktop'
-                                }
-                            ],
+                            controlItems: {
+                                $asIs: [
+                                    {
+                                        width: { min: 320, max: 479, default: 400 },
+                                        height: { min: 300, max: 700, default: 600 },
+                                        id: 'phone'
+                                    },
+                                    {
+                                        width: { min: 480, max: 1024, default: 600 },
+                                        height: { min: 300, max: 1440, default: 850 },
+                                        id: 'tablet'
+                                    },
+                                    {
+                                        width: { min: 1024, max: 2048, default: 1280 },
+                                        height: { min: 300, max: 1440, default: 520 },
+                                        id: 'desktop'
+                                    }
+                                ]
+                            },
                             genericControl: { $: 'group',
                                 controls: [
                                     { $: 'editable-number',
                                         databind: '%$globals/responsive/{%$controlItem/id%}/width%',
                                         min: '%$controlItem/width/min%',
                                         max: '%$controlItem/width/max%',
-                                        style: { $: 'editable-number.slider' },
                                         title: 'width',
+                                        style: { $: 'editable-number.slider' },
                                         features: [
                                             { $: 'field.default', value: '%$controlItem/width/default%' },
                                             { $: 'field.subscribe',
@@ -125,8 +127,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                         databind: '%$globals/responsive/{%$controlItem/id%}/height%',
                                         min: '%$controlItem/height/min%',
                                         max: '%$controlItem/height/max%',
-                                        style: { $: 'editable-number.slider' },
                                         title: 'height',
+                                        style: { $: 'editable-number.slider' },
                                         features: [
                                             { $: 'field.default', value: '%$controlItem/height/default%' },
                                             { $: 'field.subscribe',
@@ -136,10 +138,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                         ]
                                     }
                                 ],
-                                style: { $: 'property-sheet.titles-above' },
                                 title: '%$controlItem/id%',
+                                style: { $: 'property-sheet.titles-above' },
                                 features: [{ $: 'css', css: '{ padding-left: 12px; padding-top: 7px }' }]
-                            }
+                            },
                         },
                         style: { $: 'tabs.md-tabs' }
                     },

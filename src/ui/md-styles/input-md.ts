@@ -14,7 +14,7 @@ jb.component('editable-text.md-input',{
    template: `<span><md-input %$field.modelExp% placeholder="{{title}}"></md-input></span>`,
    methods: {
       	init: ctx => cmp =>
-      		cmp.title = ctx.vars.$model.title();
+      		cmp.title = ctx.vars.$model.title()
       },
       css: 'md-input { {?width: %$width%px?} }',
       directives: 'MdInput'

@@ -175,7 +175,15 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     function parseHTML(text) {
         var res = document.createElement('div');
         res.innerHTML = text;
+        setNgPath(res, '');
         return res.firstChild;
+        function setNgPath(elem, curPath) {
+            addAttribute(elem, 'ng-path', curPath);
+            Array.from(elem.children).forEach(function (e, index) {
+                if (e.nodeType == 1)
+                    setNgPath(e, curPath + '~' + index);
+            });
+        }
     }
     exports_1("parseHTML", parseHTML);
     function addAttribute(element, attrName, attrValue) {

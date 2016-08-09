@@ -45,12 +45,19 @@ System.register(['jb-core', 'jb-ui', '@angular/core'], function(exports_1, conte
                     html: { as: 'string', essential: true, defaultValue: '<div></div>' },
                     css: { as: 'string' },
                     options: { as: 'object' },
+                    features: { type: 'feature[]', dynamic: true },
+                    directives: { ignore: true },
                 },
-                impl: function (ctx, title, html, css, options) {
+                impl: function (ctx, title, html, css, options, features) {
                     var defaultOptions = { directives: jb_core_1.jb.entries(jbart.ng.directives)
                             .map(function (x) { return x[0]; })
                     };
-                    return jb_ui.Comp(jb_core_1.jb.extend({ template: html, css: css }, defaultOptions, options), ctx);
+                    return jb_ui.Comp(jb_core_1.jb.extend({
+                        jbTemplate: "<div jb-path=\"" + ctx.path + "\">" + html + "</div>",
+                        css: css,
+                        featuresOptions: features(),
+                        directives: ctx.profile.directives,
+                    }, defaultOptions, options), ctx);
                 }
             });
         }

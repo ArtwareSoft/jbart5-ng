@@ -104,6 +104,7 @@ jb_modules =
 'jb-ui/md-styles/editable-boolean-md',
 'jb-ui/md-styles/tabs-md',
 'jb-ui/md-styles/card-md',
+'jb-ui/md-styles/sidenav-md',
 
 'testing/ui-testers'
 ];
@@ -158,6 +159,7 @@ function jbLoadModules(modules) {
   System.config(jb_system_config);
 
   var loaded = 0, loadedModules= {};
+
   return new Promise(resolve=>
     modules.map(x=>{
       System.import(x).then(
@@ -177,6 +179,10 @@ function jbLoadModules(modules) {
 
 function jbBootstrap(loadedModules) {
   var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
+  jb_entries(jbart.ng.modules|| []).map(e=>e[1]).forEach(m =>
+    loadedModules['@angular/platform-browser-dynamic'].bootstrapModule(m)
+  )
+
   bootstrap(loadedModules['jb-ui'].jBartWidget, jb_entries(jbart.ng.providers).map(e=>e[1]))
     .catch(err => console.error(err))
     .then(()=>

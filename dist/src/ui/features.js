@@ -116,6 +116,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     }
                 }); }
             });
+            jb_core_1.jb.component('feature.ng-attach-object', {
+                type: 'feature',
+                params: {
+                    data: { as: 'single', dynamic: true }
+                },
+                impl: function (ctx, data) { return ({ init: function (cmp) {
+                        var obj = data(cmp.ctx);
+                        jb_core_1.jb.extend(cmp, obj);
+                        jb_core_1.jb.extend(cmp.constructor.prototype, obj.constructor.prototype || {});
+                    } }); }
+            });
             jb_core_1.jb.component('feature.disableChangeDetection', {
                 type: 'feature',
                 impl: function (ctx) { return ({
