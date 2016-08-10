@@ -16,7 +16,7 @@ jb.component('studio.open-properties', {
       }, 
       'Properties of %comp% %title%'
     ], 
-    style :{$: 'dialog.studio-floating', id: 'studio properties', width: '500' }, 
+    style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '500' }, 
     content :{$: 'studio.properties', 
       path :{$: 'studio.currentProfilePath' }
     }, 

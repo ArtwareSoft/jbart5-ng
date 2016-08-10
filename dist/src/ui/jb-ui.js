@@ -289,6 +289,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         var ngAtt = Array.from(elem.attributes).map(function (x) { return x.name; })
                             .filter(function (x) { return x.match(/_ng/); })[0];
                         var css = this.cssFixes
+                            .map(function (x) { return x.replace(/^!/, ' '); }) // replace the ! with space to allow internal selector
                             .map(function (x) { return ("[" + ngAtt + "]" + x); })
                             .join('\n');
                         if (!cssFixes_hash[css]) {
@@ -421,7 +422,16 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     });
                     (options.styles || [])
                         .filter(function (x) { return x.match(/^:/m); }) // for example :hover
-                        .forEach(function (x) { return _this.cssFixes.push(x); });
+                        .forEach(function (x) {
+                        if (_this.cssFixes.indexOf(x) == -1)
+                            _this.cssFixes.push(x);
+                    });
+                    (options.styles || [])
+                        .filter(function (x) { return x.match(/^!/m); }) // ! affect internal selectors
+                        .forEach(function (x) {
+                        if (_this.cssFixes.indexOf(x) == -1)
+                            _this.cssFixes.push(x);
+                    });
                     var annotations = this.annotations;
                     var overridable_props = ['selector', 'template', 'encapsulation'];
                     var extendable_array_props = ['styles'];

@@ -68,6 +68,7 @@ class jbComponent {
 		  		.filter(x=>x.match(/_ng/))[0];
 
 			var css = this.cssFixes
+				.map(x=>x.replace(/^!/,' ')) // replace the ! with space to allow internal selector
 				.map(x=>`[${ngAtt}]${x}`)
 				.join('\n');
 			if (!cssFixes_hash[css]) {
@@ -190,7 +191,17 @@ class jbComponent {
 
     	(options.styles || [])
     		.filter(x=>x.match(/^:/m)) // for example :hover
-    		.forEach(x=> this.cssFixes.push(x))
+    		.forEach(x=> {
+    			if (this.cssFixes.indexOf(x) == -1)
+    				this.cssFixes.push(x);
+    		});
+
+    	(options.styles || [])
+    		.filter(x=>x.match(/^!/m)) // ! affect internal selectors
+    		.forEach(x=> {
+    			if (this.cssFixes.indexOf(x) == -1)
+    				this.cssFixes.push(x);
+    		});
 
     	var annotations = this.annotations;
 		var overridable_props = ['selector', 'template','encapsulation'];

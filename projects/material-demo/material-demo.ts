@@ -16,7 +16,7 @@ jb.component('material-demo.main', {
   impl :{$: 'group', 
     controls: [
       {$: 'tabs', 
-        style :{$: 'tabs.md-tabs' }, 
+        style :{$: 'tabs.md-tabs', tabWidth: '60' }, 
         tabs: [
           {$: 'group', 
             style :{$: 'group.section' }, 
@@ -706,7 +706,8 @@ jb.component('material-demo.main', {
               }
             }
           }
-        ]
+        ], 
+        
       }
     ], 
     features: [

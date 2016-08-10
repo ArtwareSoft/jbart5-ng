@@ -15,7 +15,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'action',
                 impl: { $: 'openDialog',
                     title: 'Outline',
-                    style: { $: 'dialog.studio-floating', id: 'studio outline', width: 300 },
+                    style: { $: 'dialog.studio-floating', id: 'studio-outline', width: 300 },
                     content: { $: 'studio.control-tree' },
                     menu: { $: 'button',
                         style: { $: 'button.md-icon', icon: 'menu' },

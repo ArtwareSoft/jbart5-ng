@@ -23,7 +23,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'group',
                     controls: [
                         { $: 'tabs',
-                            style: { $: 'tabs.md-tabs' },
+                            style: { $: 'tabs.md-tabs', tabWidth: '60' },
                             tabs: [
                                 { $: 'group',
                                     style: { $: 'group.section' },
@@ -134,7 +134,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                         }
                                     }
                                 }
-                            ]
+                            ],
                         }
                     ],
                     features: [

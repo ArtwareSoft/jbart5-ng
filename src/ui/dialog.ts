@@ -99,7 +99,7 @@ function fixDialogOverflow($control,$dialog,offsetLeft,offsetTop) {
 	if ($control.offset().left + $dialog.width() + padding + (offsetLeft||0) > window.innerWidth + window.pageXOffset)
 		left = $control.offset().left - $dialog.width();
 	if (top || left)
-		return { top: top || 0 , left: left || 0}
+		return { top: top || $control.offset().top , left: left || $control.offset().left}
 }
 
 jb.component('dialogFeature.nearLauncherLocation', {

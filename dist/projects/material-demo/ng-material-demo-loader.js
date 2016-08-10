@@ -2,7 +2,7 @@ System.register(['jb-ui', '@angular2-material/checkbox/checkbox', '@angular2-mat
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_ui, checkbox_1, radio_1, button_toggle_1, grid_list_1, unique_selection_dispatcher_1;
-    var GesturesDemo, GridListDemo, max, InputDemo;
+    var GesturesDemo, GridListDemo, max, InputDemo, ListDemo;
     return {
         setters:[
             function (jb_ui_1) {
@@ -90,6 +90,50 @@ System.register(['jb-ui', '@angular2-material/checkbox/checkbox', '@angular2-mat
                 return InputDemo;
             }());
             exports_1("InputDemo", InputDemo);
+            ListDemo = (function () {
+                function ListDemo() {
+                    this.items = [
+                        'Pepper',
+                        'Salt',
+                        'Paprika'
+                    ];
+                    this.contacts = [
+                        { name: 'Nancy', headline: 'Software engineer' },
+                        { name: 'Mary', headline: 'TPM' },
+                        { name: 'Bobby', headline: 'UX designer' }
+                    ];
+                    this.messages = [
+                        {
+                            from: 'Nancy',
+                            subject: 'Brunch?',
+                            message: 'Did you want to go on Sunday? I was thinking that might work.',
+                            image: 'https://angular.io/resources/images/bios/julie-ralph.jpg'
+                        },
+                        {
+                            from: 'Mary',
+                            subject: 'Summer BBQ',
+                            message: 'Wish I could come, but I have some prior obligations.',
+                            image: 'https://angular.io/resources/images/bios/juleskremer.jpg'
+                        },
+                        {
+                            from: 'Bobby',
+                            subject: 'Oui oui',
+                            message: 'Do you have Paris reservations for the 15th? I just booked!',
+                            image: 'https://angular.io/resources/images/bios/jelbourn.jpg'
+                        }
+                    ];
+                    this.links = [
+                        { name: 'Inbox' },
+                        { name: 'Outbox' },
+                        { name: 'Spam' },
+                        { name: 'Trash' }
+                    ];
+                    this.thirdLine = false;
+                    this.infoClicked = false;
+                }
+                return ListDemo;
+            }());
+            exports_1("ListDemo", ListDemo);
         }
     }
 });

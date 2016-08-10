@@ -453,7 +453,8 @@ background-position: -49px -16px; content: ''; }
 
 .id-code-mirror #templates-list { width:100%; max-width:550px; padding: 3px; }
 
-.studio-floating-dialog.id-templates.default-location { bottom:0px; top:initial; left:0px;}
-.studio-floating-dialog.id-main-window.default-location { top:0px; left:0px;}
+.studio-properties.default-location { top:100px; left:790px }
+.studio-outline.default-location { top:100px; left:460px }
+
 
 .pick-template { width: 100%; margin-bottom: 4px; }

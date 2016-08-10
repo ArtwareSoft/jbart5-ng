@@ -28,7 +28,6 @@ jb.component('dialog.studio-floating', {
 		height: { as: 'number', default: 100},
 	},
 	impl :{$: 'customStyle',
-			$vars: { dialogID: '%$id%' },
 			template: `<div class="jb-dialog jb-default-dialog">
 				      		  <div class="dialog-title noselect">{{title}}</div>
 				      		  <jb_comp *ngIf="hasMenu" class="dialog-menu" [comp]="menuComp"></jb_comp>
@@ -38,8 +37,8 @@ jb.component('dialog.studio-floating', {
 						  	  </div>
 						</div>`,
 			features: [
-					{$: 'dialogFeature.dragTitle', id: '%$dialogID%'}, 
-					{$: 'dialogFeature.uniqueDialog', id: '%$dialogID%', remeberLastLocation: true },
+					{$: 'dialogFeature.dragTitle', id: '%$id%'}, 
+					{$: 'dialogFeature.uniqueDialog', id: '%$id%', remeberLastLocation: true },
 					{$: 'dialogFeature.maxZIndexOnClick', minZIndex: 5000 },
 					{$: 'studio-dialogFeature.studioPopupLocation' },
 			],
@@ -86,27 +85,30 @@ jb.component('dialog.studio-floating', {
 jb.component('studio-dialogFeature.studioPopupLocation',{
 	type: 'dialogFeature',
 	impl: function(context) {
-		var dialog = context.vars.$dialog;
-
-		jb.bind(dialog,'attach',function() {
-			if (sessionStorage[dialog.id]) return;
-			if (dialog.id == 'studio properties')
-				dialog.$el.css('top','100px').css('left',(window.outerWidth-320)+'px');
-				//dialog.$el.css('top','110px').css('right','600px').css('left','600px');
-			if (dialog.id == 'studio control tree')
-				//dialog.$el.css('top','0px').css('right','306px').css('left','initial');
-				dialog.$el.css('top','100px').css('left',(window.outerWidth-320-310)+'px');
-			if (dialog.id == 'studio main window')
-				dialog.$el.css('top','0px').css('right','0px').css('left','initial');
-			if (dialog.id == 'studio templates')
-				dialog.$el.css('top','73px').css('right','0px').css('left','initial');
-			if (dialog.id == 'studio template code')
-				dialog.$el.css('bottom','0px').css('left','0px').css('top','initial');
-			if (dialog.id == 'code-mirror')
-				dialog.$el.css('top','0px').css('left','0px');
-			dialog.$el.addClass('default-location');
-		});
+		return {
+			afterViewInit: function(cmp) {
+				var dialog = cmp.dialog;
+				if (!sessionStorage[dialog.id])
+					dialog.$el.addClass(dialog.id).addClass('default-location')
+			}
+		}
 	}
+	// .studio-floating-dialog.id-templates.default-location
+
+	// impl: function(context) {
+	// 	var dialog = context.vars.$dialog;
+
+	// 	jb.bind(dialog,'attach',function() {
+	// 		if (sessionStorage[dialog.id]) return;
+	// 		if (dialog.id == 'studio-properties')
+	// 			dialog.$el.css('top','100px').css('left','790px');
+	// 			//dialog.$el.css('top','110px').css('right','600px').css('left','600px');
+	// 		if (dialog.id == 'studio-control-tree')
+	// 			//dialog.$el.css('top','0px').css('right','306px').css('left','initial');
+	// 			dialog.$el.css('top','100px').css('left','490px');
+	// 		dialog.$el.addClass('default-location');
+	// 	});
+	// }
 })
 
 jb.component('studio.code-mirror-mode',{

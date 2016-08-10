@@ -23,4 +23,5 @@ run all projects tests
 
 probe
 ======
+tests
 issues with pipeline comp sugar

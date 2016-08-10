@@ -7,6 +7,9 @@ import {MdToolbar} from '@angular2-material/toolbar/toolbar';
 jb_ui.registerDirectives({MD_TABS_DIRECTIVES: MD_TABS_DIRECTIVES, MdToolbar:MdToolbar});
 
 jb.component('tabs.md-tabs', {
+  params: {
+    tabWidth: { as: 'number' }
+  },
   type: 'tabs.style',
     impl :{$: 'customStyle',
       template: `<div><md-tab-group>
@@ -17,6 +20,7 @@ jb.component('tabs.md-tabs', {
     </template>
   </md-tab>
 </md-tab-group></div>`,
+       css: '{?!.md-tab-label { min-width: %$tabWidth%px} ?}',
       features :{$: 'tabs.initTabs'},
       directives: ['MD_TABS_DIRECTIVES']
     }
