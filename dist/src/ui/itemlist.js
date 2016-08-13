@@ -19,8 +19,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     items: { as: 'array', dynamic: true, essential: true },
                     controls: { type: 'control[]', essential: true, dynamic: true },
                     style: { type: 'itemlist.style', dynamic: true, defaultValue: { $: 'itemlist.ul-li' } },
-                    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
+                    watchItems: { type: 'boolean', as: 'boolean', defaultValue: false },
                     itemVariable: { as: 'string', defaultValue: 'item' },
+                    heading: { type: 'control', dynamic: true, defaultValue: { $: 'itemlist-heading', title: '%title%' } },
                     features: { type: 'feature[]', dynamic: true, flattenArray: true },
                 },
                 impl: { $: 'group',
@@ -28,29 +29,32 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     style: { $call: 'style' },
                     controls: { $: 'dynamic-controls',
                         controlItems: '%$items_array%',
-                        genericControl: { $call: 'controls' },
+                        genericControl: { $if: '%heading%',
+                            then: { $call: 'heading' },
+                            else: { $call: 'controls' },
+                        },
                         itemVariable: '%$itemVariable%'
                     },
                     features: [
                         { $call: 'features' },
-                        { $: 'itemlist.watch-items', data: { $call: 'items' }, watch: '%$watchItems%', itemVariable: 'items_array' },
+                        { $: 'itemlist.watch-items', items: { $call: 'items' }, watch: '%$watchItems%', itemVariable: 'items_array' },
                     ]
                 }
             });
             jb_1.jb.component('itemlist.watch-items', {
                 type: 'feature',
                 params: {
-                    data: { essential: true, dynamic: true },
+                    items: { essential: true, dynamic: true },
                     itemVariable: { as: 'string' },
                     watch: { type: 'boolean', as: 'boolean', defaultValue: true }
                 },
-                impl: function (context, data, itemVariable, watch) {
+                impl: function (context, items, itemVariable, watch) {
                     return {
                         beforeInit: function (cmp) {
-                            var dataEm = cmp.jbEmitter
+                            var itemsEm = cmp.jbEmitter
                                 .filter(function (x) { return x == 'check'; })
                                 .map(function () {
-                                return data();
+                                return cmp.calc_heading ? cmp.calc_heading(items()) : items();
                             })
                                 .filter(function (items) {
                                 return !jb_compareArrays(items, (cmp.ctrls || []).map(function (ctrl) { return ctrl.comp.ctx.data; }));
@@ -59,9 +63,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                                 cmp.items = items;
                                 var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
                                 var ctx3 = itemVariable ? ctx2.setVars(jb_1.jb.obj(itemVariable, items)) : ctx2;
-                                return context.vars.$model.controls(ctx3);
+                                var ctrls = context.vars.$model.controls(ctx3);
+                                return ctrls;
                             });
-                            cmp.jbGroupChildrenEm = watch ? dataEm : dataEm.take(1);
+                            cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
                         },
                         observable: function () { } // to create jbEmitter
                     };
@@ -71,15 +76,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div><ul class=\"jb-itemlist\">\n      <li *ngFor=\"let ctrl of ctrls\" class=\"jb-item\">\n        <jb_comp [comp]=\"ctrl.comp\" [flatten]=\"true\"></jb_comp>\n      </li>\n      </ul></div>",
+                    template: "<div><ul class=\"jb-itemlist\">\n      <li *ngFor=\"let ctrl of ctrls\" class=\"jb-item\" [class.not-heading]=\"!ctrl.comp.ctx.data.heading\">\n        <jb_comp [comp]=\"ctrl.comp\" [flatten]=\"true\"></jb_comp>\n      </li>\n      </ul></div>",
                     css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
-                }
-            });
-            jb_1.jb.component('itemlist.div', {
-                type: 'group.style',
-                impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
-                    template: "<div class=\"jb-itemlist\"><jb_comp [comp]=\"ctrl.comp\" class=\"jb-item\"></jb_comp></div>",
                 }
             });
             jb_1.jb.component('itemlist.divider', {
@@ -104,7 +102,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     init: function (cmp) {
                         cmp.clickSrc = new jb_rx.Subject();
                         cmp.click = cmp.clickSrc
-                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .do(function () {
+                            if (cmp.selected && cmp.selected.heading)
+                                cmp.selected = null;
+                        })
+                            .filter(function () {
+                            return cmp.selected;
+                        });
                         var doubleClick = cmp.click.buffer(cmp.click.debounceTime(250))
                             .filter(function (buff) { return buff.length === 2; });
                         var databindEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
@@ -131,8 +136,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         });
                     },
                     afterViewInit: function (cmp) {
-                        if (ctx.params.autoSelectFirst && cmp.ctrls[0])
-                            cmp.selected = cmp.ctrls[0].comp.ctx.data;
+                        var items = cmp.items.filter(function (item) { return !item.heading; });
+                        if (ctx.params.autoSelectFirst && items[0])
+                            cmp.selected = items[0];
                     },
                     innerhost: {
                         '.jb-item': {
@@ -143,7 +149,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             '(click)': 'selected = ctrl.comp.ctx.data ; clickSrc.next($event)'
                         }
                     },
-                    css: ".jb-item.active { background: #337AB7; color: #fff }\n    .jb-item.selected { background: #bbb; color: #fff }\n    ",
+                    css: ".jb-item.selected { background: #bbb; color: #fff }\n    .jb-item.not-heading.active { background: #337AB7; color: #fff }\n    ",
                     observable: function () { } // create jbEmitter
                 }); }
             });
@@ -169,7 +175,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                                 .map(function (event) {
                                 event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
-                                return cmp.items[(cmp.items.indexOf(cmp.selected) + diff + cmp.items.length) % cmp.items.length] || cmp.selected;
+                                var items = cmp.items.filter(function (item) { return !item.heading; });
+                                return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
                             }).subscribe(function (x) {
                                 return cmp.selected = x;
                             });
@@ -187,7 +194,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 impl: function (ctx) { return ({
                     init: function (cmp) {
                         var drake = dragula($(cmp.elementRef.nativeElement).findIncludeSelf('.jb-itemlist').get(), {
-                            moves: function (el) { return $(el).hasClass('jb-item'); }
+                            moves: function (el) { return $(el).hasClass('jb-item') && !$(el).hasClass('jb-heading'); }
                         });
                         drake.on('drag', function (el, source) {
                             el.dragged = {

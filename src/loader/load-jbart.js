@@ -80,6 +80,7 @@ jb_modules =
 'jb-ui/group',
 'jb-ui/button',
 'jb-ui/itemlist',
+'jb-ui/itemlist-heading',
 'jb-ui/ui-common',
 'jb-ui/image',
 'jb-ui/pulldown-menu',

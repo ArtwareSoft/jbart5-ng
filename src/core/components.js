@@ -345,8 +345,12 @@ jb_component('contains',{
 		else 
 			all += jb_tostring(allTextItem);
       });
-      for(var i=0;i<text.length;i++)
-      	if (all.indexOf(jb_tostring(text[i])) == -1) return false;
+      var prevIndex = -1;
+      for(var i=0;i<text.length;i++) {
+      	var newIndex = all.indexOf(jb_tostring(text[i]),prevIndex);
+      	if (newIndex <= prevIndex) return false;
+      	prevIndex = newIndex;
+      }
       return true;
 	}
 })

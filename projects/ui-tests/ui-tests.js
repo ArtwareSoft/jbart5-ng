@@ -290,6 +290,24 @@ itemlist :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', 'Bart Simpson'] },
 },
 
+'itemlist-heading' :{$: 'ng2-ui-test', control :{$: 'group', controls: 
+  [
+    { $: 'itemlist', items: '%$people%', 
+        controls :{$: 'label', title: '%name%' }, 
+        features: [
+            { $: 'itemlist.selection', databind: '%$globals/selectedPerson%', autoSelectFirst: true }, 
+            { $: 'itemlist.keyboard-selection', autoFocus: true },
+            { $: 'itemlist.heading', 
+              heading :{$: 'itemlist-headings.group-by', 
+                itemToGroupID :{$if: '%male%', then: 'male', else: 'female'}
+              } 
+            }, 
+        ],
+    },
+  ]},
+  expectedHtmlResult: { $: 'contains', text: ['female', 'Marge', 'male', 'Homer Simpson', 'Bart Simpson'] },
+},
+
 tree :{$: 'ng2-ui-test',  
   control: {$: 'tree',
         nodeModel :{$: 'tree.json-read-only', 
@@ -733,7 +751,11 @@ picklist :{$: 'ng2-ui-test',
         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
     ]
   },
-  expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
+  expectedHtmlResult :{$and: [ 
+    {$: 'contains', text: ['tab1','in tab1'] },
+    {$: 'contains', text: 'tab2' },
+    {$not: {$: 'contains', text: 'in tab2' } }
+  ]},
 },
 
 'group.accordion' :{$: 'ng2-ui-test', 

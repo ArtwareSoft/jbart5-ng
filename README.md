@@ -55,8 +55,6 @@ open the studio [http://localhost:8081/project/studio/material-demo](http://loca
 If you want to learn more about jBart visual development concepts, please start with [jbart4](https://github.com/ArtwareSoft/jbart4)
  and read the tutorial carefully.
 
-We plan to have a beta for jbart5 in a month or two
-
 ###jBart Name Story
 BART - business art
 
