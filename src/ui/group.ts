@@ -63,8 +63,10 @@ jb.component('dynamic-controls', {
     itemVariable: { as: 'string', defaultValue: 'controlItem'}
   },
   impl: function(context,controlItems,genericControl,itemVariable) {
-    return controlItems().map(controlItem => genericControl(context.setVars(
-      jb.obj(itemVariable,controlItem))))
+    return controlItems()
+      .map(controlItem => jb_tosingle(genericControl(
+        jb.ctx(context,{data: controlItem, vars: jb.obj(itemVariable,controlItem)})))
+      )
   }
 })
 

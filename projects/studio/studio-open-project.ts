@@ -18,9 +18,7 @@ jb.component('studio.choose-project', {
   impl :{$: 'group', 
     features: [
       {$: 'group.wait', 
-        for :{$: 'http.get', 
-          url: '/?op=projects'
-        }, 
+        for :{$: 'http.get', url: '/?op=projects' }, 
         resource: 'projects', 
         mapToResource: '%projects%'
       }, 
@@ -42,17 +40,14 @@ jb.component('studio.choose-project', {
         style :{$: 'itemlist.ul-li' }, 
         controls :{$: 'button', 
           title: '%$project%', 
-          style :{$: 'customStyle', 
-            template: '<span><button md-button (click)="clicked()">{{title}}</button></span>', 
-            directives: 'MdButton', 
-            css: 'button { width: 260px; text-align: left }'
-          }, 
+          style :{$: 'button.md-flat' }, 
           action: [
             {$: 'closeContainingPopup' }, 
             {$: 'writeValue', value: '%$project%', to: '%$globals/project%' }, 
             {$: 'writeValue', value: 'main', to: '%$globals/page%' }, 
             {$: 'writeValue', value: '', to: '%$globals/profile_path%' }
-          ]
+          ], 
+          
         }
       }
     ]

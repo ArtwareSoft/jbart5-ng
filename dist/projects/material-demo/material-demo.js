@@ -35,7 +35,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                         },
                                         { $: 'group',
                                             title: 'Name',
-                                            style: { $: 'layout.horizontal' },
+                                            style: { $: 'layout.horizontal', spacing: '' },
                                             controls: [
                                                 { $: 'editable-text',
                                                     databind: '%firstName% %',
@@ -74,7 +74,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                                 }
                                             ]
                                         }
-                                    ]
+                                    ],
                                 },
                                 { $: 'custom-control',
                                     title: 'buttons',
@@ -133,8 +133,35 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                             class: 'InputDemo'
                                         }
                                     }
+                                },
+                                { $: 'custom-control',
+                                    title: 'list',
+                                    html: "<h1>md-list demo</h1>\n\n<button md-raised-button (click)=\"thirdLine=!thirdLine\" class=\"demo-button\">Show third line</button>\n\n<div class=\"demo\">\n  <div>\n    <h2>Normal lists</h2>\n\n    <md-list>\n      <h3 md-subheader>Items</h3>\n      <md-list-item *ngFor=\"let item of items\">\n        {{item}}\n      </md-list-item>\n    </md-list>\n\n    <md-list>\n      <md-list-item *ngFor=\"let contact of contacts\">\n        <h3 md-line>{{contact.name}}</h3>\n        <p md-line *ngIf=\"thirdLine\">extra line</p>\n        <p md-line class=\"demo-secondary-text\">{{contact.headline}}</p>\n      </md-list-item>\n    </md-list>\n\n    <md-list>\n      <h3 md-subheader>Today</h3>\n      <md-list-item *ngFor=\"let message of messages\">\n        <img md-list-avatar [src]=\"message.image\" alt=\"Image of {{message.from}}\">\n        <h4 md-line>{{message.from}}</h4>\n        <p md-line>\n          <span>{{message.subject}} -- </span>\n          <span class=\"demo-secondary-text\">{{message.message}}</span>\n        </p>\n      </md-list-item>\n      <md-divider></md-divider>\n      <md-list-item *ngFor=\"let message of messages\">\n        <h4 md-line>{{message.from}}</h4>\n        <p md-line> {{message.subject}} </p>\n        <p md-line class=\"demo-secondary-text\">{{message.message}} </p>\n      </md-list-item>\n    </md-list>\n  </div>\n\n  <div>\n    <h2>Dense lists</h2>\n    <md-list dense>\n      <h3 md-subheader>Items</h3>\n      <md-list-item *ngFor=\"let item of items\">\n        {{item}}\n      </md-list-item>\n    </md-list>\n\n    <md-list dense>\n      <md-list-item *ngFor=\"let contact of contacts\">\n        <h3 md-line>{{contact.name}}</h3>\n        <p md-line class=\"demo-secondary-text\">{{contact.headline}}</p>\n      </md-list-item>\n    </md-list>\n\n    <md-list dense>\n      <h3 md-subheader>Today</h3>\n      <md-list-item *ngFor=\"let message of messages\">\n        <img md-list-avatar [src]=\"message.image\" alt=\"Image of {{message.from}}\">\n        <h4 md-line>{{message.from}}</h4>\n        <p md-line> {{message.subject}} </p>\n        <p md-line class=\"demo-secondary-text\">{{message.message}} </p>\n      </md-list-item>\n    </md-list>\n  </div>\n  <div>\n    <h2>Nav lists</h2>\n    <md-nav-list>\n      <a md-list-item *ngFor=\"let link of links\" href=\"http://www.google.com\">\n        {{ link.name }}\n      </a>\n    </md-nav-list>\n    <div *ngIf=\"infoClicked\">\n      More info!\n    </div>\n    <md-nav-list>\n      <md-list-item *ngFor=\"let link of links\">\n        <a md-line href=\"http://www.google.com\">{{ link.name }}</a>\n        <button md-icon-button (click)=\"infoClicked=!infoClicked\">\n          <md-icon>info</md-icon>\n        </button>\n      </md-list-item>\n    </md-nav-list>\n    <md-nav-list>\n      <a md-list-item *ngFor=\"let link of links\" href=\"http://www.google.com\">\n        <md-icon md-list-icon>folder</md-icon>\n        <span md-line>{{ link.name }}</span>\n        <span md-line class=\"demo-secondary-text\"> Description </span>\n      </a>\n    </md-nav-list>\n    <md-nav-list dense>\n      <md-list-item *ngFor=\"let link of links\">\n        <a md-line href=\"http://www.google.com\">{{ link.name }}</a>\n        <button md-icon-button (click)=\"infoClicked=!infoClicked\">\n          <md-icon class=\"material-icons\">info</md-icon>\n        </button>\n      </md-list-item>\n    </md-nav-list>\n  </div>\n</div>",
+                                    css: ".demo {\n  display: flex;\n  flex-flow: row wrap;\n}\nmd-list, md-nav-list {\n    border: 1px solid rgba(0, 0, 0, 0.12);\n    width: 350px;\n    margin: 20px 20px 0 0;\n\n  }\n  h2 {\n    margin-top: 20px;\n  }\n\n  md-icon {\n    color: rgba(0, 0, 0, 0.12);\n  }\n\n  [md-list-icon] {\n    color: white;\n    background: rgba(0, 0, 0, 0.3);\n  }\n\n\n.demo-secondary-text {\n  color: rgba(0, 0, 0, 0.54);\n}",
+                                    features: { $: 'feature.ng-attach-object',
+                                        data: { $: 'new-instance',
+                                            module: 'projects/material-demo/ng-material-demo-loader',
+                                            class: 'ListDemo'
+                                        }
+                                    }
+                                },
+                                { $: 'custom-control',
+                                    title: 'announcer',
+                                    html: "<div class=\"demo-live-announcer\">\n\n  <button md-button (click)=\"announceText('Hey Google')\">Announce Text</button>\n\n</div>",
+                                    css: '',
+                                    features: { $: 'feature.ng-attach-object',
+                                        data: { $: 'injector-get', provider: 'LiveAnnouncerDemo' }
+                                    }
+                                },
+                                { $: 'custom-control',
+                                    title: 'menu',
+                                    html: "<div class=\"demo-menu\">\n  <div class=\"menu-section\">\n    <p>You clicked on: {{ selected }}</p>\n\n    <md-toolbar>\n      <button md-icon-button [md-menu-trigger-for]=\"menu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu #menu=\"mdMenu\">\n      <button md-menu-item *ngFor=\"let item of items\" (click)=\"select(item.text)\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </button>\n    </md-menu>\n  </div>\n  <div class=\"menu-section\">\n    <p> Clicking these will navigate:</p>\n    <md-toolbar>\n      <button md-icon-button [md-menu-trigger-for]=\"anchorMenu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu #anchorMenu=\"mdMenu\">\n      <a md-menu-item *ngFor=\"let item of items\" href=\"http://www.google.com\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </a>\n    </md-menu>\n  </div>\n  <div class=\"menu-section\">\n    <p>\n      Position x: before\n    </p>\n    <md-toolbar class=\"end-icon\">\n      <button md-icon-button [md-menu-trigger-for]=\"posXMenu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu x-position=\"before\" #posXMenu=\"mdMenu\" class=\"before\">\n      <button md-menu-item *ngFor=\"let item of items\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </button>\n    </md-menu>\n  </div>\n  <div class=\"menu-section\">\n    <p>\n      Position y: above\n    </p>\n    <md-toolbar>\n      <button md-icon-button [md-menu-trigger-for]=\"posYMenu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu y-position=\"above\" #posYMenu=\"mdMenu\">\n      <button md-menu-item *ngFor=\"let item of items\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </button>\n    </md-menu>\n  </div>\n</div>\n",
+                                    css: ".demo-menu {\n  display: flex;\n  flex-flow: row wrap;\n}\n\n.menu-section {\n    width: 300px;\n    margin: 20px;\n  }\n\n  .end-icon {\n    align-items: flex-end;\n  }\n",
+                                    features: { $: 'feature.ng-attach-object',
+                                        data: { $: 'injector-get', provider: 'LiveAnnouncerDemo' }
+                                    }
                                 }
-                            ],
+                            ]
                         }
                     ],
                     features: [
@@ -221,10 +248,29 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     style: { $: 'layout.horizontal', spacing: 3 }
                 }
             });
-            jb_core_1.jb.resource('material-demo', 'sources', {
-                button: "\n<button md-button>FLAT</button>\n<button md-raised-button>RAISED</button>\n<button md-icon-button>\n    <i class=\"material-icons md-24\">favorite</i>\n</button>\n<button md-fab>\n    <i class=\"material-icons md-24\">add</i>\n</button>\n<button md-mini-fab>\n    <i class=\"material-icons md-24\">add</i>\n</button>\n\n<button md-raised-button color=\"primary\">PRIMARY</button>\n<button md-raised-button color=\"accent\">ACCENT</button>\n<button md-raised-button color=\"warn\">WARN</button>\n\n<button md-button disabled>off</button>\n<button md-raised-button [disabled]=\"isDisabled\">off</button>\n<button md-mini-fab [disabled]=\"isDisabled\">check circle</button>\n",
-                card: "\n<md-card>\n   Basic card.\n</md-card>\n\n<md-card>\n   <md-card-subtitle>Subtitle first</md-card-subtitle>\n   <md-card-title>Card with title</md-card-title>   \n   <md-card-content>\n        <p>This is supporting text.</p>\n        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do \n        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad</p>\n   </md-card-content>\n   <md-card-actions>\n        <button md-button>LIKE</button>\n        <button md-button>SHARE</button>\n   </md-card-actions>\n</md-card>\n\n<md-card>\n   <md-card-header>\n      <img md-card-avatar src=\"path/to/img.png\">\n      <md-card-title>Header title</md-card-title>\n      <md-card-subtitle>Header subtitle</md-card-subtitle>\n   </md-card-header>\n   <img md-card-image src=\"path/to/img.png\">\n   <md-card-content>\n      <p>Here is some more content</p>\n   </md-card-content>\n</md-card>\n" });
-            "\ntitle group\n==============\n<md-card>\n   <md-card-title-group>\n      <img md-card-sm-image src=\"path/to/img.png\">\n      <md-card-title>Card with title</md-card-title>\n      <md-card-subtitle>Subtitle</md-card-subtitle>\n   </md-card-title-group>\n</md-card>\n\ncheck box\n==========\n<ul>\n  <li *ngFor=\"let todo of todos\">\n    <md-checkbox [checked]=\"todo.completed\"\n                 (change)=\"todo.completed = $event\">\n      {{todo.name}}\n    </md-checkbox>\n  </li>\n</ul>\n\nintermediate\n=========\n<md-checkbox [checked]=\"false\"\n             [indeterminate]=\"isIndeterminate\"\n             (change)=\"isIndeterminate = false\">\n  Click the Button Below to Make Me Indeterminate.\n</md-checkbox>\n<button type=\"button\" (click)=\"isIndeterminate = true\">\n  Make Indeterminate\n</button>\n\n<md-checkbox [checked]=\"true\" align=\"end\">\n  I come after my label.\n</md-checkbox>\n";
+            jb_core_1.jb.component('material-demo.btns', {
+                type: 'control',
+                impl: { $: 'group',
+                    title: 'btns',
+                    controls: [
+                        { $: 'button',
+                            title: 'Hello ewrewre',
+                            style: { $: 'button.md-raised' },
+                        },
+                        { $: 'itemlist',
+                            items: ['a'],
+                            controls: [
+                                { $: 'button',
+                                    title: 'Hello sfsd',
+                                    style: { $: 'button.md-raised' },
+                                }
+                            ],
+                            style: { $: 'itemlist.ul-li' },
+                            dynamicItems: true
+                        }
+                    ]
+                }
+            });
         }
     }
 });

@@ -1,67 +1,17 @@
-System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(exports_1, context_1) {
+System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-    var __metadata = (this && this.__metadata) || function (k, v) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
-    var jb_1, jb_ui, jb_rx, core_1;
-    function jb_itemlist_comp(model, context) {
-        var ItemListChild = (function () {
-            function ItemListChild(componentResolver) {
-                this.componentResolver = componentResolver;
-            }
-            ItemListChild.prototype.ngAfterViewInit = function () {
-                var cmp = this;
-                var vars = { item: cmp.item };
-                if (model.itemVariable && model.itemVariable != 'item')
-                    vars[model.itemVariable] = cmp.item;
-                var ctx = jb_1.jb.ctx(context, { data: cmp.item, vars: vars });
-                model.controls(ctx).forEach(function (ctrl) {
-                    return jb_ui.insertComponent(ctrl, cmp.componentResolver, cmp.childView);
-                });
-            };
-            __decorate([
-                core_1.Input(), 
-                __metadata('design:type', Object)
-            ], ItemListChild.prototype, "item", void 0);
-            __decorate([
-                core_1.ViewChild('jb_item_repl', { read: core_1.ViewContainerRef }), 
-                __metadata('design:type', Object)
-            ], ItemListChild.prototype, "childView", void 0);
-            ItemListChild = __decorate([
-                core_1.Component({
-                    selector: 'jb_item',
-                    template: '<div #jb_item_repl></div>',
-                }), 
-                __metadata('design:paramtypes', [core_1.ComponentResolver])
-            ], ItemListChild);
-            return ItemListChild;
-        }());
-        return ItemListChild;
-    }
+    var jb_1, jb_rx;
     return {
         setters:[
             function (jb_1_1) {
                 jb_1 = jb_1_1;
             },
-            function (jb_ui_1) {
-                jb_ui = jb_ui_1;
-            },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
-            },
-            function (core_1_1) {
-                core_1 = core_1_1;
             }],
         execute: function() {
             ;
-            jb_1.jb.type('itemlist.style');
             jb_1.jb.component('itemlist', {
                 type: 'control',
                 params: {
@@ -69,43 +19,67 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                     items: { as: 'array', dynamic: true, essential: true },
                     controls: { type: 'control[]', essential: true, dynamic: true },
                     style: { type: 'itemlist.style', dynamic: true, defaultValue: { $: 'itemlist.ul-li' } },
-                    dynamicItems: { type: 'boolean', as: 'boolean', defaultValue: true },
-                    itemVariable: { as: 'string' },
-                    features: { type: 'feature[]', dynamic: true },
+                    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
+                    itemVariable: { as: 'string', defaultValue: 'item' },
+                    features: { type: 'feature[]', dynamic: true, flattenArray: true },
                 },
-                impl: function (context) {
-                    //    var items = context.params.items();
-                    return jb_ui.ctrl(context).jbExtend({
-                        doCheck: function (cmp) {
-                            if (context.params.dynamicItems)
-                                cmp.items = context.params.items(cmp.ctx);
-                        },
+                impl: { $: 'group',
+                    title: '%$title%',
+                    style: { $call: 'style' },
+                    controls: { $: 'dynamic-controls',
+                        controlItems: '%$items_array%',
+                        genericControl: { $call: 'controls' },
+                        itemVariable: '%$itemVariable%'
+                    },
+                    features: [
+                        { $call: 'features' },
+                        { $: 'itemlist.watch-items', data: { $call: 'items' }, watch: '%$watchItems%', itemVariable: 'items_array' },
+                    ]
+                }
+            });
+            jb_1.jb.component('itemlist.watch-items', {
+                type: 'feature',
+                params: {
+                    data: { essential: true, dynamic: true },
+                    itemVariable: { as: 'string' },
+                    watch: { type: 'boolean', as: 'boolean', defaultValue: true }
+                },
+                impl: function (context, data, itemVariable, watch) {
+                    return {
                         beforeInit: function (cmp) {
-                            cmp.items = context.params.items(cmp.ctx);
-                            cmp.itemlist = {
-                                items: cmp.items,
-                                el: cmp.elementRef.nativeElement,
-                                elemToItem: function (elem) {
-                                    return cmp.items[$(elem).closest('[jb-item]').index()];
-                                },
-                                selectionEmitter: new jb_rx.Subject(),
-                            };
+                            var dataEm = cmp.jbEmitter
+                                .filter(function (x) { return x == 'check'; })
+                                .map(function () {
+                                return data();
+                            })
+                                .filter(function (items) {
+                                return !jb_compareArrays(items, (cmp.ctrls || []).map(function (ctrl) { return ctrl.comp.ctx.data; }));
+                            })
+                                .map(function (items) {
+                                cmp.items = items;
+                                var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
+                                var ctx3 = itemVariable ? ctx2.setVars(jb_1.jb.obj(itemVariable, items)) : ctx2;
+                                return context.vars.$model.controls(ctx3);
+                            });
+                            cmp.jbGroupChildrenEm = watch ? dataEm : dataEm.take(1);
                         },
-                        directives: [jb_itemlist_comp(context.params, context)]
-                    });
+                        observable: function () { } // to create jbEmitter
+                    };
                 }
             });
             jb_1.jb.component('itemlist.ul-li', {
-                type: 'itemlist.style',
+                type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: '<div><ul class="jb-itemlist"><li *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></li></ul></div>',
-                    css: "[jb-item].selected { background: #337AB7; color: #fff ;}\n    li { list-style: none; padding: 0; margin: 0;}\n    ul { list-style: none; padding: 0; margin: 0;}\n    "
+                    features: { $: 'group.initGroup' },
+                    template: "<div><ul class=\"jb-itemlist\">\n      <li *ngFor=\"let ctrl of ctrls\" class=\"jb-item\">\n        <jb_comp [comp]=\"ctrl.comp\" [flatten]=\"true\"></jb_comp>\n      </li>\n      </ul></div>",
+                    css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
                 }
             });
             jb_1.jb.component('itemlist.div', {
-                type: 'itemlist.style',
-                impl: function (context) {
-                    return { template: '<div *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></div>' };
+                type: 'group.style',
+                impl: { $: 'customStyle',
+                    features: { $: 'group.initGroup' },
+                    template: "<div class=\"jb-itemlist\"><jb_comp [comp]=\"ctrl.comp\" class=\"jb-item\"></jb_comp></div>",
                 }
             });
             jb_1.jb.component('itemlist.divider', {
@@ -114,7 +88,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                     space: { as: 'number', defaultValue: 5 }
                 },
                 impl: function (ctx, space) {
-                    return ({ css: "[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: " + space + "px }" });
+                    return ({ css: ".jb-item:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: " + space + "px }" });
                 }
             });
             // ****************** Selection ******************
@@ -126,49 +100,52 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                     onDoubleClick: { type: 'action', dynamic: true },
                     autoSelectFirst: { type: 'boolean' }
                 },
-                impl: function (context) {
-                    var itemlist = context.vars.$itemlist;
-                    return {
-                        init: function (cmp) {
-                            cmp.click = new jb_rx.Subject();
-                            var itemlist = cmp.itemlist;
-                            context.params.databind && jb_rx.refObservable(context.params.databind, context).distinctUntilChanged()
-                                .subscribe(function (selected) {
-                                //            console.log('selected1',itemlist.selected);
-                                itemlist.selected = selected;
-                            });
-                            itemlist.selectionEmitter
-                                .distinctUntilChanged().subscribe(function (selected) {
-                                itemlist.selected = selected;
-                                //            console.log('selected2',itemlist.selected);
-                                if (context.params.databind)
-                                    jb_1.jb.writeValue(context.params.databind, selected);
-                            });
-                            // first auto selection
-                            if (jb_1.jb.val(context.params.databind))
-                                itemlist.selectionEmitter.next(jb_1.jb.val(context.params.databind));
-                            else if (context.params.autoSelectFirst && itemlist.items[0])
-                                itemlist.selectionEmitter.next(itemlist.items[0]);
-                            cmp.click.buffer(cmp.click.debounceTime(250)) // double click
-                                .map(function (list) { return list.length; })
-                                .filter(function (x) { return x === 2; })
-                                .subscribe(function (x) { return context.params.onDoubleClick(context.setData(itemlist.selected)); });
-                            cmp.click.map(function (event) {
-                                return itemlist.elemToItem(event.target);
-                            })
-                                .do(function (selected) {
-                                context.params.onSelection(context.setData(selected));
-                            })
-                                .subscribe(function (x) { return itemlist.selectionEmitter.next(x); });
-                        },
-                        host: {
-                            '(click)': 'click.next($event)',
-                        },
-                        innerhost: {
-                            '[jb-item]': { '[ng-class]': '{selected: itemlist.selected == item}' },
-                        },
-                    };
-                }
+                impl: function (ctx) { return ({
+                    init: function (cmp) {
+                        cmp.clickSrc = new jb_rx.Subject();
+                        cmp.click = cmp.clickSrc
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
+                        var doubleClick = cmp.click.buffer(cmp.click.debounceTime(250))
+                            .filter(function (buff) { return buff.length === 2; });
+                        var databindEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
+                            .map(function () {
+                            return jb_1.jb.val(ctx.params.databind);
+                        })
+                            .filter(function (x) {
+                            return x != cmp.selected;
+                        })
+                            .distinctUntilChanged();
+                        var selectionEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
+                            .map(function () { return cmp.selected; })
+                            .distinctUntilChanged();
+                        doubleClick.subscribe(function () {
+                            return ctx.params.onDoubleClick(ctx.setData(cmp.selected));
+                        });
+                        selectionEm.subscribe(function (selected) {
+                            if (jb_1.jb.val(ctx.params.databind) != selected)
+                                jb_1.jb.writeValue(ctx.params.databind, selected);
+                            ctx.params.onSelection(ctx.setData(cmp.selected));
+                        });
+                        databindEm.subscribe(function (x) {
+                            return cmp.selected = x;
+                        });
+                    },
+                    afterViewInit: function (cmp) {
+                        if (ctx.params.autoSelectFirst && cmp.ctrls[0])
+                            cmp.selected = cmp.ctrls[0].comp.ctx.data;
+                    },
+                    innerhost: {
+                        '.jb-item': {
+                            '[class.active]': 'active == ctrl.comp.ctx.data',
+                            '[class.selected]': 'selected == ctrl.comp.ctx.data',
+                            '(mouseenter)': 'active = ctrl.comp.ctx.data',
+                            '(mouseleave)': 'active = null',
+                            '(click)': 'selected = ctrl.comp.ctx.data ; clickSrc.next($event)'
+                        }
+                    },
+                    css: ".jb-item.active { background: #337AB7; color: #fff }\n    .jb-item.selected { background: #bbb; color: #fff }\n    ",
+                    observable: function () { } // create jbEmitter
+                }); }
             });
             jb_1.jb.component('itemlist.keyboard-selection', {
                 type: 'feature',
@@ -179,23 +156,26 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
                 impl: function (context) {
                     return {
                         init: function (cmp) {
-                            var itemlist = cmp.itemlist;
-                            cmp.keydown = new jb_rx.Subject();
+                            cmp.keydownSrc = new jb_rx.Subject();
+                            cmp.keydown = cmp.keydownSrc
+                                .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
                             if (context.params.autoFocus)
                                 setTimeout(function () {
                                     return cmp.elementRef.nativeElement.focus();
                                 }, 1);
-                            cmp.keydown.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
+                            cmp.keydown.filter(function (e) {
+                                return e.keyCode == 38 || e.keyCode == 40;
+                            })
                                 .map(function (event) {
                                 event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
-                                return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+                                return cmp.items[(cmp.items.indexOf(cmp.selected) + diff + cmp.items.length) % cmp.items.length] || cmp.selected;
                             }).subscribe(function (x) {
-                                return itemlist.selectionEmitter.next(x);
+                                return cmp.selected = x;
                             });
                         },
                         host: {
-                            '(keydown)': 'keydown.next($event)',
+                            '(keydown)': 'keydownSrc.next($event)',
                             'tabIndex': '0'
                         }
                     };
@@ -204,30 +184,27 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', 'jb-ui/jb-rx', '@angular/core'], f
             jb_1.jb.component('itemlist.drag-and-drop', {
                 type: 'feature',
                 params: {},
-                impl: function (context) {
-                    return {
-                        init: function (cmp) {
-                            var itemlist = cmp.itemlist;
-                            var drake = itemlist.drake = dragula($(itemlist.el).findIncludeSelf('.jb-itemlist').get(), {
-                                moves: function (el) { return $(el).attr('jb-item') != null; }
-                            });
-                            drake.on('drag', function (el, source) {
-                                el.dragged = {
-                                    obj: itemlist.elemToItem(el),
-                                    remove: function (obj) { return itemlist.items.splice(itemlist.items.indexOf(obj), 1); }
-                                };
-                            });
-                            drake.on('drop', function (dropElm, target, source, sibling) {
-                                dropElm.dragged && dropElm.dragged.remove(dropElm.dragged.obj);
-                                if (!sibling)
-                                    itemlist.items.push(dropElm.dragged.obj);
-                                else
-                                    itemlist.items.splice($(sibling).index() - 1, 0, dropElm.dragged.obj);
-                                dropElm.dragged = null;
-                            });
-                        }
-                    };
-                }
+                impl: function (ctx) { return ({
+                    init: function (cmp) {
+                        var drake = dragula($(cmp.elementRef.nativeElement).findIncludeSelf('.jb-itemlist').get(), {
+                            moves: function (el) { return $(el).hasClass('jb-item'); }
+                        });
+                        drake.on('drag', function (el, source) {
+                            el.dragged = {
+                                obj: cmp.active,
+                                remove: function (obj) { return cmp.items.splice(cmp.items.indexOf(obj), 1); }
+                            };
+                        });
+                        drake.on('drop', function (dropElm, target, source, sibling) {
+                            dropElm.dragged && dropElm.dragged.remove(dropElm.dragged.obj);
+                            if (!sibling)
+                                cmp.items.push(dropElm.dragged.obj);
+                            else
+                                cmp.items.splice($(sibling).index() - 1, 0, dropElm.dragged.obj);
+                            dropElm.dragged = null;
+                        });
+                    }
+                }); }
             });
         }
     }

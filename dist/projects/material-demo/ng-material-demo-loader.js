@@ -1,12 +1,24 @@
-System.register(['jb-ui', '@angular2-material/checkbox/checkbox', '@angular2-material/radio/radio', '@angular2-material/button-toggle/button-toggle', '@angular2-material/grid-list/grid-list', '@angular2-material/core/coordination/unique-selection-dispatcher'], function(exports_1, context_1) {
+System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox', '@angular2-material/radio/radio', '@angular2-material/button-toggle/button-toggle', '@angular2-material/grid-list/grid-list', '@angular2-material/list/list', '@angular2-material/menu/menu', '@angular2-material/core/portal/portal-directives', '@angular2-material/core/ripple/ripple', '@angular2-material/core/a11y/live-announcer', '@angular2-material/core/coordination/unique-selection-dispatcher'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_ui, checkbox_1, radio_1, button_toggle_1, grid_list_1, unique_selection_dispatcher_1;
-    var GesturesDemo, GridListDemo, max, InputDemo, ListDemo;
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var jb_ui, core_1, checkbox_1, radio_1, button_toggle_1, grid_list_1, list_1, menu_1, portal_directives_1, ripple_1, live_announcer_1, unique_selection_dispatcher_1;
+    var GesturesDemo, GridListDemo, max, InputDemo, ListDemo, LiveAnnouncerDemo, MenuDemo;
     return {
         setters:[
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
+            },
+            function (core_1_1) {
+                core_1 = core_1_1;
             },
             function (checkbox_1_1) {
                 checkbox_1 = checkbox_1_1;
@@ -20,18 +32,38 @@ System.register(['jb-ui', '@angular2-material/checkbox/checkbox', '@angular2-mat
             function (grid_list_1_1) {
                 grid_list_1 = grid_list_1_1;
             },
+            function (list_1_1) {
+                list_1 = list_1_1;
+            },
+            function (menu_1_1) {
+                menu_1 = menu_1_1;
+            },
+            function (portal_directives_1_1) {
+                portal_directives_1 = portal_directives_1_1;
+            },
+            function (ripple_1_1) {
+                ripple_1 = ripple_1_1;
+            },
+            function (live_announcer_1_1) {
+                live_announcer_1 = live_announcer_1_1;
+            },
             function (unique_selection_dispatcher_1_1) {
                 unique_selection_dispatcher_1 = unique_selection_dispatcher_1_1;
             }],
         execute: function() {
             jb_ui.registerProviders({
                 MdUniqueSelectionDispatcher: unique_selection_dispatcher_1.MdUniqueSelectionDispatcher,
+                MdLiveAnnouncer: live_announcer_1.MdLiveAnnouncer,
             });
             jb_ui.registerDirectives({
                 MD_CHECKBOX_DIRECTIVES: checkbox_1.MD_CHECKBOX_DIRECTIVES,
                 MD_RADIO_DIRECTIVES: radio_1.MD_RADIO_DIRECTIVES,
                 MD_BUTTON_TOGGLE_DIRECTIVES: button_toggle_1.MD_BUTTON_TOGGLE_DIRECTIVES,
-                MD_GRID_LIST_DIRECTIVES: grid_list_1.MD_GRID_LIST_DIRECTIVES
+                MD_GRID_LIST_DIRECTIVES: grid_list_1.MD_GRID_LIST_DIRECTIVES,
+                MD_LIST_DIRECTIVES: list_1.MD_LIST_DIRECTIVES,
+                MD_MENU_DIRECTIVES: menu_1.MD_MENU_DIRECTIVES,
+                PORTAL_DIRECTIVES: portal_directives_1.PORTAL_DIRECTIVES,
+                MD_RIPPLE_DIRECTIVES: ripple_1.MD_RIPPLE_DIRECTIVES
             });
             GesturesDemo = (function () {
                 function GesturesDemo() {
@@ -134,6 +166,42 @@ System.register(['jb-ui', '@angular2-material/checkbox/checkbox', '@angular2-mat
                 return ListDemo;
             }());
             exports_1("ListDemo", ListDemo);
+            LiveAnnouncerDemo = (function () {
+                function LiveAnnouncerDemo(live) {
+                    this.live = live;
+                }
+                LiveAnnouncerDemo.prototype.announceText = function (message) {
+                    this.live.announce(message);
+                };
+                LiveAnnouncerDemo = __decorate([
+                    core_1.Injectable({}), 
+                    __metadata('design:paramtypes', [live_announcer_1.MdLiveAnnouncer])
+                ], LiveAnnouncerDemo);
+                return LiveAnnouncerDemo;
+            }());
+            exports_1("LiveAnnouncerDemo", LiveAnnouncerDemo);
+            MenuDemo = (function () {
+                function MenuDemo() {
+                    this.selected = '';
+                    this.items = [
+                        { text: 'Refresh' },
+                        { text: 'Settings' },
+                        { text: 'Help' },
+                        { text: 'Sign Out', disabled: true }
+                    ];
+                }
+                MenuDemo.prototype.select = function (text) { this.selected = text; };
+                MenuDemo = __decorate([
+                    core_1.Injectable(), 
+                    __metadata('design:paramtypes', [])
+                ], MenuDemo);
+                return MenuDemo;
+            }());
+            exports_1("MenuDemo", MenuDemo);
+            jb_ui.registerProviders({
+                LiveAnnouncerDemo: LiveAnnouncerDemo,
+                MenuDemo: MenuDemo
+            });
         }
     }
 });

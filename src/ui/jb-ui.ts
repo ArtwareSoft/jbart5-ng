@@ -1,11 +1,12 @@
 import {jb} from 'jb-core';
-import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
+import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
 import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDeprecatedForms, provideForms } from '@angular/forms';
 import {HTTP_PROVIDERS} from '@angular/http';
 
 import {NgClass,NgStyle} from '@angular/common';
+import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
+import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
 
-// import {ExceptionHandler} from 'angular2/src/facade/exception_handler';
 
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as jb_dialog from 'jb-ui/dialog';
@@ -81,13 +82,13 @@ class jbComponent {
 		return JSON.stringify(this.annotations)
 	}
 	createComp() {
-	    this.jbExtend({directives: [NgClass, NgStyle, jbComp]});
+	    this.jbExtend({directives: [NgClass, NgStyle, jbComp, PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES] });
 	    if (!this.annotations.selector)	this.annotations.selector = 'div';
 
 	    var Cmp = function(dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [ComponentResolver, ElementRef])
+			Reflect.metadata('design:paramtypes', [Compiler, ElementRef])
 		], Cmp);
 		Cmp.prototype.ngOnInit = function() {
 			try {
@@ -126,6 +127,7 @@ class jbComponent {
 		}
 		Cmp.prototype.ngOnDestroy = function() {
 			this.jbEmitter && this.jbEmitter.next('destroy');
+			this.jbEmitter && this.jbEmitter.complete();
 		}
 
 		Cmp.prototype.jbWait = function () {
@@ -369,7 +371,7 @@ export class jbComp {
   @Input() comp;
   @Input() flatten;
   @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
-  constructor(private componentResolver:ComponentResolver) {}
+  constructor(private compiler :Compiler) {}
 
   ngOnInit() {
   	// redraw if script changed at studio
@@ -399,9 +401,9 @@ export class jbComp {
   		console.log('jb_comp: replacing existing component');
   	}
   	if (comp && comp.compile)
-  		var compiled = comp.compile(this.componentResolver)
+  		var compiled = comp.compile(this.compiler)
   	else
-  		var compiled = this.componentResolver.resolveComponent(comp);
+  		var compiled = this.compiler.compileComponentAsync(comp);
 
     compiled.then(componentFactory => {
     	var cmp_ref = this.childView.createComponent(componentFactory);
@@ -420,7 +422,8 @@ export class jbComp {
   	if (!cmp.flatten) 
   		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-	var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4;
+	var parentInjector = cmp_ref.hostView._view.parentInjector._view.parentInjector._view;
+	var parentCmp = parentInjector && (parentInjector._Cmp_0_4 || parentInjector.context);
   	if (!parentCmp)
   		return jb.logError('flattenjBComp: can not get parent component');
   	if (cmp._deleted_parent)
@@ -533,7 +536,7 @@ export function addAttribute(element, attrName, attrValue) {
 	directives: [jbComp]
 })
 export class jBartWidget {
-	constructor(private elementRef: ElementRef, public ngZone: NgZone) { }
+	constructor(private elementRef: ElementRef, public ngZone: NgZone, private injector: Injector) { }
 	ngOnInit() { 
 		jbart.widgetLoaded = true; // indication for waitForIframeLoad
 		this.compId = this.elementRef.nativeElement.getAttribute('compID');
@@ -584,7 +587,7 @@ export class jBartWidget {
 	    	var ns = this.compId.split('.')[0];
 			var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 			jb.extend(resources, { window: window, globals: { } });
-			jbart.initialCtx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone} }, {});
+			jbart.initialCtx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone, injector: this.injector} }, {});
 		}
 		if (jbart.studioGlobals)
 			return jbart.initialCtx.setVars({studio: {project: jbart.studioGlobals.project, page: jbart.studioGlobals.page}})

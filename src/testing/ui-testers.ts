@@ -1,7 +1,7 @@
 import { jb } from 'jb-core/jb';
 import * as jb_ui from 'jb-ui/jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import {Directive, Component, View, ViewContainerRef, ViewChild, ComponentResolver, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
+import {Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Injector, Input, provide, NgZone} from '@angular/core';
 import {Observable,Subject} from 'rxjs/Rx';
 
 var testModules = ['ng-ui-tests','md-ui-tests']
@@ -47,7 +47,7 @@ function testComp(compID,ngZone) {
 })
 export class jBartSingleTest {
   @ViewChild('single_test', {read: ViewContainerRef}) childView;
-  constructor(private componentResolver:ComponentResolver, private ngZone: NgZone, private elementRef: ElementRef) {
+  constructor(private compiler:Compiler, private ngZone: NgZone, private elementRef: ElementRef) {
 		window.ngZone = this.ngZone;
 		jbart.zones['single-test'] = this.ngZone;
 		if ((this.elementRef.nativeElement.getAttribute('compID')||'').indexOf('studio') == 0)
@@ -57,33 +57,11 @@ export class jBartSingleTest {
   ngOnInit() {
 	this.counter = 0;
   	var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'),this.ngZone);
-  	comp.compile(this.componentResolver).then(componentFactory => 
+  	comp.compile(this.compiler).then(componentFactory => 
   		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
     );
-    // this.componentResolver.resolveComponent(comp)
-    //   .then(componentFactory => {
-    //     this.childView.createComponent(componentFactory);
-    //   });
   }
 }
-
-// @Component({
-//     selector: 'jbartTests',
-// 	template: '<div #tests></div>',
-// })
-// export class jBartTests {
-//   @ViewChild('tests', {read: ViewContainerRef}) childView;
-//   constructor(private componentResolver:ComponentResolver, private ngZone: NgZone) {
-// 		window.jbartTestsInstance = this;
-// 		window.jbartTestsNgZone = ngZone;
-// //		window.ngZone = this.ngZone;
-// 	}
-// 	addComp(comp) {
-// 	  	comp.compile(this.componentResolver).then(componentFactory => 
-// 	  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
-// 	    );
-// 	}
-// }
 
 jb.component('ng2-ui-test', {
 	params: {

@@ -58,8 +58,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
             allTestModules = ['ng-ui-tests', 'md-ui-tests', 'studio-tests', 'rx-tests'];
             testModules = ['ng-ui-tests', 'rx-tests'];
             jBartSingleTest = (function () {
-                function jBartSingleTest(componentResolver, ngZone, elementRef) {
-                    this.componentResolver = componentResolver;
+                function jBartSingleTest(compiler, ngZone, elementRef) {
+                    this.compiler = compiler;
                     this.ngZone = ngZone;
                     this.elementRef = elementRef;
                     window.ngZone = this.ngZone;
@@ -71,13 +71,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                     var _this = this;
                     this.counter = 0;
                     var comp = testComp(this.elementRef.nativeElement.getAttribute('compID'), this.ngZone);
-                    comp.compile(this.componentResolver).then(function (componentFactory) {
+                    comp.compile(this.compiler).then(function (componentFactory) {
                         return comp.registerMethods(_this.childView.createComponent(componentFactory), comp);
                     });
-                    // this.componentResolver.resolveComponent(comp)
-                    //   .then(componentFactory => {
-                    //     this.childView.createComponent(componentFactory);
-                    //   });
                 };
                 __decorate([
                     core_1.ViewChild('single_test', { read: core_1.ViewContainerRef }), 
@@ -88,28 +84,11 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                         selector: 'jBartSingleTest',
                         template: '<div #single_test></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.ComponentResolver, core_1.NgZone, core_1.ElementRef])
+                    __metadata('design:paramtypes', [core_1.Compiler, core_1.NgZone, core_1.ElementRef])
                 ], jBartSingleTest);
                 return jBartSingleTest;
             }());
             exports_1("jBartSingleTest", jBartSingleTest);
-            // @Component({
-            //     selector: 'jbartTests',
-            // 	template: '<div #tests></div>',
-            // })
-            // export class jBartTests {
-            //   @ViewChild('tests', {read: ViewContainerRef}) childView;
-            //   constructor(private componentResolver:ComponentResolver, private ngZone: NgZone) {
-            // 		window.jbartTestsInstance = this;
-            // 		window.jbartTestsNgZone = ngZone;
-            // //		window.ngZone = this.ngZone;
-            // 	}
-            // 	addComp(comp) {
-            // 	  	comp.compile(this.componentResolver).then(componentFactory => 
-            // 	  		comp.registerMethods(this.childView.createComponent(componentFactory),comp)
-            // 	    );
-            // 	}
-            // }
             jb_1.jb.component('ng2-ui-test', {
                 params: {
                     control: { type: 'control', dynamic: true },

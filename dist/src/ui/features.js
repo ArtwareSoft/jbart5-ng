@@ -2,6 +2,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx;
+    var arrayDiffer;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -45,6 +46,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     };
                 }
             });
+            arrayDiffer = function (a1, a2) { return jb_compareArrays(a1, a2); };
             // bind data and watch the data to refresh the control
             jb_core_1.jb.component('group.data', {
                 type: 'feature',
@@ -61,8 +63,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 .map(function () {
                                 return jb_core_1.jb.val(data());
                             })
-                                .distinctUntilChanged()
-                                .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                                .distinctUntilChanged(arrayDiffer)
                                 .map(function (val) {
                                 var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(val);
                                 var ctx3 = itemVariable ? ctx2.setVars(jb_core_1.jb.obj(itemVariable, val)) : ctx2;
@@ -87,8 +88,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             .map(function () {
                             return jb_core_1.jb.val(data());
                         })
-                            .distinctUntilChanged()
-                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .distinctUntilChanged(arrayDiffer)
                             .map(function (val) {
                             var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
                             return context.vars.$model.controls(ctx2);

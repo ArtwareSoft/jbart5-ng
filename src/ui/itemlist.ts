@@ -1,83 +1,80 @@
 import {jb} from 'jb-core/jb';;
-import * as jb_ui from 'jb-ui/jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import * as ui_utils from 'jb-ui/jb-ui-utils';
-import {Directive,Component, ElementRef, Input, ViewContainerRef, ViewChild, ComponentResolver } from '@angular/core';
 
-jb.type('itemlist.style');
-
-jb.component('itemlist',{
-	type: 'control',
-	params: {
-		title: { as: 'string' },
-		items: { as: 'array' , dynamic: true, essential: true },
-    controls: { type: 'control[]', essential: true, dynamic: true},
-		style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
-    dynamicItems: { type: 'boolean', as: 'boolean', defaultValue: true },
-    itemVariable: { as: 'string' },
-		features: { type: 'feature[]', dynamic: true },
-	},
-	impl: function(context) {
-//    var items = context.params.items();
-    return jb_ui.ctrl(context).jbExtend({
-      doCheck: cmp => {
-        if (context.params.dynamicItems)
-          cmp.items = context.params.items(cmp.ctx);
-      },
-      beforeInit: function(cmp) {
-        cmp.items = context.params.items(cmp.ctx);
-        cmp.itemlist = {
-            items: cmp.items,
-            el: cmp.elementRef.nativeElement,
-            elemToItem: (elem) => 
-              cmp.items[$(elem).closest('[jb-item]').index()],
-            selectionEmitter: new jb_rx.Subject(),
-        }
-       },
-      directives: [jb_itemlist_comp(context.params, context)]
-    })
-	}
+jb.component('itemlist', {
+  type: 'control',
+  params: {
+    title: { as: 'string' },
+    items: { as: 'array' , dynamic: true, essential: true },
+    controls: { type: 'control[]', essential: true, dynamic: true },
+    style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
+    itemVariable: { as: 'string', defaultValue: 'item' },
+    features: { type: 'feature[]', dynamic: true, flattenArray: true },
+  },
+  impl :{$: 'group', 
+    title: '%$title%',
+    style :{$call: 'style'},
+    controls :{$: 'dynamic-controls', 
+      controlItems : '%$items_array%',
+      genericControl :{$call: 'controls'},
+      itemVariable: '%$itemVariable%'
+    },
+    features :[
+      {$call: 'features'},
+      {$: 'itemlist.watch-items', data: {$call: 'items'}, watch: '%$watchItems%', itemVariable: 'items_array' }, 
+    ]
+  }
 })
 
-function jb_itemlist_comp(model,context) {
-    @Component({
-        selector: 'jb_item',
-        template: '<div #jb_item_repl></div>',
-    })
-    class ItemListChild {
-      @Input() item;
-      @ViewChild('jb_item_repl', {read: ViewContainerRef}) childView;
-      constructor(private componentResolver:ComponentResolver) {}
+jb.component('itemlist.watch-items', {
+  type: 'feature',
+  params: {
+    data: { essential: true, dynamic: true },
+    itemVariable: { as: 'string' },
+    watch: { type: 'boolean', as: 'boolean', defaultValue: true }
+  },
+  impl: function(context, data, itemVariable,watch) {
+    return {
+      beforeInit: function(cmp) {
+          var dataEm = cmp.jbEmitter
+              .filter(x => x == 'check')
+              .map(()=> 
+                data()) 
+              .filter(items=>
+                ! jb_compareArrays(items,(cmp.ctrls || []).map(ctrl => ctrl.comp.ctx.data)))
+//              .distinctUntilChanged(jb_compareArrays)
+              .map(items=> {
+                  cmp.items = items;
+                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
+                  var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,items)) : ctx2;
+                  return context.vars.$model.controls(ctx3)
+              })
 
-      ngAfterViewInit() {
-        var cmp = this;
-        var vars = {item: cmp.item};
-        if (model.itemVariable && model.itemVariable != 'item')
-          vars[model.itemVariable] = cmp.item;
-        var ctx = jb.ctx(context,{data: cmp.item, vars: vars});
-        model.controls(ctx).forEach(ctrl =>
-              jb_ui.insertComponent(ctrl, cmp.componentResolver, cmp.childView)
-        )
-      }
-    }
-    return ItemListChild;
-}
+          cmp.jbGroupChildrenEm = watch ? dataEm : dataEm.take(1);
+      },
+      observable: () => {} // to create jbEmitter
+  }}
+})
 
 jb.component('itemlist.ul-li', {
-  type: 'itemlist.style',
+  type: 'group.style',
   impl :{$: 'customStyle',
-    template: '<div><ul class="jb-itemlist"><li *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></li></ul></div>',
-    css: `[jb-item].selected { background: #337AB7; color: #fff ;}
-    li { list-style: none; padding: 0; margin: 0;}
-    ul { list-style: none; padding: 0; margin: 0;}
-    `
+    features :{$: 'group.initGroup'},
+    template: `<div><ul class="jb-itemlist">
+      <li *ngFor="let ctrl of ctrls" class="jb-item">
+        <jb_comp [comp]="ctrl.comp" [flatten]="true"></jb_comp>
+      </li>
+      </ul></div>`,
+    css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
   }
 })
 
 jb.component('itemlist.div', {
-  type: 'itemlist.style',
-  impl: function(context) {
-    return { template: '<div *ngFor="let item of items" jb-item><jb_item [item]="item"></jb_item></div>' }
+  type: 'group.style',
+  impl :{$: 'customStyle',
+    features :{$: 'group.initGroup'},
+    template: `<div class="jb-itemlist"><jb_comp [comp]="ctrl.comp" class="jb-item"></jb_comp></div>`,
   }
 })
 
@@ -87,7 +84,7 @@ jb.component('itemlist.divider', {
     space: { as: 'number', defaultValue: 5}
   },
   impl : (ctx,space) =>
-    ({css: `[jb-item]:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: ${space}px }`})
+    ({css: `.jb-item:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: ${space}px }`})
 })
 
 // ****************** Selection ******************
@@ -100,51 +97,56 @@ jb.component('itemlist.selection', {
     onDoubleClick: { type: 'action', dynamic: true },
     autoSelectFirst: { type: 'boolean'}
   },
-  impl: function(context) {
-    var itemlist = context.vars.$itemlist;
-    return {
-      init: function(cmp) {
-        cmp.click = new jb_rx.Subject();
-        var itemlist = cmp.itemlist;
-        context.params.databind && jb_rx.refObservable(context.params.databind,context).distinctUntilChanged()
-          .subscribe(selected=> {
-//            console.log('selected1',itemlist.selected);
-            itemlist.selected = selected
+  impl: ctx => ({
+    init: cmp => {
+        cmp.clickSrc = new jb_rx.Subject();
+        cmp.click = cmp.clickSrc
+          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
+        var doubleClick = cmp.click.buffer(cmp.click.debounceTime(250))
+          .filter(buff => buff.length === 2)
+
+        var databindEm = cmp.jbEmitter.filter(x => x == 'check')
+            .map(()=> 
+              jb.val(ctx.params.databind))
+            .filter(x=>
+              x != cmp.selected)
+            .distinctUntilChanged();
+
+        var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
+            .map(()=> cmp.selected) 
+            .distinctUntilChanged();
+
+        doubleClick.subscribe(()=>
+          ctx.params.onDoubleClick(ctx.setData(cmp.selected)));
+
+        selectionEm.subscribe( selected => {
+          if (jb.val(ctx.params.databind) != selected)
+            jb.writeValue(ctx.params.databind,selected);
+          ctx.params.onSelection(ctx.setData(cmp.selected))
         });
-        itemlist.selectionEmitter
-          .distinctUntilChanged().subscribe(selected=>{
-            itemlist.selected = selected;
-//            console.log('selected2',itemlist.selected);
-            if (context.params.databind)
-              jb.writeValue(context.params.databind,selected);
-        });
-        // first auto selection
-        if (jb.val(context.params.databind))
-         itemlist.selectionEmitter.next(jb.val(context.params.databind));
-        else if (context.params.autoSelectFirst && itemlist.items[0])
-          itemlist.selectionEmitter.next(itemlist.items[0]);
 
-        cmp.click.buffer(cmp.click.debounceTime(250)) // double click
-          .map(list => list.length)
-          .filter(x => x === 2)
-          .subscribe(x=>context.params.onDoubleClick(context.setData(itemlist.selected)))
-
-
-        cmp.click.map(event => 
-          itemlist.elemToItem(event.target))
-            .do(function(selected) {
-              context.params.onSelection(context.setData(selected))
-            })
-            .subscribe(x=>itemlist.selectionEmitter.next(x))
-      },
-      host: {
-        '(click)': 'click.next($event)',
-      },
-      innerhost: { 
-        '[jb-item]' : { '[ng-class]': '{selected: itemlist.selected == item}' }, 
-      },
-    }
-  }
+        databindEm.subscribe(x=>
+            cmp.selected = x);
+    },
+    afterViewInit: cmp => {
+        if (ctx.params.autoSelectFirst && cmp.ctrls[0])
+            cmp.selected = cmp.ctrls[0].comp.ctx.data;
+    },
+    innerhost: {
+      '.jb-item': {
+        '[class.active]': 'active == ctrl.comp.ctx.data',
+        '[class.selected]': 'selected == ctrl.comp.ctx.data',
+        '(mouseenter)': 'active = ctrl.comp.ctx.data',
+        '(mouseleave)': 'active = null',
+        '(click)': 'selected = ctrl.comp.ctx.data ; clickSrc.next($event)'
+      }
+    },
+    css: `.jb-item.active { background: #337AB7; color: #fff }
+    .jb-item.selected { background: #bbb; color: #fff }
+    `,
+    observable: () => {} // create jbEmitter
+  })
 })
 
 jb.component('itemlist.keyboard-selection', {
@@ -156,22 +158,25 @@ jb.component('itemlist.keyboard-selection', {
   impl: function(context) {
     return {
       init: function(cmp) {
-        var itemlist = cmp.itemlist
-        cmp.keydown = new jb_rx.Subject();
+        cmp.keydownSrc = new jb_rx.Subject();
+        cmp.keydown = cmp.keydownSrc
+          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
         if (context.params.autoFocus)
             setTimeout(()=> 
               cmp.elementRef.nativeElement.focus(),1);
 
-        cmp.keydown.filter(e=>e.keyCode == 38 || e.keyCode == 40)
+        cmp.keydown.filter(e=>
+              e.keyCode == 38 || e.keyCode == 40)
             .map(event => {
               event.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
-              return itemlist.items[itemlist.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+              return cmp.items[(cmp.items.indexOf(cmp.selected) + diff + cmp.items.length) % cmp.items.length] || cmp.selected;
         }).subscribe(x=>
-          itemlist.selectionEmitter.next(x))
+          cmp.selected = x)
       },
       host: {
-        '(keydown)': 'keydown.next($event)',
+        '(keydown)': 'keydownSrc.next($event)',
         'tabIndex' : '0'
       }
     }
@@ -182,30 +187,27 @@ jb.component('itemlist.drag-and-drop', {
   type: 'feature',
   params: {
   },
-  impl: function(context) {
-    return {
+  impl: ctx => ({
       init: function(cmp) {
-        var itemlist = cmp.itemlist;
-        var drake = itemlist.drake = dragula($(itemlist.el).findIncludeSelf('.jb-itemlist').get(), {
-          moves: el => $(el).attr('jb-item') != null
+        var drake = dragula($(cmp.elementRef.nativeElement).findIncludeSelf('.jb-itemlist').get(), {
+          moves: el => $(el).hasClass('jb-item')
         });
 
         drake.on('drag', function(el, source) { 
           el.dragged = { 
-            obj: itemlist.elemToItem(el),
-            remove: obj => itemlist.items.splice(itemlist.items.indexOf(obj), 1)
+            obj: cmp.active,
+            remove: obj => cmp.items.splice(cmp.items.indexOf(obj), 1)
           }
         });
         drake.on('drop', (dropElm, target, source,sibling) => {
             dropElm.dragged && dropElm.dragged.remove(dropElm.dragged.obj);
             if (!sibling)
-              itemlist.items.push(dropElm.dragged.obj)
+              cmp.items.push(dropElm.dragged.obj)
             else
-              itemlist.items.splice($(sibling).index()-1,0,dropElm.dragged.obj)
+              cmp.items.splice($(sibling).index()-1,0,dropElm.dragged.obj)
             dropElm.dragged = null;
         });
       }
-    }
-  }
+    })
 })
 

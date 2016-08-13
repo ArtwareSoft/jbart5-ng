@@ -4,6 +4,7 @@ import * as ui_utils from 'jb-ui/jb-ui-utils';
 
 declare var $: any;
 declare var jbart: any;
+declare var System: any;
 
 jb.component('addCssClass',{
 	type: 'action',
@@ -154,9 +155,22 @@ jb.component('new-instance', {
 	},
 	impl: (ctx,module,_class) => {
 		try {
-			return new (jb_entries(System._loader.modules).filter(p=>p[0].indexOf(module) != -1)[0][1].module[_class])()
+			return new (jb.entries(System._loader.modules).filter(p=>p[0].indexOf(module) != -1)[0][1].module[_class])()
 		} catch (e) {
 			return;
 		}
+	}
+})
+
+jb.component('injector-get', {
+	type: 'data',
+	params: {
+		provider: { as: 'string', essential: true },
+	},
+	impl: (ctx,providerId) => {
+		var provider = jbart.ng.providers[providerId];
+		if (provider)
+			return ctx.vars.injector.get(provider);
+		jb.logError('injector-get: provider ' + providerId + ' is not registered. Use jb_ui.registerProviders to register it');
 	}
 })

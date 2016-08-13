@@ -283,6 +283,7 @@ itemlist :{$: 'ng2-ui-test',
         ],
     },
     { $: 'itemlist', items: '%$people%',
+      dynamicItems: true,
       controls :{$: 'label', title: '%name%' } 
     },
   ]},
@@ -341,7 +342,7 @@ itemlistSelection :{$: 'ng2-ui-test',
   expectedHtmlResult: { $: 'contains', text: ['Homer Simpson'] },
 },
 
-itemlistWithMD :{$: 'ng2-ui-test', waitForPromise: {$delay: 50},  
+itemlistWithMD :{$: 'ng2-ui-test',
 control :{$: 'group', 
   controls: 
     [

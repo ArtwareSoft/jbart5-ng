@@ -28,7 +28,7 @@ jb.component('material-demo.main', {
               }, 
               {$: 'group', 
                 title: 'Name', 
-                style :{$: 'layout.horizontal' }, 
+                style :{$: 'layout.horizontal', spacing: '' }, 
                 controls: [
                   {$: 'editable-text', 
                     databind: '%firstName% %', 
@@ -67,7 +67,8 @@ jb.component('material-demo.main', {
                   }
                 ]
               }
-            ]
+            ], 
+            
           }, 
           {$: 'custom-control', 
             title: 'buttons', 
@@ -705,9 +706,243 @@ jb.component('material-demo.main', {
                 class: 'InputDemo'
               }
             }
+          }, 
+          {$: 'custom-control', 
+            title: 'list', 
+            html: `<h1>md-list demo</h1>
+
+<button md-raised-button (click)="thirdLine=!thirdLine" class="demo-button">Show third line</button>
+
+<div class="demo">
+  <div>
+    <h2>Normal lists</h2>
+
+    <md-list>
+      <h3 md-subheader>Items</h3>
+      <md-list-item *ngFor="let item of items">
+        {{item}}
+      </md-list-item>
+    </md-list>
+
+    <md-list>
+      <md-list-item *ngFor="let contact of contacts">
+        <h3 md-line>{{contact.name}}</h3>
+        <p md-line *ngIf="thirdLine">extra line</p>
+        <p md-line class="demo-secondary-text">{{contact.headline}}</p>
+      </md-list-item>
+    </md-list>
+
+    <md-list>
+      <h3 md-subheader>Today</h3>
+      <md-list-item *ngFor="let message of messages">
+        <img md-list-avatar [src]="message.image" alt="Image of {{message.from}}">
+        <h4 md-line>{{message.from}}</h4>
+        <p md-line>
+          <span>{{message.subject}} -- </span>
+          <span class="demo-secondary-text">{{message.message}}</span>
+        </p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item *ngFor="let message of messages">
+        <h4 md-line>{{message.from}}</h4>
+        <p md-line> {{message.subject}} </p>
+        <p md-line class="demo-secondary-text">{{message.message}} </p>
+      </md-list-item>
+    </md-list>
+  </div>
+
+  <div>
+    <h2>Dense lists</h2>
+    <md-list dense>
+      <h3 md-subheader>Items</h3>
+      <md-list-item *ngFor="let item of items">
+        {{item}}
+      </md-list-item>
+    </md-list>
+
+    <md-list dense>
+      <md-list-item *ngFor="let contact of contacts">
+        <h3 md-line>{{contact.name}}</h3>
+        <p md-line class="demo-secondary-text">{{contact.headline}}</p>
+      </md-list-item>
+    </md-list>
+
+    <md-list dense>
+      <h3 md-subheader>Today</h3>
+      <md-list-item *ngFor="let message of messages">
+        <img md-list-avatar [src]="message.image" alt="Image of {{message.from}}">
+        <h4 md-line>{{message.from}}</h4>
+        <p md-line> {{message.subject}} </p>
+        <p md-line class="demo-secondary-text">{{message.message}} </p>
+      </md-list-item>
+    </md-list>
+  </div>
+  <div>
+    <h2>Nav lists</h2>
+    <md-nav-list>
+      <a md-list-item *ngFor="let link of links" href="http://www.google.com">
+        {{ link.name }}
+      </a>
+    </md-nav-list>
+    <div *ngIf="infoClicked">
+      More info!
+    </div>
+    <md-nav-list>
+      <md-list-item *ngFor="let link of links">
+        <a md-line href="http://www.google.com">{{ link.name }}</a>
+        <button md-icon-button (click)="infoClicked=!infoClicked">
+          <md-icon>info</md-icon>
+        </button>
+      </md-list-item>
+    </md-nav-list>
+    <md-nav-list>
+      <a md-list-item *ngFor="let link of links" href="http://www.google.com">
+        <md-icon md-list-icon>folder</md-icon>
+        <span md-line>{{ link.name }}</span>
+        <span md-line class="demo-secondary-text"> Description </span>
+      </a>
+    </md-nav-list>
+    <md-nav-list dense>
+      <md-list-item *ngFor="let link of links">
+        <a md-line href="http://www.google.com">{{ link.name }}</a>
+        <button md-icon-button (click)="infoClicked=!infoClicked">
+          <md-icon class="material-icons">info</md-icon>
+        </button>
+      </md-list-item>
+    </md-nav-list>
+  </div>
+</div>`, 
+            css: `.demo {
+  display: flex;
+  flex-flow: row wrap;
+}
+md-list, md-nav-list {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    width: 350px;
+    margin: 20px 20px 0 0;
+
+  }
+  h2 {
+    margin-top: 20px;
+  }
+
+  md-icon {
+    color: rgba(0, 0, 0, 0.12);
+  }
+
+  [md-list-icon] {
+    color: white;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+
+.demo-secondary-text {
+  color: rgba(0, 0, 0, 0.54);
+}`, 
+            features :{$: 'feature.ng-attach-object', 
+              data :{$: 'new-instance', 
+                module: 'projects/material-demo/ng-material-demo-loader', 
+                class: 'ListDemo'
+              }
+            }
+          }, 
+          {$: 'custom-control', 
+            title: 'announcer', 
+            html: `<div class="demo-live-announcer">
+
+  <button md-button (click)="announceText('Hey Google')">Announce Text</button>
+
+</div>`, 
+            css: '', 
+            features :{$: 'feature.ng-attach-object', 
+              data :{$: 'injector-get', provider: 'LiveAnnouncerDemo' }
+            }
+          }, 
+          {$: 'custom-control', 
+            title: 'menu', 
+            html: `<div class="demo-menu">
+  <div class="menu-section">
+    <p>You clicked on: {{ selected }}</p>
+
+    <md-toolbar>
+      <button md-icon-button [md-menu-trigger-for]="menu">
+        <md-icon>more_vert</md-icon>
+      </button>
+    </md-toolbar>
+
+    <md-menu #menu="mdMenu">
+      <button md-menu-item *ngFor="let item of items" (click)="select(item.text)" [disabled]="item.disabled">
+        {{ item.text }}
+      </button>
+    </md-menu>
+  </div>
+  <div class="menu-section">
+    <p> Clicking these will navigate:</p>
+    <md-toolbar>
+      <button md-icon-button [md-menu-trigger-for]="anchorMenu">
+        <md-icon>more_vert</md-icon>
+      </button>
+    </md-toolbar>
+
+    <md-menu #anchorMenu="mdMenu">
+      <a md-menu-item *ngFor="let item of items" href="http://www.google.com" [disabled]="item.disabled">
+        {{ item.text }}
+      </a>
+    </md-menu>
+  </div>
+  <div class="menu-section">
+    <p>
+      Position x: before
+    </p>
+    <md-toolbar class="end-icon">
+      <button md-icon-button [md-menu-trigger-for]="posXMenu">
+        <md-icon>more_vert</md-icon>
+      </button>
+    </md-toolbar>
+
+    <md-menu x-position="before" #posXMenu="mdMenu" class="before">
+      <button md-menu-item *ngFor="let item of items" [disabled]="item.disabled">
+        {{ item.text }}
+      </button>
+    </md-menu>
+  </div>
+  <div class="menu-section">
+    <p>
+      Position y: above
+    </p>
+    <md-toolbar>
+      <button md-icon-button [md-menu-trigger-for]="posYMenu">
+        <md-icon>more_vert</md-icon>
+      </button>
+    </md-toolbar>
+
+    <md-menu y-position="above" #posYMenu="mdMenu">
+      <button md-menu-item *ngFor="let item of items" [disabled]="item.disabled">
+        {{ item.text }}
+      </button>
+    </md-menu>
+  </div>
+</div>
+`, 
+            css: `.demo-menu {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.menu-section {
+    width: 300px;
+    margin: 20px;
+  }
+
+  .end-icon {
+    align-items: flex-end;
+  }
+`, 
+            features :{$: 'feature.ng-attach-object', 
+              data :{$: 'injector-get', provider: 'LiveAnnouncerDemo' }
+            }
           }
-        ], 
-        
+        ]
       }
     ], 
     features: [
@@ -845,95 +1080,29 @@ jb.component('material-demo.buttons', {
   }
 })
 
-jb.resource('material-demo','sources',{
-button: `
-<button md-button>FLAT</button>
-<button md-raised-button>RAISED</button>
-<button md-icon-button>
-    <i class="material-icons md-24">favorite</i>
-</button>
-<button md-fab>
-    <i class="material-icons md-24">add</i>
-</button>
-<button md-mini-fab>
-    <i class="material-icons md-24">add</i>
-</button>
 
-<button md-raised-button color="primary">PRIMARY</button>
-<button md-raised-button color="accent">ACCENT</button>
-<button md-raised-button color="warn">WARN</button>
-
-<button md-button disabled>off</button>
-<button md-raised-button [disabled]="isDisabled">off</button>
-<button md-mini-fab [disabled]="isDisabled">check circle</button>
-`,
-card:`
-<md-card>
-   Basic card.
-</md-card>
-
-<md-card>
-   <md-card-subtitle>Subtitle first</md-card-subtitle>
-   <md-card-title>Card with title</md-card-title>   
-   <md-card-content>
-        <p>This is supporting text.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad</p>
-   </md-card-content>
-   <md-card-actions>
-        <button md-button>LIKE</button>
-        <button md-button>SHARE</button>
-   </md-card-actions>
-</md-card>
-
-<md-card>
-   <md-card-header>
-      <img md-card-avatar src="path/to/img.png">
-      <md-card-title>Header title</md-card-title>
-      <md-card-subtitle>Header subtitle</md-card-subtitle>
-   </md-card-header>
-   <img md-card-image src="path/to/img.png">
-   <md-card-content>
-      <p>Here is some more content</p>
-   </md-card-content>
-</md-card>
-`});
-
-`
-title group
-==============
-<md-card>
-   <md-card-title-group>
-      <img md-card-sm-image src="path/to/img.png">
-      <md-card-title>Card with title</md-card-title>
-      <md-card-subtitle>Subtitle</md-card-subtitle>
-   </md-card-title-group>
-</md-card>
-
-check box
-==========
-<ul>
-  <li *ngFor="let todo of todos">
-    <md-checkbox [checked]="todo.completed"
-                 (change)="todo.completed = $event">
-      {{todo.name}}
-    </md-checkbox>
-  </li>
-</ul>
-
-intermediate
-=========
-<md-checkbox [checked]="false"
-             [indeterminate]="isIndeterminate"
-             (change)="isIndeterminate = false">
-  Click the Button Below to Make Me Indeterminate.
-</md-checkbox>
-<button type="button" (click)="isIndeterminate = true">
-  Make Indeterminate
-</button>
-
-<md-checkbox [checked]="true" align="end">
-  I come after my label.
-</md-checkbox>
-`
-
+jb.component('material-demo.btns', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'btns', 
+    controls: [
+      {$: 'button', 
+        title: 'Hello ewrewre', 
+        style :{$: 'button.md-raised' }, 
+        
+      }, 
+      {$: 'itemlist', 
+        items: ['a'], 
+        controls: [
+          {$: 'button', 
+            title: 'Hello sfsd', 
+            style :{$: 'button.md-raised' }, 
+            
+          }
+        ], 
+        style :{$: 'itemlist.ul-li' }, 
+        dynamicItems: true
+      }
+    ]
+  }
+})

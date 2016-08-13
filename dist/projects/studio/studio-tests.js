@@ -81,7 +81,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             }
                         ]
                     },
-                    checkAfterCmpEvent: 'ready',
                     expectedHtmlResult: { $call: 'expectedHtmlResult' }
                 }
             });

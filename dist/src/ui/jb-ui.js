@@ -1,4 +1,4 @@
-System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', '@angular/common', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', '@angular/common', '@angular2-material/core/portal/portal-directives', '@angular2-material/core/ripple/ripple', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, core_1, forms_1, http_1, common_1, jb_rx;
+    var jb_core_1, core_1, forms_1, http_1, common_1, portal_directives_1, ripple_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget;
     function apply(ctx) {
         //	console.log('apply');
@@ -241,6 +241,12 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
             function (common_1_1) {
                 common_1 = common_1_1;
             },
+            function (portal_directives_1_1) {
+                portal_directives_1 = portal_directives_1_1;
+            },
+            function (ripple_1_1) {
+                ripple_1 = ripple_1_1;
+            },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
             }],
@@ -302,13 +308,13 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     return JSON.stringify(this.annotations);
                 };
                 jbComponent.prototype.createComp = function () {
-                    this.jbExtend({ directives: [common_1.NgClass, common_1.NgStyle, jbComp] });
+                    this.jbExtend({ directives: [common_1.NgClass, common_1.NgStyle, jbComp, portal_directives_1.PORTAL_DIRECTIVES, ripple_1.MD_RIPPLE_DIRECTIVES] });
                     if (!this.annotations.selector)
                         this.annotations.selector = 'div';
                     var Cmp = function (dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef; };
                     Cmp = Reflect.decorate([
                         core_1.Component(this.annotations),
-                        Reflect.metadata('design:paramtypes', [core_1.ComponentResolver, core_1.ElementRef])
+                        Reflect.metadata('design:paramtypes', [core_1.Compiler, core_1.ElementRef])
                     ], Cmp);
                     Cmp.prototype.ngOnInit = function () {
                         var _this = this;
@@ -353,6 +359,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     };
                     Cmp.prototype.ngOnDestroy = function () {
                         this.jbEmitter && this.jbEmitter.next('destroy');
+                        this.jbEmitter && this.jbEmitter.complete();
                     };
                     Cmp.prototype.jbWait = function () {
                         var _this = this;
@@ -496,8 +503,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 return jbComponent;
             }());
             jbComp = (function () {
-                function jbComp(componentResolver) {
-                    this.componentResolver = componentResolver;
+                function jbComp(compiler) {
+                    this.compiler = compiler;
                 }
                 jbComp.prototype.ngOnInit = function () {
                     var _this = this;
@@ -529,9 +536,9 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         console.log('jb_comp: replacing existing component');
                     }
                     if (comp && comp.compile)
-                        var compiled = comp.compile(this.componentResolver);
+                        var compiled = comp.compile(this.compiler);
                     else
-                        var compiled = this.componentResolver.resolveComponent(comp);
+                        var compiled = this.compiler.compileComponentAsync(comp);
                     compiled.then(function (componentFactory) {
                         var cmp_ref = _this.childView.createComponent(componentFactory);
                         comp.registerMethods && comp.registerMethods(cmp_ref, _this);
@@ -548,7 +555,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     if (!cmp.flatten)
                         return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-                    var parentCmp = cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4;
+                    var parentInjector = cmp_ref.hostView._view.parentInjector._view.parentInjector._view;
+                    var parentCmp = parentInjector && (parentInjector._Cmp_0_4 || parentInjector.context);
                     if (!parentCmp)
                         return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
                     if (cmp._deleted_parent)
@@ -595,15 +603,16 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         selector: 'jb_comp',
                         template: '<div #jb_comp></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.ComponentResolver])
+                    __metadata('design:paramtypes', [core_1.Compiler])
                 ], jbComp);
                 return jbComp;
             }());
             exports_1("jbComp", jbComp);
             jBartWidget = (function () {
-                function jBartWidget(elementRef, ngZone) {
+                function jBartWidget(elementRef, ngZone, injector) {
                     this.elementRef = elementRef;
                     this.ngZone = ngZone;
+                    this.injector = injector;
                 }
                 jBartWidget.prototype.ngOnInit = function () {
                     var _this = this;
@@ -656,7 +665,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         var ns = this.compId.split('.')[0];
                         var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
                         jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                        jbart.initialCtx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone } }, {});
+                        jbart.initialCtx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone, injector: this.injector } }, {});
                     }
                     if (jbart.studioGlobals)
                         return jbart.initialCtx.setVars({ studio: { project: jbart.studioGlobals.project, page: jbart.studioGlobals.page } });
@@ -668,7 +677,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         template: "<div *ngFor=\"let comp of comps\"><jb_comp [comp]=\"comp\"></jb_comp></div>\n\t\t\t\t<div *ngFor=\"let dialog of dialogs\">\n\t\t\t\t\t<jb_comp [comp]=\"dialog.comp\"></jb_comp>\n\t\t\t\t</div>",
                         directives: [jbComp]
                     }), 
-                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone])
+                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone, core_1.Injector])
                 ], jBartWidget);
                 return jBartWidget;
             }());

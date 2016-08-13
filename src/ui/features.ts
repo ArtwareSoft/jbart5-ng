@@ -31,6 +31,8 @@ jb.component('group.wait', {
   }}
 })
 
+var arrayDiffer = (a1,a2) => jb_compareArrays(a1,a2);
+
 // bind data and watch the data to refresh the control
 jb.component('group.data', {
   type: 'feature',
@@ -46,8 +48,7 @@ jb.component('group.data', {
               .filter(x => x == 'check')
               .map(()=> 
                 jb.val(data())) 
-              .distinctUntilChanged()
-              .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+              .distinctUntilChanged(arrayDiffer)
               .map(val=> {
                   var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(val);
                   var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,val)) : ctx2;
@@ -72,8 +73,7 @@ jb.component('group.watch', {
                 .filter(x => x == 'check')
                 .map(()=> 
                   jb.val(data())) 
-                .distinctUntilChanged()
-                .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+                .distinctUntilChanged(arrayDiffer)
                 .map(val=> {
                     var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
                     return context.vars.$model.controls(ctx2)

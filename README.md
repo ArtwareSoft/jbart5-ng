@@ -40,6 +40,7 @@ jBart suggests a revolutionary approach for visual development of complex apps t
 ##Install from github
 
 clone or download from https://github.com/ArtwareSoft/jbart5-ng.git
+
 	cd jbart5-ng
 	npm install
 	bower install

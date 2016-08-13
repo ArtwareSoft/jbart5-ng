@@ -85,7 +85,6 @@ jb.component('studio-test', {
         }
       ]
     },
-    checkAfterCmpEvent: 'ready',
     expectedHtmlResult: { $call: 'expectedHtmlResult' }
   }
 })

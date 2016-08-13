@@ -73,7 +73,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     itemVariable: { as: 'string', defaultValue: 'controlItem' }
                 },
                 impl: function (context, controlItems, genericControl, itemVariable) {
-                    return controlItems().map(function (controlItem) { return genericControl(context.setVars(jb_core_1.jb.obj(itemVariable, controlItem))); });
+                    return controlItems()
+                        .map(function (controlItem) { return jb_tosingle(genericControl(jb_core_1.jb.ctx(context, { data: controlItem, vars: jb_core_1.jb.obj(itemVariable, controlItem) }))); });
                 }
             });
             jb_core_1.jb.component('group.initGroup', {

@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import {Component,NgModule} from '@angular/core';
+import {Component,NgModule,Injectable} from '@angular/core';
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input/input';
 import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card/card';
@@ -12,6 +12,12 @@ import {MdToolbar} from '@angular2-material/toolbar/toolbar';
 
 import {MD_BUTTON_TOGGLE_DIRECTIVES} from '@angular2-material/button-toggle/button-toggle';
 import {MD_GRID_LIST_DIRECTIVES} from '@angular2-material/grid-list/grid-list';
+import {MD_LIST_DIRECTIVES} from '@angular2-material/list/list';
+import {MD_MENU_DIRECTIVES} from '@angular2-material/menu/menu';
+import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
+import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
+
+import {MdLiveAnnouncer} from '@angular2-material/core/a11y/live-announcer';
 
 import {
   MdUniqueSelectionDispatcher
@@ -20,12 +26,18 @@ import {
 
 jb_ui.registerProviders({
   MdUniqueSelectionDispatcher: MdUniqueSelectionDispatcher,
+  MdLiveAnnouncer: MdLiveAnnouncer,
+//  OVERLAY_PROVIDERS: OVERLAY_PROVIDERS,
 });
 jb_ui.registerDirectives({
   MD_CHECKBOX_DIRECTIVES: MD_CHECKBOX_DIRECTIVES, 
   MD_RADIO_DIRECTIVES:MD_RADIO_DIRECTIVES, 
   MD_BUTTON_TOGGLE_DIRECTIVES:MD_BUTTON_TOGGLE_DIRECTIVES,
-  MD_GRID_LIST_DIRECTIVES: MD_GRID_LIST_DIRECTIVES
+  MD_GRID_LIST_DIRECTIVES: MD_GRID_LIST_DIRECTIVES,
+  MD_LIST_DIRECTIVES: MD_LIST_DIRECTIVES,
+  MD_MENU_DIRECTIVES: MD_MENU_DIRECTIVES,
+  PORTAL_DIRECTIVES: PORTAL_DIRECTIVES,
+  MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES
 });
 
 export class GesturesDemo {
@@ -129,3 +141,33 @@ export class ListDemo {
   thirdLine: boolean = false;
   infoClicked: boolean = false;
 }
+
+@Injectable({
+//  providers: [MdLiveAnnouncer]
+})
+export class LiveAnnouncerDemo {
+  constructor(private live: MdLiveAnnouncer) {
+  }
+
+  announceText(message: string) {
+    this.live.announce(message);
+  }
+}
+
+@Injectable()
+export class MenuDemo {
+  selected = '';
+  items = [
+    {text: 'Refresh'},
+    {text: 'Settings'},
+    {text: 'Help'},
+    {text: 'Sign Out', disabled: true}
+  ];
+
+  select(text: string) { this.selected = text; }
+}
+
+jb_ui.registerProviders({
+  LiveAnnouncerDemo: LiveAnnouncerDemo,
+  MenuDemo: MenuDemo
+});
