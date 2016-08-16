@@ -41,7 +41,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 },
                 impl: function (context, id) {
                     var modal = context.params.modal;
-                    var dialog = { id: id, onOK: context.params.onOK, modal: modal, $: $('div'), em: new jb_rx.Subject() };
+                    var dialog = {
+                        id: id,
+                        onOK: context.params.onOK,
+                        modal: modal,
+                        $: $('div'),
+                        em: new jb_rx.Subject(),
+                    };
+                    //		dialog.em.subscribe(e=>console.log(e.type));
                     var ctx = (modal ? context.setVars({ dialogData: {} }) : context)
                         .setVars({ $dialog: dialog });
                     dialog.comp = jb_ui.ctrl(ctx).jbExtend({
@@ -54,7 +61,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                             cmp.contentComp = ctx.params.content(ctx);
                             cmp.menuComp = ctx.params.menu(ctx);
                             cmp.hasMenu = !!ctx.params.menu.profile;
-                            cmp.dialog.em.next({ type: 'attach' });
                         }
                     });
                     jbart.jb_dialogs.addDialog(dialog, ctx);

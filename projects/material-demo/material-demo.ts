@@ -67,8 +67,7 @@ jb.component('material-demo.main', {
                   }
                 ]
               }
-            ], 
-            
+            ]
           }, 
           {$: 'custom-control', 
             title: 'buttons', 
@@ -939,7 +938,7 @@ md-list, md-nav-list {
   }
 `, 
             features :{$: 'feature.ng-attach-object', 
-              data :{$: 'injector-get', provider: 'LiveAnnouncerDemo' }
+              data :{$: 'injector-get', provider: 'MenuDemo' }
             }
           }
         ]

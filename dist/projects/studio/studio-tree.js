@@ -117,7 +117,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             },
                             onDoubleClick: [
                                 { $: 'studio.open-properties' },
-                                { $: 'studio.highlight-in-preview' },
+                                { $: 'studio.highlight-in-preview', path: { $: 'studio.currentProfilePath' } },
                             ],
                         },
                         { $: 'tree.keyboard-selection', onEnter: { $: 'studio.open-properties' } },
@@ -135,7 +135,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'tree.nodeModel',
                 params: {},
                 impl: function (context) {
-                    var currentPath = context.str({ $: 'studio.currentProfilePath' });
+                    var currentPath = context.runGlobal({ $: 'studio.currentProfilePath' });
                     var compPath = currentPath.split('~')[0] || '';
                     return new studio.ControlModel(compPath);
                 }

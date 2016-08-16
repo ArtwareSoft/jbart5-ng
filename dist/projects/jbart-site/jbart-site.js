@@ -122,7 +122,38 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('jbart-site.bb', {
                 type: 'control',
-                impl: { $: 'group', title: 'bb' }
+                impl: { $: 'group',
+                    title: 'bbb',
+                    controls: [
+                        { $: 'label',
+                            title: 'label',
+                            style: { $: 'label.md-card-title' }
+                        },
+                        { $: 'itemlist-with-heading',
+                            headingCtrl: { $: 'label',
+                                title: '%title%',
+                                style: { $: 'label.md-card-title' }
+                            },
+                            watchItems: true,
+                            itemVariable: 'item',
+                            items: { $: 'list', items: ['a.1', 'b.2'] },
+                            title: 'itemlist',
+                            style: { $: 'itemlist.ul-li' },
+                            controls: [
+                                { $: 'label',
+                                    title: '%%',
+                                    style: { $: 'label.span' }
+                                }
+                            ],
+                            groupBy: { $: 'itemlist-heading.group-by' },
+                            features: { $: 'css', css: '.jb-item:not(.heading) { margin-left: 30px }' }
+                        },
+                        { $: 'editable-text',
+                            style: { $: 'editable-text.md-input' },
+                        }
+                    ],
+                    style: { $: 'group.md-card' },
+                }
             });
         }
     }

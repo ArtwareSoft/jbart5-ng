@@ -67,6 +67,22 @@ jb_tests('md-ui-tests', {
     expectedHtmlResult: { $: 'contains', text: 'cc' }
   },
 
+  'md-card-title' :{$: 'ng2-ui-test',  
+    control :{$: 'label', title: 'ccc', 
+        style :{$: 'label.md-card-title' }
+    },
+    expectedHtmlResult: { $: 'contains', text: 'cc' }
+  },
+
+  'md-input' :{$: 'ng2-ui-test',  
+    control :{ $: 'editable-text', 
+      title: 'name', 
+      databind: '%$person/name%', 
+      style :{$: 'editable-text.md-input'} 
+    },
+    expectedHtmlResult: { $: 'contains', text: ['name', 'Homer'] }
+  },
+
   'button.md-icon' :{$: 'ng2-ui-test',  
     control :{$: 'button', 
       title: 'ccc',
@@ -287,6 +303,13 @@ itemlist :{$: 'ng2-ui-test',
       controls :{$: 'label', title: '%name%' } 
     },
   ]},
+  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', 'Bart Simpson'] },
+},
+
+'itemlist-basic' :{$: 'ng2-ui-test', control :
+    { $: 'itemlist', items: '%$people%',
+      controls :{$: 'label', title: '%name%' } 
+    },
   expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', 'Bart Simpson'] },
 },
 

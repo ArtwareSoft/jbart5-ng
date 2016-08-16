@@ -5,44 +5,90 @@ import * as jb_ui from 'jb-ui';
 jb.type('itemlist.heading','inject headings to itemlist');
 jb.type('itemlist-heading.style');
 
-jb.component('itemlist-heading', {
-    type: "control",
-    params: {
-        title: { essential: true, dynamic: true, defaultValue: '%title%' },
-        style: { type: 'itemlist-heading.style', defaultValue: { $: 'itemlist-heading.h1' }, dynamic: true },
-        features: { type: 'feature[]', dynamic: true },
+jb.component('itemlist-with-heading', {
+  type: 'control',
+  params: {
+    title: { as: 'string' },
+    items: { as: 'array' , dynamic: true, essential: true },
+    controls: { type: 'control[]', essential: true, dynamic: true },
+    style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+    groupBy: { type: 'itemlist.group-by', essential: true, dynamic: true },
+    headingCtrl: { type: 'control', dynamic: true , defaultValue: {$: 'label', title: '%title%' } },
+    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
+    itemVariable: { as: 'string', defaultValue: 'item' },
+    features: { type: 'feature[]', dynamic: true, flattenArray: true },
+  },
+  impl :{$: 'group', 
+    title: '%$title%',
+    style :{$call: 'style'},
+    controls :{$: 'dynamic-controls', 
+      controlItems : '%$items_array%',
+      genericControl :{$if: '%heading%', 
+        then: {$call: 'headingCtrl'},
+        else: {$call: 'controls'}, 
+      },
+      itemVariable: '%$itemVariable%'
     },
-    impl: ctx => 
-      jb_ui.ctrl(ctx).jbExtend({
-      beforeInit: cmp =>
-        cmp.title = ctx.params.title()
-    })
+    features :[
+      {$call: 'features'},
+      {$: 'itemlist.watch-items-with-heading', 
+        items: {$call: 'items'}, 
+        groupBy: {$call: 'groupBy'}, 
+        watch: '%$watchItems%', 
+        itemsArrayVariable: 'items_array' 
+      }, 
+    ]
+  }
 })
 
-jb.component('itemlist-heading.h1', {
-    type: 'itemlist-heading.style',
-    impl :{$: 'customStyle', 
-        template: '<h1>{{title}}</h1>',
-    }
-})
-
-jb.component('itemlist.heading', {
+jb.component('itemlist.watch-items-with-heading', {
   type: 'feature',
   params: {
-    heading: { type: 'itemlist-heading', essential: true, dynamic: true },
+    items: { essential: true, dynamic: true },
+    itemsArrayVariable: { as: 'string' },
+    watch: { type: 'boolean', as: 'boolean', defaultValue: true },
+    groupBy: { type: 'itemlist.group-by', essential: true, dynamic: true },
   },
-  impl: (ctx,heading) => ({
+  impl: function(context, items, itemsArrayVariable,watch,groupBy) {
+    return {
       beforeInit: function(cmp) {
-        cmp.calc_heading = items =>
-          heading(ctx.setData(items))
+          var itemsEm = cmp.jbEmitter
+              .filter(x => x == 'check')
+              .map(x=>
+                items(cmp.ctx))
+              .filter(items=> 
+                !jb_compareArrays(items,cmp.items)) // compare before injecting headings
+              .do(items => 
+                cmp.items = items)
+              .map(items => 
+                groupBy(cmp.ctx.setData(items)) || items
+               )
+              .do(items => 
+                cmp.items_with_headings = items)
+              .map(items=> {
+                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
+                  var ctx3 = itemsArrayVariable ? ctx2.setVars(jb.obj(itemsArrayVariable,items)) : ctx2;
+                  var ctrls = context.vars.$model.controls(ctx3);
+                  return ctrls;
+              });
+
+          cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
       },
-    })
+      observable: () => {} // to create jbEmitter
+  }}
 })
 
-jb.component('itemlist-headings.group-by', {
-  type: 'itemlist-headings',
+jb.component('itemlist-default-heading', {
+    type: 'control',
+    impl :{$: 'label', title: '%title%' }
+})
+
+// ************* itemlist.group-by ****************
+
+jb.component('itemlist-heading.group-by', {
+  type: 'itemlist.group-by',
   params: {
-    itemToGroupID: { dynamic: true, defaultValue: { $: 'prefix', separator: '.', text: '%id%' } },
+    itemToGroupID: { dynamic: true, defaultValue: { $: 'prefix', separator: '.' } },
     promoteGroups: { type: 'data[]', as: 'array' },
   },
   impl: (ctx,itemToGroupID,promoteGroups) => {

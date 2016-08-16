@@ -3,9 +3,7 @@ function jb_run(context,parentParam,settings) {
     var profile = context.profile;
     // if (jbart.trace_paths)
     //   console.log('path: ' +context.path);
-    if (jbart.probe && jbart.probe.pathToTrace && !(settings || {}).noprobe) {
-      jbart.probe.traceGaps(context,parentParam);
-      if (context.path && jbart.probe.pathToTrace == context.path )
+    if (jbart.probe && profile.$probe && !context.noprobe) {
           return jbart.probe.record(context,parentParam)
     }
     if (profile === null) return;
@@ -17,10 +15,10 @@ function jb_run(context,parentParam,settings) {
     var jstype = parentParam && parentParam.as;
     switch (run.type) {
       case 'booleanExp': return jb_bool_expression(profile, context);
-      case 'expression': return jb_tojstype(jb_expression(profile, context), jstype, context);
-      case 'expressionRef': return jb_expression(profile, context,jstype);
+      case 'expression': return jb_tojstype(jb_expression(profile, context,parentParam), jstype, context);
+      case 'expressionRef': return jb_expression(profile, context,parentParam);
       case 'asIs': return profile;
-      case 'object': return jb_entriesToObject(jb_entries(profile).map(e=>[e[0],context.run(e[1])]));
+      case 'object': return jb_entriesToObject(jb_entries(profile).map(e=>[e[0],context.run(e[1],null,e[0])]));
       case 'function': return jb_tojstype(profile(context),jstype, context);
       case 'null': return jb_tojstype(null,jstype, context);
       case 'ignore': return context.data;
@@ -87,10 +85,14 @@ function jb_prepare(context,parentParam) {
 
   if (isArray) {
     if (!profile.length) return { type: 'null' };
-    if (!parentParam || !parentParam.type || parentParam.type === 'data' || parentParam.type === 'boolean' ) // pipeline as default for array
+    if (!parentParam || !parentParam.type || parentParam.type === 'data' || parentParam.type === 'boolean' ) { // pipeline as default for array
+      profile.sugar = true;
       return { type: (parentParam && parentParam.as === 'observable') ? 'rx-pipeline' : 'pipeline' };
-    if (parentParam_type === 'action' || parentParam_type === 'action[]' && profile.isArray)
+    }
+    if (parentParam_type === 'action' || parentParam_type === 'action[]' && profile.isArray) {
+      profile.sugar = true;
       return { type: 'foreach' };
+    }
   } else if (profile.$if) 
   return {
       type: 'if',
@@ -127,6 +129,7 @@ function jb_prepare(context,parentParam) {
       if (param.dynamic) {
         var func = jb_funcDynamicParam(ctx,valOrDefault,param,p);
         func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
+        func.path = ctx.path;
         paramsArray.push( { name: p, type: 'function', func: func } );
       } else if (param.type && param.type.indexOf('[]') > -1 && jb_isArray(valOrDefault)) // array of profiles
         paramsArray.push( { name: p, type: 'array', array: valOrDefault, param: {} } );
@@ -172,15 +175,22 @@ function jb_var(context,varname) {
   return jb_resolveFinishedPromise(res);
 }
 
-function jb_expression(expression, context, jstype) {
+function jb_expression(expression, context, parentParam) {
+  var jstype = parentParam && parentParam.as;
   expression = '' + expression;
   if (jstype == 'boolean') return jb_bool_expression(expression, context);
   if (expression.indexOf('$debugger:') == 0) {
     debugger;
     expression = expression.split('$debugger:')[1];
   }
+  if (jbart.probe && expression.indexOf('$probe:') == 0) {
+    if (context.noprobe)
+      expression = expression.split('$probe:')[1];
+    else
+      return jbart.probe.record(context,parentParam);
+  }
   if (expression.indexOf('$log:') == 0) {
-    var out = jb_expression(expression.split('$log:')[1],context,jstype);
+    var out = jb_expression(expression.split('$log:')[1],context,parentParam);
     jbart.comps.log.impl(context, out);
     return out;
   }
@@ -210,7 +220,7 @@ function jb_expression(expression, context, jstype) {
     // check variable value - if not empty return all expression, otherwise empty
     var match = expression.match(/%([^%;{}\s><"']*)%/);
     if (match && jb_tostring(expPart(match[1],context,'string')))
-      return jb_expression(expression, context, 'string');
+      return jb_expression(expression, context, { as: 'string' });
     else
       return '';
   }
@@ -276,7 +286,7 @@ function jb_bool_expression(expression, context) {
     expression = expression.split('$debugger:')[1];
   }
   if (expression.indexOf('$log:') == 0) {
-    var calculated = jb_expression(expression.split('$log:')[1],context,'string');
+    var calculated = jb_expression(expression.split('$log:')[1],context,{as: 'string'});
     var result = jb_bool_expression(expression.split('$log:')[1], context);
     jbart.comps.log.impl(context, calculated + ':' + result);
     return result;
@@ -285,7 +295,7 @@ function jb_bool_expression(expression, context) {
     return !jb_bool_expression(expression.substring(1), context);
   var parts = expression.match(/(.+)(==|!=|<|>|>=|<=|\^=|\$=)(.+)/);
   if (!parts) {
-    var asString = jb_expression(expression, context, 'string');
+    var asString = jb_expression(expression, context, {as: 'string'});
     return !!asString && asString != 'false';
   }
   if (parts.length != 4)
@@ -293,8 +303,8 @@ function jb_bool_expression(expression, context) {
   var op = parts[2].trim();
 
   if (op == '==' || op == '!=' || op == '$=' || op == '^=') {
-    var p1 = jb_expression(trim(parts[1]), context, 'string');
-    var p2 = jb_expression(trim(parts[3]), context, 'string');
+    var p1 = jb_expression(trim(parts[1]), context, {as: 'string'});
+    var p2 = jb_expression(trim(parts[3]), context, {as: 'string'});
     p2 = (p2.match(/^["'](.*)["']/) || [,p2])[1]; // remove quotes
     if (op == '==') return p1 == p2;
     if (op == '!=') return p1 != p2;
@@ -302,8 +312,8 @@ function jb_bool_expression(expression, context) {
     if (op == '$=') return p1.indexOf(p2, p1.length - p2.length) !== -1;
   }
 
-  var p1 = jb_tojstype(jb_expression(parts[1].trim(), context), 'number');
-  var p2 = jb_tojstype(jb_expression(parts[3].trim(), context), 'number');
+  var p1 = jb_tojstype(jb_expression(parts[1].trim(), context), {as:'number'});
+  var p2 = jb_tojstype(jb_expression(parts[3].trim(), context), {as:'number'});
 
   if (op == '>') return p1 > p2;
   if (op == '<') return p1 < p2;

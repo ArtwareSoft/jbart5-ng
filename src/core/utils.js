@@ -51,12 +51,16 @@ function jbCtx(context,ctx2) {
   if (typeof context == 'undefined')
     this.vars = this.params = this.resources = {}
   else {
-    if (ctx2.profile && ctx2.path == null)
+    if (ctx2.profile && ctx2.path == null) {
+      debugger;
       ctx2.path = '?';
+    }
     this.profile = (typeof(ctx2.profile) != 'undefined') ?  ctx2.profile : context.profile;
-    this.fullPath = (context.fullPath || '') + (ctx2.comp ? `[${ctx2.comp}]` : '') + (ctx2.path ? '~' + ctx2.path : '');
+    this.fullPath = (context.fullPath || '') + (ctx2.comp ? ctx2.comp : '') + (ctx2.path ? '~' + ctx2.path : '');
+    if (ctx2.fullPath != null)
+      this.fullPath = ctx2.fullPath; 
     this.path = (ctx2.comp || context.path || '') + (ctx2.path ? '~' + ctx2.path : '');
-    this.data= (typeof ctx2.data != 'undefined') ? ctx2.data : context.data;     // allowing setting data:null
+    this.data= (typeof ctx2.data != 'undefined') ? ctx2.data : context.data;     // allow setting of data:null
     this.vars= ctx2.vars ? jb_extend({},context.vars,ctx2.vars) : context.vars;
     this.params= ctx2.params || context.params;
     this.resources= context.resources;
@@ -65,12 +69,15 @@ function jbCtx(context,ctx2) {
   }
 }
 jbCtx.prototype = {
-  exp: function(expression,jstype) { return jb_expression(expression, this, jstype) },
+  runGlobal:  function(profile) { return jb_run(jb_ctx(this,{ profile: profile, comp: profile.$ , path: ''})) },
+  exp: function(expression,jstype) { return jb_expression(expression, this, {as: jstype}) },
   setVars: function(vars) { return new jbCtx(this,{vars: vars}) },
   setData: function(data) { return new jbCtx(this,{data: data}) },
   run: function(profile,parentParam, path) { return jb_run(new jbCtx(this,{profile: profile,path: path}), parentParam) },
-  str: function(profile) { return this.run(profile, { as: 'string'}) },
+//  str: function(profile) { return this.run(profile, { as: 'string'}) },
   bool: function(profile) { return this.run(profile, { as: 'boolean'}) },
+  ctx: function(ctx2) { return jb_ctx(this,ctx2) },
+  runItself: function(parentParam) { return jb_run(this,parentParam) },
 }
 
 function jb_ctx(context,ctx2) {
@@ -361,7 +368,9 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
   return { result : result, positions : positions }
 
   function sortedPropertyNames(obj) {
-    var props = jb_entries(obj).map(x=>x[0]).filter(p=>p.indexOf('$jb') != 0); // keep the order
+    var props = jb_entries(obj).map(x=>x[0]) // keep the order
+      .filter(p=>p.indexOf('$jb') != 0)
+      .filter(p=>p.indexOf('$probe') != 0); 
     var comp_name = jb_compName(profile);
     if (comp_name) { // tgp obj
       var params = jb_entries((jbart.comps[comp_name] || {}).params || {}).map(x=>x[0]);
@@ -381,6 +390,8 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
       val = val.items;
     if (Array.isArray(val)) return printArray(val,path);
     if (typeof val === 'object') return printObj(val,path);
+    if (typeof val === 'string' && val.indexOf('$probe:') == 0)
+      val = val.split('$probe:')[1];
     if (typeof val === 'function')
       result += val.toString();
     else if (typeof val === 'string' && val.indexOf('\n') == -1) 

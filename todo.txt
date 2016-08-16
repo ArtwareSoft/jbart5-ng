@@ -1,17 +1,17 @@
 
 build the jbart.io site like https://material.angular.io/
 
-picklist.md-input
+itemlist heading + search for create new control
 
-edit resources
+edit/save resources
 
 animation in expand/collapse
-animation on studio refresh component
 
 studio
 ======
 
 jb editor
+	fix boolean
     vars (for object)
 	$object
 
@@ -23,5 +23,6 @@ run all projects tests
 
 probe
 ======
+use full path
 tests
 issues with pipeline comp sugar

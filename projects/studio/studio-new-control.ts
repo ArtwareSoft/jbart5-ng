@@ -48,7 +48,9 @@ jb.component('studio.onNextModifiedPath', {
 jb.component('studio.openModifiedPath', {
 	type: 'action',
 	impl :{ $runActions: [
-            { $: 'writeValue', to: '%$globals/profile_path%', value: '%$modifiedPath%' }
+            { $: 'writeValue', to: '%$globals/profile_path%', value: '%$modifiedPath%' },
+            {$: 'studio.open-properties'},
+            {$: 'studio.open-control-tree'},
           ]}
 })
 

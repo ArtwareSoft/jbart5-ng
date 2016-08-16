@@ -74,7 +74,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                                 }
                                             ]
                                         }
-                                    ],
+                                    ]
                                 },
                                 { $: 'custom-control',
                                     title: 'buttons',
@@ -158,7 +158,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     html: "<div class=\"demo-menu\">\n  <div class=\"menu-section\">\n    <p>You clicked on: {{ selected }}</p>\n\n    <md-toolbar>\n      <button md-icon-button [md-menu-trigger-for]=\"menu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu #menu=\"mdMenu\">\n      <button md-menu-item *ngFor=\"let item of items\" (click)=\"select(item.text)\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </button>\n    </md-menu>\n  </div>\n  <div class=\"menu-section\">\n    <p> Clicking these will navigate:</p>\n    <md-toolbar>\n      <button md-icon-button [md-menu-trigger-for]=\"anchorMenu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu #anchorMenu=\"mdMenu\">\n      <a md-menu-item *ngFor=\"let item of items\" href=\"http://www.google.com\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </a>\n    </md-menu>\n  </div>\n  <div class=\"menu-section\">\n    <p>\n      Position x: before\n    </p>\n    <md-toolbar class=\"end-icon\">\n      <button md-icon-button [md-menu-trigger-for]=\"posXMenu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu x-position=\"before\" #posXMenu=\"mdMenu\" class=\"before\">\n      <button md-menu-item *ngFor=\"let item of items\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </button>\n    </md-menu>\n  </div>\n  <div class=\"menu-section\">\n    <p>\n      Position y: above\n    </p>\n    <md-toolbar>\n      <button md-icon-button [md-menu-trigger-for]=\"posYMenu\">\n        <md-icon>more_vert</md-icon>\n      </button>\n    </md-toolbar>\n\n    <md-menu y-position=\"above\" #posYMenu=\"mdMenu\">\n      <button md-menu-item *ngFor=\"let item of items\" [disabled]=\"item.disabled\">\n        {{ item.text }}\n      </button>\n    </md-menu>\n  </div>\n</div>\n",
                                     css: ".demo-menu {\n  display: flex;\n  flex-flow: row wrap;\n}\n\n.menu-section {\n    width: 300px;\n    margin: 20px;\n  }\n\n  .end-icon {\n    align-items: flex-end;\n  }\n",
                                     features: { $: 'feature.ng-attach-object',
-                                        data: { $: 'injector-get', provider: 'LiveAnnouncerDemo' }
+                                        data: { $: 'injector-get', provider: 'MenuDemo' }
                                     }
                                 }
                             ]

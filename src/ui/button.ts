@@ -36,7 +36,7 @@ jb.component('button.x', {
     size: { as: 'number', defaultValue: '21'}
   },
   impl :{$: 'customStyle', 
-      template: '<span><button (click)="clicked()" [title]="title" style=":hover { opacity: .5 }">&#215;</button></span>',
+      template: '<div><button (click)="clicked()" [title]="title" style=":hover { opacity: .5 }">&#215;</button></div>',
       css: `button {
             cursor: pointer; 
             font: %$size%px sans-serif; 
@@ -54,7 +54,7 @@ jb.component('button.x', {
 jb.component('button.popup-menu', {
   type: 'button.style',
   impl :{$: 'customStyle',  
-      template: '<span><button (click)="clicked()" [title]="title"></button></span>',
+      template: '<div><button (click)="clicked()" [title]="title"></button></div>',
       css: `
     button { border: none; cursor: pointer;  width: 0px;  height: 0px;  
       margin: 8px 0 0 6px;  border-top: 5px solid #91B193;  border-bottom: 3px solid transparent;  border-right: 4px solid transparent;  border-left: 4px solid transparent;

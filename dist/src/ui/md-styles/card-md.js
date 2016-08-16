@@ -18,7 +18,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
             jb_core_1.jb.component('group.md-card', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<md-card>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card>",
+                    template: "<div><md-card>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card></div>",
                     features: { $: 'group.initGroup' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
@@ -26,7 +26,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
             jb_core_1.jb.component('group.md-card-actions', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<md-card-actions>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-actions>",
+                    template: "<div><md-card-actions>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-actions></div>",
                     features: { $: 'group.initGroup' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
@@ -34,7 +34,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
             jb_core_1.jb.component('group.md-card-content', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<md-card-content>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-content>",
+                    template: "<div><md-card-content>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-content></div>",
                     features: { $: 'group.initGroup' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
@@ -42,7 +42,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
             jb_core_1.jb.component('group.md-card-header', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<md-card-header>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-header>",
+                    template: "<div><md-card-header>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-header></div>",
                     features: { $: 'group.initGroup' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
@@ -50,7 +50,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
             jb_core_1.jb.component('label.md-card-title', {
                 type: 'label.style',
                 impl: { $: 'customStyle',
-                    template: '<md-card-title>{{title}}</md-card-title>',
+                    template: '<div><md-card-title>{{title}}</md-card-title></div>',
                     features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
@@ -58,7 +58,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
             jb_core_1.jb.component('label.md-card-subtitle', {
                 type: 'label.style',
                 impl: { $: 'customStyle',
-                    template: '<md-card-subtitle>{{title}}</md-card-subtitle>',
+                    template: '<div><md-card-subtitle>{{title}}</md-card-subtitle></div>',
                     features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }

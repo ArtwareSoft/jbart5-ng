@@ -30,7 +30,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
             return ctx.run(jb_1.jb.extend({}, profile, { $: 'run-studio-test' }));
         }
         else if (profile.control)
-            return ctx.run(profile.control);
+            return jb_run(jb_1.jb.ctx(ctx, { profile: profile.control, comp: 'tests~' + compID, path: '' }));
         else if (profile.result)
             return jb_ui.Comp({
                 template: '<div>{{result}}</div>',

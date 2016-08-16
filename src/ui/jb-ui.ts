@@ -111,7 +111,7 @@ class jbComponent {
 			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
 			this.jbEmitter && this.jbEmitter.next('after-init');
 			jb.delay(1).then(()=>{ // ugly huck to get event after children are initialized
-				if (this.jbEmitter) {
+				if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
 					this.jbEmitter.next('after-init-children');
 					if (this.readyCounter == null)
 						this.jbEmitter.next('ready');
@@ -157,7 +157,8 @@ class jbComponent {
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
 			jb.toarray(context.params.style.profile.features)
-				.forEach(f=>this.jbExtend(context.run(f),context))
+				.forEach((f,i)=>
+					this.jbExtend(context.run(f,{type:'feature'},context.path+'~features~'+i),context))
 		}
 		return this.jbExtend(options,context);
 	}
@@ -260,8 +261,8 @@ class jbComponent {
 		// ng-model or ngmodel => ngModel
 		annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
 
-		(options.features || []).forEach(f => 
-			this.jbExtend(context.run(f), context));
+		// (options.features || []).forEach(f => 
+		// 	this.jbExtend(context.run(f), context));
 		
 		(options.featuresOptions || []).forEach(f => 
 			this.jbExtend(f, context))
@@ -576,7 +577,8 @@ export class jBartWidget {
 		this.comps = [];
 		try {
 			if (this.compId)
-				this.comps = [this.getOrCreateInitialCtx().run({ $: this.compId })];
+				this.comps = [jb_run(jb.ctx(this.getOrCreateInitialCtx(),
+					{profile:{ $: this.compId }, comp: this.compId, path: '' } ];
 		} catch(e) { 
 			jb.logException(e,'') 
 		}	

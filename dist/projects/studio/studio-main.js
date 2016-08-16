@@ -185,7 +185,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             jb_core_1.jb.component('studio.projectPages', {
                 type: 'data',
                 impl: function (context) {
-                    var projectName = context.str('{%$globals/project%}');
+                    var projectName = context.exp('{%$globals/project%}');
                     if (!jbart.previewjbart)
                         return [];
                     var out = [];
@@ -205,7 +205,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                         }
                         previewIframe.prototype.ngOnInit = function () {
                             var cmp = this;
-                            cmp.project = ctx.str('%$globals/project%');
+                            cmp.project = ctx.exp('%$globals/project%');
                             cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/' + cmp.project);
                             if (!cmp.project)
                                 debugger;
@@ -313,11 +313,19 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             });
             jb_core_1.jb.component('studio.is-of-type', {
                 params: {
-                    path: { as: 'string' },
-                    type: { as: 'string' },
+                    path: { as: 'string', essential: true },
+                    type: { as: 'string', essential: true },
                 },
                 impl: function (context, path, _type) {
                     return studio.model.isOfType(path, _type);
+                }
+            });
+            jb_core_1.jb.component('studio.PTs-of-type', {
+                params: {
+                    type: { as: 'string', essential: true },
+                },
+                impl: function (context, _type) {
+                    return studio.model.PTsOfType(_type);
                 }
             });
             jb_core_1.jb.component('studio.short-title', {

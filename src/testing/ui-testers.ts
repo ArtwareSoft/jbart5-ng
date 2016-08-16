@@ -27,7 +27,7 @@ function testComp(compID,ngZone) {
 		return ctx.run(jb.extend({},profile,{$:'run-studio-test'}));
 	}
 	else if (profile.control)
-		return ctx.run(profile.control);
+		return jb_run(jb.ctx(ctx,{profile:profile.control, comp: 'tests~'+compID, path: ''}));
 	else if (profile.result)
 		return jb_ui.Comp({ 
 			template: '<div>{{result}}</div>',

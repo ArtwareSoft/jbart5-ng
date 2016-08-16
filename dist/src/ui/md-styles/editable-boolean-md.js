@@ -18,14 +18,14 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/slide-toggle/slide-togg
             jb_core_1.jb.component('editable-boolean.md-slide-toggle', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<span><md-slide-toggle %$field.modelExp% >{{text()}}</md-slide-toggle></span>",
+                    template: "<div><md-slide-toggle %$field.modelExp% >{{text()}}</md-slide-toggle></div>",
                     directives: 'MdSlideToggle'
                 }
             });
             jb_core_1.jb.component('editable-boolean.md-slide-toggle-fixed', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<span><md-slide-toggle color=\"primary\" class=\"fix-slide-toggle\" %$field.modelExp% >{{text()}}</md-slide-toggle></span>",
+                    template: "<div><md-slide-toggle color=\"primary\" class=\"fix-slide-toggle\" %$field.modelExp% >{{text()}}</md-slide-toggle></div>",
                     css: "\n  .fix-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {\n    background-color: #1f1f1f !important}\n  .fix-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {\n    background-color: #858585 !important; opacity: 0.5 }\n  .fix-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {\n    opacity: 1; background-color: #858585 !important; \n    background-color-old: rgba(0, 150, 136, 0.26); }\n      ",
                     noViewEncapsulation: true,
                     directives: 'MdSlideToggle'

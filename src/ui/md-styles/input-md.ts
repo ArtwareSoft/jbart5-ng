@@ -11,13 +11,13 @@ jb.component('editable-text.md-input',{
   },
   impl :{$: 'customStyle', 
    features :{$: 'editable-text.bindField' },
-   template: `<span><md-input %$field.modelExp% placeholder="{{title}}"></md-input></span>`,
+   template: `<div><md-input %$field.modelExp% placeholder="{{title}}"></md-input></div>`,
    methods: {
       	init: ctx => cmp =>
       		cmp.title = ctx.vars.$model.title()
       },
       css: 'md-input { {?width: %$width%px?} }',
-      directives: 'MdInput'
+//      directives: 'MdInput'
 	}
 })
 

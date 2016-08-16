@@ -98,9 +98,16 @@ jb.component('studio.jb-editor', {
           controls :{$: 'itemlist', 
             items: '%$probeResult%', 
             controls: [
-              {$: 'studio.data-browse', data: '%in/data%', title: 'in' }, 
-              {$: 'studio.data-browse', data: '%out%', title: 'out' }
-            ]
+              {$: 'group', 
+                controls: [
+                  {$: 'studio.data-browse', data: '%in/data%', title: 'in' }, 
+                  {$: 'studio.data-browse', data: '%out%', title: 'out' }
+                ], 
+                
+                title: 'in/out'
+              }
+            ], 
+            
           }
         }
       }
@@ -243,15 +250,8 @@ jb.component('studio.jb-editor-menu', {
             '%$controlItem%', 
             {$: 'suffix', separator: '~' }
           ], 
-          action: [
-            {$: 'studio.addProperty', path: '%$controlItem%' }, 
-            {$: 'writeValue', 
-              to: '%$globals/jb_editor_selection%', 
-              value: '%$controlItem%'
-            }, 
-            {$: 'closeContainingPopup' }, 
-            {$: 'tree.regain-focus' }
-          ]
+          action :{$: 'studio.addProperty', path: '%$controlItem%' }, 
+          
         }
       }, 
       {$: 'divider', 
@@ -280,19 +280,15 @@ jb.component('studio.jb-editor-menu', {
         style :{$: 'divider.br' }, 
         title: 'divider'
       }, 
-      // {$: 'pulldown.menu-item', 
-      //   title: 'Wrap with pipeline', 
-      //   action :{$: 'studio.wrapWithPipeline', path: '%$path%' }
-      // }, 
       {$: 'pulldown.studio-wrap-with', 
-        type: 'data',
-        path: '%$path%',
-        components :{$: 'list', items: [ 'pipeline', 'list', 'firstSucceeding'] }
+        type: 'data', 
+        path: '%$path%', 
+        components :{$: 'list', items: ['pipeline', 'list', 'firstSucceeding'] }
       }, 
       {$: 'pulldown.studio-wrap-with', 
         type: 'boolean', 
-        path: '%$path%',
-        components :{$: 'list', items: [ 'and', 'or', 'not'] }
+        path: '%$path%', 
+        components :{$: 'list', items: ['and', 'or', 'not'] }
       }, 
       {$: 'pulldown.menu-item', 
         title: 'Add property', 

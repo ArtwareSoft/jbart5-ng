@@ -18,19 +18,20 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                         })
                             .take(1)
                             .catch(function (e) {
+                            debugger;
                             dialog.close();
                             resolve();
                         })
                             .subscribe(function (x) {
-                            dialog.close();
+                            jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
                             resolve();
-                            console.log('close dialog');
+                            console.log('close test dialog');
                         });
                     },
                     css: '{display: none}'
                 })
             };
-            console.log('add dialog');
+            console.log('add test dialog');
             _win.jbart.jb_dialogs.addDialog(dialog, ctx);
             _win.setTimeout(function () { }, 1); // refresh
         });
@@ -55,32 +56,47 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                     this.probe = {};
                     this.circuit = this.context.profile;
                 }
-                Probe.prototype.traceGaps = function (context, parentParam) {
-                    var _this = this;
-                    if (context.path.indexOf('data-tests') == 0)
-                        console.log('running at', context.path, 'looking for ' + this.pathToTrace);
-                    if (typeof context.profile == 'object' && jb_core_1.jb.compName(context.profile))
-                        jb_core_1.jb.entries(context.profile)
-                            .filter(function (p) {
-                            return p[0].indexOf('on') == 0 || p[0].indexOf('action') == 0;
-                        })
-                            .forEach(function (p) {
-                            return _this.doTraceGaps(p[0], context);
-                        });
+                // traceGaps(context,parentParam) {
+                //   if (context.path.indexOf('data-tests') == 0)
+                //     console.log('running at',context.path, 'looking for ' + this.pathToTrace);
+                //   if (typeof context.profile == 'object' && jb.compName(context.profile))
+                //     jb.entries(context.profile)
+                //       .filter(p=>
+                //         p[0].indexOf('on') == 0 || p[0].indexOf('action') == 0)
+                //       .forEach(p => 
+                //         this.doTraceGaps(p[0],context))
+                // }
+                // doTraceGaps(prop,context) { // for action paths
+                //     var _win = jbart.previewWindow || window;
+                //     var path = context.path + '~' + prop;
+                //     var compName = studio.model.compName(path);
+                //     var ctx = _win.jb_ctx(context, { profile: context.profile[prop], path: prop});
+                //     var propCtx = _win.jb_prepare(ctx).ctx;
+                //     this.probe[path] = [{in: propCtx }];
+                //     jb.entries(bridge[compName])
+                //       .map(p=>path+'~'+p[0])
+                //       .forEach(inner_path=> {
+                //           this.probe[inner_path] = [{in: propCtx }]
+                //         })
+                // }
+                Probe.prototype.setTrace = function () {
+                    this.clearTrace();
+                    var profile = studio.profileFromPath(this.pathToTrace);
+                    if (jb_core_1.jb.compName(profile))
+                        profile.$probe = true;
+                    else if (typeof profile == 'string') {
+                        var profileRef = studio.profileRefFromPath(this.pathToTrace);
+                        jb_core_1.jb.writeValue(profileRef, "$probe:" + profile);
+                    }
                 };
-                Probe.prototype.doTraceGaps = function (prop, context) {
-                    var _this = this;
-                    var _win = jbart.previewWindow || window;
-                    var path = context.path + '~' + prop;
-                    var compName = studio.model.compName(path);
-                    var ctx = _win.jb_ctx(context, { profile: context.profile[prop], path: prop });
-                    var propCtx = _win.jb_prepare(ctx).ctx;
-                    this.probe[path] = [{ in: propCtx }];
-                    jb_core_1.jb.entries(bridge[compName])
-                        .map(function (p) { return path + '~' + p[0]; })
-                        .forEach(function (inner_path) {
-                        _this.probe[inner_path] = [{ in: propCtx }];
-                    });
+                Probe.prototype.clearTrace = function () {
+                    var profile = studio.profileFromPath(this.pathToTrace);
+                    if (jb_core_1.jb.compName(profile))
+                        delete profile.$probe;
+                    else if (typeof profile == 'string' && profile.indexOf('$probe:') == 0) {
+                        var profileRef = studio.profileRefFromPath(this.pathToTrace);
+                        jb_core_1.jb.writeValue(profileRef, profile.substr(7));
+                    }
                 };
                 Probe.prototype.runCircuitNoGaps = function () {
                     var _win = jbart.previewWindow || window;
@@ -89,52 +105,46 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                     else if (!studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action'))
                         return Promise.resolve(_win.jb_run(this.context));
                 };
-                Probe.prototype.runCircuitWithGaps = function () {
+                Probe.prototype.run = function () {
                     var _this = this;
                     var _jbart = studio.jbart_base();
                     _jbart.probe = this;
                     this.probe[this.pathToTrace] = [];
+                    this.setTrace();
                     return this.runCircuitNoGaps().then(function () {
-                        if (_this.probe[_this.pathToTrace].length > 0) {
-                            _jbart.probe = null;
-                            return _this.probe[_this.pathToTrace];
-                        }
-                        else {
-                            return _this.rerunCircuit();
-                        }
+                        _jbart.probe = null;
+                        _this.clearTrace();
+                        return _this.probe[_this.pathToTrace];
                     });
+                    // return this.runCircuitNoGaps().then(()=>{
+                    //   if (this.probe[this.pathToTrace].length > 0) {
+                    //     _jbart.probe = null;
+                    //     return this.probe[this.pathToTrace];
+                    //   } else {
+                    //     return this.rerunCircuit();
+                    //   }
+                    // })
                 };
-                Probe.prototype.rerunCircuit = function () {
-                    var _this = this;
-                    var path_parts = this.pathToTrace.split('~');
-                    var sub_paths = path_parts.map(function (e, i) {
-                        return path_parts.slice(0, i + 1).join('~');
-                    }).reverse();
-                    var gapToRun = sub_paths
-                        .filter(function (p) {
-                        return _this.probe[p] && _this.probe[p].length;
-                    })
-                        .map(function (p) {
-                        return _this.bridge(p, _this.probe[p][0].in);
-                    })
-                        .filter(function (x) { return x; })[0];
-                    if (gapToRun)
-                        return new Probe(this.pathToTrace, gapToRun, (this.depth || 0) + 1).runCircuitWithGaps();
-                };
+                // rerunCircuit() {
+                //   var path_parts = this.pathToTrace.split('~');
+                //   var sub_paths = path_parts.map((e,i)=>
+                //     path_parts.slice(0,i+1).join('~')).reverse();
+                //   var gapToRun = sub_paths
+                //     .filter(p=>
+                //       this.probe[p] && this.probe[p].length)
+                //     .map(p=>
+                //       this.bridge(p,this.probe[p][0].in))
+                //     .filter(x=>x)
+                //     [0];
+                //   if (gapToRun)
+                //     return new Probe(this.pathToTrace,gapToRun,(this.depth||0)+1).run();
+                // }
                 Probe.prototype.record = function (context, parentParam) {
-                    var input = new jbCtx(context, {});
-                    var out = jb_run(context, parentParam, { noprobe: true });
-                    this.probe[context.path].push({ in: input, out: jb_val(out) });
+                    var input = context.ctx({});
+                    input.noprobe = true;
+                    var out = input.runItself(parentParam);
+                    this.probe[this.pathToTrace].push({ in: input, out: jb_val(out) });
                     return out;
-                };
-                Probe.prototype.bridge = function (path, inCtx) {
-                    var compName = studio.model.compName(studio.parentPath(path));
-                    var prop = path.split('~').pop();
-                    if (!bridge[compName] || !bridge[compName][prop])
-                        return;
-                    if (bridge[compName][prop] == 'default')
-                        return jb_core_1.jb.ctx(ctx, { profile: profile[prop], path: prop });
-                    return bridge[compName][prop](path, inCtx);
                 };
                 return Probe;
             }());
@@ -160,8 +170,8 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                     var _jbart = studio.jbart_base();
                     var _win = jbart.previewWindow || window;
                     var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
-                    var context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: '' });
-                    return new Probe(path(), context).runCircuitWithGaps();
+                    var context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: '', fullPath: circuit });
+                    return new Probe(path(), context).run();
                 }
             });
         }

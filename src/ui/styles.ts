@@ -14,6 +14,9 @@ jb.component('customStyle', {
 		directives: { ignore: true }
 	},
 	impl: function (context,template,css,features,methods,atts,noViewEncapsulation) {
+		var defaultOptions = {directives: jb.entries(jbart.ng.directives)
+			.map(x=>x[0])
+		};
 		var options = jb.extend({
 				jbTemplate: template,
 				css: css,
@@ -23,6 +26,7 @@ jb.component('customStyle', {
 			},methods);
 		if (noViewEncapsulation)
 			jb.extend(options,{encapsulation: ViewEncapsulation.None})
+		jb.extend(options,defaultOptions);
 
 		return options;
 	}

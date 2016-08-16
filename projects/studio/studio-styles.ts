@@ -49,7 +49,7 @@ jb.component('button.studio-data-script',{
 jb.component('editable-boolean.studio-slide-toggle', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 
-      template: `<span><md-slide-toggle color="primary" class="studio-slide-toggle" %$field.modelExp% >{{text()}}</md-slide-toggle></span>`,
+      template: `<div><md-slide-toggle color="primary" class="studio-slide-toggle" %$field.modelExp% >{{text()}}</md-slide-toggle></div>`,
       css: `
       .studio-slide-toggle { margin: 0 !important; width: 153px; }
   .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {
@@ -171,9 +171,9 @@ jb.component('property-sheet.studio-plain', {
 //     icon: { as: 'string', default: 'code' },
 //   },
 //   impl :{$: 'customStyle', 
-//       template: `<span><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
+//       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
 //                 <i class="material-icons">%$icon%</i>
-//               </button></span>`,
+//               </button></div>`,
 //       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
 //      	.material-icons { font-size:12px;  }
 //       `
@@ -183,9 +183,9 @@ jb.component('property-sheet.studio-plain', {
 jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle',
-      template: `<span><button md-icon-button md-button (click)="toggle()" title="{{yesNo ? 'collapse' : 'expand'}}">
+      template: `<div><button md-icon-button md-button (click)="toggle()" title="{{yesNo ? 'collapse' : 'expand'}}">
       	<i class="material-icons">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>
-      	</button></span>`,
+      	</button></div>`,
       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
      	.material-icons { font-size:12px;  }
       `
@@ -195,9 +195,9 @@ jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
 jb.component('editable-boolean.studio-expand-collapse-in-array', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle',
-      template: `<span><button md-icon-button md-button (click)="toggle()" title="{{yesNo ? 'collapse' : 'expand'}}">
+      template: `<div><button md-icon-button md-button (click)="toggle()" title="{{yesNo ? 'collapse' : 'expand'}}">
       	<i class="material-icons">{{yesNo ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>
-      	</button></span>`,
+      	</button></div>`,
       css: `button { width: 24px; height: 24px; padding: 0; }
      	.material-icons { font-size:12px;  }
       `
@@ -207,7 +207,7 @@ jb.component('editable-boolean.studio-expand-collapse-in-array', {
 // jb.component('button.studio-edit-js', {
 //   type: 'button.style',
 //   impl :{$: 'customStyle',  
-//   	template: '<span><button (click)="clicked()" [title]="title">{}</button></span>',
+//   	template: '<div><button (click)="clicked()" [title]="title">{}</button></div>',
 //   	css: `{ margin-top: -2px; margin-left: -3px; margin-right: -5px;}
 //   		 button { cursor: pointer; 
 //             font: 12px sans-serif; 
@@ -225,7 +225,7 @@ jb.component('editable-boolean.studio-expand-collapse-in-array', {
 // jb.component('button.studio-delete', {
 //   type: 'button.style',
 //   impl :{$: 'customStyle',  
-//       template: '<span><button (click)="clicked()" [title]="title">&#215;</button></span>',
+//       template: '<div><button (click)="clicked()" [title]="title">&#215;</button></div>',
 //       css: `{ margin-left: -4px; margin-top: -1px }
 //       button {
 //             cursor: pointer; 

@@ -93,22 +93,6 @@ jb.component('studio-dialogFeature.studioPopupLocation',{
 			}
 		}
 	}
-	// .studio-floating-dialog.id-templates.default-location
-
-	// impl: function(context) {
-	// 	var dialog = context.vars.$dialog;
-
-	// 	jb.bind(dialog,'attach',function() {
-	// 		if (sessionStorage[dialog.id]) return;
-	// 		if (dialog.id == 'studio-properties')
-	// 			dialog.$el.css('top','100px').css('left','790px');
-	// 			//dialog.$el.css('top','110px').css('right','600px').css('left','600px');
-	// 		if (dialog.id == 'studio-control-tree')
-	// 			//dialog.$el.css('top','0px').css('right','306px').css('left','initial');
-	// 			dialog.$el.css('top','100px').css('left','490px');
-	// 		dialog.$el.addClass('default-location');
-	// 	});
-	// }
 })
 
 jb.component('studio.code-mirror-mode',{

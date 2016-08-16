@@ -8,7 +8,7 @@ jb_ui.registerDirectives({MdSlideToggle: MdSlideToggle});
 jb.component('editable-boolean.md-slide-toggle', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 
-      template: `<span><md-slide-toggle %$field.modelExp% >{{text()}}</md-slide-toggle></span>`,
+      template: `<div><md-slide-toggle %$field.modelExp% >{{text()}}</md-slide-toggle></div>`,
       directives: 'MdSlideToggle'
   }
 })
@@ -16,7 +16,7 @@ jb.component('editable-boolean.md-slide-toggle', {
 jb.component('editable-boolean.md-slide-toggle-fixed', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 
-      template: `<span><md-slide-toggle color="primary" class="fix-slide-toggle" %$field.modelExp% >{{text()}}</md-slide-toggle></span>`,
+      template: `<div><md-slide-toggle color="primary" class="fix-slide-toggle" %$field.modelExp% >{{text()}}</md-slide-toggle></div>`,
       css: `
   .fix-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {
     background-color: #1f1f1f !important}

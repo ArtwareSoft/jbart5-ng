@@ -83,11 +83,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                         .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
                         .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; })
                         .filter(function (x) {
-                        return _this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.indexOf(_this.tail) == 0;
+                        return _this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.toLowerCase().indexOf(_this.tail) != -1;
                     })
                         .map(function (x) {
                         return jb_core_1.jb.extend(x, { text: x.text || x.toPaste + _this.valAsText(x.value) });
                     });
+                    if (this.tail)
+                        this.options.sort(function (x, y) { return (x.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0) - (y.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0); });
                     return this;
                 };
                 suggestions.prototype.valAsText = function (val) {
@@ -182,7 +184,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                 }
                             });
                             function getProbe() {
-                                cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
+                                cmp.probeResult = cmp.probeResult || ctx.runGlobal({ $: 'studio.probe', path: ctx.params.path });
                                 return cmp.probeResult;
                             }
                             function closeFloatingInput(ctx) {
@@ -205,6 +207,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                         features: { $: 'studio.suggestions-emitter' },
                         controls: { $: 'itemlist',
                             items: '%$suggestionContext/suggestionObj/options%',
+                            watchItems: true,
                             controls: { $: 'label', title: '%text%' },
                             features: [
                                 { $: 'itemlist.studio-suggestions-selection',
@@ -253,14 +256,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                 impl: function (ctx) {
                     return ({
                         init: function (cmp) {
-                            var itemlist = cmp.itemlist;
-                            itemlist.selected = cmp.items[0];
                             var keyEm = ctx.vars.suggestionContext.keyEm
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }));
                             keyEm.filter(function (e) { return e.keyCode == 13; }) // ENTER
                                 .subscribe(function (x) {
-                                if (itemlist.selected)
-                                    ctx.params.onEnter(ctx.setData(itemlist.selected));
+                                if (cmp.selected)
+                                    ctx.params.onEnter(ctx.setData(cmp.selected));
                             });
                             keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC
                                 .subscribe(function (x) {
@@ -270,21 +271,26 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                 return e.keyCode == 38 || e.keyCode == 40;
                             })
                                 .map(function (event) {
-                                // event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
-                                return cmp.items[cmp.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+                                var items = cmp.items; //.filter(item=>!item.heading);
+                                return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
                             })
                                 .subscribe(function (x) {
-                                return itemlist.selectionEmitter.next(x);
+                                return cmp.selected = x;
                             });
                             // change selection if options are changed
                             ctx.vars.suggestionContext.suggestionEm
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
                                 .distinctUntilChanged(null, function (e) { return e.options.join(','); })
                                 .subscribe(function (e) {
-                                itemlist.selected = e.options[0];
+                                cmp.selected = e.options[0];
                             });
-                        }
+                        },
+                        afterViewInit: function (cmp) {
+                            var items = cmp.items; //.filter(item=>!item.heading);
+                            if (items[0])
+                                cmp.selected = items[0];
+                        },
                     });
                 }
             });

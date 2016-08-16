@@ -69,9 +69,11 @@ export class suggestions {
         .filter(x=> x.toPaste.indexOf('$$') != 0)
         .filter(x=>['$ngZone','$window'].indexOf(x.toPaste) == -1)
         .filter(x=>
-          this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.indexOf(this.tail) == 0)
+          this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.toLowerCase().indexOf(this.tail) != -1)
         .map(x=>
           jb.extend(x,{ text: x.text || x.toPaste + this.valAsText(x.value) }))
+    if (this.tail)
+      this.options.sort((x,y)=> (x.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0) - (y.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0));
 
     return this;
   }
@@ -169,7 +171,7 @@ jb.component('editable-text.suggestions-input-feature', {
           })
 
         function getProbe() {
-          cmp.probeResult = cmp.probeResult || ctx.run({$: 'studio.probe', path: ctx.params.path });
+          cmp.probeResult = cmp.probeResult || ctx.runGlobal({$: 'studio.probe', path: ctx.params.path });
           return cmp.probeResult;
         }
         function closeFloatingInput(ctx) {
@@ -192,6 +194,7 @@ jb.component('studio.jb-open-suggestions', {
         features :{$: 'studio.suggestions-emitter' },
         controls:{$: 'itemlist', 
           items : '%$suggestionContext/suggestionObj/options%', 
+          watchItems: true,
           controls: {$: 'label', title: '%text%' },
           features: [
             {$: 'itemlist.studio-suggestions-selection',
@@ -240,15 +243,13 @@ jb.component('itemlist.studio-suggestions-selection', {
   impl: ctx => 
     ({
       init: function(cmp) {
-        var itemlist = cmp.itemlist;
-        itemlist.selected = cmp.items[0];
         var keyEm = ctx.vars.suggestionContext.keyEm
           .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
 
         keyEm.filter(e=>e.keyCode == 13) // ENTER
           .subscribe(x=>{
-              if (itemlist.selected)
-                ctx.params.onEnter(ctx.setData(itemlist.selected))
+              if (cmp.selected)
+                ctx.params.onEnter(ctx.setData(cmp.selected))
           })
         keyEm.filter(e=>e.keyCode == 27) // ESC
           .subscribe(x=>
@@ -257,21 +258,27 @@ jb.component('itemlist.studio-suggestions-selection', {
         keyEm.filter(e=>
                 e.keyCode == 38 || e.keyCode == 40)
             .map(event => {
-              // event.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
-              return cmp.items[cmp.items.indexOf(itemlist.selected) + diff] || itemlist.selected;
+              var items = cmp.items; //.filter(item=>!item.heading);
+              return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
             })
             .subscribe(x=>
-                itemlist.selectionEmitter.next(x))
+                cmp.selected = x)
 
         // change selection if options are changed
         ctx.vars.suggestionContext.suggestionEm
             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
             .distinctUntilChanged(null,e=>e.options.join(','))
             .subscribe(e => {
-              itemlist.selected = e.options[0]
+              cmp.selected = e.options[0]
           })
-      }
+      },
+      afterViewInit: cmp => {
+          var items = cmp.items; //.filter(item=>!item.heading);
+          if (items[0])
+            cmp.selected = items[0];
+      },
+
   })
 })
 

@@ -342,7 +342,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
                         this.jbEmitter && this.jbEmitter.next('after-init');
                         jb_core_1.jb.delay(1).then(function () {
-                            if (_this.jbEmitter) {
+                            if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
                                 _this.jbEmitter.next('after-init-children');
                                 if (_this.readyCounter == null)
                                     _this.jbEmitter.next('ready');
@@ -386,7 +386,9 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
-                            .forEach(function (f) { return _this.jbExtend(context.run(f), context); });
+                            .forEach(function (f, i) {
+                            return _this.jbExtend(context.run(f, { type: 'feature' }, context.path + '~features~' + i), context);
+                        });
                     }
                     return this.jbExtend(options, context);
                 };
@@ -492,9 +494,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         }
                     // ng-model or ngmodel => ngModel
                     annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, function (st) { return st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase(); });
-                    (options.features || []).forEach(function (f) {
-                        return _this.jbExtend(context.run(f), context);
-                    });
+                    // (options.features || []).forEach(f => 
+                    // 	this.jbExtend(context.run(f), context));
                     (options.featuresOptions || []).forEach(function (f) {
                         return _this.jbExtend(f, context);
                     });
@@ -654,7 +655,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     this.comps = [];
                     try {
                         if (this.compId)
-                            this.comps = [this.getOrCreateInitialCtx().run({ $: this.compId })];
+                            this.comps = [jb_run(jb_core_1.jb.ctx(this.getOrCreateInitialCtx(), { profile: { $: this.compId }, comp: this.compId, path: '' }))];
                     }
                     catch (e) {
                         jb_core_1.jb.logException(e, '');

@@ -22,14 +22,13 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
                 },
                 impl: { $: 'customStyle',
                     features: { $: 'editable-text.bindField' },
-                    template: "<span><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></span>",
+                    template: "<div><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></div>",
                     methods: {
                         init: function (ctx) { return function (cmp) {
                             return cmp.title = ctx.vars.$model.title();
                         }; }
                     },
                     css: 'md-input { {?width: %$width%px?} }',
-                    directives: 'MdInput'
                 }
             });
         }

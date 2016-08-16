@@ -4,7 +4,6 @@ export var jb = {
 	type: jb_type,
 	Ctx: jbCtx,
 	ctx: jb_ctx,
-//	expression: jb_expression,
 	comps: jbart.comps,
 	compName: jb_compName,
 	isProfOfType: jb_isProfOfType,
@@ -14,7 +13,6 @@ export var jb = {
 	logPerformance: jb_logPerformance,
 
 	widgets: jbart_widgets,
-//	run: jb_run,
 	bind: jb_bind,
 	trigger: jb_trigger,
 

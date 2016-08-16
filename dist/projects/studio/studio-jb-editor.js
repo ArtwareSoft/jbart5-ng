@@ -104,9 +104,14 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                 controls: { $: 'itemlist',
                                     items: '%$probeResult%',
                                     controls: [
-                                        { $: 'studio.data-browse', data: '%in/data%', title: 'in' },
-                                        { $: 'studio.data-browse', data: '%out%', title: 'out' }
-                                    ]
+                                        { $: 'group',
+                                            controls: [
+                                                { $: 'studio.data-browse', data: '%in/data%', title: 'in' },
+                                                { $: 'studio.data-browse', data: '%out%', title: 'out' }
+                                            ],
+                                            title: 'in/out'
+                                        }
+                                    ],
                                 }
                             }
                         }
@@ -241,15 +246,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                     '%$controlItem%',
                                     { $: 'suffix', separator: '~' }
                                 ],
-                                action: [
-                                    { $: 'studio.addProperty', path: '%$controlItem%' },
-                                    { $: 'writeValue',
-                                        to: '%$globals/jb_editor_selection%',
-                                        value: '%$controlItem%'
-                                    },
-                                    { $: 'closeContainingPopup' },
-                                    { $: 'tree.regain-focus' }
-                                ]
+                                action: { $: 'studio.addProperty', path: '%$controlItem%' },
                             }
                         },
                         { $: 'divider',
@@ -278,10 +275,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             style: { $: 'divider.br' },
                             title: 'divider'
                         },
-                        // {$: 'pulldown.menu-item', 
-                        //   title: 'Wrap with pipeline', 
-                        //   action :{$: 'studio.wrapWithPipeline', path: '%$path%' }
-                        // }, 
                         { $: 'pulldown.studio-wrap-with',
                             type: 'data',
                             path: '%$path%',

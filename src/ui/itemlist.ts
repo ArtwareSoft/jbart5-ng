@@ -9,9 +9,8 @@ jb.component('itemlist', {
     items: { as: 'array' , dynamic: true, essential: true },
     controls: { type: 'control[]', essential: true, dynamic: true },
     style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
-    watchItems: { type: 'boolean', as: 'boolean', defaultValue: false },
+    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
     itemVariable: { as: 'string', defaultValue: 'item' },
-    heading: { type: 'control', dynamic: true , defaultValue: {$: 'itemlist-heading', title: '%title%' } },
     features: { type: 'feature[]', dynamic: true, flattenArray: true },
   },
   impl :{$: 'group', 
@@ -19,45 +18,46 @@ jb.component('itemlist', {
     style :{$call: 'style'},
     controls :{$: 'dynamic-controls', 
       controlItems : '%$items_array%',
-      genericControl :{$if: '%heading%', 
-        then: {$call: 'heading'},
-        else: {$call: 'controls'}, 
-      },
+      genericControl :{$call: 'controls'},
       itemVariable: '%$itemVariable%'
     },
     features :[
       {$call: 'features'},
-      {$: 'itemlist.watch-items', items: {$call: 'items'}, watch: '%$watchItems%', itemVariable: 'items_array' }, 
+      {$: 'itemlist.init', items: {$call: 'items'}, watch: '%$watchItems%', itemsArrayVariable: 'items_array' }, 
     ]
   }
 })
 
-jb.component('itemlist.watch-items', {
+jb.component('itemlist.init', {
   type: 'feature',
   params: {
     items: { essential: true, dynamic: true },
-    itemVariable: { as: 'string' },
+    itemsArrayVariable: { as: 'string' },
     watch: { type: 'boolean', as: 'boolean', defaultValue: true }
   },
-  impl: function(context, items, itemVariable,watch) {
+  impl: function(context, items, itemsArrayVariable,watch) {
     return {
       beforeInit: function(cmp) {
           var itemsEm = cmp.jbEmitter
               .filter(x => x == 'check')
-              .map(()=> 
-                cmp.calc_heading ? cmp.calc_heading(items()) : items()
-               )
+              .map(x=>
+                items(cmp.ctx))
+              .do(items => 
+                cmp.items = items)
               .filter(items=>
-                ! jb_compareArrays(items,(cmp.ctrls || []).map(ctrl => ctrl.comp.ctx.data)))
+                ! jb_compareArrays(items,(cmp.ctrls || []).map(ctrl => ctrl.comp.ctx.data))
+                )
               .map(items=> {
-                  cmp.items = items;
                   var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
-                  var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,items)) : ctx2;
+                  var ctx3 = itemsArrayVariable ? ctx2.setVars(jb.obj(itemsArrayVariable,items)) : ctx2;
                   var ctrls = context.vars.$model.controls(ctx3);
                   return ctrls;
-              })
+              });
 
           cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
+
+          cmp.ctrlOfItem = item =>
+            context.vars.$model.controls(ctx3)
       },
       observable: () => {} // to create jbEmitter
   }}
@@ -68,7 +68,7 @@ jb.component('itemlist.ul-li', {
   impl :{$: 'customStyle',
     features :{$: 'group.initGroup'},
     template: `<div><ul class="jb-itemlist">
-      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.not-heading]="!ctrl.comp.ctx.data.heading">
+      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading">
         <jb_comp [comp]="ctrl.comp" [flatten]="true"></jb_comp>
       </li>
       </ul></div>`,
@@ -118,7 +118,8 @@ jb.component('itemlist.selection', {
             .distinctUntilChanged();
 
         var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
-            .map(()=> cmp.selected) 
+            .map(()=> cmp.selected)
+            .filter(x=>x) 
             .distinctUntilChanged();
 
         doubleClick.subscribe(()=>
@@ -134,9 +135,8 @@ jb.component('itemlist.selection', {
             cmp.selected = x);
     },
     afterViewInit: cmp => {
-        var items = cmp.items.filter(item=>!item.heading);
-        if (ctx.params.autoSelectFirst && items[0])
-            cmp.selected = items[0];
+        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb.val(ctx.params.databind))
+            cmp.selected = cmp.items[0];
     },
     innerhost: {
       '.jb-item': {
@@ -148,7 +148,7 @@ jb.component('itemlist.selection', {
       }
     },
     css: `.jb-item.selected { background: #bbb; color: #fff }
-    .jb-item.not-heading.active { background: #337AB7; color: #fff }
+    .jb-item.active:not(.heading) { background: #337AB7; color: #fff }
     `,
     observable: () => {} // create jbEmitter
   })
@@ -176,7 +176,7 @@ jb.component('itemlist.keyboard-selection', {
             .map(event => {
               event.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
-              var items = cmp.items.filter(item=>!item.heading);
+              var items = cmp.items;
               return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
         }).subscribe(x=>
           cmp.selected = x)
@@ -196,7 +196,7 @@ jb.component('itemlist.drag-and-drop', {
   impl: ctx => ({
       init: function(cmp) {
         var drake = dragula($(cmp.elementRef.nativeElement).findIncludeSelf('.jb-itemlist').get(), {
-          moves: el => $(el).hasClass('jb-item') && !$(el).hasClass('jb-heading')
+          moves: el => $(el).hasClass('jb-item')
         });
 
         drake.on('drag', function(el, source) { 

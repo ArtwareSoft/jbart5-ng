@@ -19,9 +19,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     items: { as: 'array', dynamic: true, essential: true },
                     controls: { type: 'control[]', essential: true, dynamic: true },
                     style: { type: 'itemlist.style', dynamic: true, defaultValue: { $: 'itemlist.ul-li' } },
-                    watchItems: { type: 'boolean', as: 'boolean', defaultValue: false },
+                    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
                     itemVariable: { as: 'string', defaultValue: 'item' },
-                    heading: { type: 'control', dynamic: true, defaultValue: { $: 'itemlist-heading', title: '%title%' } },
                     features: { type: 'feature[]', dynamic: true, flattenArray: true },
                 },
                 impl: { $: 'group',
@@ -29,44 +28,46 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     style: { $call: 'style' },
                     controls: { $: 'dynamic-controls',
                         controlItems: '%$items_array%',
-                        genericControl: { $if: '%heading%',
-                            then: { $call: 'heading' },
-                            else: { $call: 'controls' },
-                        },
+                        genericControl: { $call: 'controls' },
                         itemVariable: '%$itemVariable%'
                     },
                     features: [
                         { $call: 'features' },
-                        { $: 'itemlist.watch-items', items: { $call: 'items' }, watch: '%$watchItems%', itemVariable: 'items_array' },
+                        { $: 'itemlist.init', items: { $call: 'items' }, watch: '%$watchItems%', itemsArrayVariable: 'items_array' },
                     ]
                 }
             });
-            jb_1.jb.component('itemlist.watch-items', {
+            jb_1.jb.component('itemlist.init', {
                 type: 'feature',
                 params: {
                     items: { essential: true, dynamic: true },
-                    itemVariable: { as: 'string' },
+                    itemsArrayVariable: { as: 'string' },
                     watch: { type: 'boolean', as: 'boolean', defaultValue: true }
                 },
-                impl: function (context, items, itemVariable, watch) {
+                impl: function (context, items, itemsArrayVariable, watch) {
                     return {
                         beforeInit: function (cmp) {
                             var itemsEm = cmp.jbEmitter
                                 .filter(function (x) { return x == 'check'; })
-                                .map(function () {
-                                return cmp.calc_heading ? cmp.calc_heading(items()) : items();
+                                .map(function (x) {
+                                return items(cmp.ctx);
+                            })
+                                .do(function (items) {
+                                return cmp.items = items;
                             })
                                 .filter(function (items) {
                                 return !jb_compareArrays(items, (cmp.ctrls || []).map(function (ctrl) { return ctrl.comp.ctx.data; }));
                             })
                                 .map(function (items) {
-                                cmp.items = items;
                                 var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
-                                var ctx3 = itemVariable ? ctx2.setVars(jb_1.jb.obj(itemVariable, items)) : ctx2;
+                                var ctx3 = itemsArrayVariable ? ctx2.setVars(jb_1.jb.obj(itemsArrayVariable, items)) : ctx2;
                                 var ctrls = context.vars.$model.controls(ctx3);
                                 return ctrls;
                             });
                             cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
+                            cmp.ctrlOfItem = function (item) {
+                                return context.vars.$model.controls(ctx3);
+                            };
                         },
                         observable: function () { } // to create jbEmitter
                     };
@@ -76,7 +77,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div><ul class=\"jb-itemlist\">\n      <li *ngFor=\"let ctrl of ctrls\" class=\"jb-item\" [class.not-heading]=\"!ctrl.comp.ctx.data.heading\">\n        <jb_comp [comp]=\"ctrl.comp\" [flatten]=\"true\"></jb_comp>\n      </li>\n      </ul></div>",
+                    template: "<div><ul class=\"jb-itemlist\">\n      <li *ngFor=\"let ctrl of ctrls\" class=\"jb-item\" [class.heading]=\"ctrl.comp.ctx.data.heading\">\n        <jb_comp [comp]=\"ctrl.comp\" [flatten]=\"true\"></jb_comp>\n      </li>\n      </ul></div>",
                     css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
                 }
             });
@@ -122,6 +123,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             .distinctUntilChanged();
                         var selectionEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
                             .map(function () { return cmp.selected; })
+                            .filter(function (x) { return x; })
                             .distinctUntilChanged();
                         doubleClick.subscribe(function () {
                             return ctx.params.onDoubleClick(ctx.setData(cmp.selected));
@@ -136,9 +138,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         });
                     },
                     afterViewInit: function (cmp) {
-                        var items = cmp.items.filter(function (item) { return !item.heading; });
-                        if (ctx.params.autoSelectFirst && items[0])
-                            cmp.selected = items[0];
+                        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb_1.jb.val(ctx.params.databind))
+                            cmp.selected = cmp.items[0];
                     },
                     innerhost: {
                         '.jb-item': {
@@ -149,7 +150,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             '(click)': 'selected = ctrl.comp.ctx.data ; clickSrc.next($event)'
                         }
                     },
-                    css: ".jb-item.selected { background: #bbb; color: #fff }\n    .jb-item.not-heading.active { background: #337AB7; color: #fff }\n    ",
+                    css: ".jb-item.selected { background: #bbb; color: #fff }\n    .jb-item.active:not(.heading) { background: #337AB7; color: #fff }\n    ",
                     observable: function () { } // create jbEmitter
                 }); }
             });
@@ -175,7 +176,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                                 .map(function (event) {
                                 event.stopPropagation();
                                 var diff = event.keyCode == 40 ? 1 : -1;
-                                var items = cmp.items.filter(function (item) { return !item.heading; });
+                                var items = cmp.items;
                                 return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
                             }).subscribe(function (x) {
                                 return cmp.selected = x;
@@ -194,7 +195,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 impl: function (ctx) { return ({
                     init: function (cmp) {
                         var drake = dragula($(cmp.elementRef.nativeElement).findIncludeSelf('.jb-itemlist').get(), {
-                            moves: function (el) { return $(el).hasClass('jb-item') && !$(el).hasClass('jb-heading'); }
+                            moves: function (el) { return $(el).hasClass('jb-item'); }
                         });
                         drake.on('drag', function (el, source) {
                             el.dragged = {

@@ -101,7 +101,7 @@ export function profileRefFromPath(path) {
 	return ref;
 }
 
-function profileFromPath(path) {
+export function profileFromPath(path) {
 	var id = path.split('~')[0];
 	var comp = jbart_base().comps[id] || jbart.comps[id];
 	comp = comp && comp.impl;
@@ -117,11 +117,16 @@ function profileFromPath(path) {
 			jb.logError('profileFromPath: non existing path '+ path+ ' property: ' + p);
 		if (obj && p == '0' && obj[p] == null) // flatten one-item array
 			return obj;
-		return obj && (obj[p] || obj['$'+p]); 
+		if (obj == null)
+			return null;
+		else if (obj[p] == null)
+			return obj['$'+p];
+		else
+			return obj[p]; 
 	}, comp);
 }
 
-function getComp(id) {
+export function getComp(id) {
 	return jbart_base().comps[id] || jbart.comps[id];
 }
 
@@ -156,12 +161,16 @@ export class ControlModel {
 
 		var val = profileFromPath(path);
 		if (childrenType == 'controls') {
-			var prop = this.controlParam(path);
-			if (!prop || !val[prop]) 
-				var out = [];
-			else
-				var out = childPath(prop);
-			return out.concat(this.innerControlPaths(path));
+			return [].concat.apply([],
+				this.controlParams(path).map(prop=>
+					childPath(prop)))
+				.concat(this.innerControlPaths(path));
+			// var prop = this.controlParams(path);
+			// if (!prop || !val[prop]) 
+			// 	var out = [];
+			// else
+			// 	var out = childPath(prop);
+			//return out.concat(this.innerControlPaths(path));
 		} else if (childrenType == 'non-controls') {
 			return this.nonControlParams(path).map(prop=>path + '~' + prop)
 		} else if (childrenType == 'array') {
@@ -193,11 +202,6 @@ export class ControlModel {
 	jbEditorSubNodes(path) {
 		var val = profileFromPath(path);
 		var comp = getComp(jb.compName(val||{}));
-//		var param = this.paramDef(path);
-		// if (Array.isArray(val) && (param.type == 'data' || param.type == null)) // pipeline
-		// 	return Object.getOwnPropertyNames(val)
-		// 		.map(x=>x=='length'? val.length : x)
-		// 		.map(k=> path +'~items~'+k)
 		if (Array.isArray(val))
 			return Object.getOwnPropertyNames(val)
 				.map(x=>x=='length'? val.length : x)
@@ -558,10 +562,13 @@ export class ControlModel {
 		return comp_arr.reduce((all,ar)=>all.concat(ar),[]);
 	}
 	controlParam(path) {
+		return this.controlParams(path)[0];
+	}
+	controlParams(path) {
 		var prof = profileFromPath(path);
 		if (!prof) return [];
 		var params = (getComp(jb.compName(prof)) || {}).params;
-		return jb.entries(params).filter(p=>(p[1].type||'').indexOf('control')!=-1).map(p=>p[0])[0]
+		return jb.entries(params).filter(p=>(p[1].type||'').indexOf('control')!=-1).map(p=>p[0])
 	}
 	nonControlParams(path) {
 		var prof = profileFromPath(path);

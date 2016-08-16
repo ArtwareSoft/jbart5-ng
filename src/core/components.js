@@ -12,10 +12,16 @@ jb_component('call',{
  		param: { as: 'string' }
  	},
  	impl: function(context,param) {
-      if (context.componentContext && typeof(context.componentContext.params[param]) == 'function')
- 		return context.componentContext.params[param](jb_ctx(context, { data: context.data, vars: context.vars, componentContext: context.componentContext.componentContext }));
+ 	  var paramObj = context.componentContext && context.componentContext.params[param];
+      if (typeof(paramObj) == 'function')
+ 		return paramObj(jb_ctx(context, { 
+ 			data: context.data, 
+ 			vars: context.vars, 
+ 			componentContext: context.componentContext.componentContext,
+ 			comp: paramObj.path // overrides path 
+ 		}));
       else
-        return context.componentContext && context.componentContext.params[param];
+        return paramObj;
  	}
 });
 
@@ -28,12 +34,14 @@ jb_component('pipeline',{
 		var data = jb_toarray(context.data);
 		var curr = [data[0]]; // use only one data item, the first or null
 		var profiles = jb_toarray(context.profile.items || context.profile['$pipeline']);
+		var innerPath = context.profile.items.sugar ? '~' : (context.profile['$pipeline'] ? '~$pipeline~' : '~items~');
+
 		profiles.forEach(function(profile,i) {
 			if (jb_profileType(profile) == 'aggregator')
-				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile, path: ''+i }), { as: 'array'});
+				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile, path: innerPath+i }), { as: 'array'});
 			else 
 				curr = [].concat.apply([],curr.map(function(item) {
-					return jb_run(jb_ctx(context,{data: item, profile: profile, path: ''+i}), { as: 'array'});
+					return jb_run(jb_ctx(context,{data: item, profile: profile, path: innerPath+i}), { as: 'array'});
 				})).filter(notNull);
 		});
 		return curr;
@@ -44,12 +52,10 @@ jb_component('pipeline',{
 jb_component('run',{
  	type: '*',
  	params: {
- 		profile: {},
- 		as: { as: 'string' }
+ 		profile: { as: 'single'},
  	},
- 	impl: function(context,profile,as) {
- 		var param = as ? { as: as} : null;
- 	  	return context.run(profile,param);
+ 	impl: function(context,profile) {
+ 	  	return context.runGlobal(profile);
  	}
 });
 
@@ -81,17 +87,6 @@ jb_component('firstSucceeding',{
 				return items[i];
 	}
 });
-
-// jb_component('jsonPath',{
-// 	type: "data",
-// 	params: {
-// 		parent: { defaultValue: '%%', as: 'single' },
-// 		path: { as: 'string' }
-// 	},
-// 	impl: function(context,parent,path) {
-// 		return parent && jb_run(jb_ctx(context,{ data: parent, profile: '{{' + path + '}}' }));
-// 	}
-// });
 
 jb_component('objectProperties',{
 	type: "data",
@@ -469,7 +464,7 @@ jb_component('object',{
 		if (Array.isArray(obj)) return obj;
 		for(var i in obj)
 			if (i.charAt(0) != '$') {
-				result[i] = jb_run(jb_ctx(context,{profile: obj[i] }));
+				result[i] = jb_run(jb_ctx(context,{profile: obj[i], path: i }));
 				var native_type = obj[i]['$as'];
 				if (native_type)
 					result[i] = jb_tojstype(result[i],native_type);
@@ -627,7 +622,7 @@ jb_component('searchFilter', {
 	type: 'aggregator',
 	params: {
 		pattern: { as:'string'},
-		itemText: { dynamic:true, as:'string', defaultValue:'{{}}'},
+		itemText: { dynamic:true, as:'string', defaultValue:'%%'},
 		ignoreCase: { type:'boolean', as:'boolean', defaultValue:true }
 	},
 	impl: function(context,pattern,itemText,ignoreCase) {
@@ -730,18 +725,24 @@ jb_component('runActions', {
 	},
 	impl: function(context) {
 		var actions = jb_toarray(context.profile.actions || context.profile['$runActions']);
-		var deferred = $.Deferred();
-		function runFromIndex(index,last_result) {
-			if (index >= actions.length)
-				return deferred.resolve(last_result);
-			var promise = jb_run(jb_ctx(context,{profile: actions[index] }),{ as: 'single'});
-			$.when(promise).then(
-					function(res) { runFromIndex(index+1,last_result) },
-					deferred.reject
-			);
-		}
-		runFromIndex(0);
-		return deferred.promise();
+		var innerPath = actions.sugar ? '~' : (context.profile['$runActions'] ? '~$runActions~' : '~actions~');
+		return actions.reduce((def,action,index) =>
+			def.then(() =>
+				$.when(jb_run(jb_ctx(context,{profile: action, path: innerPath + index }),{ as: 'single'}))),
+			$.Deferred().resolve())
+
+		// var deferred = $.Deferred();
+		// function runFromIndex(index,last_result) {
+		// 	if (index >= actions.length)
+		// 		return deferred.resolve(last_result);
+		// 	var promise = jb_run(jb_ctx(context,{profile: actions[index], path: innerPath + index }),{ as: 'single'});
+		// 	$.when(promise).then(
+		// 			function(res) { runFromIndex(index+1,last_result) },
+		// 			deferred.reject
+		// 	);
+		// }
+		// runFromIndex(0);
+		// return deferred.promise();
 	}
 });
 

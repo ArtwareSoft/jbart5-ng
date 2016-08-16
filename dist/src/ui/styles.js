@@ -26,6 +26,9 @@ System.register(['jb-core', 'jb-ui', '@angular/core'], function(exports_1, conte
                     directives: { ignore: true }
                 },
                 impl: function (context, template, css, features, methods, atts, noViewEncapsulation) {
+                    var defaultOptions = { directives: jb_core_1.jb.entries(jbart.ng.directives)
+                            .map(function (x) { return x[0]; })
+                    };
                     var options = jb_core_1.jb.extend({
                         jbTemplate: template,
                         css: css,
@@ -35,6 +38,7 @@ System.register(['jb-core', 'jb-ui', '@angular/core'], function(exports_1, conte
                     }, methods);
                     if (noViewEncapsulation)
                         jb_core_1.jb.extend(options, { encapsulation: core_1.ViewEncapsulation.None });
+                    jb_core_1.jb.extend(options, defaultOptions);
                     return options;
                 }
             });

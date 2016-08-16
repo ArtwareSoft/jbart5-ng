@@ -145,6 +145,22 @@ jb.component('studio-helper.jb-editor', {
   }
 })
 
+jb.component('studio-helper.jb-editor-fullpath', {
+  type: 'control', 
+  params: {
+    path: { defaultValue: 'studio-helper.insert-control' }
+  }, 
+  impl :{$: 'group', 
+    $vars: { circuit: 'studio-helper.insert-control' }, 
+    title: 'main', 
+    controls: [
+//      {$: 'studio.jb-edit-property', path: '%$path%~title~0' }, 
+      {$: 'studio.jb-editor', path: '%$path%' },
+    ], 
+    features :{$: 'css', css: '{ height: 200px; padding: 50px }' }
+  }
+})
+
 jb.component('studio-helper.sample-control', {
   type: 'control', 
   impl :{$: 'group', 
@@ -263,7 +279,7 @@ jb.component('studio-helper.itemlist-with-find', {
           {$: 'button', 
             title: '%name%', 
             style :{$: 'customStyle', 
-              template: '<span><button md-button (click)="clicked()">{{title}}</button></span>', 
+              template: '<div><button md-button (click)="clicked()">{{title}}</button></div>', 
               directives: 'MdButton', 
               css: 'button { width: 200px; text-align: left }'
             }
@@ -321,3 +337,60 @@ jb.component('studio-helper.open-dialog', {
   }
 })
 
+
+
+jb.component('studio-helper.insert-control', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'itemlist-with-find', 
+    controls: [
+      {$: 'group', 
+        style :{$: 'layout.horizontal', spacing: '23' }, 
+        title: 'buttons', 
+        controls: [
+          {$: 'button', 
+            title: 'Insert group', 
+            style :{$: 'button.md-raised' }
+          }, 
+          {$: 'button', 
+            title: 'Insert editable-text', 
+            style :{$: 'button.md-raised' }
+          }, 
+          {$: 'button', 
+            title: 'Insert button', 
+            style :{$: 'button.md-raised' }, 
+            features :{$: 'css.margin', left: '' }
+          }
+        ]
+      }, 
+      {$: 'editable-text', 
+        databind: '%$globals/ctrl_pattern%', 
+        title: 'search', 
+        style :{$: 'editable-text.md-input' }, 
+        
+      }, 
+      {$: 'itemlist', 
+        items: [
+          {$: 'studio.PTs-of-type', type: 'control' }, 
+          {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+        ], 
+        controls: [
+          {$: 'button', 
+            title: '%%', 
+            style :{$: 'customStyle', 
+              template: '<div><button md-button (click)="clicked()">{{title}}</button></div>', 
+              directives: 'MdButton', 
+              css: 'button { width: 200px; text-align: left }'
+            }
+          }
+        ], 
+        style :{$: 'itemlist.ul-li' }, 
+        features :{$: 'itemlist.heading', 
+          heading :{$: 'itemlist-heading.group-by', 
+            itemToGroupID :{$: 'prefix', separator: '.' }
+          }
+        }
+      }
+    ]
+  }
+})

@@ -49,14 +49,14 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     size: { as: 'number', defaultValue: '21' }
                 },
                 impl: { $: 'customStyle',
-                    template: '<span><button (click)="clicked()" [title]="title" style=":hover { opacity: .5 }">&#215;</button></span>',
+                    template: '<div><button (click)="clicked()" [title]="title" style=":hover { opacity: .5 }">&#215;</button></div>',
                     css: "button {\n            cursor: pointer; \n            font: %$size%px sans-serif; \n            border: none; \n            background: transparent; \n            color: #000; \n            text-shadow: 0 1px 0 #fff; \n            font-weight: 700; \n            opacity: .2;\n        }\n        button:hover { opacity: .5 }"
                 }
             });
             jb_core_1.jb.component('button.popup-menu', {
                 type: 'button.style',
                 impl: { $: 'customStyle',
-                    template: '<span><button (click)="clicked()" [title]="title"></button></span>',
+                    template: '<div><button (click)="clicked()" [title]="title"></button></div>',
                     css: "\n    button { border: none; cursor: pointer;  width: 0px;  height: 0px;  \n      margin: 8px 0 0 6px;  border-top: 5px solid #91B193;  border-bottom: 3px solid transparent;  border-right: 4px solid transparent;  border-left: 4px solid transparent;\n      display: inline-block;  vertical-align: top; padding: 0; background: transparent;}\n    button:hover { border-top: 5px solid #6A886C; }\n    button:focus { outline: none; }\n    "
                 }
             });

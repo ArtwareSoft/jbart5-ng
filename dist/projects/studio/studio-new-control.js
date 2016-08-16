@@ -56,7 +56,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
             jb_core_1.jb.component('studio.openModifiedPath', {
                 type: 'action',
                 impl: { $runActions: [
-                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%$modifiedPath%' }
+                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%$modifiedPath%' },
+                        { $: 'studio.open-properties' },
+                        { $: 'studio.open-control-tree' },
                     ] }
             });
             jb_core_1.jb.component('studio.openNewPage', {

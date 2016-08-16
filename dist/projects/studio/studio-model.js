@@ -92,12 +92,19 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 jb_core_1.jb.logError('profileFromPath: non existing path ' + path + ' property: ' + p);
             if (obj && p == '0' && obj[p] == null)
                 return obj;
-            return obj && (obj[p] || obj['$' + p]);
+            if (obj == null)
+                return null;
+            else if (obj[p] == null)
+                return obj['$' + p];
+            else
+                return obj[p];
         }, comp);
     }
+    exports_1("profileFromPath", profileFromPath);
     function getComp(id) {
         return jbart_base().comps[id] || jbart.comps[id];
     }
+    exports_1("getComp", getComp);
     // used for PTs of type
     function findjBartToLook(path) {
         var id = path.split('~')[0];
@@ -221,12 +228,10 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         return this.jbEditorSubNodes(path);
                     var val = profileFromPath(path);
                     if (childrenType == 'controls') {
-                        var prop = this.controlParam(path);
-                        if (!prop || !val[prop])
-                            var out = [];
-                        else
-                            var out = childPath(prop);
-                        return out.concat(this.innerControlPaths(path));
+                        return [].concat.apply([], this.controlParams(path).map(function (prop) {
+                            return childPath(prop);
+                        }))
+                            .concat(this.innerControlPaths(path));
                     }
                     else if (childrenType == 'non-controls') {
                         return this.nonControlParams(path).map(function (prop) { return path + '~' + prop; });
@@ -258,11 +263,6 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                 ControlModel.prototype.jbEditorSubNodes = function (path) {
                     var val = profileFromPath(path);
                     var comp = getComp(jb_core_1.jb.compName(val || {}));
-                    //		var param = this.paramDef(path);
-                    // if (Array.isArray(val) && (param.type == 'data' || param.type == null)) // pipeline
-                    // 	return Object.getOwnPropertyNames(val)
-                    // 		.map(x=>x=='length'? val.length : x)
-                    // 		.map(k=> path +'~items~'+k)
                     if (Array.isArray(val))
                         return Object.getOwnPropertyNames(val)
                             .map(function (x) { return x == 'length' ? val.length : x; })
@@ -589,11 +589,14 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return comp_arr.reduce(function (all, ar) { return all.concat(ar); }, []);
                 };
                 ControlModel.prototype.controlParam = function (path) {
+                    return this.controlParams(path)[0];
+                };
+                ControlModel.prototype.controlParams = function (path) {
                     var prof = profileFromPath(path);
                     if (!prof)
                         return [];
                     var params = (getComp(jb_core_1.jb.compName(prof)) || {}).params;
-                    return jb_core_1.jb.entries(params).filter(function (p) { return (p[1].type || '').indexOf('control') != -1; }).map(function (p) { return p[0]; })[0];
+                    return jb_core_1.jb.entries(params).filter(function (p) { return (p[1].type || '').indexOf('control') != -1; }).map(function (p) { return p[0]; });
                 };
                 ControlModel.prototype.nonControlParams = function (path) {
                     var prof = profileFromPath(path);
