@@ -56,10 +56,17 @@ function jbCtx(context,ctx2) {
       ctx2.path = '?';
     }
     this.profile = (typeof(ctx2.profile) != 'undefined') ?  ctx2.profile : context.profile;
-    this.fullPath = (context.fullPath || '') + (ctx2.comp ? ctx2.comp : '') + (ctx2.path ? '~' + ctx2.path : '');
+    this.fullPath = (context.fullPath || '') + (ctx2.path ? '~' + ctx2.path : '');
     if (ctx2.fullPath != null)
       this.fullPath = ctx2.fullPath; 
-    this.path = (ctx2.comp || context.path || '') + (ctx2.path ? '~' + ctx2.path : '');
+    if (!this.fullPath && ctx2.comp)
+      this.fullPath = ctx2.comp;
+
+    this.path = (context.path || '') + (ctx2.path ? '~' + ctx2.path : '');
+    if (ctx2.comp)
+      this.path = ctx2.comp;
+    if (ctx2.callerPath)
+      this.callerPath = ctx2.callerPath;
     this.data= (typeof ctx2.data != 'undefined') ? ctx2.data : context.data;     // allow setting of data:null
     this.vars= ctx2.vars ? jb_extend({},context.vars,ctx2.vars) : context.vars;
     this.params= ctx2.params || context.params;

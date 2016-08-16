@@ -42,11 +42,12 @@ function jb_run(context,parentParam,settings) {
         var out;
         if (run.impl) {
           run.args = prepareGCArgs(run.ctx);
+          run.args[0].callerPath = context.callerPath;
           if (profile.$debugger) debugger;
           out = run.impl.apply(null,run.args);
         }
         else
-          out = jb_run(jb_ctx(run.ctx, { componentContext: run.ctx }),parentParam);
+          out = jb_run(jb_ctx(run.ctx, { componentContext: run.ctx, callerPath: context.path }),parentParam);
 
         if (profile.$log)
           jbart.comps.log.impl(context, (profile.$log == true) ? out : jb_run( jb_ctx(context, { profile: profile.$log, data: out, vars: { data: context.data } })));

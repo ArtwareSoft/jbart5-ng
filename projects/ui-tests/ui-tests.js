@@ -315,16 +315,16 @@ itemlist :{$: 'ng2-ui-test',
 
 'itemlist-heading' :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [
-    { $: 'itemlist', items: '%$people%', 
+    { $: 'itemlist-with-heading', items: '%$people%', 
         controls :{$: 'label', title: '%name%' }, 
+        groupBy :{$: 'itemlist-heading.group-by', 
+          itemToGroupID :{$if: '%male%', then: 'male', else: 'female'}
+        },
+//        headingCtrl :{$: 'label', title: '%title%' }, 
         features: [
             { $: 'itemlist.selection', databind: '%$globals/selectedPerson%', autoSelectFirst: true }, 
             { $: 'itemlist.keyboard-selection', autoFocus: true },
-            { $: 'itemlist.heading', 
-              heading :{$: 'itemlist-headings.group-by', 
-                itemToGroupID :{$if: '%male%', then: 'male', else: 'female'}
-              } 
-            }, 
+            {$: 'css', css: '.jb-item:not(.heading) { margin-left: 30px }' }
         ],
     },
   ]},

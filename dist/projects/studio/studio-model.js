@@ -240,7 +240,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         if (!val)
                             return [];
                         else if (!Array.isArray(val))
-                            return [path + '~0'];
+                            return [path];
                         else
                             return val.map(function (inner, i) { return path + '~' + i; });
                     }
@@ -248,7 +248,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         if (Array.isArray(val[prop]))
                             return val[prop].map(function (inner, i) { return path + '~' + prop + '~' + i; });
                         else
-                            return [path + '~' + prop + '~0'];
+                            return [path + '~' + prop];
                     }
                 };
                 ControlModel.prototype.innerControlPaths = function (path) {
@@ -283,7 +283,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         if (Array.isArray(val[prop]))
                             return val[prop].map(function (inner, i) { return path + '~' + prop + '~' + i; });
                         else
-                            return [path + '~' + prop + '~0'];
+                            return [path + '~' + prop];
                     }
                 };
                 ControlModel.prototype.jbEditorMoreParams = function (path) {

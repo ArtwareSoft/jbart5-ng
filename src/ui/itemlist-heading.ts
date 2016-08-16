@@ -57,15 +57,16 @@ jb.component('itemlist.watch-items-with-heading', {
               .map(x=>
                 items(cmp.ctx))
               .filter(items=> 
-                !jb_compareArrays(items,cmp.items)) // compare before injecting headings
+                !jb_compareArrays(items,cmp.original_items)) // compare before injecting headings
               .do(items => 
-                cmp.items = items)
+                cmp.original_items = items)
               .map(items => 
                 groupBy(cmp.ctx.setData(items)) || items
                )
               .do(items => 
                 cmp.items_with_headings = items)
               .map(items=> {
+                  cmp.items = items.filter(item=>!item.heading);
                   var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
                   var ctx3 = itemsArrayVariable ? ctx2.setVars(jb.obj(itemsArrayVariable,items)) : ctx2;
                   var ctrls = context.vars.$model.controls(ctx3);

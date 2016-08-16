@@ -63,10 +63,10 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 return items(cmp.ctx);
                             })
                                 .filter(function (items) {
-                                return !jb_compareArrays(items, cmp.items);
+                                return !jb_compareArrays(items, cmp.original_items);
                             }) // compare before injecting headings
                                 .do(function (items) {
-                                return cmp.items = items;
+                                return cmp.original_items = items;
                             })
                                 .map(function (items) {
                                 return groupBy(cmp.ctx.setData(items)) || items;
@@ -75,6 +75,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 return cmp.items_with_headings = items;
                             })
                                 .map(function (items) {
+                                cmp.items = items.filter(function (item) { return !item.heading; });
                                 var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
                                 var ctx3 = itemsArrayVariable ? ctx2.setVars(jb_1.jb.obj(itemsArrayVariable, items)) : ctx2;
                                 var ctrls = context.vars.$model.controls(ctx3);

@@ -177,7 +177,7 @@ export class ControlModel {
 			if (!val) 
 				return [];
 			else if (!Array.isArray(val)) 
-				return [path + '~0'];
+				return [path];
 			else
 				return val.map((inner, i) => path + '~' + i)
 		}
@@ -186,7 +186,7 @@ export class ControlModel {
 			if (Array.isArray(val[prop]))
 				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
 			else
-				return [path + '~' + prop + '~0']
+				return [path + '~' + prop]
 		}
 	}
 
@@ -225,7 +225,7 @@ export class ControlModel {
 			if (Array.isArray(val[prop]))
 				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
 			else
-				return [path + '~' + prop + '~0']
+				return [path + '~' + prop]
 		}
 
 	}

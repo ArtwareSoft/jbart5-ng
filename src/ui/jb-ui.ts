@@ -152,7 +152,7 @@ class jbComponent {
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
 
-		jb.path(options, ['atts','jb-path'], profilePath(context.profile)||''); // for the studio
+		jb.path(options, ['atts','jb-path'], context.callerPath || context.path); //profilePath(context.profile)||''); // for the studio
 
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
@@ -273,6 +273,7 @@ class jbComponent {
 export function ctrl(context) {
 	var ctx = context.setVars({ $model: context.params });
 	var styleOptions = defaultStyle(ctx);
+	ctx.callerPath = context.callerPath;
 	return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
 
 	function defaultStyle(ctx) {
@@ -357,10 +358,12 @@ function profilePath(profile) {
 		if (depth > 50) debugger;
 		if (!parent) return '';
 		if (parent === dest) return '~'; // will be removed
-		return Object.getOwnPropertyNames(parent).filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0).map(function(p) {
-			var path = getPath(parent[p], dest, (depth || 0) + 1,comp);
-			return path ? (p + '~' + path) : '';
-		}).join(''); // only one will succeed
+		return Object.getOwnPropertyNames(parent)
+			.filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0)
+			.map(function(p) {
+				var path = getPath(parent[p], dest, (depth || 0) + 1,comp);
+				return path ? (p + '~' + path) : '';
+			}).join(''); // only one will succeed
 	}
 }
 
