@@ -55,7 +55,7 @@ jb_component('run',{
  		profile: { as: 'single'},
  	},
  	impl: function(context,profile) {
- 	  	return context.runGlobal(profile);
+ 	  	return context.run(profile);
  	}
 });
 

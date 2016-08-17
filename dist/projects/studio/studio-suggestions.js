@@ -184,7 +184,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                 }
                             });
                             function getProbe() {
-                                cmp.probeResult = cmp.probeResult || ctx.runGlobal({ $: 'studio.probe', path: ctx.params.path });
+                                cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
                                 return cmp.probeResult;
                             }
                             function closeFloatingInput(ctx) {

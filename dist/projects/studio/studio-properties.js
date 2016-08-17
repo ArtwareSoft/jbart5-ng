@@ -146,7 +146,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         fieldPT = 'studio.property-array';
                     else
                         fieldPT = 'studio.property-tgp';
-                    return context.runGlobal({ $: fieldPT, path: path });
+                    return context.run({ $: fieldPT, path: path });
                 }
             });
             jb_core_1.jb.component('studio.property-label', {

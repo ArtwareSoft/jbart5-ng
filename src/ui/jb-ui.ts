@@ -158,7 +158,7 @@ class jbComponent {
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
 			jb.toarray(context.params.style.profile.features)
 				.forEach((f,i)=>
-					this.jbExtend(context.run(f,{type:'feature'},context.path+'~features~'+i),context))
+					this.jbExtend(context.runInner(f,{type:'feature'},context.path+'~features~'+i),context))
 		}
 		return this.jbExtend(options,context);
 	}
@@ -261,9 +261,6 @@ class jbComponent {
 		// ng-model or ngmodel => ngModel
 		annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
 
-		// (options.features || []).forEach(f => 
-		// 	this.jbExtend(context.run(f), context));
-		
 		(options.featuresOptions || []).forEach(f => 
 			this.jbExtend(f, context))
 		return this;
@@ -339,7 +336,7 @@ function jbTemplate(options) {
 	})
 }
 
-function profilePath(profile) {
+export function profilePath(profile) { // export for tests
 	// caching last component
 	var lastFound = window.jb_lastFoundAt;
 	if (lastFound && getPath(jb.comps[lastFound].impl, profile,0))
@@ -581,7 +578,7 @@ export class jBartWidget {
 		try {
 			if (this.compId)
 				this.comps = [jb_run(jb.ctx(this.getOrCreateInitialCtx(),
-					{profile:{ $: this.compId }, comp: this.compId, path: '' } ];
+					{ profile:{ $: this.compId }, comp: this.compId, path: '' })) ];
 		} catch(e) { 
 			jb.logException(e,'') 
 		}	

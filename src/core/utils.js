@@ -76,13 +76,17 @@ function jbCtx(context,ctx2) {
   }
 }
 jbCtx.prototype = {
-  runGlobal:  function(profile) { return jb_run(jb_ctx(this,{ profile: profile, comp: profile.$ , path: ''})) },
+  run: function(profile,x,y) { 
+    if (x != null || y != null)
+      debugger;
+    return jb_run(jb_ctx(this,{ profile: profile, comp: profile.$ , path: ''})) },
   exp: function(expression,jstype) { return jb_expression(expression, this, {as: jstype}) },
   setVars: function(vars) { return new jbCtx(this,{vars: vars}) },
   setData: function(data) { return new jbCtx(this,{data: data}) },
-  run: function(profile,parentParam, path) { return jb_run(new jbCtx(this,{profile: profile,path: path}), parentParam) },
+  runInner: function(profile,parentParam, path) { return jb_run(new jbCtx(this,{profile: profile,path: path}), parentParam) },
 //  str: function(profile) { return this.run(profile, { as: 'string'}) },
   bool: function(profile) { return this.run(profile, { as: 'boolean'}) },
+  // keeps the context vm and not the caller vm - needed in studio probe
   ctx: function(ctx2) { return jb_ctx(this,ctx2) },
   runItself: function(parentParam) { return jb_run(this,parentParam) },
 }
@@ -377,7 +381,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
   function sortedPropertyNames(obj) {
     var props = jb_entries(obj).map(x=>x[0]) // keep the order
       .filter(p=>p.indexOf('$jb') != 0)
-      .filter(p=>p.indexOf('$probe') != 0); 
+      .filter(p=>p.indexOf('$jbProbe') != 0); 
     var comp_name = jb_compName(profile);
     if (comp_name) { // tgp obj
       var params = jb_entries((jbart.comps[comp_name] || {}).params || {}).map(x=>x[0]);
@@ -397,8 +401,8 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
       val = val.items;
     if (Array.isArray(val)) return printArray(val,path);
     if (typeof val === 'object') return printObj(val,path);
-    if (typeof val === 'string' && val.indexOf('$probe:') == 0)
-      val = val.split('$probe:')[1];
+    if (typeof val === 'string' && val.indexOf('$jbProbe:') == 0)
+      val = val.split('$jbProbe:')[1];
     if (typeof val === 'function')
       result += val.toString();
     else if (typeof val === 'string' && val.indexOf('\n') == -1) 

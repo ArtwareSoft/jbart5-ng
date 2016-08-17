@@ -3,7 +3,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio, jb_rx;
     var Probe, bridge;
-    function testControl(ctx) {
+    function testControl(ctx, emitter) {
         // test the control as a dialog
         return new Promise(function (resolve, reject) {
             var _jbart = studio.jbart_base();
@@ -23,6 +23,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                             resolve();
                         })
                             .subscribe(function (x) {
+                            emitter.next({ element: cmp.elementRef.nativeElement });
                             jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
                             resolve();
                             console.log('close test dialog');
@@ -83,39 +84,44 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                     this.clearTrace();
                     var profile = studio.profileFromPath(this.pathToTrace);
                     if (jb_core_1.jb.compName(profile))
-                        profile.$probe = true;
+                        profile.$jbProbe = true;
                     else if (typeof profile == 'string') {
                         var profileRef = studio.profileRefFromPath(this.pathToTrace);
-                        jb_core_1.jb.writeValue(profileRef, "$probe:" + profile);
+                        jb_core_1.jb.writeValue(profileRef, "$jbProbe:" + profile);
                     }
                 };
                 Probe.prototype.clearTrace = function () {
                     var profile = studio.profileFromPath(this.pathToTrace);
                     if (jb_core_1.jb.compName(profile))
-                        delete profile.$probe;
-                    else if (typeof profile == 'string' && profile.indexOf('$probe:') == 0) {
+                        delete profile.$jbProbe;
+                    else if (typeof profile == 'string' && profile.indexOf('$jbProbe:') == 0) {
                         var profileRef = studio.profileRefFromPath(this.pathToTrace);
                         jb_core_1.jb.writeValue(profileRef, profile.substr(7));
                     }
                 };
                 Probe.prototype.runCircuitNoGaps = function () {
                     var _win = jbart.previewWindow || window;
-                    if (studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control'))
-                        return testControl(this.context);
-                    else if (!studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action'))
+                    if (studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control')) {
+                        return testControl(this.context, this.em);
+                    }
+                    else if (!studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action')) {
                         return Promise.resolve(_win.jb_run(this.context));
+                    }
                 };
-                Probe.prototype.run = function () {
+                Probe.prototype.observable = function () {
                     var _this = this;
+                    this.em = new jb_rx.Subject();
                     var _jbart = studio.jbart_base();
                     _jbart.probe = this;
                     this.probe[this.pathToTrace] = [];
                     this.setTrace();
-                    return this.runCircuitNoGaps().then(function () {
+                    this.runCircuitNoGaps().then(function () {
                         _jbart.probe = null;
                         _this.clearTrace();
-                        return _this.probe[_this.pathToTrace];
+                        _this.em.next({ finalResult: _this.probe[_this.pathToTrace] });
+                        _this.em.complete();
                     });
+                    return this.em;
                     // return this.runCircuitNoGaps().then(()=>{
                     //   if (this.probe[this.pathToTrace].length > 0) {
                     //     _jbart.probe = null;
@@ -148,6 +154,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                 };
                 return Probe;
             }());
+            exports_1("Probe", Probe);
             bridge = {
                 openDialog: {
                     content: function (path, inCtx) {
@@ -171,7 +178,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                     var _win = jbart.previewWindow || window;
                     var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
                     var context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: '', fullPath: circuit });
-                    return new Probe(path(), context).run();
+                    return new Probe(path(), context).observable().toPromise();
                 }
             });
         }

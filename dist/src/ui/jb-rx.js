@@ -41,11 +41,15 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
     function pipe(profiles, observable, context, sort) {
         return profiles.reduce(function (aggregated, prof) {
             if (jb_1.jb.isProfOfType(prof, 'rx.elem'))
-                return context.run(prof).$pipe(aggregated);
-            return aggregated.concatMap(function (ctx) {
+                return context.runInner(prof).$pipe(aggregated);
+            return aggregated.concatMap(function (ctx, index) {
                 //var ctx = context.setData(ctx.data);
-                var res = jb_1.jb.toarray(ctx.run(prof)).map(function (data) { return ctxWithVar(ctx.setData(data), prof); });
-                return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) { return observableFromCtx(ctx2).catch(function (e) { debugger; }); }));
+                var res = jb_1.jb.toarray(ctx.runInner(prof, null, index)).map(function (data) {
+                    return ctxWithVar(ctx.setData(data), prof);
+                });
+                return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) {
+                    return observableFromCtx(ctx2).catch(function (e) { debugger; });
+                }));
             });
         }, observable);
         function ctxWithVar(ctx, prof) {

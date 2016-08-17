@@ -91,11 +91,13 @@ jb.component('rxFilter',{
 function pipe(profiles,observable,context,sort) {
 	return profiles.reduce(function(aggregated,prof) {
 		if (jb.isProfOfType(prof,'rx.elem'))
-			return context.run(prof).$pipe(aggregated)
-		return aggregated.concatMap(ctx=>{
+			return context.runInner(prof).$pipe(aggregated)
+		return aggregated.concatMap((ctx,index)=>{
 			//var ctx = context.setData(ctx.data);
-			var res = jb.toarray(ctx.run(prof)).map(data=>ctxWithVar(ctx.setData(data),prof));
-			return Observable.concat.apply(Observable.of(),res.map(ctx2=>observableFromCtx(ctx2).catch(e=>{debugger})))
+			var res = jb.toarray(ctx.runInner(prof,null,index)).map(data=>
+				ctxWithVar(ctx.setData(data),prof));
+			return Observable.concat.apply(Observable.of(),res.map(ctx2=>
+				observableFromCtx(ctx2).catch(e=>{debugger})))
 		})
 	},observable)
 

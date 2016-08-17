@@ -135,7 +135,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'tree.nodeModel',
                 params: {},
                 impl: function (context) {
-                    var currentPath = context.runGlobal({ $: 'studio.currentProfilePath' });
+                    var currentPath = context.run({ $: 'studio.currentProfilePath' });
                     var compPath = currentPath.split('~')[0] || '';
                     return new studio.ControlModel(compPath);
                 }

@@ -361,7 +361,8 @@ jb.component('studio-helper.insert-control', {
             style :{$: 'button.md-raised' }, 
             features :{$: 'css.margin', left: '' }
           }
-        ]
+        ], 
+        features :{$: 'css.margin', bottom: '7' }
       }, 
       {$: 'editable-text', 
         databind: '%$globals/ctrl_pattern%', 
@@ -369,7 +370,7 @@ jb.component('studio-helper.insert-control', {
         style :{$: 'editable-text.md-input' }, 
         
       }, 
-      {$: 'itemlist', 
+      {$: 'itemlist-with-heading', 
         items: [
           {$: 'studio.PTs-of-type', type: 'control' }, 
           {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
@@ -380,17 +381,21 @@ jb.component('studio-helper.insert-control', {
             style :{$: 'customStyle', 
               template: '<div><button md-button (click)="clicked()">{{title}}</button></div>', 
               directives: 'MdButton', 
-              css: 'button { width: 200px; text-align: left }'
-            }
+              css: 'button { width: 300px; text-align: left }'
+            }, 
+            
           }
         ], 
-        style :{$: 'itemlist.ul-li' }, 
-        features :{$: 'itemlist.heading', 
-          heading :{$: 'itemlist-heading.group-by', 
-            itemToGroupID :{$: 'prefix', separator: '.' }
-          }
+        
+        groupBy :{$: 'itemlist-heading.group-by' }, 
+        headingCtrl :{$: 'label', 
+          title: '%title%', 
+          features :{$: 'css.margin', top: '10' }, 
+          style :{$: 'label.md-card-title' }
         }
       }
-    ]
+    ], 
+    
+    style :{$: 'group.md-card' }
   }
 })

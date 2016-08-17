@@ -228,6 +228,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                                 { $: 'css', css: '{ color: red; font-weight: bold }' }
                             ]
                         },
+                        { $: 'label', title: '%reason%',
+                            features: { $: 'css.padding', left: '15' }
+                        },
                     ]
                 }
             });

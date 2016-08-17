@@ -3,7 +3,7 @@ function jb_run(context,parentParam,settings) {
     var profile = context.profile;
     // if (jbart.trace_paths)
     //   console.log('path: ' +context.path);
-    if (jbart.probe && profile.$probe && !context.noprobe) {
+    if (jbart.probe && profile.$jbProbe && !context.noprobe) {
           return jbart.probe.record(context,parentParam)
     }
     if (profile === null) return;
@@ -18,7 +18,7 @@ function jb_run(context,parentParam,settings) {
       case 'expression': return jb_tojstype(jb_expression(profile, context,parentParam), jstype, context);
       case 'expressionRef': return jb_expression(profile, context,parentParam);
       case 'asIs': return profile;
-      case 'object': return jb_entriesToObject(jb_entries(profile).map(e=>[e[0],context.run(e[1],null,e[0])]));
+      case 'object': return jb_entriesToObject(jb_entries(profile).map(e=>[e[0],context.runInner(e[1],null,e[0])]));
       case 'function': return jb_tojstype(profile(context),jstype, context);
       case 'null': return jb_tojstype(null,jstype, context);
       case 'ignore': return context.data;
@@ -148,9 +148,9 @@ function jb_prepare(context,parentParam) {
 
 function jb_funcDynamicParam(ctx,profileToRun,param,paramName) {
    if (param && param.type && param.type.indexOf('[') != -1 && jb_isArray(profileToRun)) // array
-    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map((prof,i)=>(ctx2||ctx).setData(data2).run(prof,param,paramName+'~'+i))))
+    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map((prof,i)=>(ctx2||ctx).setData(data2).runInner(prof,param,paramName+'~'+i))))
   else // single
-    var res = jb_func(paramName,(ctx2,data2) => profileToRun && (ctx2||ctx).setData(data2).run(profileToRun,param,paramName))
+    var res = jb_func(paramName,(ctx2,data2) => profileToRun && (ctx2||ctx).setData(data2).runInner(profileToRun,param,paramName))
   return res;
 }
 
@@ -184,9 +184,9 @@ function jb_expression(expression, context, parentParam) {
     debugger;
     expression = expression.split('$debugger:')[1];
   }
-  if (jbart.probe && expression.indexOf('$probe:') == 0) {
+  if (jbart.probe && expression.indexOf('$jbProbe:') == 0) {
     if (context.noprobe)
-      expression = expression.split('$probe:')[1];
+      expression = expression.split('$jbProbe:')[1];
     else
       return jbart.probe.record(context,parentParam);
   }

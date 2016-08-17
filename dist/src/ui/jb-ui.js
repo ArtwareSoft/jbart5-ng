@@ -122,6 +122,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
             }).join(''); // only one will succeed
         }
     }
+    exports_1("profilePath", profilePath);
     function ngRef(ref, cmp) {
         if (typeof ref == 'string' && ref.match(/{{.*}}/))
             return { $jb_parent: cmp, $jb_property: ref.match(/{{(.*)}}/)[1] };
@@ -390,7 +391,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
                             .forEach(function (f, i) {
-                            return _this.jbExtend(context.run(f, { type: 'feature' }, context.path + '~features~' + i), context);
+                            return _this.jbExtend(context.runInner(f, { type: 'feature' }, context.path + '~features~' + i), context);
                         });
                     }
                     return this.jbExtend(options, context);
@@ -497,8 +498,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         }
                     // ng-model or ngmodel => ngModel
                     annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, function (st) { return st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase(); });
-                    // (options.features || []).forEach(f => 
-                    // 	this.jbExtend(context.run(f), context));
                     (options.featuresOptions || []).forEach(function (f) {
                         return _this.jbExtend(f, context);
                     });

@@ -2,7 +2,7 @@ import {jb} from 'jb-core';
 import * as studio from './studio-model';
 import * as jb_rx from 'jb-ui/jb-rx';
 
-class Probe {
+export class Probe {
   constructor(public pathToTrace, public context, public depth) {
     this.probe = {};
     this.circuit = this.context.profile;
@@ -35,38 +35,42 @@ class Probe {
     this.clearTrace();
     var profile = studio.profileFromPath(this.pathToTrace);
     if (jb.compName(profile))
-      profile.$probe = true;
+      profile.$jbProbe = true;
     else if (typeof profile == 'string') {
       var profileRef = studio.profileRefFromPath(this.pathToTrace);
-      jb.writeValue(profileRef,`$probe:${profile}`)
+      jb.writeValue(profileRef,`$jbProbe:${profile}`)
     }
   }
   clearTrace() {
     var profile = studio.profileFromPath(this.pathToTrace);
     if (jb.compName(profile))
-      delete profile.$probe;
-    else if (typeof profile == 'string' && profile.indexOf('$probe:') == 0) {
+      delete profile.$jbProbe;
+    else if (typeof profile == 'string' && profile.indexOf('$jbProbe:') == 0) {
       var profileRef = studio.profileRefFromPath(this.pathToTrace);
       jb.writeValue(profileRef,profile.substr(7))
     }
   }
   runCircuitNoGaps() {
     var _win = jbart.previewWindow || window;
-    if (studio.model.isCompNameOfType(jb.compName(this.circuit),'control')) // running circuit in a group to get the 'ready' event
-      return testControl(this.context);
-    else if (! studio.model.isCompNameOfType(jb.compName(this.circuit),'action'))
+    if (studio.model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
+      return testControl(this.context, this.em);
+    } else if (! studio.model.isCompNameOfType(jb.compName(this.circuit),'action')) {
       return Promise.resolve(_win.jb_run(this.context));
+    }
   }
-  run() {
+  observable() {
+    this.em = new jb_rx.Subject();
     var _jbart = studio.jbart_base();
     _jbart.probe = this;
     this.probe[this.pathToTrace] = [];
     this.setTrace();
-    return this.runCircuitNoGaps().then(()=>{
+    this.runCircuitNoGaps().then(()=>{
         _jbart.probe = null;
         this.clearTrace();
-        return this.probe[this.pathToTrace];
+        this.em.next({finalResult: this.probe[this.pathToTrace]});
+        this.em.complete();
     })
+    return this.em;
       // return this.runCircuitNoGaps().then(()=>{
       //   if (this.probe[this.pathToTrace].length > 0) {
       //     _jbart.probe = null;
@@ -132,12 +136,12 @@ jb.component('studio.probe', {
       var _win = jbart.previewWindow || window;
       var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
       var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: '', fullPath: circuit} );
-      return new Probe(path(),context).run();
+      return new Probe(path(),context).observable().toPromise();
     }
 })
 
 
-function testControl(ctx) {
+function testControl(ctx,emitter) {
   // test the control as a dialog
   return new Promise((resolve,reject)=> {
     var _jbart = studio.jbart_base();
@@ -155,6 +159,7 @@ function testControl(ctx) {
               dialog.close();resolve()
           })
           .subscribe(x=>{
+            emitter.next({ element : cmp.elementRef.nativeElement })
             jb.delay(1).then(()=>dialog.close()); // delay to avoid race conditin with itself
             resolve();
             console.log('close test dialog');

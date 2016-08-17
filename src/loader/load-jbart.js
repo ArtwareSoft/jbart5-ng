@@ -111,7 +111,7 @@ jb_modules =
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
-,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control'
+,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions']
   .map(x=>'studio/studio-' + x)
 

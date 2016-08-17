@@ -1,0 +1,45 @@
+dynamic to static
+  pick & edit
+
+static to dynamic
+  highlight
+  refresh
+  probe
+
+
+issues:
+=============
+
+using global component
+---------------------
+group using global group. pick&edit should return caller.
+put caller path in componentContext
+
+PT By Examples
+----------------------------
+itemlist using group
+
+sugar
+------------------------
+static and dynamic should use actual json path
+$pipline: [], $runActions: [], $filter :{$..}, $not :{ $}
+{$asIs : { .. }}
+
+
+path tester
+===============
+control to test that includes $probe
+static path
+probe
+count_highlighted
+
+pick&edit selector = [jb-path]='%$staticPath%'
+
+tests- 
+	static path - calc static path of $probe and compare it to static path
+	pick&edit - look for the static path at the pick&edit selector
+	highlight - count pick&edit selector and check against count_highlighted
+	refresh - log all cmp.ctx.path against jb-path and caller-path
+	probe - run the probe. use control as circuit. check that probe result is not empty.
+
+

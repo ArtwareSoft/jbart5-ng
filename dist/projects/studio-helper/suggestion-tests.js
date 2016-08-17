@@ -15,18 +15,18 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestions({ value: '%', selectionStart: 1 }).extendWithSuggestions(ctx);
-                        return JSON.stringify(obj.suggestions);
+                        var obj = new suggestions.suggestions({ value: '%', selectionStart: 1 }).extendWithOptions(ctx);
+                        return JSON.stringify(JSON.stringify(obj.options.map(function (x) { return x.text; })));
                     },
-                    expectedResult: { $: 'contains', text: '$win' }
+                    expectedResult: { $: 'contains', text: '$people' }
                 },
             });
             jb_core_1.jb.component('vars-filter', {
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestions({ value: '%$p', selectionStart: 3 }).extendWithSuggestions(ctx);
-                        return JSON.stringify(obj.suggestions);
+                        var obj = new suggestions.suggestions({ value: '%$p', selectionStart: 3 }).extendWithOptions(ctx);
+                        return JSON.stringify(JSON.stringify(obj.options.map(function (x) { return x.text; })));
                     },
                     expectedResult: { $and: [{ $: 'contains', text: '$people' }, { $not: { $contains: '$win' } }] }
                 },
@@ -35,8 +35,8 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestions({ value: '%$people/', selectionStart: 9 }).extendWithSuggestions(ctx);
-                        return JSON.stringify(obj.suggestions);
+                        var obj = new suggestions.suggestions({ value: '%$people/', selectionStart: 9 }).extendWithOptions(ctx);
+                        return JSON.stringify(JSON.stringify(obj.options.map(function (x) { return x.text; })));
                     },
                     expectedResult: { $and: [{ $: 'contains', text: 'people' }, { $not: { $contains: '$people' } }] }
                 },

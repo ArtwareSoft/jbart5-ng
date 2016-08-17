@@ -209,6 +209,9 @@ jb.component('ui-tests.show-one-test-in-project', {
 						{$: 'css', css: '{ color: red; font-weight: bold }'}
 					]
 				},
+				{$: 'label', title: '%reason%', 
+					features :{$: 'css.padding', left: '15' }
+				},
 			]
 	}
 })

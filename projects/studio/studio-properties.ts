@@ -147,7 +147,7 @@ jb.component('studio.property-field',{
 		else 
 			fieldPT = 'studio.property-tgp';
 
-		return context.runGlobal({ $: fieldPT, path: path});
+		return context.run({ $: fieldPT, path: path});
 	}
 })
 
