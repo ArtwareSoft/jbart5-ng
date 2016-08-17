@@ -149,16 +149,26 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
             });
             jb_1.jb.component('ui-tests.show-project-tests', {
                 type: 'control',
-                impl: { $: 'itemlog',
-                    items: [
-                        '%$window.jbart.comps%',
-                        { $: 'objectToArray' },
-                        { $filter: '%val/type% == "test"' },
-                        function (ctx) {
-                            return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
-                        },
-                    ],
-                    controls: { $: 'ui-tests.show-one-test-in-project' }
+                impl: { $: 'group',
+                    features: { $: 'group.watch', data: '%$window/jbart/studioGlobals/profile_path%' },
+                    controls: { $: 'itemlog',
+                        items: [
+                            '%$window.jbart.comps%',
+                            { $: 'objectToArray' },
+                            { $filter: '%val/type% == "test"' },
+                            { $filter: function (ctx) {
+                                    var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
+                                    if (!selectedTst || selectedTst.slice(-6) == '.tests')
+                                        return true;
+                                    return ctx.data.id == selectedTst;
+                                }
+                            },
+                            function (ctx) {
+                                return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
+                            },
+                        ],
+                        controls: { $: 'ui-tests.show-one-test-in-project' }
+                    }
                 }
             });
             jb_1.jb.component('ui-tests.show-tests', {
@@ -208,10 +218,18 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                 impl: { $: 'group',
                     layout: { $: 'md-layout', layout: 'row', },
                     controls: [
-                        { $: 'button', title: '%id%',
+                        { $: 'button', title: { $firstSucceeding: ['%title%', '%id%'] },
                             style: { $: 'button.href' },
                             features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
-                            action: { $: 'studio.open-jb-editor',
+                            action: [{ $: 'writeValue',
+                                    value: '%id%', to: '%$window/jbart/studioGlobals/profile_path%'
+                                },
+                                function (ctx) {
+                                    var studioWin = ctx.resources.window.jbart.studioWindow;
+                                    studioWin && studioWin.jbart.zones['studio.all'].run(function () { }); // refresh studio win
+                                }
+                            ],
+                            action2: { $: 'studio.open-jb-editor',
                                 $vars: { circuit: '%id%' },
                                 path: '%id%',
                             },

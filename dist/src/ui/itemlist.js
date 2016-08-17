@@ -124,7 +124,8 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         var selectionEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
                             .map(function () { return cmp.selected; })
                             .filter(function (x) { return x; })
-                            .distinctUntilChanged();
+                            .distinctUntilChanged()
+                            .skip(1);
                         doubleClick.subscribe(function () {
                             return ctx.params.onDoubleClick(ctx.setData(cmp.selected));
                         });
@@ -138,8 +139,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                         });
                     },
                     afterViewInit: function (cmp) {
-                        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb_1.jb.val(ctx.params.databind))
+                        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb_1.jb.val(ctx.params.databind)) {
                             cmp.selected = cmp.items[0];
+                            jb_1.jb.writeValue(ctx.params.databind, cmp.selected);
+                        }
                     },
                     innerhost: {
                         '.jb-item': {

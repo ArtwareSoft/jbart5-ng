@@ -51,18 +51,22 @@ jb.component('jb-path-test', {
     return staticPathTst.merge(expectedDynamicCounterTst).merge(probeCheckTst);
 
 
-    function failure(part,reason) { return { id: testId + '- ' + part, success:false, reason: reason } };
-    function success(part) { return { id: testId + '- ' + part, success: true } };
+    function failure(part,reason) { return { id: testId, title: testId + '- ' + part, success:false, reason: reason } };
+    function success(part) { return { id: testId, title: testId + '- ' + part, success: true } };
 
     function findProbeProfile(parent) {
       if (parent.$mark)
         return parent;
       if (typeof parent == 'object')
         return jb.entries(parent)
-        .map(e=>findProbeProfile(e[1]))
-        .map(x=>
-          (x == 'markInString') ? ({$parent: parent, $prop: e[0]}) : x)
+        .map(e=>({
+          prop: e[0],
+          res: findProbeProfile(e[1])
+        }))
+        .map(e=>
+          (e.res == 'markInString') ? ({$parent: parent, $prop: e.prop}) : e.res)
         .filter(x=>x)[0];
+
       if (typeof parent == 'string' && parent.indexOf('$mark:') == 0)
         return 'markInString';
     }

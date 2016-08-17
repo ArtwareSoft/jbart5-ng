@@ -386,6 +386,9 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 jbComponent.prototype.jbCtrl = function (context) {
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
+                    if (context.path != profilePath(context.profile)) {
+                        profilePath(context.profile);
+                    }
                     jb_core_1.jb.path(options, ['atts', 'jb-path'], context.callerPath || context.path); //profilePath(context.profile)||''); // for the studio
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {

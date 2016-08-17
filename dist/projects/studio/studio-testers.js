@@ -60,18 +60,21 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe'], function(
                             return failure('probe');
                     }).take(1);
                     return staticPathTst.merge(expectedDynamicCounterTst).merge(probeCheckTst);
-                    function failure(part, reason) { return { id: testId + '- ' + part, success: false, reason: reason }; }
+                    function failure(part, reason) { return { id: testId, title: testId + '- ' + part, success: false, reason: reason }; }
                     ;
-                    function success(part) { return { id: testId + '- ' + part, success: true }; }
+                    function success(part) { return { id: testId, title: testId + '- ' + part, success: true }; }
                     ;
                     function findProbeProfile(parent) {
                         if (parent.$mark)
                             return parent;
                         if (typeof parent == 'object')
                             return jb_core_1.jb.entries(parent)
-                                .map(function (e) { return findProbeProfile(e[1]); })
-                                .map(function (x) {
-                                return (x == 'markInString') ? ({ $parent: parent, $prop: e[0] }) : x;
+                                .map(function (e) { return ({
+                                prop: e[0],
+                                res: findProbeProfile(e[1])
+                            }); })
+                                .map(function (e) {
+                                return (e.res == 'markInString') ? ({ $parent: parent, $prop: e.prop }) : e.res;
                             })
                                 .filter(function (x) { return x; })[0];
                         if (typeof parent == 'string' && parent.indexOf('$mark:') == 0)

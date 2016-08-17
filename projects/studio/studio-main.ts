@@ -91,7 +91,7 @@ jb.component('studio.all', {
             features: [
               {$: 'itemlist.selection', 
                 databind: '%$globals/page%', 
-                onSelection :{$: 'onNextTimer', 
+                onSelection :{$: 'onNextTimer', $debugger: 0,
                   action :{$: 'writeValue', 
                     to: '%$globals/profile_path%', 
                     value: '{%$globals/project%}.{%$globals/page%}'
@@ -187,6 +187,7 @@ jb.component('studio.renderWidget',{
 					window.jb_studio_window = true; // let studio widgets run in a special mode
 					waitForIframeLoad(iframe).then(function() {
 						var w = iframe.contentWindow;
+						w.jbart.studioWindow = window;
 						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 						w.jbart.modifyOperationsEm = studio.modifyOperationsEm;
 						w.jbart.studioActivityEm = studio.studioActivityEm;

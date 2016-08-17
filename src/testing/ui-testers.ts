@@ -122,17 +122,27 @@ jb.component('data-test', {
 
 jb.component('ui-tests.show-project-tests', {
 	type: 'control',
-	impl :{$: 'itemlog',
-		items: [
-			'%$window.jbart.comps%',
-			{ $: 'objectToArray' },
-			{$filter: '%val/type% == "test"' },
-			ctx => 
-				ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
-			// { $rxParallelKeepOrder: ctx => 
-			// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
-		],
-		controls :{$: 'ui-tests.show-one-test-in-project' } 
+	impl :{$: 'group',
+	    features: {$: 'group.watch', data: '%$window/jbart/studioGlobals/profile_path%' }, 
+ 		controls: {$: 'itemlog',
+			items: [
+				'%$window.jbart.comps%',
+				{ $: 'objectToArray' },
+				{$filter: '%val/type% == "test"' },
+				{$filter: ctx => {
+						var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
+						if (!selectedTst || selectedTst.slice(-6) == '.tests') 
+							return true;
+						return ctx.data.id == selectedTst;
+					}
+				}
+				ctx => 
+					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+				// { $rxParallelKeepOrder: ctx => 
+				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
+			],
+			controls :{$: 'ui-tests.show-one-test-in-project' } 
+		}
 	}
 })
 
@@ -189,10 +199,18 @@ jb.component('ui-tests.show-one-test-in-project', {
 		layout :{$: 'md-layout', layout: 'row',  },
 		controls: 
 			[
-				{	$: 'button', title: '%id%',
+				{	$: 'button', title: { $firstSucceeding: ['%title%','%id%']},
 					style :{$: 'button.href' },
 					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
-  					action :{$: 'studio.open-jb-editor', 
+  					action : [{$: 'writeValue', 
+  						value: '%id%', to: '%$window/jbart/studioGlobals/profile_path%'
+  						},
+  						ctx => {
+  							var studioWin = ctx.resources.window.jbart.studioWindow;
+  							studioWin && studioWin.jbart.zones['studio.all'].run(()=>{}); // refresh studio win
+  						}
+  					], 
+  					action2 :{$: 'studio.open-jb-editor', 
   						$vars: { circuit: '%id%' }, 
   						path: '%id%',
   					}, 

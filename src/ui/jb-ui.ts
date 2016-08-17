@@ -152,6 +152,10 @@ class jbComponent {
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
 
+		if (context.path != profilePath(context.profile)) {
+			profilePath(context.profile);
+		}
+
 		jb.path(options, ['atts','jb-path'], context.callerPath || context.path); //profilePath(context.profile)||''); // for the studio
 
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))

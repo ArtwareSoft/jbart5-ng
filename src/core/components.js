@@ -34,7 +34,10 @@ jb_component('pipeline',{
 		var data = jb_toarray(context.data);
 		var curr = [data[0]]; // use only one data item, the first or null
 		var profiles = jb_toarray(context.profile.items || context.profile['$pipeline']);
-		var innerPath = context.profile.items.sugar ? '~' : (context.profile['$pipeline'] ? '~$pipeline~' : '~items~');
+		if (context.profile.items && context.profile.items.sugar)
+			var innerPath =  '~' ;
+		else 
+			var innerPath = context.profile['$pipeline'] ? '~$pipeline~' : '~items~';
 
 		profiles.forEach(function(profile,i) {
 			if (jb_profileType(profile) == 'aggregator')
@@ -725,7 +728,10 @@ jb_component('runActions', {
 	},
 	impl: function(context) {
 		var actions = jb_toarray(context.profile.actions || context.profile['$runActions']);
-		var innerPath = actions.sugar ? '~' : (context.profile['$runActions'] ? '~$runActions~' : '~actions~');
+		if (context.profile.actions && context.profile.actions.sugar)
+			var innerPath =  '~' ;
+		else 
+			var innerPath = context.profile['$runActions'] ? '~$runActions~' : '~items~';
 		return actions.reduce((def,action,index) =>
 			def.then(() =>
 				$.when(jb_run(jb_ctx(context,{profile: action, path: innerPath + index }),{ as: 'single'}))),

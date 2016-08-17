@@ -120,7 +120,8 @@ jb.component('itemlist.selection', {
         var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
             .map(()=> cmp.selected)
             .filter(x=>x) 
-            .distinctUntilChanged();
+            .distinctUntilChanged()
+            .skip(1);
 
         doubleClick.subscribe(()=>
           ctx.params.onDoubleClick(ctx.setData(cmp.selected)));
@@ -135,8 +136,10 @@ jb.component('itemlist.selection', {
             cmp.selected = x);
     },
     afterViewInit: cmp => {
-        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb.val(ctx.params.databind))
+        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb.val(ctx.params.databind)) {
             cmp.selected = cmp.items[0];
+            jb.writeValue(ctx.params.databind,cmp.selected);
+        }
     },
     innerhost: {
       '.jb-item': {
