@@ -87,9 +87,10 @@ jb.component('ng2-ui-test', {
 								id: ctx.vars.testID,
 								success: ctx.params.expectedHtmlResult(ctx.setData(html))
 							});
-							ctx2.run({$:'closeContainingPopup'})
+							if (!jbart.singleTestID)
+								ctx2.run({$:'closeContainingPopup'})
 						}),
-					css: '{display: none}'
+					css: jbart.singleTestID ? '' : '{display: none}'
 			})
 		})
 	})
@@ -131,11 +132,13 @@ jb.component('ui-tests.show-project-tests', {
 				{$filter: '%val/type% == "test"' },
 				{$filter: ctx => {
 						var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
+						if (!selectedTst)
+							selectedTst = location.href.split('/')[6];
 						if (!selectedTst || selectedTst.slice(-6) == '.tests') 
 							return true;
 						return ctx.data.id == selectedTst;
 					}
-				}
+				},
 				ctx => 
 					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
 				// { $rxParallelKeepOrder: ctx => 
@@ -146,49 +149,86 @@ jb.component('ui-tests.show-project-tests', {
 	}
 })
 
-
 jb.component('ui-tests.show-tests', {
 	type: 'control',
-	impl :{$: 'itemlog',
-		items: [
-			() => testModules,
-//			'just-a-label',
-			'%$window.jbart_widgets.{%%}.tests%',
-			{ $: 'objectToArray' },
-//			{ $pipeline: [{ $: 'objectToArray' }, { $: 'slice', start: 26, end: 27 }]} ,
-			{ $rxFilter: ctx => (!jb_urlParam('test')) || jb_urlParam('test') == ctx.data.id },
-//		    tap('test'),
-//			ctx => ctx.setVars({testID:ctx.data.id}).run(ctx.data.val),
-			{ $rxParallelKeepOrder: ctx => ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
-//		    tap('test result'),
-		],
-		controls :{$: 'ui-tests.show-one-test' } 
+	impl :{$: 'group',
+ 		controls: {$: 'itemlog',
+			items: [
+//				{$list: jbart.testProjects , $var: 'project'},
+				'%$window.jbart.comps%',
+				{ $: 'objectToArray' },
+				{$filter: '%val/type% == "test"' },
+//				{$filter: {$: 'equals', item1: '%$project%', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+				// ctx => 
+				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+				{ $rxParallelKeepOrder: ctx => 
+					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl) },
+			],
+			controls :{$: 'ui-tests.show-one-test' } 
+		}
 	}
 })
 
+jb.component('ui-tests.single-test', {
+	type: 'control',
+	impl :{$: 'group',
+ 		controls: {$: 'itemlog',
+			items: ctx =>
+				ctx.setVars({testID:jbart.singleTestID}).run(jbart.comps[jbart.singleTestID].impl) ,
+			controls :{$: 'ui-tests.show-one-test' } 
+		}
+	}
+})
+
+// jb.component('ui-tests.show-tests2', {
+// 	type: 'control',
+// 	impl :{$: 'itemlog',
+// 		items: [
+// 			() => testModules,
+// //			'just-a-label',
+// 			'%$window.jbart_widgets.{%%}.tests%',
+// 			{ $: 'objectToArray' },
+// //			{ $pipeline: [{ $: 'objectToArray' }, { $: 'slice', start: 26, end: 27 }]} ,
+// 			{ $rxFilter: ctx => (!jb_urlParam('test')) || jb_urlParam('test') == ctx.data.id },
+// //		    tap('test'),
+// //			ctx => ctx.setVars({testID:ctx.data.id}).run(ctx.data.val),
+// 			{ $rxParallelKeepOrder: ctx => ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
+// //		    tap('test result'),
+// 		],
+// 		controls :{$: 'ui-tests.show-one-test' } 
+// 	}
+// })
+
 jb.component('ui-tests.show-one-test', {
 	type: 'control',
+	params: {
+		testResult: {as: 'single', defaultValue: '%%'},
+	},
 	impl :{$: 'group',
 		layout :{$: 'md-layout', layout: 'row',  },
 		controls: 
 			[
-				{	$: 'button', title: '%id%',
+				{	$: 'button', title: '%$testResult/id%',
 					style :{$: 'button.href' },
 					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
-					action :{$: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%id%' }
+					action :{$: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
 				},
 				{ $: 'label', title: 'success', 
 					features: [
-						{$: 'hidden', showCondition: '"%success%" == "true"'},
+						{$: 'hidden', showCondition: '"%$testResult/success%" == "true"'},
 						{$: 'css', css: '{ color: green; font-weight: bold }'}
 					]
 				},
 				{ $: 'label', title: 'failure', 
 					features: [
-						{$: 'hidden', showCondition: '"%success%" != "true"'},
+						{$: 'hidden', showCondition: '"%$testResult/success%" != "true"'},
 						{$: 'css', css: '{ color: red; font-weight: bold }'}
 					]
 				},
+				{$: 'label', title: '%$testResult/reason%', 
+					features :{$: 'css.padding', left: '15' }
+				},
+
 			]
 	}
 })

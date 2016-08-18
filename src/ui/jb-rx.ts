@@ -89,9 +89,9 @@ jb.component('rxFilter',{
 })
 
 function pipe(profiles,observable,context,sort) {
-	return profiles.reduce(function(aggregated,prof) {
+	return profiles.reduce(function(aggregated,prof,_index) {
 		if (jb.isProfOfType(prof,'rx.elem'))
-			return context.runInner(prof).$pipe(aggregated)
+			return context.runInner(prof,null,_index).$pipe(aggregated)
 		return aggregated.concatMap((ctx,index)=>{
 			//var ctx = context.setData(ctx.data);
 			var res = jb.toarray(ctx.runInner(prof,null,index)).map(data=>

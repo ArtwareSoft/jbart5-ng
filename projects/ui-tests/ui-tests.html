@@ -2,7 +2,7 @@
 <html>
 
   <head>
-    <title>Studio Helper</title>
+    <title>UI Tests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
   	<script type="text/javascript" src="/src/loader/load-jbart.js"></script>
   </head>
@@ -11,14 +11,11 @@
 
 
 <body>
-  <jbart compID="studio-helper.jb-editor">loading ...</jbart>
+  <jbart compID="ui-tests.main">loading ...</jbart>
 
 <script>
 
-jbLoadProject('studio-helper').then(x=>
-  console.log(x))
-
-jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/studio-helper/studio-helper','projects/studio-helper/suggestion-tests','projects/studio-helper/path-tests']))
+jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/ui-tests/ui-tests','projects/ui-tests/md-tests','projects/ui-tests/rx-tests']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

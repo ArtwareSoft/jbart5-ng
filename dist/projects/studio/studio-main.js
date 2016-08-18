@@ -47,8 +47,17 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
             }],
         execute: function() {
             jbart.studio = jbart.studio || {};
-            // jb.resource('studio','UrlPathEm',{$: 'rx.urlPath', base: 'studio', zoneId: 'studio.all', 
-            // 	params: [ 'project', 'page', 'profile_path' ] , databind: '{%$globals%}' } )
+            jb_core_1.jb.component('studio.all1', {
+                type: 'control',
+                impl: { $: 'group',
+                    controls: {
+                        $if: false,
+                        $then: { $: 'studio.renderWidget' },
+                        else: { $: 'studio.project' }
+                    },
+                    features: { $: 'group.watch', data: { $: 'studio.is-single-test' } }
+                }
+            });
             jb_core_1.jb.component('studio.all', {
                 type: 'control',
                 impl: { $: 'group',
@@ -180,6 +189,14 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                 type: 'control',
                 impl: { $: 'custom-control',
                     template: '<div style="padding: 60px 30px 30px 30px;background-color: #327DC8;zoom: 20%;"> <span style="position: absolute;margin-top:20px;margin-left:50px; color: white; font-size: 127px; font-family: Times New Roman, Times, serif">jB</span>  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215px" height="228px" viewBox="0 0 215 228" preserveAspectRatio="xMidYMid meet" zoomAndPan="disable" xmlns:svg="http://www.w3.org/2000/svg"> <polygon points="106 0 0   38 17  178 106 228" fill="#DE3641"></polygon> <polygon points="106 0 215 38 198 178 106 228" fill="#B13138"></polygon> </svg> </div>'
+                }
+            });
+            jb_core_1.jb.component('studio.is-single-test', {
+                type: 'boolean',
+                impl: function (ctx) {
+                    var page = location.href.split('/')[6];
+                    var profile_path = location.href.split('/')[7];
+                    return page == 'tests' && profile_path && profile_path.slice(-6) != '.tests';
                 }
             });
             jb_core_1.jb.component('studio.projectPages', {

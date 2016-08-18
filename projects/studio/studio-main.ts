@@ -4,11 +4,19 @@ import * as studio from './studio-model';
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import { Component, ElementRef } from '@angular/core';
 
-
 jbart.studio = jbart.studio || {}
 
-// jb.resource('studio','UrlPathEm',{$: 'rx.urlPath', base: 'studio', zoneId: 'studio.all', 
-// 	params: [ 'project', 'page', 'profile_path' ] , databind: '{%$globals%}' } )
+jb.component('studio.all1', {
+  type: 'control', 
+  impl :{ $: 'group',
+  	controls :{ 
+	  	$if : false, // {$:'studio.is-single-test'},
+	  	$then: {$: 'studio.renderWidget' },
+	  	else :{$: 'studio.project'}
+  	},
+    features :{$: 'group.watch', data :{$:'studio.is-single-test'} }
+  }
+})
 
 jb.component('studio.all', {
   type: 'control', 
@@ -152,6 +160,15 @@ jb.component('studio.jbart-logo',{
     }
 }) 
 
+jb.component('studio.is-single-test',{
+	type: 'boolean',
+	impl: ctx => {
+		var page = location.href.split('/')[6];
+		var profile_path = location.href.split('/')[7];
+		return page == 'tests' && profile_path && profile_path.slice(-6) != '.tests';
+  	}
+})
+
 jb.component('studio.projectPages',{
 	type: 'data',
 	impl: function(context) {
@@ -211,7 +228,6 @@ jb.component('studio.renderWidget',{
 						})
 						jb.trigger(jbart, 'preview_loaded');
 					})
-
 		  		}
 		}
 		previewIframe.jb_title = 

@@ -11,13 +11,15 @@
 
 <body>
   <jbart compID="ui-tests.show-tests">loading tests</jbart>
-  <jbartTests style="display:none"></jbartTests>
 
 <script>
 
-jbLoadModules(jb_modules.concat(['/projects/ui-tests/ui-tests.js']))
-  .then(loadedModules=>
-    jbBootstrap(loadedModules))   
+jbProjectsModules(jbart.testProjects).then(test_modules=>
+	jbLoadModules(jb_modules.concat(jb_studio_modules).concat(test_modules))
+	  .then(loadedModules=>
+	    jbBootstrap(loadedModules))   
+)
+
   
 </script>
 

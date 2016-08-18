@@ -189,3 +189,26 @@ function jbBootstrap(loadedModules) {
     .then(()=>
       jbart.afterBootsrtap = true);
 }
+
+// for tests
+
+jbart.testProjects = ['ui-tests','studio-helper'];
+
+function jbProjectModules(project) {
+  return $.get('/projects/'+project+'/'+project+'.html').then(function(html){
+    return (html.split('jbLoadModules(')[1] || '')
+      .split('[')[1]
+      .split(']')[0]
+      .replace(/'|"/g,'')
+      .split(',');
+  })
+}
+
+function jbProjectsModules(projects) {
+  return projects.reduce((def,project)=>
+      def.then(modules=>
+        jbProjectModules(project).then(more_modules=>
+          modules.concat(more_modules))), 
+      Promise.resolve([]) )
+}
+
