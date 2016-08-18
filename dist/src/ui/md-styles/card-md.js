@@ -51,7 +51,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<div><md-card-title>{{title}}</md-card-title></div>',
-                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' },
+                    features: { $: 'label.bind-title' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
             });
@@ -59,7 +59,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/card/card.js'], functio
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<div><md-card-subtitle>{{title}}</md-card-subtitle></div>',
-                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' },
+                    ffeatures: { $: 'label.bind-title' },
                     directives: 'MD_CARD_DIRECTIVES'
                 }
             });

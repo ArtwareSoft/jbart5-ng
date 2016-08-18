@@ -177,21 +177,46 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
             jb_1.jb.component('ui-tests.show-tests', {
                 type: 'control',
                 impl: { $: 'group',
-                    controls: { $: 'itemlog',
-                        items: [
-                            //				{$list: jbart.testProjects , $var: 'project'},
-                            '%$window.jbart.comps%',
-                            { $: 'objectToArray' },
-                            { $filter: '%val/type% == "test"' },
-                            //				{$filter: {$: 'equals', item1: '%$project%', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
-                            // ctx => 
-                            // 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
-                            { $rxParallelKeepOrder: function (ctx) {
-                                    return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
-                                } },
-                        ],
-                        controls: { $: 'ui-tests.show-one-test' }
-                    }
+                    $vars: {
+                        tst: {
+                            counter: 0,
+                            failures: '',
+                        },
+                        total: function (ctx) {
+                            return jb_1.jb.entries(jbart.comps)
+                                .map(function (x) { return x[1]; })
+                                .filter(function (x) { return x.type == 'test'; })
+                                .reduce(function (acc, test) { return acc + (test.impl.$ == 'jb-path-test' ? 3 : 1); }, 0);
+                        }
+                    },
+                    controls: [
+                        { $: 'label', title: '{?failures: %$tst/failures%?}',
+                            style: { $: 'label.h1' },
+                            features: { $: 'css', css: '{ color: red; font-weight: bold }' },
+                        },
+                        { $: 'label', title: '%$tst/counter% of %$total%' },
+                        { $: 'itemlog',
+                            counter: '%$tst/counter%',
+                            items: [
+                                //				{$list: jbart.testProjects , $var: 'project'},
+                                '%$window.jbart.comps%',
+                                { $: 'objectToArray' },
+                                { $filter: '%val/type% == "test"' },
+                                //				{$filter: {$: 'equals', item1: '%$project%', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+                                // ctx => 
+                                // 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+                                { $rxParallelKeepOrder: function (ctx) {
+                                        return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
+                                    } },
+                                function (ctx) {
+                                    if (!ctx.data.success)
+                                        ctx.vars.tst.failures = (ctx.vars.tst.failures || 0) + 1;
+                                    return ctx.data;
+                                }
+                            ],
+                            controls: { $: 'ui-tests.show-one-test' }
+                        }
+                    ]
                 }
             });
             jb_1.jb.component('ui-tests.single-test', {

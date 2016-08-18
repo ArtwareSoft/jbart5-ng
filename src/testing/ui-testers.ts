@@ -152,7 +152,26 @@ jb.component('ui-tests.show-project-tests', {
 jb.component('ui-tests.show-tests', {
 	type: 'control',
 	impl :{$: 'group',
- 		controls: {$: 'itemlog',
+		$vars : {
+			tst: {
+				counter: 0,
+				failures: '',
+			},
+			total: ctx =>
+				jb.entries(jbart.comps)
+					.map(x=>x[1])
+					.filter(x=>x.type == 'test')
+					.reduce((acc,test)=>acc+(test.impl.$ == 'jb-path-test' ? 3: 1),0)
+
+		},
+ 		controls: [
+ 			{$: 'label', title: '{?failures: %$tst/failures%?}',
+ 				style: {$: 'label.h1'},
+ 				features: {$: 'css', css: '{ color: red; font-weight: bold }'},
+ 			},
+ 			{$: 'label', title: '%$tst/counter% of %$total%' },
+ 			{$: 'itemlog',
+ 			counter: '%$tst/counter%',
 			items: [
 //				{$list: jbart.testProjects , $var: 'project'},
 				'%$window.jbart.comps%',
@@ -163,9 +182,15 @@ jb.component('ui-tests.show-tests', {
 				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
 				{ $rxParallelKeepOrder: ctx => 
 					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl) },
+				ctx => {
+					if (!ctx.data.success)
+						ctx.vars.tst.failures = (ctx.vars.tst.failures || 0)+1;
+					return ctx.data;
+				}
 			],
 			controls :{$: 'ui-tests.show-one-test' } 
 		}
+	]
 	}
 })
 

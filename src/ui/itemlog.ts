@@ -12,6 +12,7 @@ jb.component('itemlog',{
     controls: { type: 'control[]', essential: true, dynamic: true},
 		style: { type: 'itemlog.style', dynamic: true , defaultValue: { $: 'itemlog.div' } },
     itemVariable: { as: 'string', defaultValue: 'item' },
+    counter: {as : 'ref'},
 		features: { type: 'feature[]', dynamic: true },
 	},
 	impl: function(context) {
@@ -21,9 +22,12 @@ jb.component('itemlog',{
           cmp.itemToComp = item => 
             context.params.controls(item.setVars(jb.obj(context.params.itemVariable,item.data))) [0];
 
-          context.params.items(context).subscribe(itemCtx=>  
-              cmp.items.unshift(itemCtx));
-        }
+          context.params.items(context).subscribe(itemCtx=>  {
+              cmp.items.unshift(itemCtx);
+              if (context.params.counter)
+                jb.writeValue(context.params.counter,cmp.items.length)
+          })
+      }
     });
 	}
 })

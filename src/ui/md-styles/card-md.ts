@@ -52,7 +52,7 @@ jb.component('label.md-card-title', {
     type: 'label.style',
     impl :{$: 'customStyle', 
         template: '<div><md-card-title>{{title}}</md-card-title></div>',
-        features :{$: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' },
+        features :{$: 'label.bind-title' },
         directives: 'MD_CARD_DIRECTIVES'
     }
 })
@@ -61,7 +61,7 @@ jb.component('label.md-card-subtitle', {
     type: 'label.style',
     impl :{$: 'customStyle', 
         template: '<div><md-card-subtitle>{{title}}</md-card-subtitle></div>',
-        features :{$: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' },
+        ffeatures :{$: 'label.bind-title' },
         directives: 'MD_CARD_DIRECTIVES'
     }
 })

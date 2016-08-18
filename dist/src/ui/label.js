@@ -14,20 +14,28 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
             jb_core_1.jb.component('label', {
                 type: "control",
                 params: {
-                    title: { essential: true, defaultValue: 'label', as: 'ref' },
+                    title: { essential: true, defaultValue: 'hello', dynamic: true },
                     style: { type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (ctx) {
-                    return jb_ui.ctrl(ctx.setVars({ title: jb_core_1.jb.val(ctx.params.title) }));
+                    return jb_ui.ctrl(ctx.setVars({ title: ctx.params.title() }));
                 }
             });
             jb_core_1.jb.type('label.style');
+            jb_core_1.jb.component('label.bind-title', {
+                type: 'feature',
+                impl: function (ctx) { return ({
+                    doCheck: function (cmp) {
+                        cmp.title = ctx.vars.$model.title(cmp.ctx);
+                    }
+                }); }
+            });
             jb_core_1.jb.component('label.span', {
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<span>{{title}}</span>',
-                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
+                    features: { $: 'label.bind-title' }
                 }
             });
             jb_core_1.jb.component('label.static-span', {
@@ -40,21 +48,21 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<p>{{title}}</p>',
-                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
+                    features: { $: 'label.bind-title' }
                 }
             });
             jb_core_1.jb.component('label.h1', {
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<h1>{{title}}</h1>',
-                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
+                    features: { $: 'label.bind-title' }
                 }
             });
             jb_core_1.jb.component('label.h2', {
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<h2>{{title}}</h2>',
-                    features: { $: 'oneWayBind', to: '{{title}}', value: '%$$model/title%' }
+                    features: { $: 'label.bind-title' }
                 }
             });
         }

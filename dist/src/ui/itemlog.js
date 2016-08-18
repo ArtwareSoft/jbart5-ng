@@ -21,6 +21,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                     controls: { type: 'control[]', essential: true, dynamic: true },
                     style: { type: 'itemlog.style', dynamic: true, defaultValue: { $: 'itemlog.div' } },
                     itemVariable: { as: 'string', defaultValue: 'item' },
+                    counter: { as: 'ref' },
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (context) {
@@ -31,7 +32,9 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                                 return context.params.controls(item.setVars(jb_1.jb.obj(context.params.itemVariable, item.data)))[0];
                             };
                             context.params.items(context).subscribe(function (itemCtx) {
-                                return cmp.items.unshift(itemCtx);
+                                cmp.items.unshift(itemCtx);
+                                if (context.params.counter)
+                                    jb_1.jb.writeValue(context.params.counter, cmp.items.length);
                             });
                         }
                     });
