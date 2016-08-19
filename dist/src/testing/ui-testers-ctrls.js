@@ -136,11 +136,11 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         },
                         { $: 'button', title: 'sublime',
                             style: { $: 'button.href' },
-                            features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
                             action: { $: 'studio.goto-sublime', path: '%$testResult/id%' },
                             features: [
-                                { $: 'hidden', showCondition: '"%$testResult/success%" != "true"' },
-                            ]
+                                { $: 'hidden', showCondition: { $or: ['"%$testResult/success%" != "true"', '%$window.jbart.singleTestID%'] } },
+                                { $: 'css.padding', left: '15' },
+                            ],
                         },
                     ]
                 }

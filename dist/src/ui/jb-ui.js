@@ -379,11 +379,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 jbComponent.prototype.jbCtrl = function (context) {
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
-                    if (context.path != profilePath(context.profile)) {
-                        context.componentContext.callerPath;
-                        profilePath(context.profile);
-                    }
-                    jb_core_1.jb.path(options, ['atts', 'jb-path'], context.path); //profilePath(context.profile)||''); // for the studio
+                    var path = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath : context.path;
+                    jb_core_1.jb.path(options, ['atts', 'jb-path'], path); // for pick & edit
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
