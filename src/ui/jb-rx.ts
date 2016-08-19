@@ -61,7 +61,7 @@ jb.component('rxLog',{
 	impl: (ctx,pipe) => pipe.subscribe(x=>console.log(x.data))
 })
 
-jb.component('rxPipe',{
+jb.component('rxPipe', {
 	type: 'rx.elem',
 	params: {
 		items: { type: 'data,rx.elem[]', ignore: true, essential: true }
@@ -69,7 +69,7 @@ jb.component('rxPipe',{
 	impl: function(context) { return { 
 		$pipe: function(obs) {
 			var profiles = jb_toarray(context.profile.items || context.profile['$rxPipe'] || context.profile['$pipeline']);
-			return pipe(profiles,obs,context,true);
+			return pipe(profiles,obs,context);
 		}
 	}
   }
@@ -88,13 +88,13 @@ jb.component('rxFilter',{
   }
 })
 
-function pipe(profiles,observable,context,sort) {
+function pipe(profiles,observable,context) {
 	return profiles.reduce(function(aggregated,prof,_index) {
 		if (jb.isProfOfType(prof,'rx.elem'))
 			return context.runInner(prof,null,_index).$pipe(aggregated)
-		return aggregated.concatMap((ctx,index)=>{
+		return aggregated.concatMap(ctx=>{
 			//var ctx = context.setData(ctx.data);
-			var res = jb.toarray(ctx.runInner(prof,null,index)).map(data=>
+			var res = jb.toarray(ctx.runInner(prof,null,_index)).map(data=>
 				ctxWithVar(ctx.setData(data),prof));
 			return Observable.concat.apply(Observable.of(),res.map(ctx2=>
 				observableFromCtx(ctx2).catch(e=>{debugger})))
@@ -145,7 +145,12 @@ jb.component('rxParallelKeepOrder', {
 		.subscribe(()=>{
 			while (parallel_results[emitted])
 				parallel_results[emitted++].forEach(x=>out.next(x))
-		})
+			},
+			x=>jb.logError('rxParallelKeepOrder'),
+			()=>
+				out.complete()
+		)
+		
 		return out;
 	}}}
 })
@@ -158,14 +163,27 @@ jb.component('rx.distinctUntilChanged', {
 	    keySelector: { type: 'rx.keySelector' },
 	    comparer: { type: 'rx.comparer' },
 	},
-	impl: context => { return { $pipe : obs => obs.concatMap(ctx=>
+	impl: context => ({ $pipe : obs => 
+		obs.concatMap(ctx=>
 			obs.map(ctx=>ctx.data)
 			.distinctUntilChanged(keySelector,comparer)
 			.flatMap(x=>ctx) )  
-	}}
+	})
 })
 
-
+jb.component('rx.concat', {
+	type: 'rx.elem',
+	params: {
+		items: { type: 'data,rx.elem[]', ignore: true, essential: true }
+	},
+	impl: (context,items) => ({
+		$pipe: obs => {
+			var profiles = jb_toarray(context.profile.items);
+			var inner_pipe = pipe(profiles,Observable.of(context),context);
+			return obs.concat(inner_pipe);
+		}
+	})
+})
 
 // ************* Subject
 

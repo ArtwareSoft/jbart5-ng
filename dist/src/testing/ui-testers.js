@@ -110,6 +110,10 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                                         resolve({ id: ctx.vars.testID, success: false });
                                     })
                                         .subscribe(function (x) {
+                                        Array.from(cmp.elementRef.nativeElement.querySelectorAll('input')).forEach(function (inp) {
+                                            if (inp.parentElement)
+                                                inp.parentElement.innerHTML += inp.value || '';
+                                        });
                                         var html = cmp.elementRef.nativeElement.outerHTML;
                                         resolve({
                                             id: ctx.vars.testID,
@@ -182,11 +186,18 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                             counter: 0,
                             failures: '',
                         },
+                        tests: ['%$window.jbart.comps%',
+                            { $: 'objectToArray' },
+                            { $filter: '%val/type% == "test"' }],
+                        parallel_tests: ['%$tests%',
+                            { $filter: { $: 'notEquals', item1: 'path-test', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
+                        ],
+                        serial_tests: ['%$tests%',
+                            { $filter: { $: 'equals', item1: 'path-test', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
+                        ],
                         total: function (ctx) {
-                            return jb_1.jb.entries(jbart.comps)
-                                .map(function (x) { return x[1]; })
-                                .filter(function (x) { return x.type == 'test'; })
-                                .reduce(function (acc, test) { return acc + (test.impl.$ == 'jb-path-test' ? 3 : 1); }, 0);
+                            return ctx.exp('%$tests%')
+                                .reduce(function (acc, test) { return acc + (test.val.impl.$ == 'jb-path-test' ? 3 : 1); }, 0);
                         }
                     },
                     controls: [
@@ -198,16 +209,20 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                         { $: 'itemlog',
                             counter: '%$tst/counter%',
                             items: [
-                                //				{$list: jbart.testProjects , $var: 'project'},
-                                '%$window.jbart.comps%',
-                                { $: 'objectToArray' },
-                                { $filter: '%val/type% == "test"' },
-                                //				{$filter: {$: 'equals', item1: '%$project%', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+                                '%$parallel_tests%',
                                 // ctx => 
                                 // 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
                                 { $rxParallelKeepOrder: function (ctx) {
                                         return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
                                     } },
+                                { $: 'rx.concat',
+                                    items: [
+                                        '%$serial_tests%',
+                                        function (ctx) {
+                                            return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
+                                        },
+                                    ]
+                                },
                                 function (ctx) {
                                     if (!ctx.data.success)
                                         ctx.vars.tst.failures = (ctx.vars.tst.failures || 0) + 1;
@@ -256,7 +271,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                 impl: { $: 'group',
                     layout: { $: 'md-layout', layout: 'row', },
                     controls: [
-                        { $: 'button', title: '%$testResult/id%',
+                        { $: 'button', title: { $firstSucceeding: ['%$testResult/title%', '%$testResult/id%'] },
                             style: { $: 'button.href' },
                             features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
                             action: { $: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
@@ -275,6 +290,14 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui', '@angular/core'], function(exports
                         },
                         { $: 'label', title: '%$testResult/reason%',
                             features: { $: 'css.padding', left: '15' }
+                        },
+                        { $: 'button', title: 'sublime',
+                            style: { $: 'button.href' },
+                            features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
+                            action: { $: 'studio.goto-sublime', path: '%$testResult/id%' },
+                            features: [
+                                { $: 'hidden', showCondition: '"%$testResult/success%" != "true"' },
+                            ]
                         },
                     ]
                 }

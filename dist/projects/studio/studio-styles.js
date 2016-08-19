@@ -21,7 +21,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: '<div [title]="title" (click)="clicked()"><div class="inner-text">{{title}}</div></div>',
                     css: ".inner-text {\n  white-space: nowrap; overflow-x: hidden;\n  display: inline; height: 16px; \n  padding-left: 4px; padding-top: 2px;\n  font: 12px \"arial\"; color: #555555; \n}\n\n{\n  width: 149px;\n  border: 1px solid #ccc; border-radius: 4px;\n  cursor: pointer;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n  background: #eee;\n  white-space: nowrap; overflow-x: hidden;\n  text-overflow: ellipsis;\n}",
-                    features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
                 }
             });
             jb_core_1.jb.component('editable-boolean.studio-slide-toggle', {

@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@angular2-material/icon/icon.js', '@angular2-material/icon/icon-registry'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@angular2-material/icon/icon.js', '@angular2-material/icon/icon-registry', '@angular2-material/core/portal/portal-directives', '@angular2-material/core/ripple/ripple'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, button_js_1, icon_js_1, icon_registry_1;
+    var jb_core_1, jb_ui, button_js_1, icon_js_1, icon_registry_1, portal_directives_1, ripple_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -18,9 +18,15 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@an
             },
             function (icon_registry_1_1) {
                 icon_registry_1 = icon_registry_1_1;
+            },
+            function (portal_directives_1_1) {
+                portal_directives_1 = portal_directives_1_1;
+            },
+            function (ripple_1_1) {
+                ripple_1 = ripple_1_1;
             }],
         execute: function() {
-            jb_ui.registerDirectives({ MdButton: button_js_1.MdButton, MdIcon: icon_js_1.MdIcon });
+            jb_ui.registerDirectives({ MdButton: button_js_1.MdButton, MdIcon: icon_js_1.MdIcon, PORTAL_DIRECTIVES: portal_directives_1.PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES: ripple_1.MD_RIPPLE_DIRECTIVES });
             jb_ui.registerProviders({ MdIconRegistry: icon_registry_1.MdIconRegistry });
             jb_core_1.jb.component('button.md-flat', {
                 type: 'button.style',

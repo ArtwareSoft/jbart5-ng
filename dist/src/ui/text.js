@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx;
+    var jb_core_1, jb_ui;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,23 +9,28 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
-            },
-            function (jb_rx_1) {
-                jb_rx = jb_rx_1;
             }],
         execute: function() {
             jb_core_1.jb.type('text.style');
             jb_core_1.jb.component('text', {
                 type: 'control',
                 params: {
-                    text: { essential: true, as: 'ref' },
+                    text: { essential: true, dynamic: true },
                     style: { type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
                     title: { as: 'string', defaultValue: 'text' },
                     features: { type: 'feature[]', dynamic: true },
                 },
                 impl: function (ctx, text) {
-                    return jb_ui.ctrl(ctx.setVars({ text: jb_core_1.jb.val(ctx.params.text) }));
+                    return jb_ui.ctrl(ctx.setVars({ text: ctx.params.text() }));
                 }
+            });
+            jb_core_1.jb.component('text.bind-text', {
+                type: 'feature',
+                impl: function (ctx) { return ({
+                    doCheck: function (cmp) {
+                        cmp.text = ctx.vars.$model.text(cmp.ctx);
+                    }
+                }); }
             });
             jb_core_1.jb.component('text.multi-line', {
                 type: 'text.style',
@@ -35,14 +40,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 },
                 impl: { $: 'customStyle',
                     template: '<div><textarea readonly cols="%$cols%" rows="%$rows%">{{text}}</textarea></div>',
-                    features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
+                    features: { $: 'text.bind-text' }
                 }
             });
             jb_core_1.jb.component('text.paragraph', {
                 type: 'text.style',
                 impl: { $: 'customStyle',
                     template: '<p>{{text}}</p>',
-                    features: { $: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
+                    features: { $: 'text.bind-text' }
                 }
             });
             jb_core_1.jb.component('text.codemirror', {
@@ -57,6 +62,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     return {
                         template: '<textarea></textarea>',
                         cssClass: 'jb-codemirror',
+                        observable: function () { },
                         init: function (cmp) {
                             mode = mode || 'javascript';
                             var field = context.vars.field;
@@ -71,10 +77,20 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             //$textarea.val(field.getValue());
                             //if (resizer) jb_codemirrorResizer(editor, $el);
                             context.vars.ngZone.runOutsideAngular(function () {
-                                var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                                try {
+                                    var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                                }
+                                catch (e) {
+                                    jb_core_1.jb.logException(e, 'editable-text.codemirror');
+                                    return;
+                                }
                                 $(editor.getWrapperElement()).css('box-shadow', 'none'); //.css('height', '200px');
-                                jb_rx.refObservable(context.vars.$model.text, context)
-                                    .subscribe(function (x) {
+                                var modelChangeEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
+                                    .map(function () { return context.vars.$model.text(); })
+                                    .filter(function (x) { return x; })
+                                    .distinctUntilChanged()
+                                    .skip(1);
+                                modelChangeEm.subscribe(function (x) {
                                     return editor.setValue(x);
                                 });
                             });

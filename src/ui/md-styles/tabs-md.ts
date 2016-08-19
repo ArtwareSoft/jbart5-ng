@@ -1,10 +1,11 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import {MD_TABS_DIRECTIVES} from '@angular2-material/tabs/tabs.js';
+import {MD_TABS_DIRECTIVES,TABS_INTERNAL_DIRECTIVES} from '@angular2-material/tabs/tabs.js';
 import {MdToolbar} from '@angular2-material/toolbar/toolbar';
 
-jb_ui.registerDirectives({MD_TABS_DIRECTIVES: MD_TABS_DIRECTIVES, MdToolbar:MdToolbar});
+
+jb_ui.registerDirectives({MD_TABS_DIRECTIVES: MD_TABS_DIRECTIVES, MdToolbar:MdToolbar,TABS_INTERNAL_DIRECTIVES: TABS_INTERNAL_DIRECTIVES});
 
 jb.component('tabs.md-tabs', {
   params: {

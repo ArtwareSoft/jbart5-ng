@@ -82,6 +82,10 @@ jb.component('ng2-ui-test', {
 						.catch(e=>{ 
 							resolve({ id: ctx.vars.testID, success:false }) })
 						.subscribe(x=>{
+							Array.from(cmp.elementRef.nativeElement.querySelectorAll('input')).forEach(inp=>{
+								if (inp.parentElement)
+									inp.parentElement.innerHTML += inp.value || '';
+							})
 							var html = cmp.elementRef.nativeElement.outerHTML;
 							resolve({ 
 								id: ctx.vars.testID,
@@ -157,11 +161,19 @@ jb.component('ui-tests.show-tests', {
 				counter: 0,
 				failures: '',
 			},
+			tests: ['%$window.jbart.comps%',
+				{ $: 'objectToArray' },
+				{$filter: '%val/type% == "test"' }],
+			parallel_tests: [ '%$tests%', 
+				{$filter: {$: 'notEquals', item1: 'path-test', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+			],
+			serial_tests: [ '%$tests%', 
+				{$filter: {$: 'equals', item1: 'path-test', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+			],
+
 			total: ctx =>
-				jb.entries(jbart.comps)
-					.map(x=>x[1])
-					.filter(x=>x.type == 'test')
-					.reduce((acc,test)=>acc+(test.impl.$ == 'jb-path-test' ? 3: 1),0)
+				ctx.exp('%$tests%')
+					.reduce((acc,test)=>acc+(test.val.impl.$ == 'jb-path-test' ? 3: 1),0)
 
 		},
  		controls: [
@@ -173,15 +185,18 @@ jb.component('ui-tests.show-tests', {
  			{$: 'itemlog',
  			counter: '%$tst/counter%',
 			items: [
-//				{$list: jbart.testProjects , $var: 'project'},
-				'%$window.jbart.comps%',
-				{ $: 'objectToArray' },
-				{$filter: '%val/type% == "test"' },
-//				{$filter: {$: 'equals', item1: '%$project%', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+				'%$parallel_tests%',
 				// ctx => 
 				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
 				{ $rxParallelKeepOrder: ctx => 
 					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl) },
+				{$: 'rx.concat', 
+					items: [ // serial run of path-tests
+					'%$serial_tests%',
+					ctx => 
+						ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+					] 
+				},
 				ctx => {
 					if (!ctx.data.success)
 						ctx.vars.tst.failures = (ctx.vars.tst.failures || 0)+1;
@@ -193,6 +208,7 @@ jb.component('ui-tests.show-tests', {
 	]
 	}
 })
+
 
 jb.component('ui-tests.single-test', {
 	type: 'control',
@@ -233,7 +249,7 @@ jb.component('ui-tests.show-one-test', {
 		layout :{$: 'md-layout', layout: 'row',  },
 		controls: 
 			[
-				{	$: 'button', title: '%$testResult/id%',
+				{	$: 'button', title: {$firstSucceeding: ['%$testResult/title%','%$testResult/id%']},
 					style :{$: 'button.href' },
 					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
 					action :{$: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
@@ -252,6 +268,14 @@ jb.component('ui-tests.show-one-test', {
 				},
 				{$: 'label', title: '%$testResult/reason%', 
 					features :{$: 'css.padding', left: '15' }
+				},
+				{	$: 'button', title: 'sublime',
+					style :{$: 'button.href' },
+					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
+					action :{$: 'studio.goto-sublime', path: '%$testResult/id%' },
+					features: [
+						{$: 'hidden', showCondition: '"%$testResult/success%" != "true"'},
+					]
 				},
 
 			]

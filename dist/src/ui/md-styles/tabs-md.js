@@ -17,7 +17,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/tabs/tabs.js', '@angula
                 toolbar_1 = toolbar_1_1;
             }],
         execute: function() {
-            jb_ui.registerDirectives({ MD_TABS_DIRECTIVES: tabs_js_1.MD_TABS_DIRECTIVES, MdToolbar: toolbar_1.MdToolbar });
+            jb_ui.registerDirectives({ MD_TABS_DIRECTIVES: tabs_js_1.MD_TABS_DIRECTIVES, MdToolbar: toolbar_1.MdToolbar, TABS_INTERNAL_DIRECTIVES: tabs_js_1.TABS_INTERNAL_DIRECTIVES });
             jb_core_1.jb.component('tabs.md-tabs', {
                 params: {
                     tabWidth: { as: 'number' }

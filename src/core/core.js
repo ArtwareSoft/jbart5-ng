@@ -9,6 +9,9 @@ function jb_run(context,parentParam,settings) {
     if (profile === null) return;
     if (profile.$debugger == 0) debugger;
     if (profile.$asIs) return profile.$asIs;
+    if (parentParam && (parentParam.type||'').indexOf('[]') > -1 && ! parentParam.as) // fix to array value. e.g. single feature not in array
+        parentParam.as = 'array';
+
     if (typeof profile === 'object' && Object.getOwnPropertyNames(profile).length == 0)
       return;
     var run = jb_prepare(context,parentParam);
@@ -119,16 +122,15 @@ function jb_prepare(context,parentParam) {
 
   for (var p in comp.params) {
     var param = comp.params[p];
-    var val = profile[p];
-    if (!val && first && firstProp != '$') // $comp sugar
-      val = profile[firstProp]; 
-    if (val != null && (param.type||'').indexOf('[]') > -1 && !Array.isArray(val)) // fix to array value. e.g. single feature not in array
-       val = [val];
+    var val = profile[p], path =p;
+    if (!val && first && firstProp != '$') { // $comp sugar
+      val = profile[firstProp]; path = firstProp;
+    }
     var valOrDefault = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : [];
 
     if (!param.ignore) {
       if (param.dynamic) {
-        var func = jb_funcDynamicParam(ctx,valOrDefault,param,p);
+        var func = jb_funcDynamicParam(ctx,valOrDefault,param,p,path);
         func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
         func.path = ctx.path;
         paramsArray.push( { name: p, type: 'function', func: func } );
@@ -146,11 +148,14 @@ function jb_prepare(context,parentParam) {
 }
 
 
-function jb_funcDynamicParam(ctx,profileToRun,param,paramName) {
+function jb_funcDynamicParam(ctx,profileToRun,param,paramName,path) {
    if (param && param.type && param.type.indexOf('[') != -1 && jb_isArray(profileToRun)) // array
-    var res = jb_func(paramName,(ctx2,data2) => jb_flattenArray(profileToRun.map((prof,i)=>(ctx2||ctx).setData(data2).runInner(prof,param,paramName+'~'+i))))
+    var res = jb_func(paramName,(ctx2,data2) => 
+      jb_flattenArray(profileToRun.map((prof,i)=>
+        (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i))))
   else // single
-    var res = jb_func(paramName,(ctx2,data2) => profileToRun && (ctx2||ctx).setData(data2).runInner(profileToRun,param,paramName))
+    var res = jb_func(paramName,(ctx2,data2) => 
+      profileToRun && (ctx2||ctx).setData(data2).runInner(profileToRun,param,path))
   return res;
 }
 

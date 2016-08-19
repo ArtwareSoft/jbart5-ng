@@ -1,6 +1,6 @@
 import {jb} from 'jb-core/jb';
 
-jb.resource('studio-helper','people', { "people": [
+jb.resource('ui-tests','people-array', { "people": [
   { "name": "Homer Simpson" ,"age": 42 , "male": true},
   { "name": "Marge Simpson" ,"age": 38 , "male": false},
   { "name": "Bart Simpson"  ,"age": 12 , "male": true}
@@ -230,7 +230,7 @@ jb.component('studio-helper.expandable', {
 jb.component('studio-helper-dummy.label', {
   type: 'control', 
   impl :{$: 'label', 
-        title: [ '%$people/people%', 
+        title: [ '%$people-array/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'
         ],
@@ -251,7 +251,7 @@ jb.component('studio-helper.group-with-label', {
   impl :{$: 'group', 
     controls: [
       {$: 'label', 
-        title: [ '%$people/people%', 
+        title: [ '%$people-array/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'
         ]
@@ -272,7 +272,7 @@ jb.component('studio-helper.itemlist-with-find', {
       }, 
       {$: 'itemlist', 
         items: [
-          '%$people/people%', 
+          '%$people-array/people%', 
           {$: 'search-filter', pattern: '%$globals/project_pattern%' }
         ], 
         controls: [

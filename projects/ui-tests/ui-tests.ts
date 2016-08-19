@@ -33,21 +33,21 @@ jb.resource('ui-tests','wait2sec', new Promise(res => setTimeout(()=>{res(2)}, 2
 
 jb.component('inner-label1-tst', {
   params: {
-     title: { essential: true, dynamic: true, as: 'ref' },
+     title: { essential: true, dynamic: true },
   },
   impl :{$: 'label', cssClass: 'inner-label1-tst', title: {$call: 'title' }}
 })
 
 jb.component('inner-label2-tst', {
   params: {
-     title: { essential: true, dynamic: true, as: 'ref' },
+     title: { essential: true, dynamic: true },
   },
   impl :{$: 'inner-label1-tst', cssClass: 'inner-label2-tst', title: {$call: 'title' }}
 })
 
 jb.component('inner-label3-tst', {
   params: {
-     title: { essential: true, dynamic: true, as: 'ref' },
+     title: { essential: true, dynamic: true },
   },
   impl :{$: 'inner-label2-tst', cssClass: 'inner-label3-tst', title: {$call: 'title' }}
 })
@@ -264,7 +264,7 @@ jb.component('ui-test.tree-DD', {
         { $: 'tree.keyboard-selection'} 
     ] 
   },
-  expectedHtmlResult: { $: 'contains', text: ['address'] } ,
+  expectedHtmlResult: { $: 'contains', text: ['Homer'] } ,
 },
 })
 
@@ -660,7 +660,7 @@ jb.component('ui-test.prettyPrintComp', {
       },
     ]
   },
-  expectedHtmlResult: { $: 'contains', text: ["as: 'ref'"] },
+  expectedHtmlResult: { $: 'contains', text: ["dynamic: true"] },
 },
 })
 
@@ -785,8 +785,8 @@ jb.component('ui-test.group.accordion', {
 jb.component('ui-test.inner-label', {
   type: 'test',
   impl :{$: 'ng2-ui-test',  
-  control :{$: 'inner-label3-tst', title: 'Hello World2' },
-  expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
+    control :{$: 'inner-label3-tst', title: 'Hello World2' },
+    expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 
 })

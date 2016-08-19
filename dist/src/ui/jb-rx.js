@@ -38,13 +38,13 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
         }
     }
     exports_1("observableFromCtx", observableFromCtx);
-    function pipe(profiles, observable, context, sort) {
+    function pipe(profiles, observable, context) {
         return profiles.reduce(function (aggregated, prof, _index) {
             if (jb_1.jb.isProfOfType(prof, 'rx.elem'))
                 return context.runInner(prof, null, _index).$pipe(aggregated);
-            return aggregated.concatMap(function (ctx, index) {
+            return aggregated.concatMap(function (ctx) {
                 //var ctx = context.setData(ctx.data);
-                var res = jb_1.jb.toarray(ctx.runInner(prof, null, index)).map(function (data) {
+                var res = jb_1.jb.toarray(ctx.runInner(prof, null, _index)).map(function (data) {
                     return ctxWithVar(ctx.setData(data), prof);
                 });
                 return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) {
@@ -124,7 +124,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                     return {
                         $pipe: function (obs) {
                             var profiles = jb_toarray(context.profile.items || context.profile['$rxPipe'] || context.profile['$pipeline']);
-                            return pipe(profiles, obs, context, true);
+                            return pipe(profiles, obs, context);
                         }
                     };
                 }
@@ -179,6 +179,8 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                                 .subscribe(function () {
                                 while (parallel_results[emitted])
                                     parallel_results[emitted++].forEach(function (x) { return out.next(x); });
+                            }, function (x) { return jb_1.jb.logError('rxParallelKeepOrder'); }, function () {
+                                return out.complete();
                             });
                             return out;
                         } };
@@ -190,14 +192,27 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                     keySelector: { type: 'rx.keySelector' },
                     comparer: { type: 'rx.comparer' },
                 },
-                impl: function (context) {
-                    return { $pipe: function (obs) { return obs.concatMap(function (ctx) {
+                impl: function (context) { return ({ $pipe: function (obs) {
+                        return obs.concatMap(function (ctx) {
                             return obs.map(function (ctx) { return ctx.data; })
                                 .distinctUntilChanged(keySelector, comparer)
                                 .flatMap(function (x) { return ctx; });
-                        }); }
-                    };
-                }
+                        });
+                    }
+                }); }
+            });
+            jb_1.jb.component('rx.concat', {
+                type: 'rx.elem',
+                params: {
+                    items: { type: 'data,rx.elem[]', ignore: true, essential: true }
+                },
+                impl: function (context, items) { return ({
+                    $pipe: function (obs) {
+                        var profiles = jb_toarray(context.profile.items);
+                        var inner_pipe = pipe(profiles, Observable_1.Observable.of(context), context);
+                        return obs.concat(inner_pipe);
+                    }
+                }); }
             });
             jb_1.jb.component('rx.subject', {
                 type: 'rx.subject,rx.observable,rx.observer',

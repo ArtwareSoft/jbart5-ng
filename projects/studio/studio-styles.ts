@@ -40,7 +40,7 @@ jb.component('button.studio-data-script',{
   white-space: nowrap; overflow-x: hidden;
   text-overflow: ellipsis;
 }`, 
-          features :{$: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
+//          features :{$: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
         } 
 })
 

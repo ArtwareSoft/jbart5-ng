@@ -460,12 +460,6 @@ export class jbComp {
   }
 }
 
-export function ngRef(ref,cmp) {
-	if (typeof ref == 'string' && ref.match(/{{.*}}/))
-		return {$jb_parent: cmp, $jb_property: ref.match(/{{(.*)}}/)[1] }
-	return ref;
-}
-
 export function twoWayBind(ref) {
 	if (!ref) return {
 		bindToCmp: () => {},

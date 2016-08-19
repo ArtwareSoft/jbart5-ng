@@ -214,20 +214,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                     };
                 }
             });
-            jb_core_1.jb.component('oneWayBind', {
-                type: 'feature',
-                params: {
-                    value: { essential: true, dynamic: true },
-                    to: { essential: true, as: 'ref' },
-                },
-                impl: function (context, value, to) {
-                    return {
-                        doCheck: function (cmp) {
-                            jb_core_1.jb.writeValue(jb_ui.ngRef(to, cmp), value(cmp.ctx));
-                        }
-                    };
-                }
-            });
             jb_core_1.jb.component('field.style-on-focus', {
                 type: 'feature',
                 params: {

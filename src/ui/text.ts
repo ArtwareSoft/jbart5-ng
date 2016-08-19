@@ -7,14 +7,24 @@ jb.type('text.style');
 jb.component('text', {
     type: 'control',
     params: {
-        text: { essential: true, as: 'ref' },
+        text: { essential: true, dynamic: true },
         style: { type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
         title: { as: 'string', defaultValue: 'text' },
         features: { type: 'feature[]', dynamic: true },
     },
     impl: (ctx,text) => 
-        jb_ui.ctrl(ctx.setVars({text: jb.val(ctx.params.text)}))
+        jb_ui.ctrl(ctx.setVars({text: ctx.params.text()}))
 })
+
+jb.component('text.bind-text', {
+  type: 'feature',
+  impl: ctx => ({
+    doCheck: function(cmp) {
+      cmp.text = ctx.vars.$model.text(cmp.ctx);
+    }
+  })
+})
+
 
 jb.component('text.multi-line', {
     type: 'text.style',
@@ -24,7 +34,7 @@ jb.component('text.multi-line', {
     },
     impl :{$: 'customStyle', 
         template: '<div><textarea readonly cols="%$cols%" rows="%$rows%">{{text}}</textarea></div>',
-        features :{$: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
+        features :{$: 'text.bind-text'}
     }
 })
 
@@ -32,7 +42,7 @@ jb.component('text.paragraph', {
     type: 'text.style',
     impl :{$: 'customStyle', 
         template: '<p>{{text}}</p>',
-        features :{$: 'oneWayBind', to: '{{text}}', value: '%$$model/text%' }
+        features :{$: 'text.bind-text' }
     }
 })
 
@@ -48,6 +58,7 @@ jb.component('text.codemirror', {
         return {
             template: '<textarea></textarea>',
             cssClass: 'jb-codemirror',
+            observable: () => {},
             init: function(cmp) {
                 mode = mode || 'javascript';
                 var field = context.vars.field;
@@ -63,10 +74,20 @@ jb.component('text.codemirror', {
                 //if (resizer) jb_codemirrorResizer(editor, $el);
 
                 context.vars.ngZone.runOutsideAngular(() => {
-                    var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                    try {
+                        var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                    } catch(e) {
+                        jb.logException(e,'editable-text.codemirror');
+                        return;
+                    }
                     $(editor.getWrapperElement()).css('box-shadow', 'none'); //.css('height', '200px');
-                    jb_rx.refObservable(context.vars.$model.text,context)
-                        .subscribe(x=>
+                    var modelChangeEm = cmp.jbEmitter.filter(x => x == 'check')
+                        .map(()=> context.vars.$model.text())
+                        .filter(x=>x) 
+                        .distinctUntilChanged()
+                        .skip(1);
+
+                    modelChangeEm.subscribe(x=>
                             editor.setValue(x));
                 })
             }

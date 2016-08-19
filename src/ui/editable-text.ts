@@ -74,7 +74,12 @@ jb.component('editable-text.codemirror', {
 				//if (resizer) jb_codemirrorResizer(editor, $el);
 
 				context.vars.ngZone.runOutsideAngular(() => {
-					var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+					try {
+						var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+					} catch(e) {
+						jb.logException(e,'editable-text.codemirror');
+						return;
+					}
 					cmp.codeMirror = editor;
 					$(editor.getWrapperElement()).css('box-shadow', 'none');
 					if (height)

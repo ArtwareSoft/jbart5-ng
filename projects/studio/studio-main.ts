@@ -48,7 +48,7 @@ jb.component('studio.all', {
                     margin-top: -100px;
                     }
                     `, 
-                  features :{$: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
+                  features :{$: 'label.bind-title'}
                 }
               }, 
               {$: 'label', 

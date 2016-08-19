@@ -11,7 +11,7 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                 suggestions = suggestions_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('simple-vars', {
+            jb_core_1.jb.component('suggestions-test.simple-vars', {
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
@@ -21,7 +21,7 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                     expectedResult: { $: 'contains', text: '$people' }
                 },
             });
-            jb_core_1.jb.component('vars-filter', {
+            jb_core_1.jb.component('suggestions-test.vars-filter', {
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
@@ -31,11 +31,11 @@ System.register(['jb-core', 'studio/studio-suggestions'], function(exports_1, co
                     expectedResult: { $and: [{ $: 'contains', text: '$people' }, { $not: { $contains: '$win' } }] }
                 },
             });
-            jb_core_1.jb.component('inside-array', {
+            jb_core_1.jb.component('suggestions-test.inside-array', {
                 type: 'test',
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
-                        var obj = new suggestions.suggestions({ value: '%$people/', selectionStart: 9 }).extendWithOptions(ctx);
+                        var obj = new suggestions.suggestions({ value: '%$people-array/', selectionStart: 15 }).extendWithOptions(ctx);
                         return JSON.stringify(JSON.stringify(obj.options.map(function (x) { return x.text; })));
                     },
                     expectedResult: { $and: [{ $: 'contains', text: 'people' }, { $not: { $contains: '$people' } }] }

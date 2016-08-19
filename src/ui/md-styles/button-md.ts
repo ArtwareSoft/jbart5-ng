@@ -4,7 +4,10 @@ import {MdButton} from '@angular2-material/button/button.js';
 import {MdIcon} from '@angular2-material/icon/icon.js';
 import {MdIconRegistry} from '@angular2-material/icon/icon-registry';
 
-jb_ui.registerDirectives({MdButton: MdButton,MdIcon: MdIcon });
+import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
+import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
+
+jb_ui.registerDirectives({MdButton: MdButton,MdIcon: MdIcon, PORTAL_DIRECTIVES:PORTAL_DIRECTIVES,MD_RIPPLE_DIRECTIVES:MD_RIPPLE_DIRECTIVES});
 jb_ui.registerProviders({MdIconRegistry: MdIconRegistry});
 
 jb.component('button.md-flat', {

@@ -101,7 +101,13 @@ jb.component('md-test.md-tabs', {
         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
     ]
   },
-  expectedHtmlResult :{$: 'contains', text: ['tab1','in tab1','tab2'] },
+  expectedHtmlResult :{$and: 
+      [ 
+        { $: 'contains', text: ['tab1','in tab1'] },
+        { $: 'contains', text: ['tab2'] },
+        { $not: { $: 'contains', text: ['in tab2'] } }
+       ]
+    },
   }
 })
 

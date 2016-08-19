@@ -123,12 +123,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
         }
     }
     exports_1("profilePath", profilePath);
-    function ngRef(ref, cmp) {
-        if (typeof ref == 'string' && ref.match(/{{.*}}/))
-            return { $jb_parent: cmp, $jb_property: ref.match(/{{(.*)}}/)[1] };
-        return ref;
-    }
-    exports_1("ngRef", ngRef);
     function twoWayBind(ref) {
         if (!ref)
             return {

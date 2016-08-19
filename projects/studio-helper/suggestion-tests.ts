@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as suggestions from 'studio/studio-suggestions';
 
-jb.component('simple-vars', {
+jb.component('suggestions-test.simple-vars', {
 	type: 'test',
 	 impl :{$: 'data-test', 
 		calculate: ctx => {
@@ -12,7 +12,7 @@ jb.component('simple-vars', {
 	},
 })
 
-jb.component('vars-filter', {
+jb.component('suggestions-test.vars-filter', {
 	type: 'test',
 	 impl :{$: 'data-test', 
 		calculate: ctx => {
@@ -23,15 +23,14 @@ jb.component('vars-filter', {
 	},
 })
 
-jb.component('inside-array', {
+jb.component('suggestions-test.inside-array', {
 	type: 'test',
 	 impl :{$: 'data-test', 
 		calculate: ctx => {
-			var obj = new suggestions.suggestions({ value: '%$people/', selectionStart: 9 }).extendWithOptions(ctx);
+			var obj = new suggestions.suggestions({ value: '%$people-array/', selectionStart: 15 }).extendWithOptions(ctx);
 			return JSON.stringify(JSON.stringify(obj.options.map(x=>x.text)));
 		},
 		expectedResult :{ $and: [{$: 'contains', text: 'people' }, { $not: { $contains: '$people'}}]}
 	},
 })
-
 

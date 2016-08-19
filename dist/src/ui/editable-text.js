@@ -82,7 +82,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                             $textarea.val(field.getValue());
                             //if (resizer) jb_codemirrorResizer(editor, $el);
                             context.vars.ngZone.runOutsideAngular(function () {
-                                var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                                try {
+                                    var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
+                                }
+                                catch (e) {
+                                    jb_core_1.jb.logException(e, 'editable-text.codemirror');
+                                    return;
+                                }
                                 cmp.codeMirror = editor;
                                 $(editor.getWrapperElement()).css('box-shadow', 'none');
                                 if (height)

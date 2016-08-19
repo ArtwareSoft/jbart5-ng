@@ -83,7 +83,7 @@ System.register(['jb-core', 'jb-ui', './studio-model', '@angular/platform-browse
                                             style: { $: 'customStyle',
                                                 template: '<span class="studio-message">{{title}}</span> ',
                                                 css: "{ position: absolute;\n                    color: white;  padding: 20px;  background: #327DC8;\n                    width: 1000px;\n                    margin-top: -100px;\n                    }\n                    ",
-                                                features: { $: 'oneWayBind', value: '%$$model/title%', to: '{{title}}' }
+                                                features: { $: 'label.bind-title' }
                                             }
                                         },
                                         { $: 'label',

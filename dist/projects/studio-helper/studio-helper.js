@@ -8,7 +8,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 jb_1 = jb_1_1;
             }],
         execute: function() {
-            jb_1.jb.resource('studio-helper', 'people', { "people": [
+            jb_1.jb.resource('ui-tests', 'people-array', { "people": [
                     { "name": "Homer Simpson", "age": 42, "male": true },
                     { "name": "Marge Simpson", "age": 38, "male": false },
                     { "name": "Bart Simpson", "age": 12, "male": true }
@@ -218,7 +218,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             jb_1.jb.component('studio-helper-dummy.label', {
                 type: 'control',
                 impl: { $: 'label',
-                    title: ['%$people/people%',
+                    title: ['%$people-array/people%',
                         { $filter: '%age% == 42' },
                         '%name%'
                     ],
@@ -237,7 +237,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 impl: { $: 'group',
                     controls: [
                         { $: 'label',
-                            title: ['%$people/people%',
+                            title: ['%$people-array/people%',
                                 { $filter: '%age% == 42' },
                                 '%name%'
                             ]
@@ -257,7 +257,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         },
                         { $: 'itemlist',
                             items: [
-                                '%$people/people%',
+                                '%$people-array/people%',
                                 { $: 'search-filter', pattern: '%$globals/project_pattern%' }
                             ],
                             controls: [

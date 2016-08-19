@@ -32,9 +32,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe'], function(
                         return;
                     var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
                     if (probProf.$parent)
-                        static_path += '~' + probProf.prop;
+                        static_path += '~' + probProf.$prop;
                     var staticPathTst = (static_path.split('controlWithMark~')[1] == expectedStaticPath) ? jb_rx.Observable.of(success('static path')) :
-                        jb_rx.Observable.of(failure('static path', 'static paths match error: ' + static_path + ' expected ' + expectedStaticPath));
+                        jb_rx.Observable.of(failure('static path', 'static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath));
                     // ********** dynamic counter
                     var probeObs = new probe.Probe(static_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' })).observable();
                     var expectedDynamicCounterTst = probeObs.filter(function (res) { return res.element; })

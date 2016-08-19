@@ -202,19 +202,6 @@ jb.component('hidden', {
   }
 })
 
-jb.component('oneWayBind', {
-  type: 'feature',
-  params: {
-    value: { essential: true, dynamic: true },
-    to: { essential: true, as: 'ref' },
-  },
-  impl: function(context,value,to) { return {
-    doCheck: function(cmp) {
-      jb.writeValue(jb_ui.ngRef(to,cmp),value(cmp.ctx));
-    }
-  } }
-})
-
 jb.component('field.style-on-focus', {
   type: 'feature',
   params: {
