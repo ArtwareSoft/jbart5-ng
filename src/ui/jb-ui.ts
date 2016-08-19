@@ -153,10 +153,11 @@ class jbComponent {
 			optionsOfProfile(context.profile));
 
 		if (context.path != profilePath(context.profile)) {
+			context.componentContext.callerPath;
 			profilePath(context.profile);
 		}
 
-		jb.path(options, ['atts','jb-path'], context.callerPath || context.path); //profilePath(context.profile)||''); // for the studio
+		jb.path(options, ['atts','jb-path'], context.path); //profilePath(context.profile)||''); // for the studio
 
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
@@ -274,7 +275,6 @@ class jbComponent {
 export function ctrl(context) {
 	var ctx = context.setVars({ $model: context.params });
 	var styleOptions = defaultStyle(ctx);
-	ctx.callerPath = context.callerPath;
 	return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
 
 	function defaultStyle(ctx) {
@@ -587,7 +587,7 @@ export class jBartWidget {
 	    	var ns = this.compId.split('.')[0];
 			var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 			jb.extend(resources, { window: window, globals: { } });
-			jbart.initialCtx = jb.ctx({ ngMode: true, resources: resources, vars: {ngZone: this.ngZone, injector: this.injector} }, {});
+			jbart.initialCtx = jb.ctx({ resources: resources, vars: {ngZone: this.ngZone, injector: this.injector} }, {});
 		}
 		if (jbart.studioGlobals)
 			return jbart.initialCtx.setVars({studio: {project: jbart.studioGlobals.project, page: jbart.studioGlobals.page}})

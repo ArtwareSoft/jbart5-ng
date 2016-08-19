@@ -18,7 +18,7 @@ jb_component('call',{
  			data: context.data, 
  			vars: context.vars, 
  			componentContext: context.componentContext.componentContext,
- 			comp: paramObj.path // overrides path 
+ 			comp: paramObj.srcPath // overrides path - use the former path
  		}));
       else
         return paramObj;
@@ -33,11 +33,13 @@ jb_component('pipeline',{
 	impl: function(context,items) {
 		var data = jb_toarray(context.data);
 		var curr = [data[0]]; // use only one data item, the first or null
+		if (typeof context.profile.items == 'string')
+			return context.runInner(context.profile.items,null,'items');
 		var profiles = jb_toarray(context.profile.items || context.profile['$pipeline']);
 		if (context.profile.items && context.profile.items.sugar)
-			var innerPath =  '~' ;
+			var innerPath =  '' ;
 		else 
-			var innerPath = context.profile['$pipeline'] ? '~$pipeline~' : '~items~';
+			var innerPath = context.profile['$pipeline'] ? '$pipeline~' : 'items~';
 
 		profiles.forEach(function(profile,i) {
 			if (jb_profileType(profile) == 'aggregator')
@@ -729,9 +731,9 @@ jb_component('runActions', {
 	impl: function(context) {
 		var actions = jb_toarray(context.profile.actions || context.profile['$runActions']);
 		if (context.profile.actions && context.profile.actions.sugar)
-			var innerPath =  '~' ;
+			var innerPath =  '' ;
 		else 
-			var innerPath = context.profile['$runActions'] ? '~$runActions~' : '~items~';
+			var innerPath = context.profile['$runActions'] ? '$runActions~' : 'items~';
 		return actions.reduce((def,action,index) =>
 			def.then(() =>
 				$.when(jb_run(jb_ctx(context,{profile: action, path: innerPath + index }),{ as: 'single'}))),

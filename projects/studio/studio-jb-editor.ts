@@ -85,10 +85,6 @@ jb.component('studio.jb-editor', {
       }, 
       {$: 'group', 
         title: 'input-output', 
-        features: [
-          {$: 'group.data', data: '%$globals/jb_editor_selection%' }, 
-          {$: 'group.watch', data: '%$globals/jb_preview_result_counter%' }
-        ], 
         controls :{$: 'group', 
           features :{$: 'group.wait', 
             for :{$: 'studio.probe', path: '%$globals/jb_editor_selection%' }, 

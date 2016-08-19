@@ -28,7 +28,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     function ctrl(context) {
         var ctx = context.setVars({ $model: context.params });
         var styleOptions = defaultStyle(ctx);
-        ctx.callerPath = context.callerPath;
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
         function defaultStyle(ctx) {
             var profile = context.profile;
@@ -381,9 +380,10 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
                     if (context.path != profilePath(context.profile)) {
+                        context.componentContext.callerPath;
                         profilePath(context.profile);
                     }
-                    jb_core_1.jb.path(options, ['atts', 'jb-path'], context.callerPath || context.path); //profilePath(context.profile)||''); // for the studio
+                    jb_core_1.jb.path(options, ['atts', 'jb-path'], context.path); //profilePath(context.profile)||''); // for the studio
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
@@ -665,7 +665,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         var ns = this.compId.split('.')[0];
                         var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
                         jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                        jbart.initialCtx = jb_core_1.jb.ctx({ ngMode: true, resources: resources, vars: { ngZone: this.ngZone, injector: this.injector } }, {});
+                        jbart.initialCtx = jb_core_1.jb.ctx({ resources: resources, vars: { ngZone: this.ngZone, injector: this.injector } }, {});
                     }
                     if (jbart.studioGlobals)
                         return jbart.initialCtx.setVars({ studio: { project: jbart.studioGlobals.project, page: jbart.studioGlobals.page } });

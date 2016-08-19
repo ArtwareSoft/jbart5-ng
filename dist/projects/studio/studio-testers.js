@@ -33,15 +33,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe'], function(
                     var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
                     if (probProf.$parent)
                         static_path += '~' + probProf.$prop;
+                    var actual_path = static_path.replace('~controlWithMark', '');
                     var staticPathTst = (static_path.split('controlWithMark~')[1] == expectedStaticPath) ? jb_rx.Observable.of(success('static path')) :
                         jb_rx.Observable.of(failure('static path', 'static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath));
                     // ********** dynamic counter
-                    var probeObs = new probe.Probe(static_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' })).observable();
+                    var probeObs = new probe.Probe(actual_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' })).observable();
                     var expectedDynamicCounterTst = probeObs.filter(function (res) { return res.element; })
                         .map(function (res) {
                         try {
-                            var path_to_compare = static_path.replace('~controlWithMark', '');
-                            var match = Array.from(res.element.querySelectorAll("[jb-path=\"" + path_to_compare + "\"]"));
+                            var match = Array.from(res.element.querySelectorAll("[jb-path=\"" + actual_path + "\"]"));
                         }
                         catch (e) {
                             var match = [];
@@ -49,15 +49,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe'], function(
                         if (match.length == expectedDynamicCounter)
                             return success('dynamic counter');
                         else
-                            return failure('dynamic counter', 'jb-path error: ' + path_to_compare + ' found ' + match.length + ' times. expecting ' + expectedDynamicCounter + ' occurrences');
+                            return failure('dynamic counter', 'jb-path error: ' + actual_path + ' found ' + match.length + ' times. expecting ' + expectedDynamicCounter + ' occurrences');
                     }).take(1);
                     // ********** prob check
                     var probeCheckTst = probeObs.filter(function (res) { return res.finalResult; })
                         .map(function (res) {
                         if (res.finalResult[0] && probeCheck(res.finalResult[0].in))
                             return success('probe');
-                        else
+                        else {
+                            debugger;
                             return failure('probe');
+                        }
                     }).take(1);
                     return staticPathTst.merge(expectedDynamicCounterTst).merge(probeCheckTst);
                     function failure(part, reason) { return { id: testId, title: testId + '- ' + part, success: false, reason: reason }; }

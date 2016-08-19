@@ -65,14 +65,12 @@ function jbCtx(context,ctx2) {
     this.path = (context.path || '') + (ctx2.path ? '~' + ctx2.path : '');
     if (ctx2.comp)
       this.path = ctx2.comp;
-    if (ctx2.callerPath)
-      this.callerPath = ctx2.callerPath;
     this.data= (typeof ctx2.data != 'undefined') ? ctx2.data : context.data;     // allow setting of data:null
     this.vars= ctx2.vars ? jb_extend({},context.vars,ctx2.vars) : context.vars;
     this.params= ctx2.params || context.params;
     this.resources= context.resources;
     this.componentContext= (typeof ctx2.componentContext != 'undefined') ? ctx2.componentContext : context.componentContext;
-    this.ngMode= context.ngMode;
+    this.probe= context.probe;
   }
 }
 jbCtx.prototype = {

@@ -20,23 +20,23 @@ jb.component('jb-path-test', {
     var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
     if (probProf.$parent)
       static_path += '~' + probProf.$prop;
+    var actual_path = static_path.replace('~controlWithMark','');
     var staticPathTst = (static_path.split('controlWithMark~')[1] == expectedStaticPath) ? jb_rx.Observable.of(success('static path')) :
       jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath ));
 
     // ********** dynamic counter
-    var probeObs = new probe.Probe(static_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } )).observable();
+    var probeObs = new probe.Probe(actual_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } )).observable();
     var expectedDynamicCounterTst = probeObs.filter(res=>res.element)
         .map(res=>{
           try {
-            var path_to_compare = static_path.replace('~controlWithMark','');
-            var match = Array.from(res.element.querySelectorAll(`[jb-path="${path_to_compare}"]`));
+            var match = Array.from(res.element.querySelectorAll(`[jb-path="${actual_path}"]`));
           } catch(e) {
             var match = [];
           }
           if (match.length ==  expectedDynamicCounter)
             return success('dynamic counter');
           else
-            return failure('dynamic counter', 'jb-path error: ' + path_to_compare + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
+            return failure('dynamic counter', 'jb-path error: ' + actual_path + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
       }).take(1);
 
     // ********** prob check
@@ -44,8 +44,10 @@ jb.component('jb-path-test', {
         .map(res=>{
         if (res.finalResult[0] && probeCheck(res.finalResult[0].in) )
           return success('probe');
-        else
+        else {
+          debugger;
           return failure('probe');
+        }
       }).take(1)
 
     return staticPathTst.merge(expectedDynamicCounterTst).merge(probeCheckTst);

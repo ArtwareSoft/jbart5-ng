@@ -107,7 +107,8 @@ jb_modules =
 'jb-ui/md-styles/card-md',
 'jb-ui/md-styles/sidenav-md',
 
-'testing/ui-testers'
+'testing/ui-testers',
+'testing/ui-testers-ctrls',
 ];
 
 jb_studio_modules = ['model','main','menu','toolbar','tests','popups'

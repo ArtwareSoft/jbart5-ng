@@ -5,7 +5,7 @@ function reverseOrderDelayedPromises(ctx) {
 }
 function tap(label) { return ctx => { console.log('tap: ' +label||'',ctx.data); return ctx.data } }
 
-jb.component('rx-tests.rx-simple', {
+jb.component('rx-test.rx-simple', {
   type: 'test',
   impl :{$: 'rx-test',  
   result: [
@@ -15,7 +15,7 @@ jb.component('rx-tests.rx-simple', {
 },
 })
 
-jb.component('rx-tests.rx-with-vars', {
+jb.component('rx-test.rx-with-vars', {
   type: 'test',
   impl :{$: 'rx-test',  
   result: [
@@ -28,7 +28,7 @@ jb.component('rx-tests.rx-with-vars', {
 })
 
 // the default behavior is to run one-by-one
-jb.component('rx-tests.one-by-one',{
+jb.component('rx-test.one-by-one',{
   type: 'test',
   impl :{$: 'rx-test',  
   result: [
@@ -40,7 +40,7 @@ jb.component('rx-tests.one-by-one',{
 })
 
 // if we do not want to wait, we can run in parallel
-jb.component('rx-tests.rx-parallel',{
+jb.component('rx-test.rx-parallel',{
   type: 'test',
   impl :{$: 'rx-test',  
   result: [
@@ -52,7 +52,7 @@ jb.component('rx-tests.rx-parallel',{
 })
 
 // we can run in parallel yet ask to get the results in the original order
-jb.component('rx-tests.rx-parallel-keep-order',{
+jb.component('rx-test.rx-parallel-keep-order',{
   type: 'test',
   impl :{$: 'rx-test',  
   result: [

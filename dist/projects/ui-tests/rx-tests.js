@@ -12,7 +12,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('rx-tests.rx-simple', {
+            jb_core_1.jb.component('rx-test.rx-simple', {
                 type: 'test',
                 impl: { $: 'rx-test',
                     result: [
@@ -21,7 +21,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     expectedResult: { $containsSeq: [1, 2, 3] }
                 },
             });
-            jb_core_1.jb.component('rx-tests.rx-with-vars', {
+            jb_core_1.jb.component('rx-test.rx-with-vars', {
                 type: 'test',
                 impl: { $: 'rx-test',
                     result: [
@@ -33,7 +33,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             // the default behavior is to run one-by-one
-            jb_core_1.jb.component('rx-tests.one-by-one', {
+            jb_core_1.jb.component('rx-test.one-by-one', {
                 type: 'test',
                 impl: { $: 'rx-test',
                     result: [
@@ -44,7 +44,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             // if we do not want to wait, we can run in parallel
-            jb_core_1.jb.component('rx-tests.rx-parallel', {
+            jb_core_1.jb.component('rx-test.rx-parallel', {
                 type: 'test',
                 impl: { $: 'rx-test',
                     result: [
@@ -55,7 +55,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             // we can run in parallel yet ask to get the results in the original order
-            jb_core_1.jb.component('rx-tests.rx-parallel-keep-order', {
+            jb_core_1.jb.component('rx-test.rx-parallel-keep-order', {
                 type: 'test',
                 impl: { $: 'rx-test',
                     result: [

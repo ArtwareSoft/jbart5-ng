@@ -1,10 +1,9 @@
 function jb_run(context,parentParam,settings) {
   try {
     var profile = context.profile;
-    // if (jbart.trace_paths)
-    //   console.log('path: ' +context.path);
-    if (jbart.probe && profile.$jbProbe && !context.noprobe) {
-          return jbart.probe.record(context,parentParam)
+    if (context.probe) {
+      if (context.probe.pathToTrace == context.path)
+        return context.probe.record(context,parentParam)
     }
     if (profile === null) return;
     if (profile.$debugger == 0) debugger;
@@ -45,12 +44,13 @@ function jb_run(context,parentParam,settings) {
         var out;
         if (run.impl) {
           run.args = prepareGCArgs(run.ctx);
-          run.args[0].callerPath = context.callerPath;
           if (profile.$debugger) debugger;
           out = run.impl.apply(null,run.args);
         }
-        else
-          out = jb_run(jb_ctx(run.ctx, { componentContext: run.ctx, callerPath: context.path }),parentParam);
+        else {
+          run.ctx.callerPath = context.path;
+          out = jb_run(jb_ctx(run.ctx, { componentContext: run.ctx }),parentParam);
+        }
 
         if (profile.$log)
           jbart.comps.log.impl(context, (profile.$log == true) ? out : jb_run( jb_ctx(context, { profile: profile.$log, data: out, vars: { data: context.data } })));
@@ -132,7 +132,7 @@ function jb_prepare(context,parentParam) {
       if (param.dynamic) {
         var func = jb_funcDynamicParam(ctx,valOrDefault,param,p,path);
         func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
-        func.path = ctx.path;
+        func.srcPath = ctx.path;
         paramsArray.push( { name: p, type: 'function', func: func } );
       } else if (param.type && param.type.indexOf('[]') > -1 && jb_isArray(valOrDefault)) // array of profiles
         paramsArray.push( { name: p, type: 'array', array: valOrDefault, param: {} } );
@@ -189,20 +189,14 @@ function jb_expression(expression, context, parentParam) {
     debugger;
     expression = expression.split('$debugger:')[1];
   }
-  if (jbart.probe && expression.indexOf('$jbProbe:') == 0) {
-    if (context.noprobe)
-      expression = expression.split('$jbProbe:')[1];
-    else
-      return jbart.probe.record(context,parentParam);
-  }
   if (expression.indexOf('$log:') == 0) {
     var out = jb_expression(expression.split('$log:')[1],context,parentParam);
     jbart.comps.log.impl(context, out);
     return out;
   }
   if (expression.indexOf('%') == -1 && expression.indexOf('{') == -1) return expression;
-  if (context && !context.ngMode)
-    expression = expression.replace(/{{/g,'{%').replace(/}}/g,'%}')
+  // if (context && !context.ngMode)
+  //   expression = expression.replace(/{{/g,'{%').replace(/}}/g,'%}')
   if (expression == '{%%}' || expression == '%%')
       return expPart('',context,jstype);
 

@@ -37,7 +37,7 @@ jb.component('path-test.using-global', {
 			controls :{$: 'test.inner-label', $mark: true } 
 		},
 		expectedStaticPath : 'controls',
-		expectedDynamicCounter: 1,
+		expectedDynamicCounter: 0,
 		probeCheck : '%$tst% == 10'
 	}
 })
@@ -103,7 +103,7 @@ jb.component('path-test.pipeline-no-sugar', {
 		controlWithMark: {$: 'group', 
 			controls :{$: 'label', title :{$: 'pipeline', items: ['$mark:hello'] } } 
 		},
-		expectedStaticPath : 'controls~title~$pipeline~items~0',
+		expectedStaticPath : 'controls~title~items~0',
 		expectedDynamicCounter: 0,
 		probeCheck : '%$tst% == 10'
 	}
@@ -116,7 +116,7 @@ jb.component('path-test.pipeline-one-elem', {
 		controlWithMark: {$: 'group', 
 			controls :{$: 'label', title :{$: 'pipeline', items: '$mark:hello' } } 
 		},
-		expectedStaticPath : 'controls~title~$pipeline~items',
+		expectedStaticPath : 'controls~title~items',
 		expectedDynamicCounter: 0,
 		probeCheck : '%$tst% == 10'
 	}

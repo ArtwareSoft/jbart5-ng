@@ -91,10 +91,6 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         },
                         { $: 'group',
                             title: 'input-output',
-                            features: [
-                                { $: 'group.data', data: '%$globals/jb_editor_selection%' },
-                                { $: 'group.watch', data: '%$globals/jb_preview_result_counter%' }
-                            ],
                             controls: { $: 'group',
                                 features: { $: 'group.wait',
                                     for: { $: 'studio.probe', path: '%$globals/jb_editor_selection%' },
