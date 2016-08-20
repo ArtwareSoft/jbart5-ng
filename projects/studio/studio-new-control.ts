@@ -1,6 +1,8 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
+import {modifyOperationsEm} from './studio-utils';
+
 
 jb.component('studio.openNewCtrlDialog', {
   type: 'action', 
@@ -39,7 +41,7 @@ jb.component('studio.onNextModifiedPath', {
 		action: { type: 'action', dynamic: true, essential: true }
 	},
 	impl: (ctx,action) =>  
-		studio.modifyOperationsEm.take(1)
+		modifyOperationsEm.take(1)
             .subscribe(e =>
             	action(ctx.setVars({ modifiedPath: e.args.modifiedPath }))
             )
@@ -82,7 +84,7 @@ jb.component('studio.openNewPage', {
                             type: 'control',
                             impl: { $: 'group', title: ctx.exp('%$dialogData/name%') }
                         };
-                        studio.model.modify(studio.model.newComp, id, { profile: profile }, ctx);
+                        model.modify(model.newComp, id, { profile: profile }, ctx);
                         ctx.run({ $: 'writeValue', to: '%$globals/page%', value: '%$dialogData/name%' });
                         ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
                     }

@@ -1,13 +1,13 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
+import {modifyOperationsEm} from './studio-utils';
 
 class Undo {
 	history = [];
 	index = 0;
 	clipboard = null;
 	constructor() {
-		studio.modifyOperationsEm.subscribe(change=>{
+		modifyOperationsEm.subscribe(change=>{
 			this.history.push(change);
 			this.index = this.history.length;
 		})

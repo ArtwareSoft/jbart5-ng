@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
 
 jb.component('studio.pick', {
 	type: 'action',
@@ -131,7 +131,7 @@ function showBox(cmp,profElem,_window,previewOffset) {
 		cmp.width = profElem.outerWidth();
 	cmp.height = profElem.outerHeight();
 
-	cmp.title = studio.model.shortTitle(profElem.attr('jb-path'));
+	cmp.title = model.shortTitle(profElem.attr('jb-path'));
 
 	var $el = $(cmp.elementRef.nativeElement);
 	var $titleText = $el.find('.title .text');

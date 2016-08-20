@@ -225,9 +225,22 @@ jb.component('css.width', {
   type: 'feature,dialogFeature',
   params: {
     width: { essential: true, as: 'number' },
+    overflow: { as: 'string', options: ',auto,hidden,scroll'},
+    minMax: { as: 'string', options: ',min,max'},
   },
-  impl: (context,width) => 
-    ({css: `{ width: ${width}px}`})
+  impl: (context,width,overflow,minMax) => 
+    ({css: `{ ${minMax ? minMax +'-':''}width: ${width}px ${overflow ? '; overflow-x:' + overflow + ';' : ''} }`})
+})
+
+jb.component('css.height', {
+  type: 'feature,dialogFeature',
+  params: {
+    height: { essential: true, as: 'number' },
+    overflow: { as: 'string', options: ',auto,hidden,scroll'},
+    minMax: { as: 'string', options: ',min,max'},
+  },
+  impl: (context,height,overflow,minMax) =>
+    ({css: `{ ${minMax ? minMax +'-':''}height: ${height}px ${overflow ? '; overflow-y:' + overflow : ''} }`})
 })
 
 jb.component('css.padding', {

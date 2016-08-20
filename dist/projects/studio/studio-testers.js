@@ -37,7 +37,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe'], function(
                     var staticPathTst = (static_path.split('controlWithMark~')[1] == expectedStaticPath) ? jb_rx.Observable.of(success('static path')) :
                         jb_rx.Observable.of(failure('static path', 'static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath));
                     // ********** dynamic counter
-                    var probeObs = new probe.Probe(actual_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' })).observable();
+                    var probeObs = new probe.Probe(actual_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' }), true).observable();
                     var expectedDynamicCounterTst = probeObs.filter(function (res) { return res.element; })
                         .map(function (res) {
                         try {

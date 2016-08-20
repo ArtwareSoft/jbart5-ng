@@ -51,7 +51,7 @@ class jbComponent {
 			this.factory = factory_hash[this.hashkey()];
 		else
 			try { 
-			this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
+			this.factory = factory_hash[this.hashkey()] = compiler.compileComponentSync(this.comp || this.createComp());
 		} catch (e) {
 			jb.logError('ng compilation error',this, e);
 			throw e;
@@ -152,8 +152,8 @@ class jbComponent {
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
 
-		var path = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
-		jb.path(options, ['atts','jb-path'], path); // for pick & edit
+		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
+		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
 
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
@@ -372,25 +372,28 @@ export class jbComp {
   @Input() comp;
   @Input() flatten;
   @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
-  constructor(private compiler :Compiler) {}
+  constructor(private compiler :Compiler,private ngZone: NgZone) {}
 
   ngOnInit() {
   	// redraw if script changed at studio
-		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+	(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
 				.flatMap(e=> {
-					if (this.comp && e.path == this.comp.ctx.path) {
+					if (this.comp && e.path == this.comp.callerPath) {
 						jb.delay(100).then(() =>
 				  			$(this._nativeElement).addClass('jb-highlight-comp-changed'));
-						return [this.comp.ctx.run()];
+						var comp = this.comp.ctx.runItself();
+						return [comp];
 					}
 					return [];
 				})
-				.filter(x=>x)
 				.startWith(this.comp)
+				.filter(x=>
+					x)
 				.subscribe(comp=> {
+					this.comp = comp;
 					this.draw(comp);
-					if (comp != this.comp)
-						applyPreview(this.comp.ctx);
+//					if (comp != this.comp)
+						applyPreview(comp.ctx);
 				})
   }
 
@@ -401,16 +404,16 @@ export class jbComp {
   		this.jbDispose();
   		console.log('jb_comp: replacing existing component');
   	}
-  	if (comp && comp.compile)
-  		var compiled = comp.compile(this.compiler)
-  	else
-  		var compiled = this.compiler.compileComponentAsync(comp);
+  	this.ngZone.runOutsideAngular(() => {
+	  	if (comp && comp.compile)
+	  		var componentFactory = comp.compile(this.compiler)
+	  	else
+	  		var componentFactory = this.compiler.compileComponentSync(comp);
 
-    compiled.then(componentFactory => {
-    	var cmp_ref = this.childView.createComponent(componentFactory);
-    	comp.registerMethods && comp.registerMethods(cmp_ref,this);
-        this.flattenjBComp(cmp_ref)
-    });
+	   	var cmp_ref = this.childView.createComponent(componentFactory);
+	   	comp.registerMethods && comp.registerMethods(cmp_ref,this);
+	    this.flattenjBComp(cmp_ref);
+	})
   }
 
 // very ugly: flatten the structure and pushing the dispose function to the group parent.

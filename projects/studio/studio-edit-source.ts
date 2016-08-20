@@ -1,5 +1,6 @@
 import {jb} from 'jb-core';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
+import {evalProfile} from './studio-utils';
 
 jb.component('studio.editSource', {
 	type: 'action',
@@ -27,14 +28,14 @@ jb.component('studio.profile-as-text', {
 	impl: (context,path,stringOnly) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') {
-					var val = studio.model.val(path);
+					var val = model.val(path);
 					if (typeof val == 'string')
 						return val;
 					return jb.prettyPrint(val);
 				} else {
-					var newVal = value.match(/^\s*({|\[)/) ? studio.evalProfile(value) : value;
+					var newVal = value.match(/^\s*({|\[)/) ? evalProfile(value) : value;
 					if (newVal != null)
-						studio.model.modify(studio.model.writeValue, path, { value: newVal },context);
+						model.modify(model.writeValue, path, { value: newVal },context);
 				}
 			}
 		})
@@ -48,9 +49,9 @@ jb.component('studio.string-property-ref', {
 	impl: (context,path,stringOnly) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') {
-					return studio.model.val(path);
+					return model.val(path);
 				} else {
-					studio.model.modify(studio.model.writeValue, path, { value: newVal },context);
+					model.modify(model.writeValue, path, { value: newVal },context);
 				}
 			}
 		})
@@ -63,7 +64,7 @@ jb.component('studio.goto-sublime', {
 		path: { as: 'string'}
 	},
 	impl: (ctx,path) => {
-		var compName = path.indexOf('~') == -1 ? path : studio.model.compName(path);
+		var compName = path.indexOf('~') == -1 ? path : model.compName(path);
 		compName && $.ajax(`/?op=gotoSource&comp=${compName}`)
 	}
 }) 

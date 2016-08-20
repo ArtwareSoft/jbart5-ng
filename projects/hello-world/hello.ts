@@ -7,9 +7,9 @@ jb.component('hello-world.test2', {
 
 jb.component('hello-world.main', {
   type: 'control', 
-  impl :{$: 'label', title: 'hello main' }
+  impl :{$: 'label', title: '$log:hello main' }
 })
-jb.component('hello-world.group1', {
+jb.component('hello-world.main1', {
 	type: 'control',
 	impl: {$: 'group', 
 		title: 'main', 
@@ -21,6 +21,6 @@ jb.component('hello-world.group1', {
 			{ $: 'button', title: '2.2' },
 		  ]
 		},
-		{$: 'label', title: '1.0' },
+		{$: 'label', title: '$log:1.0' },
 	]}
 })

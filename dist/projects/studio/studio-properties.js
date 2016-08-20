@@ -1,14 +1,17 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-properties', {
@@ -123,9 +126,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: function (context, path) {
                     var fieldPT = 'studio.property-label';
-                    var val = studio.model.val(path);
+                    var val = studio_tgp_model_1.model.val(path);
                     var valType = typeof val;
-                    var paramDef = studio.model.paramDef(path);
+                    var paramDef = studio_tgp_model_1.model.paramDef(path);
                     if (!paramDef)
                         jb_core_1.jb.logError('property-field: no param def for path ' + path);
                     if (valType == 'function')
@@ -135,7 +138,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     else if (paramDef.options)
                         fieldPT = 'studio.property-enum';
                     else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1) {
-                        if (studio.model.compName(path) || valType == 'object')
+                        if (studio_tgp_model_1.model.compName(path) || valType == 'object')
                             fieldPT = 'studio.property-data-script';
                         else if (paramDef.type == 'boolean' && (valType == 'boolean' || val == null))
                             fieldPT = 'studio.property-boolean';
@@ -199,9 +202,9 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    var val = studio.model.val(path);
-                    if (studio.model.compName(path))
-                        return studio.model.compName(path);
+                    var val = studio_tgp_model_1.model.val(path);
+                    if (studio_tgp_model_1.model.compName(path))
+                        return studio_tgp_model_1.model.compName(path);
                     if (Array.isArray(val))
                         return jb_core_1.jb.prettyPrint(val);
                     if (typeof val == 'function')
@@ -299,7 +302,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                                         },
                                         { $: 'picklist.dynamic-options',
                                             recalcEm: function (ctx) {
-                                                return studio.modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                                return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
                                             }
                                         }
                                     ]
@@ -352,7 +355,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             },
                             { $: 'picklist.dynamic-options',
                                 recalcEm: function (ctx) {
-                                    return studio.modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                    return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
                                 }
                             }
                         ],
@@ -470,7 +473,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: function (context, path) {
                     return [{ code: '', text: '' }]
-                        .concat(studio.model.PTsOfPath(path).map(function (op) { return ({ code: op, text: op }); }));
+                        .concat(studio_tgp_model_1.model.PTsOfPath(path).map(function (op) { return ({ code: op, text: op }); }));
                 }
             });
             jb_core_1.jb.component('studio.tgp-type-options', {
@@ -479,7 +482,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     type: { as: 'string' }
                 },
                 impl: function (context, type) {
-                    return studio.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
+                    return studio_tgp_model_1.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
                 }
             });
             jb_core_1.jb.component('studio.undo-support', {
@@ -491,24 +494,24 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     return ({
                         // saving state on focus and setting the change on blur
                         init: function (cmp) {
-                            var before = studio.compAsStrFromPath(path);
+                            var before = studio_utils_1.compAsStrFromPath(path);
                             if (cmp.codeMirror) {
                                 cmp.codeMirror.on('focus', function () {
-                                    return before = studio.compAsStrFromPath(path);
+                                    return before = studio_utils_1.compAsStrFromPath(path);
                                 });
                                 cmp.codeMirror.on('blur', function () {
-                                    if (before != studio.compAsStrFromPath(path))
-                                        studio.notifyModifcation(path, before, ctx);
+                                    if (before != studio_utils_1.compAsStrFromPath(path))
+                                        studio_utils_1.notifyModifcation(path, before, ctx);
                                 });
                             }
                             else {
                                 $(cmp.elementRef.nativeElement).findIncludeSelf('input')
                                     .focus(function (e) {
-                                    before = studio.compAsStrFromPath(path);
+                                    before = studio_utils_1.compAsStrFromPath(path);
                                 })
                                     .blur(function (e) {
-                                    if (before != studio.compAsStrFromPath(path))
-                                        studio.notifyModifcation(path, before, ctx);
+                                    if (before != studio_utils_1.compAsStrFromPath(path))
+                                        studio_utils_1.notifyModifcation(path, before, ctx);
                                 });
                             }
                         }
@@ -522,7 +525,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     data: { as: 'ref' }
                 },
                 impl: function (context, path, _data) {
-                    studio.modifyOperationsEm
+                    studio_utils_1.modifyOperationsEm
                         .filter(function (e) {
                         return e.path == path;
                     })
@@ -538,7 +541,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 },
                 impl: function (context, initialPath) {
                     var path = initialPath;
-                    studio.pathChangesEm.subscribe(function (fixer) { path = fixer.fix(path); });
+                    studio_utils_1.pathChangesEm.subscribe(function (fixer) { path = fixer.fix(path); });
                     return {
                         ctrlsEmFunc: function (originalCtrlsEmFunc, ctx, cmp) {
                             return cmp.jbEmitter
@@ -553,7 +556,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         observable: function () { } // to create jbEmitter
                     };
                     function profileChildren() {
-                        return studio.model.nonControlParams(path).join(' ');
+                        return studio_tgp_model_1.model.nonControlParams(path).join(' ');
                     }
                 }
             });

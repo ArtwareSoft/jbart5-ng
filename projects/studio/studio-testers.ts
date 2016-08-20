@@ -25,7 +25,7 @@ jb.component('jb-path-test', {
       jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath ));
 
     // ********** dynamic counter
-    var probeObs = new probe.Probe(actual_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } )).observable();
+    var probeObs = new probe.Probe(actual_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true).observable();
     var expectedDynamicCounterTst = probeObs.filter(res=>res.element)
         .map(res=>{
           try {

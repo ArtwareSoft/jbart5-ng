@@ -1,6 +1,8 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
+import {compAsStrFromPath,modifyOperationsEm,notifyModifcation,pathChangesEm} from './studio-utils';
+
 
 jb.component('studio.open-properties', {
   type: 'action', 
@@ -119,9 +121,9 @@ jb.component('studio.property-field',{
 	impl: function(context,path) {
 		var fieldPT = 'studio.property-label';
 
-		var val = studio.model.val(path);
+		var val = model.val(path);
 		var valType = typeof val;
-		var paramDef = studio.model.paramDef(path);
+		var paramDef = model.paramDef(path);
 		if (!paramDef)
 			jb.logError('property-field: no param def for path '+path);
 		if (valType == 'function')
@@ -131,7 +133,7 @@ jb.component('studio.property-field',{
 		else if (paramDef.options)
 			fieldPT = 'studio.property-enum';
 		else if ( ['data','boolean'].indexOf(paramDef.type || 'data') != -1) {
-			if ( studio.model.compName(path) || valType == 'object')
+			if ( model.compName(path) || valType == 'object')
 				fieldPT = 'studio.property-data-script';
 			else if (paramDef.type == 'boolean' && (valType == 'boolean' || val == null))
 				fieldPT = 'studio.property-boolean';
@@ -142,7 +144,7 @@ jb.component('studio.property-field',{
 			fieldPT = 'studio.property-array';
 		// else if ( (paramDef.type || '').indexOf('.style') > -1 )
 		//  	fieldPT = 'studio.property-Style';
-    // else if ( studio.model.compName(path) == 'customStyle')
+    // else if ( model.compName(path) == 'customStyle')
     //   fieldPT = 'studio.property-custom-style';
 		else 
 			fieldPT = 'studio.property-tgp';
@@ -204,9 +206,9 @@ jb.component('studio.data-script-summary', {
     path: { as: 'string' }
   }, 
   impl: (ctx,path) => {
-  	var val = studio.model.val(path);
-  	if (studio.model.compName(path))
-  		return studio.model.compName(path);
+  	var val = model.val(path);
+  	if (model.compName(path))
+  		return model.compName(path);
   	if (Array.isArray(val))
   		return jb.prettyPrint(val);
   	if (typeof val == 'function')
@@ -308,7 +310,7 @@ jb.component('studio.property-tgp', {
               }, 
               {$: 'picklist.dynamic-options', 
                 recalcEm: function (ctx) {
-                                                return studio.modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                                return modifyOperationsEm.filter(function (e) { return e.newComp; });
                                             }
               }
             ]
@@ -363,7 +365,7 @@ jb.component('studio.property-custom-style', {
             },
             { $: 'picklist.dynamic-options', 
               recalcEm: ctx => 
-                studio.modifyOperationsEm.filter(e=>e.newComp)
+                modifyOperationsEm.filter(e=>e.newComp)
             }
          ],
     }
@@ -486,7 +488,7 @@ jb.component('studio.tgp-path-options',{
 	},
 	impl: (context,path) => 
 		[{code:'',text:''}]
-			.concat(studio.model.PTsOfPath(path).map(op=> ({ code: op, text: op})))
+			.concat(model.PTsOfPath(path).map(op=> ({ code: op, text: op})))
 })
 
 jb.component('studio.tgp-type-options',{
@@ -495,7 +497,7 @@ jb.component('studio.tgp-type-options',{
 		type: { as: 'string'} 
 	},
 	impl: (context,type) => 
-			studio.model.PTsOfType(type).map(op=>({ code: op, text: op}))
+			model.PTsOfType(type).map(op=>({ code: op, text: op}))
 })
 
 jb.component('studio.undo-support', {
@@ -507,23 +509,23 @@ jb.component('studio.undo-support', {
   	({
   		// saving state on focus and setting the change on blur
   		init: cmp => {
-  			var before = studio.compAsStrFromPath(path);
+  			var before = compAsStrFromPath(path);
   			if (cmp.codeMirror) {
   				cmp.codeMirror.on('focus',()=>
-  					before = studio.compAsStrFromPath(path)
+  					before = compAsStrFromPath(path)
   				);
   				cmp.codeMirror.on('blur',()=>{
-  					if (before != studio.compAsStrFromPath(path))
-						studio.notifyModifcation(path,before,ctx)
+  					if (before != compAsStrFromPath(path))
+						notifyModifcation(path,before,ctx)
   				});
   			} else {
   			$(cmp.elementRef.nativeElement).findIncludeSelf('input')
   				.focus(e=> {
-  					before = studio.compAsStrFromPath(path)
+  					before = compAsStrFromPath(path)
   				})
   				.blur(e=> {
-  					if (before != studio.compAsStrFromPath(path))
-						studio.notifyModifcation(path,before,ctx)
+  					if (before != compAsStrFromPath(path))
+						notifyModifcation(path,before,ctx)
   				})
   			}
   		}
@@ -537,7 +539,7 @@ jb.component('studio.bindto-modifyOperations', {
     data: { as: 'ref' }
   },
   impl: function(context, path,_data) {
-        studio.modifyOperationsEm
+        modifyOperationsEm
           .filter(e=>
             e.path == path)
           .subscribe(e=>
@@ -553,7 +555,7 @@ jb.component('group.studio-watch-path', {
   },
   impl: function(context, initialPath) {
   	var path = initialPath;
-  	studio.pathChangesEm.subscribe(fixer => { path = fixer.fix(path) });
+  	pathChangesEm.subscribe(fixer => { path = fixer.fix(path) });
     return {
       ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
         return cmp.jbEmitter
@@ -570,7 +572,7 @@ jb.component('group.studio-watch-path', {
 	}
 
 	function profileChildren() {
-	  	return studio.model.nonControlParams(path).join(' ');
+	  	return model.nonControlParams(path).join(' ');
 	}
   }
 })

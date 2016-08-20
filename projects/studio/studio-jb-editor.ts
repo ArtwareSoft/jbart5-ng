@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import * as studio from './studio-model';
+import {model,TgpModel} from './studio-tgp-model';
 
 
 jb.component('studio.open-jb-editor', {
@@ -136,7 +136,7 @@ jb.component('studio.jb-editor.nodes', {
 	type: 'tree.nodeModel',
 	params: { path: { as: 'string'} },
 	impl: function(context,path) {
-		return new studio.ControlModel(path,'jb-editor');
+		return new TgpModel(path,'jb-editor');
 	}
 })
 
@@ -188,32 +188,32 @@ jb.component('studio.profile-value-as-text', {
   impl: (context,path) => ({
       $jb_val: function(value) {
         if (typeof value == 'undefined') {
-          var val = studio.model.val(path);
+          var val = model.val(path);
           if (val == null)
             return '';
           if (typeof val == 'string')
             return val;
-          if (studio.model.compName(path))
-            return '=' + studio.model.compName(path);
+          if (model.compName(path))
+            return '=' + model.compName(path);
           return typeof val;
         }
        
         var _path = path;
         // if (path.slice(-2)== '~+') {
         //   var arrPath = path.slice(0,-2);
-        //   studio.model.modify(studio.model.addArrayItem, arrPath, {}, context);
-        //   var ar = studio.model.val(arrPath);
+        //   model.modify(model.addArrayItem, arrPath, {}, context);
+        //   var ar = model.val(arrPath);
         //   _path = arrPath+'~'+ (ar.length-1);
         // }
 
         if (value.indexOf('=') == 0) {
           var comp = value.substr(1);
           if (comp == 'pipeline')
-            studio.model.modify(studio.model.writeValue, _path, { value: [] },context);  
+            model.modify(model.writeValue, _path, { value: [] },context);  
           else if (studio.findjBartToLook(_path).comps[comp])
-            studio.model.modify(studio.model.setComp, _path, { comp: value.substr(1) },context);
+            model.modify(model.setComp, _path, { comp: value.substr(1) },context);
         } else {
-          studio.model.modify(studio.model.writeValue, _path, { value: value },context);
+          model.modify(model.writeValue, _path, { value: value },context);
         }
       }
     })

@@ -1,9 +1,11 @@
 import {jb} from 'jb-core';
-import * as studio from './studio-model';
 import * as jb_rx from 'jb-ui/jb-rx';
 
+import {model} from './studio-tgp-model';
+import {jbart_base} from './studio-utils';
+
 export class Probe {
-  constructor(public pathToTrace, public context, public depth) {
+  constructor(public pathToTrace, public context, public depth, public forTests) {
     this.probe = {};
     context.probe = this;
     this.circuit = this.context.profile;
@@ -11,9 +13,9 @@ export class Probe {
 
   runCircuitNoGaps() {
     var _win = jbart.previewWindow || window;
-    if (studio.model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
-      return testControl(this.context, this.em);
-    } else if (! studio.model.isCompNameOfType(jb.compName(this.circuit),'action')) {
+    if (model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
+      return testControl(this.context, this.em, this.forTests);
+    } else if (! model.isCompNameOfType(jb.compName(this.circuit),'action')) {
       return Promise.resolve(_win.jb_run(this.context));
     }
   }
@@ -47,7 +49,7 @@ jb.component('studio.probe', {
   type:'data',
   params: { path: { as: 'string', dynamic: true } },
   impl: (ctx,path) => {
-      var _jbart = studio.jbart_base();
+      var _jbart = jbart_base();
       var _win = jbart.previewWindow || window;
       var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
       var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: '', fullPath: circuit} );
@@ -56,10 +58,10 @@ jb.component('studio.probe', {
 })
 
 
-function testControl(ctx,emitter) {
+function testControl(ctx,emitter,forTests) {
   // test the control as a dialog
   return new Promise((resolve,reject)=> {
-    var _jbart = studio.jbart_base();
+    var _jbart = jbart_base();
     var _win = jbart.previewWindow || window;
     var dialog = { 
       id: 'test-control', 
@@ -75,7 +77,8 @@ function testControl(ctx,emitter) {
           })
           .subscribe(x=>{
             emitter.next({ element : cmp.elementRef.nativeElement })
-            jb.delay(1).then(()=>dialog.close()); // delay to avoid race conditin with itself
+            if (!forTests)
+              jb.delay(1).then(()=>dialog.close()); // delay to avoid race conditin with itself
             resolve();
             console.log('close test dialog');
           })
@@ -108,7 +111,7 @@ var bridge = {
 }
 
   // bridge(path,inCtx) {
-  //   var compName = studio.model.compName(studio.parentPath(path));
+  //   var compName = model.compName(studio.parentPath(path));
   //   var prop = path.split('~').pop();
   //   if (!bridge[compName] || !bridge[compName][prop])
   //     return;
@@ -153,7 +156,7 @@ var bridge = {
   // doTraceGaps(prop,context) { // for action paths
   //     var _win = jbart.previewWindow || window;
   //     var path = context.path + '~' + prop;
-  //     var compName = studio.model.compName(path);
+  //     var compName = model.compName(path);
   //     var ctx = _win.jb_ctx(context, { profile: context.profile[prop], path: prop});
   //     var propCtx = _win.jb_prepare(ctx).ctx;
   //     this.probe[path] = [{in: propCtx }];

@@ -236,9 +236,22 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                 type: 'feature,dialogFeature',
                 params: {
                     width: { essential: true, as: 'number' },
+                    overflow: { as: 'string', options: ',auto,hidden,scroll' },
+                    minMax: { as: 'string', options: ',min,max' },
                 },
-                impl: function (context, width) {
-                    return ({ css: "{ width: " + width + "px}" });
+                impl: function (context, width, overflow, minMax) {
+                    return ({ css: "{ " + (minMax ? minMax + '-' : '') + "width: " + width + "px " + (overflow ? '; overflow-x:' + overflow + ';' : '') + " }" });
+                }
+            });
+            jb_core_1.jb.component('css.height', {
+                type: 'feature,dialogFeature',
+                params: {
+                    height: { essential: true, as: 'number' },
+                    overflow: { as: 'string', options: ',auto,hidden,scroll' },
+                    minMax: { as: 'string', options: ',min,max' },
+                },
+                impl: function (context, height, overflow, minMax) {
+                    return ({ css: "{ " + (minMax ? minMax + '-' : '') + "height: " + height + "px " + (overflow ? '; overflow-y:' + overflow : '') + " }" });
                 }
             });
             jb_core_1.jb.component('css.padding', {

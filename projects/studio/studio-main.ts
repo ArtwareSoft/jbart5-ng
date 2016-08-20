@@ -1,22 +1,12 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
+
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import { Component, ElementRef } from '@angular/core';
+import {modifiedCtrlsEm,modifyOperationsEm,studioActivityEm} from './studio-utils';
+
 
 jbart.studio = jbart.studio || {}
-
-jb.component('studio.all1', {
-  type: 'control', 
-  impl :{ $: 'group',
-  	controls :{ 
-	  	$if : false, // {$:'studio.is-single-test'},
-	  	$then: {$: 'studio.renderWidget' },
-	  	else :{$: 'studio.project'}
-  	},
-    features :{$: 'group.watch', data :{$:'studio.is-single-test'} }
-  }
-})
 
 jb.component('studio.all', {
   type: 'control', 
@@ -132,7 +122,7 @@ jb.component('studio.all', {
             action :{
               $runActions: [
                 {$: 'studio.waitForPreviewIframe' }, 
-                {$: 'studio.fixProfilePath' },
+                {$: 'studio.fix-to-closest-path', path: '%$globals/profile_path%' },
                 {$: 'studio.setPreviewSize', width: 1280, height: 520 }
               ]
             }
@@ -153,12 +143,17 @@ jb.component('studio.all', {
     ]
   }
 })
+
 jb.component('studio.jbart-logo',{
 	type: 'control',
 	impl :{$: 'custom-control', 
         template: '<div style="padding: 60px 30px 30px 30px;background-color: #327DC8;zoom: 20%;"> <span style="position: absolute;margin-top:20px;margin-left:50px; color: white; font-size: 127px; font-family: Times New Roman, Times, serif">jB</span>  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215px" height="228px" viewBox="0 0 215 228" preserveAspectRatio="xMidYMid meet" zoomAndPan="disable" xmlns:svg="http://www.w3.org/2000/svg"> <polygon points="106 0 0   38 17  178 106 228" fill="#DE3641"></polygon> <polygon points="106 0 215 38 198 178 106 228" fill="#B13138"></polygon> </svg> </div>'
     }
 }) 
+
+jb.component('studio.currentProfilePath', {
+	impl: { $firstSucceeding: ['%$simulateProfilePath%', '%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
+})
 
 jb.component('studio.is-single-test',{
 	type: 'boolean',
@@ -206,9 +201,9 @@ jb.component('studio.renderWidget',{
 						var w = iframe.contentWindow;
 						w.jbart.studioWindow = window;
 						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
-						w.jbart.modifyOperationsEm = studio.modifyOperationsEm;
-						w.jbart.studioActivityEm = studio.studioActivityEm;
-						w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm = studio.modifiedCtrlsEm;
+						w.jbart.modifyOperationsEm = modifyOperationsEm;
+						w.jbart.studioActivityEm = studioActivityEm;
+						w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm = modifiedCtrlsEm;
 						jbart.previewWindow = w;
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;
@@ -219,7 +214,7 @@ jb.component('studio.renderWidget',{
 						jb_ui.getZone('studio.all').then(zone=> {
 							zone.onStable.subscribe(function(){
 								w.jbart.studioGlobals = ctx.exp('{%$globals%}');
-								studio.studioActivityEm.next();
+								studioActivityEm.next();
 								//console.log('studio.all stable');
 								// refresh preview
 								jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
@@ -277,270 +272,3 @@ jb.component('studio.waitForPreviewIframe',{
 	}
 })
 
-jb.component('studio.fixProfilePath', {
-	impl: ctx => {
-		var path = ctx.exp('%$globals/profile_path%');
-		if (!path) return;
-		while (path.indexOf('~') != -1)
-			path = studio.parentPath(path);
-		if (path != ctx.exp('%$globals/profile_path%')) {
-			jb.writeValue(ctx.exp('%$globals/profile_path%','ref'),path);
-			jb_ui.apply(ctx);
-		}
-	}
-})
-
-
-jb.component('studio.currentProfilePath', {
-	impl: { $firstSucceeding: ['%$simulateProfilePath%', '%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
-})
-
-
-jb.component('studio.short-title',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.shortTitle(path)
-})
-
-jb.component('studio.ref',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.profileRefFromPathWithNotification(path,context)
-});
-
-jb.component('studio.val',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.val(path)
-})
-
-jb.component('studio.is-primitive-value', {
-  params: { path: { as: 'string' } },
-  impl: (context,path) => 
-      typeof studio.model.val(path) == 'string'
-})
-
-jb.component('studio.is-of-type', {
-  params: { 
-  	path: { as: 'string', essential: true },
-  	type: { as: 'string', essential: true },
-  },
-  impl: (context,path,_type) => 
-      studio.model.isOfType(path,_type)
-})
-
-jb.component('studio.PTs-of-type', {
-  params: { 
-  	type: { as: 'string', essential: true },
-  },
-  impl: (context,_type) => 
-      studio.model.PTsOfType(_type)
-})
-
-jb.component('studio.short-title', {
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.shortTitle(path)
-})
-
-jb.component('studio.has-param', {
-	params: { 
-		path: { as: 'string' }, 
-		param: { as: 'string' }, 
-	},
-	impl: (context,path,param) => 
-		studio.model.paramDef(path+'~'+param)
-})
-
-jb.component('studio.non-control-children',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.children(path,'non-controls')
-})
-
-jb.component('studio.array-children',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.children(path,'array')
-})
-
-jb.component('studio.compName',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.compName(path) || ''
-})
-
-jb.component('studio.paramDef',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.paramDef(path)
-})
-
-jb.component('studio.enum-options',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		((studio.model.paramDef(path) || {}).options ||'').split(',').map(x=>{return {code:x,text:x}})
-})
-
-jb.component('studio.prop-name',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.propName(path)
-})
-
-jb.component('studio.more-params',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-        studio.model.jbEditorMoreParams(path)
-})
-
-
-jb.component('studio.compName-ref',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => { return {
-			$jb_val: function(value) {
-				if (typeof value == 'undefined') 
-					return studio.model.compName(path);
-				else
-					studio.model.modify(studio.model.setComp, path, { comp: value },context)
-			}
-		}	
-	}
-})
-
-jb.component('studio.insertComp',{
-	type: 'action',
-	params: { 
-		path: { as: 'string' },
-		comp: { as: 'string' },
-	},
-	impl: (context,path,comp) => 
-		studio.model.modify(studio.model.insertComp, path, { comp: comp },context)
-})
-
-jb.component('studio.wrap', {
-	type: 'action',
-	params: { 
-		path: { as: 'string' }, 
-		compName: { as: 'string' } 
-	},
-	impl: (context,path,compName) => 
-		studio.model.modify(studio.model.wrap, path, {compName: compName},context)
-})
-
-jb.component('studio.wrapWithGroup', {
-	type: 'action',
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.modify(studio.model.wrapWithGroup, path, {},context)
-})
-
-jb.component('studio.addProperty', {
-	type: 'action',
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.modify(studio.model.addProperty, path, {},context)
-})
-
-jb.component('studio.wrapWithPipeline', {
-	type: 'action',
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.modify(studio.model.wrapWithPipeline, path, {},context)
-})
-
-jb.component('studio.duplicate',{
-	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
-	impl: (context,path) => 
-		studio.model.modify(studio.model.duplicate, path, {},context)
-})
-
-jb.component('studio.moveInArray',{
-	type: 'action',
-	params: { 
-		path: { as: 'string' },
-		moveUp: { type: 'boolean', as: 'boolean'} 
-	},
-	impl: (context,path,moveUp) => 
-		studio.model.modify(studio.model.moveInArray, 
-					path, { moveUp: moveUp },context)
-})
-
-jb.component('studio.newArrayItem',{
-	type: 'action',
-	params: { path: { as: 'string' } },
-	impl: (context,path) => 
-		studio.model.modify(studio.model.addArrayItem, path, {},context)
-})
-
-
-jb.component('studio.delete',{
-	type: 'action',
-	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.modify(studio.model._delete,path,{},context)
-})
-
-jb.component('studio.make-local',{
-	type: 'action',
-	params: { path: { as: 'string' } },
-	impl: (context,path) => studio.model.modify(studio.model.makeLocal,path,{ctx: context},context)
-})
-
-jb.component('studio.projectSource',{
-	params: { 
-		project: { as: 'string', defaultValue: '%$globals/project%' } 
-	},
-	impl: (context,project) => {
-		if (!project) return;
-		var comps = jb.entries(studio.jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
-		return comps.map(comp=>studio.compAsStr(comp)).join('\n\n')
-	}
-})
-
-jb.component('studio.compSource',{
-	params: { 
-		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
-	},
-	impl: (context,comp) => 
-		studio.compAsStr(comp.split('~')[0])
-})
-
-jb.component('studio.isCustomStyle',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => { 
-		return (studio.model.compName(path) || '').indexOf('custom') == 0 
-	}
-})
-
-jb.component('studio.message',{
-	type: 'action',
-	params: { message: { as: 'string' } },
-	impl: (ctx,message) => 
-		studio.message(message)
-})
-
-jb.component('studio.refreshPreview',{
-	type: 'action',
-	impl: () => {
-		if (jbart.previewjbart)
-			jbart.previewjbart.previewRefreshCounter = (jbart.previewjbart.previewRefreshCounter || 0) + 1;
-	}
-})
-
-jb.component('studio.redrawStudio',{
-	type: 'action',
-	impl: () => 
-    	jbart.redrawStudio && jbart.redrawStudio()
-})
-
-jb.component('studio.goto-path',{
-	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
-	impl :{$runActions: [ 
-		{$: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' }, 
-		{$: 'studio.open-properties'},
-		{$: 'studio.open-control-tree'}
-	]}
-})

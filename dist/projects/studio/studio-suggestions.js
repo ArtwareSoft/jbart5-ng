@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx, studio;
+    var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1;
     var suggestions;
     function rev(str) {
         return str.split('').reverse().join('');
@@ -17,8 +17,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
             }],
         execute: function() {
             suggestions = (function () {
@@ -55,7 +55,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                     var vars = jb_core_1.jb.entries(jb_core_1.jb.extend({}, (probeCtx.componentContext || {}).params, probeCtx.vars, probeCtx.resources))
                         .map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); });
                     if (this.inputVal.indexOf('=') == 0)
-                        this.options = studio.model.PTsOfPath(path).map(function (compName) {
+                        this.options = studio_tgp_model_1.model.PTsOfPath(path).map(function (compName) {
                             var name = compName.substring(compName.indexOf('.') + 1);
                             var ns = compName.substring(0, compName.indexOf('.'));
                             return {
@@ -204,8 +204,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-suggestions-popup' },
                     content: { $: 'group',
-                        features: { $: 'studio.suggestions-emitter' },
-                        controls: { $: 'itemlist',
+                        controls: { $: 'itemlist-with-heading',
                             items: '%$suggestionContext/suggestionObj/options%',
                             watchItems: true,
                             controls: { $: 'label', title: '%text%' },
@@ -222,8 +221,11 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
                                         { $: 'closeContainingPopup' }
                                     ]
                                 },
+                                { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
+                                { $: 'css.width', width: '200', overflow: 'auto' }
                             ]
-                        }
+                        },
+                        features: { $: 'studio.suggestions-emitter' }
                     }
                 }
             });

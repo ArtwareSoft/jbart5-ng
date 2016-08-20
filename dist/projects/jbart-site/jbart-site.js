@@ -127,32 +127,35 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controls: [
                         { $: 'label',
                             title: 'label',
-                            style: { $: 'label.md-card-title' }
+                            style: { $: 'label.md-card-title' },
                         },
                         { $: 'itemlist-with-heading',
-                            headingCtrl: { $: 'label',
-                                title: '%title%',
-                                style: { $: 'label.md-card-title' }
-                            },
-                            watchItems: true,
-                            itemVariable: 'item',
-                            items: { $: 'list', items: ['a.1', 'b.2'] },
                             title: 'itemlist',
-                            style: { $: 'itemlist.ul-li' },
+                            items: { $: 'list', items: ['a.1', ''] },
                             controls: [
                                 { $: 'label',
                                     title: '%%',
                                     style: { $: 'label.span' }
                                 }
                             ],
+                            style: { $: 'itemlist.ul-li' },
                             groupBy: { $: 'itemlist-heading.group-by' },
-                            features: { $: 'css', css: '.jb-item:not(.heading) { margin-left: 30px }' }
+                            headingCtrl: { $: 'label',
+                                title: '%title%',
+                                style: { $: 'label.md-card-title' }
+                            },
+                            watchItems: true,
+                            itemVariable: 'item',
+                            features: [
+                                { $: 'css', css: '.jb-item:not(.heading) { margin-left: 30px }' },
+                                { $: 'css.height', height: '186', overflow: 'auto' }
+                            ]
                         },
                         { $: 'editable-text',
-                            style: { $: 'editable-text.md-input' },
+                            style: { $: 'editable-text.md-input' }
                         }
                     ],
-                    style: { $: 'group.md-card' },
+                    style: { $: 'group.md-card' }
                 }
             });
         }

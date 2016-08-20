@@ -1,14 +1,17 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.editSource', {
@@ -36,15 +39,15 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: function (context, path, stringOnly) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
-                            var val = studio.model.val(path);
+                            var val = studio_tgp_model_1.model.val(path);
                             if (typeof val == 'string')
                                 return val;
                             return jb_core_1.jb.prettyPrint(val);
                         }
                         else {
-                            var newVal = value.match(/^\s*({|\[)/) ? studio.evalProfile(value) : value;
+                            var newVal = value.match(/^\s*({|\[)/) ? studio_utils_1.evalProfile(value) : value;
                             if (newVal != null)
-                                studio.model.modify(studio.model.writeValue, path, { value: newVal }, context);
+                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: newVal }, context);
                         }
                     }
                 }); }
@@ -57,10 +60,10 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: function (context, path, stringOnly) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
-                            return studio.model.val(path);
+                            return studio_tgp_model_1.model.val(path);
                         }
                         else {
-                            studio.model.modify(studio.model.writeValue, path, { value: newVal }, context);
+                            studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: newVal }, context);
                         }
                     }
                 }); }
@@ -71,7 +74,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    var compName = path.indexOf('~') == -1 ? path : studio.model.compName(path);
+                    var compName = path.indexOf('~') == -1 ? path : studio_tgp_model_1.model.compName(path);
                     compName && $.ajax("/?op=gotoSource&comp=" + compName);
                 }
             });

@@ -1,14 +1,17 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.openNewCtrlDialog', {
@@ -47,7 +50,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     action: { type: 'action', dynamic: true, essential: true }
                 },
                 impl: function (ctx, action) {
-                    return studio.modifyOperationsEm.take(1)
+                    return studio_utils_1.modifyOperationsEm.take(1)
                         .subscribe(function (e) {
                         return action(ctx.setVars({ modifiedPath: e.args.modifiedPath }));
                     });
@@ -89,7 +92,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                             type: 'control',
                             impl: { $: 'group', title: ctx.exp('%$dialogData/name%') }
                         };
-                        studio.model.modify(studio.model.newComp, id, { profile: profile }, ctx);
+                        studio_tgp_model_1.model.modify(studio_tgp_model_1.model.newComp, id, { profile: profile }, ctx);
                         ctx.run({ $: 'writeValue', to: '%$globals/page%', value: '%$dialogData/name%' });
                         ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
                     }

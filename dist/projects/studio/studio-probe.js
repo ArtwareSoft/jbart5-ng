@@ -1,12 +1,12 @@
-System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio, jb_rx;
+    var jb_core_1, jb_rx, studio_tgp_model_1, studio_utils_1;
     var Probe, bridge;
-    function testControl(ctx, emitter) {
+    function testControl(ctx, emitter, forTests) {
         // test the control as a dialog
         return new Promise(function (resolve, reject) {
-            var _jbart = studio.jbart_base();
+            var _jbart = studio_utils_1.jbart_base();
             var _win = jbart.previewWindow || window;
             var dialog = {
                 id: 'test-control',
@@ -24,7 +24,8 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                         })
                             .subscribe(function (x) {
                             emitter.next({ element: cmp.elementRef.nativeElement });
-                            jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
+                            if (!forTests)
+                                jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
                             resolve();
                             console.log('close test dialog');
                         });
@@ -42,28 +43,32 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
-            },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
+            },
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             Probe = (function () {
-                function Probe(pathToTrace, context, depth) {
+                function Probe(pathToTrace, context, depth, forTests) {
                     this.pathToTrace = pathToTrace;
                     this.context = context;
                     this.depth = depth;
+                    this.forTests = forTests;
                     this.probe = {};
                     context.probe = this;
                     this.circuit = this.context.profile;
                 }
                 Probe.prototype.runCircuitNoGaps = function () {
                     var _win = jbart.previewWindow || window;
-                    if (studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control')) {
-                        return testControl(this.context, this.em);
+                    if (studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control')) {
+                        return testControl(this.context, this.em, this.forTests);
                     }
-                    else if (!studio.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action')) {
+                    else if (!studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action')) {
                         return Promise.resolve(_win.jb_run(this.context));
                     }
                 };
@@ -97,7 +102,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
                 type: 'data',
                 params: { path: { as: 'string', dynamic: true } },
                 impl: function (ctx, path) {
-                    var _jbart = studio.jbart_base();
+                    var _jbart = studio_utils_1.jbart_base();
                     var _win = jbart.previewWindow || window;
                     var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
                     var context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: '', fullPath: circuit });
@@ -123,7 +128,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
     }
 });
 // bridge(path,inCtx) {
-//   var compName = studio.model.compName(studio.parentPath(path));
+//   var compName = model.compName(studio.parentPath(path));
 //   var prop = path.split('~').pop();
 //   if (!bridge[compName] || !bridge[compName][prop])
 //     return;
@@ -166,7 +171,7 @@ System.register(['jb-core', './studio-model', 'jb-ui/jb-rx'], function(exports_1
 // doTraceGaps(prop,context) { // for action paths
 //     var _win = jbart.previewWindow || window;
 //     var path = context.path + '~' + prop;
-//     var compName = studio.model.compName(path);
+//     var compName = model.compName(path);
 //     var ctx = _win.jb_ctx(context, { profile: context.profile[prop], path: prop});
 //     var propCtx = _win.jb_prepare(ctx).ctx;
 //     this.probe[path] = [{in: propCtx }];

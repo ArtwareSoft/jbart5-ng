@@ -274,7 +274,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         this.factory = factory_hash[this.hashkey()];
                     else
                         try {
-                            this.factory = factory_hash[this.hashkey()] = compiler.resolveComponent(this.comp || this.createComp());
+                            this.factory = factory_hash[this.hashkey()] = compiler.compileComponentSync(this.comp || this.createComp());
                         }
                         catch (e) {
                             jb_core_1.jb.logError('ng compilation error', this, e);
@@ -379,8 +379,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 jbComponent.prototype.jbCtrl = function (context) {
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
-                    var path = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath : context.path;
-                    jb_core_1.jb.path(options, ['atts', 'jb-path'], path); // for pick & edit
+                    this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath : context.path;
+                    jb_core_1.jb.path(options, ['atts', 'jb-path'], this.callerPath); // for pick & edit
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
@@ -500,28 +500,33 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 return jbComponent;
             }());
             jbComp = (function () {
-                function jbComp(compiler) {
+                function jbComp(compiler, ngZone) {
                     this.compiler = compiler;
+                    this.ngZone = ngZone;
                 }
                 jbComp.prototype.ngOnInit = function () {
                     var _this = this;
                     // redraw if script changed at studio
                     (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
                         .flatMap(function (e) {
-                        if (_this.comp && e.path == _this.comp.ctx.path) {
+                        if (_this.comp && e.path == _this.comp.callerPath) {
                             jb_core_1.jb.delay(100).then(function () {
                                 return $(_this._nativeElement).addClass('jb-highlight-comp-changed');
                             });
-                            return [_this.comp.ctx.run()];
+                            var comp = _this.comp.ctx.runItself();
+                            return [comp];
                         }
                         return [];
                     })
-                        .filter(function (x) { return x; })
                         .startWith(this.comp)
+                        .filter(function (x) {
+                        return x;
+                    })
                         .subscribe(function (comp) {
+                        _this.comp = comp;
                         _this.draw(comp);
-                        if (comp != _this.comp)
-                            applyPreview(_this.comp.ctx);
+                        //					if (comp != this.comp)
+                        applyPreview(comp.ctx);
                     });
                 };
                 jbComp.prototype.draw = function (comp) {
@@ -532,11 +537,11 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         this.jbDispose();
                         console.log('jb_comp: replacing existing component');
                     }
-                    if (comp && comp.compile)
-                        var compiled = comp.compile(this.compiler);
-                    else
-                        var compiled = this.compiler.compileComponentAsync(comp);
-                    compiled.then(function (componentFactory) {
+                    this.ngZone.runOutsideAngular(function () {
+                        if (comp && comp.compile)
+                            var componentFactory = comp.compile(_this.compiler);
+                        else
+                            var componentFactory = _this.compiler.compileComponentSync(comp);
                         var cmp_ref = _this.childView.createComponent(componentFactory);
                         comp.registerMethods && comp.registerMethods(cmp_ref, _this);
                         _this.flattenjBComp(cmp_ref);
@@ -600,7 +605,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         selector: 'jb_comp',
                         template: '<div #jb_comp></div>',
                     }), 
-                    __metadata('design:paramtypes', [core_1.Compiler])
+                    __metadata('design:paramtypes', [core_1.Compiler, core_1.NgZone])
                 ], jbComp);
                 return jbComp;
             }());

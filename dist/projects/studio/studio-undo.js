@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, studio;
+    var jb_core_1, jb_ui, studio_utils_1;
     var Undo, undo;
     function doSetComp(jbart_base, id, comp) {
         jbart_base.comps[id] = comp;
@@ -23,8 +23,8 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             Undo = (function () {
@@ -33,7 +33,7 @@ System.register(['jb-core', 'jb-ui', './studio-model'], function(exports_1, cont
                     this.history = [];
                     this.index = 0;
                     this.clipboard = null;
-                    studio.modifyOperationsEm.subscribe(function (change) {
+                    studio_utils_1.modifyOperationsEm.subscribe(function (change) {
                         _this.history.push(change);
                         _this.index = _this.history.length;
                     });

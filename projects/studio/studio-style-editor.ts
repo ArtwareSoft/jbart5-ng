@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
 
 jb.component('studio.open-style-editor', {
 	type: 'action',
@@ -89,7 +89,7 @@ jb.component('studio.style-source', {
     path: { as: 'string' }
   }, 
   impl: (ctx,path) =>
-    studio.model.getStyleComp(path) 
+    model.getStyleComp(path) 
 })
 
 jb.component('studio.format-css', {
@@ -125,11 +125,11 @@ jb.component('studio.open-make-global-style', {
         var path = ctx.componentContext.params.path;
         var id = ctx.exp('%$globals/project%.%$dialogData/name%'); 
         var profile = {
-          type: studio.model.paramDef(path).type,
-          impl : studio.model.val(path)
+          type: model.paramDef(path).type,
+          impl : model.val(path)
         }
-        studio.model.modify(studio.model.newComp,id,{profile:profile},ctx);
-        studio.model.modify(studio.model.writeValue,path,{value : {$: id}},ctx);
+        model.modify(model.newComp,id,{profile:profile},ctx);
+        model.modify(model.writeValue,path,{value : {$: id}},ctx);
     }
   }
 })

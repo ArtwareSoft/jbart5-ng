@@ -2,153 +2,11 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
-export var modifyOperationsEm = new jb_rx.Subject();
-export var studioActivityEm = new jb_rx.Subject();
-export var pathChangesEm = new jb_rx.Subject();
-
-export var modifiedCtrlsEm;
-
-// very strange bug after upgrading to rc4 - no flatmap at init phase
-var intervalID = window.setInterval(()=> {
-		if (modifyOperationsEm.flatMap) {
-			window.clearInterval(intervalID);
-			modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
-			    var path_parts = x.path.split('~');
-			    var sub_paths = path_parts.map((e,i)=>
-			      path_parts.slice(0,i+1).join('~')).reverse();
-			    var firstCtrl = sub_paths
-			      .filter(p=>
-			      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
-			      [0];
-			     return firstCtrl ? [{ path: firstCtrl}] : [];
-				})
-		}
-	}
-,30);
-
-export function jbart_base() {
-	return jbart.previewjbart || jbart;
-}
-
-export function compAsStr(id) {
-	return jb_prettyPrintComp(id,getComp(id))
-}
-
-export function parentPath(path) {
-	return path.split('~').slice(0,-1).join('~');
-}
-
-export function compAsStrFromPath(path) {
-	return compAsStr(path.split('~')[0])
-}
-
-export function notifyModifcation(path,before,ctx) {
-	var comp = path.split('~')[0];
-	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
-}
-
-export function message(message,error) {
-	$('.studio-message').text(message); // add animation
-	$('.studio-message').css('background', error ? 'red' : '#327DC8');
-	$('.studio-message').css('animation','');
-	jb.delay(1).then(()=>
-		$('.studio-message').css('animation','slide_from_top 5s ease')
-	)
-
-}
-
-export function profileRefFromPathWithNotification(path,ctx) {
-	var _ref = profileRefFromPath(path);
-	return {
-		$jb_val: function(value) {
-			if (typeof value == 'undefined') 
-				return _ref.$jb_val(value);
-			if (_ref.$jb_val() == value) return;
-			var comp = path.split('~')[0];
-			var before = compAsStr(comp);
-			_ref.$jb_val(value);
-			notifyModifcation(path,before,ctx);
-		}
-	}
-}
-
-export function profileRefFromPath(path) {
-	if (path.indexOf('~') == -1) return {
-		$jb_val: function(value) {
-			if (typeof value == 'undefined') 
-				return profileFromPath(path);
-			else
-				findjBartToLook(path).comps[path].impl = value;
-		}
-	}
-
-	var ref = {
-		path: path,
-		$jb_val: function(value) {
-			if (typeof value == 'undefined') 
-				return profileFromPath(this.path);
-
-			if (profileFromPath(parentPath(this.path)) == profileFromPath(this.path)) // flatten one-item array
-				var actual_path = parentPath(this.path);
-			else
-				var actual_path = this.path;
-			
-			var parent = profileFromPath(parentPath(actual_path));
-			parent[actual_path.split('~').pop()] = value;
-		}
-	}
-	pathChangesEm.subscribe(fixer => ref.path = fixer.fix(ref.path))
-	return ref;
-}
-
-export function profileFromPath(path) {
-	var id = path.split('~')[0];
-	var comp = jbart_base().comps[id] || jbart.comps[id];
-	comp = comp && comp.impl;
-	if (!comp) {
-		console.log('can not find path ',path);
-		return;
-	}
-	var innerPath = path.split('~').slice(1).join('~');
-	if (!innerPath)
-		return comp;
-	return comp && innerPath.split('~').reduce(function(obj, p) { 
-		if (!obj)
-			jb.logError('profileFromPath: non existing path '+ path+ ' property: ' + p);
-		if (obj && p == '0' && obj[p] == null) // flatten one-item array
-			return obj;
-		if (obj == null)
-			return null;
-		else if (obj[p] == null)
-			return obj['$'+p];
-		else
-			return obj[p]; 
-	}, comp);
-}
-
-export function getComp(id) {
-	return jbart_base().comps[id] || jbart.comps[id];
-}
-
-// used for PTs of type
-export function findjBartToLook(path) {
-	var id = path.split('~')[0];
-	if (jbart_base().comps[id])
-		return jbart_base();
-	if (jbart.comps[id])
-		return jbart;
-}
-
-export function evalProfile(prof_str) {
-	try {
-		return eval('('+prof_str+')')
-	} catch (e) {
-		jb.logException(e,'eval profile:'+prof_str);
-	}
-}
+import {profileFromPath,parentPath,profileRefFromPath,pathFixer} from './studio-path';
+import {jbart_base,findjBartToLook,compAsStr,getComp,modifyOperationsEm} from './studio-utils';
 
 // The jbart control model return string paths and methods to fix them on change
-export class ControlModel {
+export class TgpModel {
 	constructor(public rootPath, private childrenType) { }
 
 	val(path) { 
@@ -354,7 +212,7 @@ export class ControlModel {
 		if (Array.isArray(parent)) {
 			var index = Number(prop);
 			parent.splice(index, 1);
-			// fixIndexPath(path,-1);
+			// pathFixer.fixIndexPath(path,-1);
 			// this.fixArray(path.split('~').slice(0,-2).join('~'));
 		} else { 
 			if (parent[prop] === undefined) { // array type with one element
@@ -375,7 +233,7 @@ export class ControlModel {
 			this._delete(args.dragged);
 			var index = (args.index == -1) ? arr.length : args.index;
 			arr.splice(index,0,dragged);
-			fixMovePaths(args.dragged,path+'~'+ctrlParam+ '~' + index);
+			pathFixer.fixMovePaths(args.dragged,path+'~'+ctrlParam+ '~' + index);
 			this.fixArray(path);
 		}
 	}
@@ -388,7 +246,7 @@ export class ControlModel {
 			if (base <0 || base >= arr.length-1) 
 				return; // the + elem
 			arr.splice(base,2,arr[base+1],arr[base]);
-			fixReplacingPaths(parentPath(path)+'~'+base,parentPath(path)+'~'+(base+1));
+			pathFixer.fixReplacingPaths(parentPath(path)+'~'+base,parentPath(path)+'~'+(base+1));
 		}
 	}
 
@@ -444,7 +302,7 @@ export class ControlModel {
 			var index = Number(prop);
 			arr.splice(index, 0,clone);
 			if (index < arr.length-2)
-				fixIndexPaths(path,1);
+				pathFixer.fixIndexPaths(path,1);
 		}
 	}
 
@@ -630,88 +488,220 @@ export class ControlModel {
 
 }
 
-export var model = new ControlModel('');
+export var model = new TgpModel('');
 
 
-// ***************** path fixers after changes **************************
+// ************** components
 
-function fixMovePaths(from,to) {
-//	console.log('fixMovePath',from,to);
-	var parent_path = parentPath(to);
-	var depth = parent_path.split('~').length;
-	var index = Number(to.split('~').pop()) || 0;
-	pathChangesEm.next({ from: from, to: to, 
-		fix: function(pathToFix) {
-			if (!pathToFix) return;
-			if (pathToFix.indexOf(from) == 0) {
-//				console.log('fixMovePath - action',pathToFix, 'to',to + pathToFix.substr(from.length));
-				return to + pathToFix.substr(from.length);
+jb.component('studio.short-title',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => model.shortTitle(path)
+})
+
+jb.component('studio.val',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.val(path)
+})
+
+jb.component('studio.is-primitive-value', {
+  params: { path: { as: 'string' } },
+  impl: (context,path) => 
+      typeof model.val(path) == 'string'
+})
+
+jb.component('studio.is-of-type', {
+  params: { 
+  	path: { as: 'string', essential: true },
+  	type: { as: 'string', essential: true },
+  },
+  impl: (context,path,_type) => 
+      model.isOfType(path,_type)
+})
+
+jb.component('studio.PTs-of-type', {
+  params: { 
+  	type: { as: 'string', essential: true },
+  },
+  impl: (context,_type) => 
+      model.PTsOfType(_type)
+})
+
+jb.component('studio.short-title', {
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.shortTitle(path)
+})
+
+jb.component('studio.has-param', {
+	params: { 
+		path: { as: 'string' }, 
+		param: { as: 'string' }, 
+	},
+	impl: (context,path,param) => 
+		model.paramDef(path+'~'+param)
+})
+
+jb.component('studio.non-control-children',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.children(path,'non-controls')
+})
+
+jb.component('studio.array-children',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.children(path,'array')
+})
+
+jb.component('studio.compName',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => model.compName(path) || ''
+})
+
+jb.component('studio.paramDef',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => model.paramDef(path)
+})
+
+jb.component('studio.enum-options',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		((model.paramDef(path) || {}).options ||'').split(',').map(x=>{return {code:x,text:x}})
+})
+
+jb.component('studio.prop-name',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.propName(path)
+})
+
+jb.component('studio.more-params',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+        model.jbEditorMoreParams(path)
+})
+
+
+jb.component('studio.compName-ref',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => { return {
+			$jb_val: function(value) {
+				if (typeof value == 'undefined') 
+					return model.compName(path);
+				else
+					model.modify(model.setComp, path, { comp: value },context)
 			}
-			else {
-				var fixed1 = fixIndexOfPath(pathToFix,from,-1);
-				return fixIndexOfPath(fixed1,to,1);
-			}
-		}
-	})
-}
-
-function fixIndexOfPath(pathToFix,changedPath,diff) {
-	var parent_path = parentPath(changedPath);
-	var depth = parent_path.split('~').length;
-	if (pathToFix.indexOf(parent_path) == 0 && pathToFix.split('~').length > depth) {
-		var index = Number(changedPath.split('~').pop()) || 0;
-		var elems = pathToFix.split('~');
-		var indexToFix = Number(elems[depth]);
-		if (indexToFix >= index) {
-			elems[depth] = Math.max(0,indexToFix + diff);
-//			console.log('fixIndexPath - action',pathToFix, indexToFix,'to',elems[depth]);
-		}
-		return elems.join('~')
+		}	
 	}
-	return pathToFix;
-}
+})
 
-function fixIndexPaths(path,diff) {
-	pathChangesEm.next(function(pathToFix) {
-		return fixIndexOfPath(pathToFix,path,diff)
-	})
-} 
+jb.component('studio.insertComp',{
+	type: 'action',
+	params: { 
+		path: { as: 'string' },
+		comp: { as: 'string' },
+	},
+	impl: (context,path,comp) => 
+		model.modify(model.insertComp, path, { comp: comp },context)
+})
 
-function fixReplacingPaths(path1,path2) {
-	pathChangesEm.next(new FixReplacingPaths(path1,path2))
-} 
+jb.component('studio.wrap', {
+	type: 'action',
+	params: { 
+		path: { as: 'string' }, 
+		compName: { as: 'string' } 
+	},
+	impl: (context,path,compName) => 
+		model.modify(model.wrap, path, {compName: compName},context)
+})
 
-class FixReplacingPaths {
-	constructor(private path1,private  path2) {}
-	fix(pathToFix) {
-		if (pathToFix.indexOf(this.path1) == 0)
-			return pathToFix.replace(this.path1,this.path2)
-		else if (pathToFix.indexOf(this.path2) == 0)
-			return pathToFix.replace(this.path2,this.path1)
-		return pathToFix;
+jb.component('studio.wrapWithGroup', {
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.modify(model.wrapWithGroup, path, {},context)
+})
+
+jb.component('studio.addProperty', {
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.modify(model.addProperty, path, {},context)
+})
+
+jb.component('studio.wrapWithPipeline', {
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.modify(model.wrapWithPipeline, path, {},context)
+})
+
+jb.component('studio.duplicate',{
+	type: 'action',
+	params: { 
+		path: { as: 'string' },
+	},
+	impl: (context,path) => 
+		model.modify(model.duplicate, path, {},context)
+})
+
+jb.component('studio.moveInArray',{
+	type: 'action',
+	params: { 
+		path: { as: 'string' },
+		moveUp: { type: 'boolean', as: 'boolean'} 
+	},
+	impl: (context,path,moveUp) => 
+		model.modify(model.moveInArray, 
+					path, { moveUp: moveUp },context)
+})
+
+jb.component('studio.newArrayItem',{
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => 
+		model.modify(model.addArrayItem, path, {},context)
+})
+
+
+jb.component('studio.delete',{
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => model.modify(model._delete,path,{},context)
+})
+
+jb.component('studio.make-local',{
+	type: 'action',
+	params: { path: { as: 'string' } },
+	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context)
+})
+
+jb.component('studio.projectSource',{
+	params: { 
+		project: { as: 'string', defaultValue: '%$globals/project%' } 
+	},
+	impl: (context,project) => {
+		if (!project) return;
+		var comps = jb.entries(jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
+		return comps.map(comp=>compAsStr(comp)).join('\n\n')
 	}
-}
+})
 
+jb.component('studio.compSource',{
+	params: { 
+		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
+	},
+	impl: (context,comp) => 
+		compAsStr(comp.split('~')[0])
+})
 
-function fixArrayWrapperPath() {
-	pathChangesEm.next(function(pathToFix) {
-		var base = pathToFix.split('~')[0];
-		var first = jb.val(profileRefFromPath(base));
-		var res = pathToFix.split('~')[0];
-		pathToFix.split('~').slice(1).reduce(function(obj,prop) {
-			if (!obj || (obj[prop] == null && prop == '0')) 
-				return
-			if (Array.isArray(obj) && isNaN(Number(prop))) {
-				res += '~0~' + prop;
-				debugger;
-			}
-			else
-				res += '~' + prop;
-			return obj[prop]
-		},first);
-		return res;
-	})
-}
+jb.component('studio.isCustomStyle',{
+	params: { path: { as: 'string' } },
+	impl: (context,path) => { 
+		return (model.compName(path) || '').indexOf('custom') == 0 
+	}
+})
 
 
 

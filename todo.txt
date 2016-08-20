@@ -11,6 +11,7 @@ animation in expand/collapse
 
 studio
 ======
+delete page
 array inside propertysheet is always features. http://localhost:8081/project/studio/studio-helper/insert-control/studio-helper.insert-control~controls~2
 component references
 jb editor

@@ -1,6 +1,6 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
 import { Http, Response } from '@angular/http';
 
 jb.component('studio.open-project', {
@@ -47,7 +47,7 @@ jb.component('studio.choose-project', {
             {$: 'writeValue', value: 'main', to: '%$globals/page%' }, 
             {$: 'writeValue', value: '', to: '%$globals/profile_path%' }
           ], 
-          
+          features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
         }
       }
     ]

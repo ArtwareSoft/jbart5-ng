@@ -1,6 +1,5 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
 
 jb.component('studio.open-resource', {
 	type: 'action',

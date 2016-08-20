@@ -1,14 +1,14 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1, studio_tgp_model_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-style-editor', {
@@ -96,7 +96,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    return studio.model.getStyleComp(path);
+                    return studio_tgp_model_1.model.getStyleComp(path);
                 }
             });
             jb_core_1.jb.component('studio.format-css', {
@@ -131,11 +131,11 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                         var path = ctx.componentContext.params.path;
                         var id = ctx.exp('%$globals/project%.%$dialogData/name%');
                         var profile = {
-                            type: studio.model.paramDef(path).type,
-                            impl: studio.model.val(path)
+                            type: studio_tgp_model_1.model.paramDef(path).type,
+                            impl: studio_tgp_model_1.model.val(path)
                         };
-                        studio.model.modify(studio.model.newComp, id, { profile: profile }, ctx);
-                        studio.model.modify(studio.model.writeValue, path, { value: { $: id } }, ctx);
+                        studio_tgp_model_1.model.modify(studio_tgp_model_1.model.newComp, id, { profile: profile }, ctx);
+                        studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: { $: id } }, ctx);
                     }
                 }
             });

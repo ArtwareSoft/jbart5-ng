@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import * as studio from './studio-model';
+import {model,TgpModel} from './studio-tgp-model';
+import {pathChangesEm} from './studio-utils';
 
 jb.component('studio.open-control-tree', {
 	type: 'action',
@@ -131,7 +132,7 @@ jb.component('studio.control-tree.nodes', {
 	impl: function(context) {
 		var currentPath = context.run({ $: 'studio.currentProfilePath' });
 		var compPath = currentPath.split('~')[0] || '';
-		return new studio.ControlModel(compPath);
+		return new TgpModel(compPath);
 	}
 })
 
@@ -142,7 +143,7 @@ jb.component('studio.control-tree.refreshPathChanges', {
     var tree = context.vars.$tree; 
     if (jbart._refreshPathTreeObserver)
     	jbart._refreshPathTreeObserver.unsubscribe();
-    jbart._refreshPathTreeObserver = studio.pathChangesEm.subscribe(function(fixer) {
+    jbart._refreshPathTreeObserver = pathChangesEm.subscribe(function(fixer) {
     	var new_expanded = {};
     	Object.getOwnPropertyNames(tree.expanded).filter(path=>tree.expanded[path])
     		.forEach(path => new_expanded[fixer.fix(path)] = true)

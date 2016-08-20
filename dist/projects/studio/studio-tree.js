@@ -1,14 +1,17 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-control-tree', {
@@ -137,7 +140,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: function (context) {
                     var currentPath = context.run({ $: 'studio.currentProfilePath' });
                     var compPath = currentPath.split('~')[0] || '';
-                    return new studio.ControlModel(compPath);
+                    return new studio_tgp_model_1.TgpModel(compPath);
                 }
             });
             // after model modifications the paths of the selected and expanded nodes may change and the tree should fix it.
@@ -147,7 +150,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                     var tree = context.vars.$tree;
                     if (jbart._refreshPathTreeObserver)
                         jbart._refreshPathTreeObserver.unsubscribe();
-                    jbart._refreshPathTreeObserver = studio.pathChangesEm.subscribe(function (fixer) {
+                    jbart._refreshPathTreeObserver = studio_utils_1.pathChangesEm.subscribe(function (fixer) {
                         var new_expanded = {};
                         Object.getOwnPropertyNames(tree.expanded).filter(function (path) { return tree.expanded[path]; })
                             .forEach(function (path) { return new_expanded[fixer.fix(path)] = true; });

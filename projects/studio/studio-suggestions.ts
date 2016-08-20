@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import * as studio from './studio-model';
+import {model} from './studio-tgp-model';
 
 function rev(str) {
   return str.split('').reverse().join('');
@@ -41,7 +41,7 @@ export class suggestions {
           .map(x=>({toPaste: '$' + x[0], value: x[1]}))
 
     if (this.inputVal.indexOf('=') == 0)
-      this.options = studio.model.PTsOfPath(path).map(compName=> {
+      this.options = model.PTsOfPath(path).map(compName=> {
             var name = compName.substring(compName.indexOf('.')+1);
             var ns = compName.substring(0,compName.indexOf('.'));
             return { 
@@ -187,31 +187,33 @@ jb.component('studio.jb-open-suggestions', {
   type: 'action', 
   params: {
     path: { as: 'string' }
-  },
+  }, 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-suggestions-popup' }, 
-    content :{$: 'group',
-        features :{$: 'studio.suggestions-emitter' },
-        controls:{$: 'itemlist', 
-          items : '%$suggestionContext/suggestionObj/options%', 
-          watchItems: true,
-          controls: {$: 'label', title: '%text%' },
-          features: [
-            {$: 'itemlist.studio-suggestions-selection',
-              onEnter: [
-                {$: 'studio.jb-paste-suggestion', path: '%$path%'},
-                {$: 'closeContainingPopup'}
-              ]
-            },
-            {$: 'itemlist.selection', 
-                onDoubleClick: [
-                {$: 'studio.jb-paste-suggestion', path: '%$path%'},
-                {$: 'closeContainingPopup'}
-              ]
-            },
-          ]
-        }
-      }
+    content :{$: 'group', 
+      controls :{$: 'itemlist-with-heading', 
+        items: '%$suggestionContext/suggestionObj/options%', 
+        watchItems: true, 
+        controls :{$: 'label', title: '%text%' }, 
+        features: [
+          {$: 'itemlist.studio-suggestions-selection', 
+            onEnter: [
+              {$: 'studio.jb-paste-suggestion', path: '%$path%' }, 
+              {$: 'closeContainingPopup' }
+            ]
+          }, 
+          {$: 'itemlist.selection', 
+            onDoubleClick: [
+              {$: 'studio.jb-paste-suggestion', path: '%$path%' }, 
+              {$: 'closeContainingPopup' }
+            ]
+          }, 
+          {$: 'css.height', height: '500', overflow: 'auto', minMax: 'max' }, 
+          {$: 'css.width', width: '200', overflow: 'auto'  }
+        ]
+      }, 
+      features :{$: 'studio.suggestions-emitter' }
+    }
   }
 })
 
@@ -311,3 +313,4 @@ jb.component('studio.jb-paste-suggestion', {
     }
   }
 })
+

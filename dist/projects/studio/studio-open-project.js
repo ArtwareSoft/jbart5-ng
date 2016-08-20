@@ -50,6 +50,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     { $: 'writeValue', value: 'main', to: '%$globals/page%' },
                                     { $: 'writeValue', value: '', to: '%$globals/profile_path%' }
                                 ],
+                                features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
                             }
                         }
                     ]

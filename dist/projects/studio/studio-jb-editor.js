@@ -1,14 +1,14 @@
-System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio;
+    var jb_core_1, studio_tgp_model_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-jb-editor', {
@@ -138,7 +138,7 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 type: 'tree.nodeModel',
                 params: { path: { as: 'string' } },
                 impl: function (context, path) {
-                    return new studio.ControlModel(path, 'jb-editor');
+                    return new studio_tgp_model_1.TgpModel(path, 'jb-editor');
                 }
             });
             jb_core_1.jb.component('studio.open-jb-edit-property', {
@@ -187,31 +187,31 @@ System.register(['jb-core', './studio-model'], function(exports_1, context_1) {
                 impl: function (context, path) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
-                            var val = studio.model.val(path);
+                            var val = studio_tgp_model_1.model.val(path);
                             if (val == null)
                                 return '';
                             if (typeof val == 'string')
                                 return val;
-                            if (studio.model.compName(path))
-                                return '=' + studio.model.compName(path);
+                            if (studio_tgp_model_1.model.compName(path))
+                                return '=' + studio_tgp_model_1.model.compName(path);
                             return typeof val;
                         }
                         var _path = path;
                         // if (path.slice(-2)== '~+') {
                         //   var arrPath = path.slice(0,-2);
-                        //   studio.model.modify(studio.model.addArrayItem, arrPath, {}, context);
-                        //   var ar = studio.model.val(arrPath);
+                        //   model.modify(model.addArrayItem, arrPath, {}, context);
+                        //   var ar = model.val(arrPath);
                         //   _path = arrPath+'~'+ (ar.length-1);
                         // }
                         if (value.indexOf('=') == 0) {
                             var comp = value.substr(1);
                             if (comp == 'pipeline')
-                                studio.model.modify(studio.model.writeValue, _path, { value: [] }, context);
+                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, _path, { value: [] }, context);
                             else if (studio.findjBartToLook(_path).comps[comp])
-                                studio.model.modify(studio.model.setComp, _path, { comp: value.substr(1) }, context);
+                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.setComp, _path, { comp: value.substr(1) }, context);
                         }
                         else {
-                            studio.model.modify(studio.model.writeValue, _path, { value: value }, context);
+                            studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, _path, { value: value }, context);
                         }
                     }
                 }); }

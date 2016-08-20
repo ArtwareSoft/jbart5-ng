@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx, studio;
+    var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1;
     function eventToProfileElem(e, _window) {
         var $el = $(_window.document.elementFromPoint(e.pageX - $(_window).scrollLeft(), e.pageY - $(_window).scrollTop()));
         if (!$el[0])
@@ -22,7 +22,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
         else
             cmp.width = profElem.outerWidth();
         cmp.height = profElem.outerHeight();
-        cmp.title = studio.model.shortTitle(profElem.attr('jb-path'));
+        cmp.title = studio_tgp_model_1.model.shortTitle(profElem.attr('jb-path'));
         var $el = $(cmp.elementRef.nativeElement);
         var $titleText = $el.find('.title .text');
         $el.find('.title .text').text(cmp.title);
@@ -42,8 +42,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-model'], function(
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
             },
-            function (studio_1) {
-                studio = studio_1;
+            function (studio_tgp_model_1_1) {
+                studio_tgp_model_1 = studio_tgp_model_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.pick', {
