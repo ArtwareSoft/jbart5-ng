@@ -315,7 +315,7 @@ itemlist :{$: 'ng2-ui-test',
 
 'itemlist-heading' :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [
-    { $: 'itemlist-with-heading', items: '%$people%', 
+    { $: 'itemlist-with-groups', items: '%$people%', 
         controls :{$: 'label', title: '%name%' }, 
         groupBy :{$: 'itemlist-heading.group-by', 
           itemToGroupID :{$if: '%male%', then: 'male', else: 'female'}

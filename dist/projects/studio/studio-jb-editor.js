@@ -1,7 +1,7 @@
-System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,6 +9,9 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
             },
             function (studio_tgp_model_1_1) {
                 studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-jb-editor', {
@@ -98,7 +101,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                                 },
                                 title: 'wait for probe',
                                 controls: { $: 'itemlist',
-                                    items: '%$probeResult%',
+                                    items: '%$probeResult/finalResult%',
                                     controls: [
                                         { $: 'group',
                                             controls: [
@@ -109,7 +112,8 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                                         }
                                     ],
                                 }
-                            }
+                            },
+                            features: { $: 'group.watch', data: '%$globals/jb_editor_selection%' }
                         }
                     ],
                     style: { $: 'layout.horizontal', spacing: 3 }
@@ -207,7 +211,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                             var comp = value.substr(1);
                             if (comp == 'pipeline')
                                 studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, _path, { value: [] }, context);
-                            else if (studio.findjBartToLook(_path).comps[comp])
+                            else if (studio_utils_1.findjBartToLook(_path).comps[comp])
                                 studio_tgp_model_1.model.modify(studio_tgp_model_1.model.setComp, _path, { comp: value.substr(1) }, context);
                         }
                         else {

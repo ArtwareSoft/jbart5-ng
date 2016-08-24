@@ -5,7 +5,7 @@ import * as jb_ui from 'jb-ui';
 jb.type('itemlist.heading','inject headings to itemlist');
 jb.type('itemlist-heading.style');
 
-jb.component('itemlist-with-heading', {
+jb.component('itemlist-with-groups', {
   type: 'control',
   params: {
     title: { as: 'string' },

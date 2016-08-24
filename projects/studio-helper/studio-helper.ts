@@ -370,7 +370,7 @@ jb.component('studio-helper.insert-control', {
         style :{$: 'editable-text.md-input' }, 
         
       }, 
-      {$: 'itemlist-with-heading', 
+      {$: 'itemlist-with-groups', 
         items: [
           {$: 'studio.PTs-of-type', type: 'control' }, 
           {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }

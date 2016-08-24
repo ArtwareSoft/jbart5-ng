@@ -111,3 +111,22 @@ jb.component('studio.goto-path', {
 		{$: 'studio.open-control-tree'}
 	]}
 })
+
+jb.component('studio.projectSource',{
+	params: { 
+		project: { as: 'string', defaultValue: '%$globals/project%' } 
+	},
+	impl: (context,project) => {
+		if (!project) return;
+		var comps = jb.entries(jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
+		return comps.map(comp=>compAsStr(comp)).join('\n\n')
+	}
+})
+
+jb.component('studio.compSource',{
+	params: { 
+		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
+	},
+	impl: (context,comp) => 
+		compAsStr(comp.split('~')[0])
+})

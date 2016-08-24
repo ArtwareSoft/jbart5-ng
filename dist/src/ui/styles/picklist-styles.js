@@ -25,8 +25,3 @@ System.register(['jb-core'], function(exports_1, context_1) {
         }
     }
 });
-//      	<option *ngFor="let option of optionsOfGroup(group)" [value]="option.code">{{option.text}}</option>
-// template: `<div><select %$field.modelExp%>
-//   <optgorup *ngFor="let option of options">{{option.text}}
-//   </optgorup>
-//   </select></div>`,

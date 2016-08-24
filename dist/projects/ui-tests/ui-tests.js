@@ -200,7 +200,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('ui-test.itemlist-heading', {
                 type: 'test',
                 impl: { $: 'ng2-ui-test', control: { $: 'group', controls: [
-                            { $: 'itemlist-with-heading', items: '%$people%',
+                            { $: 'itemlist-with-groups', items: '%$people%',
                                 controls: { $: 'label', title: '%name%' },
                                 groupBy: { $: 'itemlist-heading.group-by',
                                     itemToGroupID: { $if: '%male%', then: 'male', else: 'female' }

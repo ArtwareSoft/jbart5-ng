@@ -81,7 +81,10 @@ export class TgpModel {
 
 		function flattenArray(prop) {
 			if (Array.isArray(val[prop]))
-				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
+				return Object.getOwnPropertyNames(val[prop])
+					.map(x=>x=='length'? val.length : x)
+					.map(k=> path +'~'+prop + '~' + k)
+//				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
 			else
 				return [path + '~' + prop]
 		}
@@ -490,6 +493,14 @@ export class TgpModel {
 
 export var model = new TgpModel('');
 
+export function groups_of_controls(ctrlComps) {
+
+}
+
+export function groups_of_data(dataComps) {
+
+}
+
 
 // ************** components
 
@@ -696,12 +707,6 @@ jb.component('studio.compSource',{
 		compAsStr(comp.split('~')[0])
 })
 
-jb.component('studio.isCustomStyle',{
-	params: { path: { as: 'string' } },
-	impl: (context,path) => { 
-		return (model.compName(path) || '').indexOf('custom') == 0 
-	}
-})
 
 
 

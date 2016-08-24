@@ -11,7 +11,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             ;
             jb_1.jb.type('itemlist.heading', 'inject headings to itemlist');
             jb_1.jb.type('itemlist-heading.style');
-            jb_1.jb.component('itemlist-with-heading', {
+            jb_1.jb.component('itemlist-with-groups', {
                 type: 'control',
                 params: {
                     title: { as: 'string' },

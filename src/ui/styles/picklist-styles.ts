@@ -37,9 +37,5 @@ select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
     `
   }
 })
-//      	<option *ngFor="let option of optionsOfGroup(group)" [value]="option.code">{{option.text}}</option>
 
-    // template: `<div><select %$field.modelExp%>
-    //   <optgorup *ngFor="let option of options">{{option.text}}
-    //   </optgorup>
-    //   </select></div>`,
+

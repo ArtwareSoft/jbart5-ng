@@ -3,12 +3,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio_path_1, studio_utils_1;
     var TgpModel, model;
-    function groups_of_controls(ctrlComps) {
-    }
-    exports_1("groups_of_controls", groups_of_controls);
-    function groups_of_data(dataComps) {
-    }
-    exports_1("groups_of_data", groups_of_data);
     return {
         setters:[
             function (jb_core_1_1) {
@@ -88,9 +82,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     }
                     function flattenArray(prop) {
                         if (Array.isArray(val[prop]))
-                            return Object.getOwnPropertyNames(val[prop])
-                                .map(function (x) { return x == 'length' ? val.length : x; })
-                                .map(function (k) { return path + '~' + prop + '~' + k; });
+                            return val[prop].map(function (inner, i) { return path + '~' + prop + '~' + i; });
                         else
                             return [path + '~' + prop];
                     }
@@ -658,6 +650,12 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 },
                 impl: function (context, comp) {
                     return studio_utils_1.compAsStr(comp.split('~')[0]);
+                }
+            });
+            jb_core_1.jb.component('studio.isCustomStyle', {
+                params: { path: { as: 'string' } },
+                impl: function (context, path) {
+                    return (model.compName(path) || '').indexOf('custom') == 0;
                 }
             });
         }

@@ -149,12 +149,11 @@ jb.component('jbart-site.bb', {
     controls: [
       {$: 'label', 
         title: 'label', 
-        style :{$: 'label.md-card-title' }, 
-        
+        style :{$: 'label.md-card-title' }
       }, 
-      {$: 'itemlist-with-heading', 
+      {$: 'itemlist-with-groups', 
         title: 'itemlist', 
-        items :{$: 'list', items: ['a.1', ''] }, 
+        items :{$: 'list', items: ['a.1', 'b.2'] }, 
         controls: [
           {$: 'label', 
             title: '%%', 

@@ -117,6 +117,25 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
                         { $: 'studio.open-control-tree' }
                     ] }
             });
+            jb_core_1.jb.component('studio.projectSource', {
+                params: {
+                    project: { as: 'string', defaultValue: '%$globals/project%' }
+                },
+                impl: function (context, project) {
+                    if (!project)
+                        return;
+                    var comps = jb_core_1.jb.entries(jbart_base().comps).map(function (x) { return x[0]; }).filter(function (x) { return x.indexOf(project) == 0; });
+                    return comps.map(function (comp) { return compAsStr(comp); }).join('\n\n');
+                }
+            });
+            jb_core_1.jb.component('studio.compSource', {
+                params: {
+                    comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+                },
+                impl: function (context, comp) {
+                    return compAsStr(comp.split('~')[0]);
+                }
+            });
         }
     }
 });

@@ -2,6 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {model,TgpModel} from './studio-tgp-model';
+import {findjBartToLook} from './studio-utils';
 
 
 jb.component('studio.open-jb-editor', {
@@ -92,20 +93,20 @@ jb.component('studio.jb-editor', {
           }, 
           title: 'wait for probe', 
           controls :{$: 'itemlist', 
-            items: '%$probeResult%', 
+            items: '%$probeResult/finalResult%', 
             controls: [
               {$: 'group', 
                 controls: [
                   {$: 'studio.data-browse', data: '%in/data%', title: 'in' }, 
                   {$: 'studio.data-browse', data: '%out%', title: 'out' }
                 ], 
-                
                 title: 'in/out'
               }
             ], 
             
           }
-        }
+        }, 
+        features :{$: 'group.watch', data: '%$globals/jb_editor_selection%' }
       }
     ], 
     style :{$: 'layout.horizontal', spacing: 3 }
@@ -210,7 +211,7 @@ jb.component('studio.profile-value-as-text', {
           var comp = value.substr(1);
           if (comp == 'pipeline')
             model.modify(model.writeValue, _path, { value: [] },context);  
-          else if (studio.findjBartToLook(_path).comps[comp])
+          else if (findjBartToLook(_path).comps[comp])
             model.modify(model.setComp, _path, { comp: value.substr(1) },context);
         } else {
           model.modify(model.writeValue, _path, { value: value },context);

@@ -204,7 +204,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-suggestions-popup' },
                     content: { $: 'group',
-                        controls: { $: 'itemlist-with-heading',
+                        controls: { $: 'itemlist-with-groups',
                             items: '%$suggestionContext/suggestionObj/options%',
                             watchItems: true,
                             controls: { $: 'label', title: '%text%' },

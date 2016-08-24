@@ -111,7 +111,7 @@ jb_modules =
 'testing/ui-testers-ctrls',
 ];
 
-jb_studio_modules = ['model','main','menu','toolbar','tests','popups'
+jb_studio_modules = ['tgp-model','model-components','path','utils','main','menu','toolbar','tests','popups'
 ,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions']
   .map(x=>'studio/studio-' + x)
