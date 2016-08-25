@@ -9,6 +9,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             }],
         execute: function() {
             jb_1.jb.component('ng2-ui-test', {
+                type: 'test',
                 params: {
                     control: { type: 'control', dynamic: true },
                     expectedTemplateResult: { type: 'boolean', dynamic: true, as: 'boolean' },
@@ -49,6 +50,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 }
             });
             jb_1.jb.component('data-test', {
+                type: 'test',
                 params: {
                     calculate: { dynamic: true },
                     runBefore: { type: 'action', dynamic: true },

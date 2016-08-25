@@ -1,20 +1,16 @@
 import {jb} from 'jb-core';
-import * as jb_rx from 'jb-ui/jb-rx';
-//import {Http, RequestOptions, Request, RequestMethods} from '@angular/http';
-import { Http, Response, XHRBackend, BrowserXhr, RequestOptions, XSRFStrategy, CookieXSRFStrategy } from '@angular/http';
+import * as jb_ui from 'jb-ui';
+import { Http, HTTP_PROVIDERS } from '@angular/http';
+
+jb_ui.registerProviders({ HTTP_PROVIDERS: HTTP_PROVIDERS });
 
 jb.component('http.get', {
 	params: {
 		url: { as: 'string' },
 	},
-	impl: (ctx,url,resource) => 
-		new Http(new XHRBackend(new BrowserXhr(), null, new CookieXSRFStrategy()), new RequestOptions())
+	impl: (ctx,url) =>
+		ctx.vars.injector.get(Http)
 			.get(url)
 			.map(x=>
 				x.json())
-//			.take(1)
-			// .do(x => {
-			// 	if (resource)
-			// 		ctx.resources[resource] = ctx.params.mapToResource(ctx.setData(x.json()))
-			// })
 })

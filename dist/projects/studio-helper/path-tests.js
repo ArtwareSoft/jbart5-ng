@@ -9,7 +9,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
             }],
         execute: function() {
             jb_core_1.jb.component('path-test.single-control', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -21,7 +20,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.pt-by-example', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -36,7 +34,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.using-global', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -59,7 +56,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'group', controls: { $call: 'ctrl' } }
             });
             jb_core_1.jb.component('path-test.inner-in-template', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -73,7 +69,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.pipeline-sugar1', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -85,7 +80,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.pipeline-sugar2', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -97,7 +91,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.pipeline-no-sugar', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -109,7 +102,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.pipeline-one-elem', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -121,7 +113,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.filter-sugar', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -133,7 +124,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('path-test.filter-no-sugar', {
-                type: 'test',
                 impl: { $: 'jb-path-test',
                     $vars: { tst: 10 },
                     controlWithMark: { $: 'group',
@@ -148,8 +138,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
     }
 });
 // jb.component('path-test.asIs', {
-// 	type: 'test',
-// 	 impl :{$: 'jb-path-test', 
+// // 	 impl :{$: 'jb-path-test', 
 // 	 	$vars: { tst: 10 },
 // 		controlWithMark: {$: 'group', 
 // 			controls :{$: 'label', title :{ $asIs: '$mark:hello'} },

@@ -15,7 +15,12 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['projects/studio-helper/studio-helper','projects/studio-helper/suggestion-tests','projects/studio-helper/path-tests']))
+jbLoadModules(jb_modules.concat(jb_studio_modules)
+  .concat([
+      'projects/studio-helper/studio-helper',
+      'projects/studio-helper/suggestion-tests',
+      'projects/studio-helper/path-tests',
+      'projects/studio-helper/studio-tree-tests']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

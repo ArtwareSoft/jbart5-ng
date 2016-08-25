@@ -53,7 +53,6 @@ jb.component('inner-label3-tst', {
 })
 
 jb.component('ui-test.label', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'label', title: 'Hello World2' },
   expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
@@ -61,7 +60,6 @@ jb.component('ui-test.label', {
 })
 
 jb.component('ui-test.expandable-group', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
     control :{$: 'group', title: 'test1',
       style :{$: 'group.expandable'}, 
@@ -76,7 +74,6 @@ jb.component('ui-test.expandable-group', {
 })
 
 jb.component('ui-test.button', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'button', title: 'ccc' },
   expectedHtmlResult: { $: 'contains', text: 'cc' }
@@ -84,7 +81,6 @@ jb.component('ui-test.button', {
 })
 
 jb.component('ui-test.group', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [ 
@@ -97,7 +93,6 @@ jb.component('ui-test.group', {
 })
 
 jb.component('ui-test.button-click', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'button', 
     //style :{$: 'button.x'}, 
@@ -109,7 +104,6 @@ jb.component('ui-test.button-click', {
 })
 
 jb.component('ui-test.button-x', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'button', 
     style :{$: 'button.x'}, 
@@ -121,7 +115,6 @@ jb.component('ui-test.button-x', {
 })
 
 jb.component('ui-test.resource', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'button', title: '%$person.name%' } ,
   expectedHtmlResult: { $: 'contains', text: ['Homer'] },
@@ -129,7 +122,6 @@ jb.component('ui-test.resource', {
 })
 
 jb.component('ui-test.features-css', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'label', 
     title: 'Hello World2', 
@@ -140,7 +132,6 @@ jb.component('ui-test.features-css', {
 })
 
 jb.component('ui-test.itemlist', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'itemlist', items: '%$people%', 
       controls :{ $: 'label', title: '%$item.name% - %name%' }, 
@@ -150,7 +141,6 @@ jb.component('ui-test.itemlist', {
 })
 
 jb.component('ui-test.itemlist-with-select', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'itemlist', items: '%$people%', 
       controls :{ $: 'label', title: '%$item.name% - %name%' }, 
@@ -161,7 +151,6 @@ jb.component('ui-test.itemlist-with-select', {
 })
 
 jb.component('ui-test.http-get', {
-  type: 'test',
   impl:{$: 'ng2-ui-test',  
   control :{$: 'group', 
     controls :{$: 'itemlist', 
@@ -184,7 +173,6 @@ jb.component('ui-test.http-get', {
 })
 
 jb.component('ui-test.itemlist-DD', {
-  type: 'test',
   impl :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [
     { $: 'itemlist', items: '%$people%', 
@@ -205,7 +193,6 @@ jb.component('ui-test.itemlist-DD', {
 })
 
 jb.component('ui-test.itemlist-basic', {
-  type: 'test',
   impl :{$: 'ng2-ui-test', control :
     { $: 'itemlist', items: '%$people%',
       controls :{$: 'label', title: '%name%' } 
@@ -215,7 +202,6 @@ jb.component('ui-test.itemlist-basic', {
 })
 
 jb.component('ui-test.itemlist-heading', {
-  type: 'test',
   impl :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [
     { $: 'itemlist-with-groups', items: '%$people%', 
@@ -236,7 +222,6 @@ jb.component('ui-test.itemlist-heading', {
 })
 
 jb.component('ui-test.tree', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control: {$: 'tree',
         nodeModel :{$: 'tree.json-read-only', 
@@ -252,7 +237,6 @@ jb.component('ui-test.tree', {
 })
 
 jb.component('ui-test.tree-DD', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'tree',
     nodeModel :{$: 'tree.json-read-only', 
@@ -269,7 +253,6 @@ jb.component('ui-test.tree-DD', {
 })
 
 jb.component('ui-test.itemlist-add-button', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control: { $: 'group', controls: 
     [
@@ -287,7 +270,6 @@ jb.component('ui-test.itemlist-add-button', {
 })
 
 jb.component('ui-test.itemlist-selection', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',
   control :{$: 'itemlist', items: '%$people%', 
         controls :{$: 'label', title: '%$item.name%' }, 
@@ -300,7 +282,6 @@ jb.component('ui-test.itemlist-selection', {
 })
 
 jb.component('ui-test.itemlist-MD', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',
 control :{$: 'group', 
   controls: 
@@ -325,8 +306,7 @@ control :{$: 'group',
 })
 
 // jb.component('ui-test.ngShow-label', {
-//   type: 'test',
-//   impl :{$: 'ng2-ui-test',  
+// //   impl :{$: 'ng2-ui-test',  
 //   control :{$: 'label', 
 //         title: 'Dan',
 //         features :{$ngAtts: {'[hidden]': '12==12'} }
@@ -336,8 +316,7 @@ control :{$: 'group',
 // })
 
 // jb.component('ui-test.ngShow-list', {
-//   type: 'test',
-//   impl :{$: 'ng2-ui-test',  
+// //   impl :{$: 'ng2-ui-test',  
 //   control :{$: 'itemlist', 
 //       items: '%$people%', 
 //       controls :{$: 'label', 
@@ -369,7 +348,6 @@ control :{$: 'group',
 // })
 
 jb.component('ui-test.layout-horizontal', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
       style :{$: 'layout.horizontal' },
@@ -383,7 +361,6 @@ jb.component('ui-test.layout-horizontal', {
 })
 
 jb.component('ui-test.editable-text', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
     control :{$: 'editable-text', 
       title: 'name', 
@@ -394,7 +371,6 @@ jb.component('ui-test.editable-text', {
 })
 
 jb.component('ui-test.editable-text-in-group', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
         controls: [
@@ -408,7 +384,6 @@ jb.component('ui-test.editable-text-in-group', {
 })
 
 jb.component('ui-test.editable-text-with-jb-val', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
       $vars: {
@@ -437,7 +412,6 @@ jb.component('ui-test.editable-text-with-jb-val', {
 })
 
 jb.component('ui-test.property-sheet.growing', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
           style :{$: 'property-sheet.growing'},
@@ -460,7 +434,6 @@ jb.component('ui-test.property-sheet.growing', {
 })
 
 jb.component('ui-test.property-sheet.style-on-focus', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
           style :{$: 'property-sheet.style-on-focus'},
@@ -489,7 +462,6 @@ jb.component('ui-test.property-sheet.style-on-focus', {
 })
 
 jb.component('ui-test.property-sheet.titles-above', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
     controls : [
@@ -508,7 +480,6 @@ jb.component('ui-test.property-sheet.titles-above', {
 })
 
 jb.component('ui-test.property-sheet.titles-left', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',
     controls : [
@@ -527,7 +498,6 @@ jb.component('ui-test.property-sheet.titles-left', {
 })
 
 jb.component('ui-test.editable-number', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [
@@ -547,7 +517,6 @@ jb.component('ui-test.editable-number', {
 })
 
 jb.component('ui-test.editable-boolean.all-styles', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [
@@ -576,7 +545,6 @@ jb.component('ui-test.editable-boolean.all-styles', {
 })
 
 jb.component('ui-test.editable-boolean-settings', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
     [
@@ -595,7 +563,6 @@ jb.component('ui-test.editable-boolean-settings', {
 })
 
 jb.component('ui-test.editable-boolean.expand-collapse', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', 
   $vars: {
@@ -617,7 +584,6 @@ jb.component('ui-test.editable-boolean.expand-collapse', {
 })
 
 jb.component('ui-test.code-mirror', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', 
     $vars: {
@@ -647,7 +613,6 @@ jb.component('ui-test.code-mirror', {
 })
 
 jb.component('ui-test.prettyPrintComp', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  waitForPromise: {$delay: 50},
   control :{$: 'group', controls: [
       {$: 'text', 
@@ -665,7 +630,6 @@ jb.component('ui-test.prettyPrintComp', {
 })
 
 jb.component('ui-test.picklist', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
       [
@@ -687,7 +651,6 @@ jb.component('ui-test.picklist', {
 })
 
 jb.component('ui-test.picklist-groups', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
       [
@@ -710,8 +673,7 @@ jb.component('ui-test.picklist-groups', {
 })
 
 // jb.component('dialog', {
-//   type: 'test',
-//   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+// //   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
 //   control :{$: 'button', title: 'Open Dialog', $click: true,
 //       action :{$: 'openDialog', 
 //         title: 'Hello' , 
@@ -724,8 +686,7 @@ jb.component('ui-test.picklist-groups', {
 // })
 
 // jb.component('popup-menu', {
-//   type: 'test',
-//   impl :{$: 'ng2-ui-test', 
+// //   impl :{$: 'ng2-ui-test', 
 //   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
 //       controls: 
 //       [
@@ -738,7 +699,6 @@ jb.component('ui-test.picklist-groups', {
 // })
 
 jb.component('ui-test.dynamic-controls', {
-  type: 'test',
   impl :{$: 'ng2-ui-test', 
   control :{$: 'group',
       style :{$: 'property-sheet.titles-left' },
@@ -752,7 +712,6 @@ jb.component('ui-test.dynamic-controls', {
 })
 
 jb.component('ui-test.tabs', {
-  type: 'test',
   impl :{$: 'ng2-ui-test', 
   control :{$: 'tabs',
       tabs:[
@@ -769,7 +728,6 @@ jb.component('ui-test.tabs', {
 })
 
 jb.component('ui-test.group.accordion', {
-  type: 'test',
   impl :{$: 'ng2-ui-test', 
   control :{$: 'group',
       style :{$: 'group.accordion'},
@@ -783,10 +741,8 @@ jb.component('ui-test.group.accordion', {
 })
 
 jb.component('ui-test.inner-label', {
-  type: 'test',
   impl :{$: 'ng2-ui-test',  
     control :{$: 'inner-label3-tst', title: 'Hello World2' },
     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
-
 })

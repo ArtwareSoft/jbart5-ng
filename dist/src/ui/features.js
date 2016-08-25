@@ -34,7 +34,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx'], function(exports_1, context
                                 return [context.vars.$model.controls(cmp.ctx.setData(data))];
                             })
                                 .do(function (x) {
-                                return waiting.ready();
+                                return jb_ui.delayOutsideAngular(context, function () {
+                                    return waiting.ready();
+                                });
                             })
                                 .startWith([loading(context)])
                                 .catch(function (e) {

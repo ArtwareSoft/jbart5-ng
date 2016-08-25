@@ -15,9 +15,16 @@ enableProdMode();
 jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
-//	console.log('apply');
-	jb.delay(1);
-	ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{})
+	console.log('apply');
+	return jb.delay(1).then(() =>
+			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
+}
+
+export function delayOutsideAngular(ctx,func) {
+	return ctx.vars.ngZone.runOutsideAngular(() =>
+		return jb.delay(1).then(()=>
+			Promise.resolve(func()))
+	)
 }
 
 export function applyPreview(ctx) {
@@ -110,7 +117,7 @@ class jbComponent {
 		Cmp.prototype.ngAfterViewInit = function() {
 			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
 			this.jbEmitter && this.jbEmitter.next('after-init');
-			jb.delay(1).then(()=>{ // ugly huck to get event after children are initialized
+			delayOutsideAngular(this.ctx,()=>{ 
 				if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
 					this.jbEmitter.next('after-init-children');
 					if (this.readyCounter == null)
@@ -390,10 +397,10 @@ export class jbComp {
 				.filter(x=>
 					x)
 				.subscribe(comp=> {
-					this.comp = comp;
 					this.draw(comp);
-//					if (comp != this.comp)
+					if (comp != this.comp) // changed
 						applyPreview(comp.ctx);
+					this.comp = comp;
 				})
   }
 
@@ -416,6 +423,22 @@ export class jbComp {
 	})
   }
 
+ jbWait() {
+	this.readyCounter = (this.readyCounter || 0)+1;
+	if (this.parentCmp && this.parentCmp.jbWait)
+		this.parentWaiting = this.parentCmp.jbWait();
+	return {
+		ready: () => {
+			this.readyCounter--;
+			if (!this.readyCounter) {
+				this.jbEmitter && this.jbEmitter.next('ready');
+				if (this.parentWaiting)
+					this.parentWaiting.ready();
+			}
+		}
+	}
+ }
+
 // very ugly: flatten the structure and pushing the dispose function to the group parent.
   flattenjBComp(cmp_ref) {
   	var cmp = this;
@@ -423,8 +446,6 @@ export class jbComp {
   		cmp_ref.destroy();
 
   	this._nativeElement = cmp_ref._hostElement.nativeElement;
-  	if (!cmp.flatten) 
-  		return;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
 	var parentInjector = cmp_ref.hostView._view.parentInjector._view.parentInjector._view;
 	var parentCmp = parentInjector && (parentInjector._Cmp_0_4 || parentInjector.context);
@@ -432,6 +453,9 @@ export class jbComp {
   		return jb.logError('flattenjBComp: can not get parent component');
   	if (cmp._deleted_parent)
   		return jb.logError('flattenjBComp: deleted parent exists');
+  	this.parentCmp = parentCmp;
+  	if (!cmp.flatten) 
+  		return;
 
   	var to_keep = cmp_ref._hostElement.nativeElement;
   	var to_delete = to_keep.parentNode

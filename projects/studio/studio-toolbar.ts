@@ -10,8 +10,8 @@ jb.component('studio.pickAndOpen', {
 		from: '%$from%',
 	  	onSelect: [
 			{$: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
-			{$: 'studio.open-properties'},
 			{$: 'studio.open-control-tree'},
+      {$: 'studio.open-properties'},
  		],
 	} 
 })

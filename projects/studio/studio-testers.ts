@@ -1,9 +1,52 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
-import * as probe from './studio-probe';
+import {Probe} from './studio-probe';
+import {suggestions} from './studio-suggestions';
+import {TgpModel} from './studio-tgp-model';
+
+jb.component('suggestions-test', {
+  type: 'test',
+  params: {
+    expression: { as: 'string' },
+    selectionStart: { as: 'number', defaultValue: -1 },
+    expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
+  },
+  impl :{$: 'data-test', 
+    calculate: ctx => {
+      var params = ctx.componentContext.params;
+      var selectionStart = params.selectionStart == -1 ? params.expression.length : params.selectionStart;
+      var obj = new suggestions({ value: params.expression, selectionStart: selectionStart })
+        .extendWithOptions(ctx);
+      return JSON.stringify(JSON.stringify(obj.options.map(x=>x.text)));
+    },
+    expectedResult :{$call: 'expectedResult' }
+  },
+})
+
+jb.component('studio-tree-children-test', {
+  type: 'test',
+  params: {
+    path: { as: 'string' },
+    childrenType: { as: 'string', type: ',jb-editor' },
+    expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
+  },
+  impl :{$: 'data-test', 
+    calculate: ctx => {
+      var params = ctx.componentContext.params;
+      var mdl = new TgpModel('',params.childrenType);
+      var titles = mdl.children(params.path)
+        .map(path=>
+          mdl.title(path,true));
+      return JSON.stringify(titles);
+    },
+    expectedResult :{$call: 'expectedResult' }
+  },
+})
+
 
 jb.component('jb-path-test', {
+  type: 'test',
   params: {
     controlWithMark: { type: 'control', dynamic: true },
     expectedStaticPath: { as: 'string' },
@@ -25,7 +68,7 @@ jb.component('jb-path-test', {
       jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath ));
 
     // ********** dynamic counter
-    var probeObs = new probe.Probe(actual_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true).observable();
+    var probeObs = new Probe(actual_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true).observable();
     var expectedDynamicCounterTst = probeObs.filter(res=>res.element)
         .map(res=>{
           try {
@@ -77,64 +120,65 @@ jb.component('jb-path-test', {
 })
 
 
-jb.component('studio-test', {
-  params: {
-    project : { as: 'string', defaultValue: 'hello-world'},
-    page : { as: 'string', defaultValue: 'group1'},
-    profile_path: { as: 'string', defaultValue: 'hello-world.group1'},
-    control: { type: 'control', dynamic: true },
-    expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
-  },
-  impl :{$: 'ng2-ui-test', 
-    control :{$: 'group',
-      features :
-        [ 
-          { $: 'feature.init', action:
-            [
-              { $: 'writeValue', to: '%$globals/project%', value: '%$project%' },
-              { $: 'writeValue', to: '%$globals/page%', value: '%$page%' },
-              { $: 'writeValue', to: '%$globals/profile_path%', value: '%$profile_path%' },
-            ]
-          },
-          { $: 'feature.emitter', varName: 'studioTestEm' }
-        ],
-      controls: [
-        { $: 'studio.renderWidget' },
-        { $: 'group', 
-            controls :{$: 'group',
-                features :{$: 'feature.afterLoad', action :{$: 'rx.emit', from: 'ready', to: '%$studioTestEm%' }},
-                controls :{$call: 'control' } 
-            },
-            features :{$: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }}
-        }
-      ]
-    },
-    expectedHtmlResult: { $call: 'expectedHtmlResult' }
-  }
-})
+// jb.component('studio-test', {
+//   params: {
+//     project : { as: 'string', defaultValue: 'hello-world'},
+//     page : { as: 'string', defaultValue: 'group1'},
+//     profile_path: { as: 'string', defaultValue: 'hello-world.group1'},
+//     control: { type: 'control', dynamic: true },
+//     expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
+//   },
+//   impl :{$: 'ng2-ui-test', 
+//     control :{$: 'group',
+//       features :
+//         [ 
+//           { $: 'feature.init', action:
+//             [
+//               { $: 'writeValue', to: '%$globals/project%', value: '%$project%' },
+//               { $: 'writeValue', to: '%$globals/page%', value: '%$page%' },
+//               { $: 'writeValue', to: '%$globals/profile_path%', value: '%$profile_path%' },
+//             ]
+//           },
+//           { $: 'feature.emitter', varName: 'studioTestEm' }
+//         ],
+//       controls: [
+//         { $: 'studio.renderWidget' },
+//         { $: 'group', 
+//             controls :{$: 'group',
+//                 features :{$: 'feature.afterLoad', action :{$: 'rx.emit', from: 'ready', to: '%$studioTestEm%' }},
+//                 controls :{$call: 'control' } 
+//             },
+//             features :{$: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }}
+//         }
+//       ]
+//     },
+//     expectedHtmlResult: { $call: 'expectedHtmlResult' }
+//   }
+// })
 
-jb.component('run-studio-test', {
-  params: { 
-    project : { as: 'string', defaultValue: 'hello-world'},
-    page : { as: 'string', defaultValue: 'group1'},
-    profile_path: { as: 'string', defaultValue: 'hello-world.group1'},
-    control : { dynamic: true },
-  },
-  impl :{$: 'group',
-    features :{$: 'feature.init', action: [
-      { $: 'writeValue', to: '%$globals/project%', value: '%$project%' },
-      { $: 'writeValue', to: '%$globals/page%', value: '%$page%' },
-      { $: 'writeValue', to: '%$globals/profile_path%', value: '%$profile_path%' },
-    ] },
-    controls: [
-      { $: 'studio.renderWidget' },
-      { $: 'group', controls: { $call: 'control' }, 
-          atts: {style: 'margin-left: 100px'},
-          features : [
-            { $: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }},
-          ]
-        }
-    ]
-  }
-})
+// jb.component('run-studio-test', {
+//   params: { 
+//     project : { as: 'string', defaultValue: 'hello-world'},
+//     page : { as: 'string', defaultValue: 'group1'},
+//     profile_path: { as: 'string', defaultValue: 'hello-world.group1'},
+//     control : { dynamic: true },
+//   },
+//   impl :{$: 'group',
+//     features :{$: 'feature.init', action: [
+//       { $: 'writeValue', to: '%$globals/project%', value: '%$project%' },
+//       { $: 'writeValue', to: '%$globals/page%', value: '%$page%' },
+//       { $: 'writeValue', to: '%$globals/profile_path%', value: '%$profile_path%' },
+//     ] },
+//     controls: [
+//       { $: 'studio.renderWidget' },
+//       { $: 'group', controls: { $call: 'control' }, 
+//           atts: {style: 'margin-left: 100px'},
+//           features : [
+//             { $: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }},
+//           ]
+//         }
+//     ]
+//   }
+// })
 
+// 

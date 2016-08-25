@@ -13,11 +13,20 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     var jb_core_1, core_1, forms_1, http_1, common_1, portal_directives_1, ripple_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget;
     function apply(ctx) {
-        //	console.log('apply');
-        jb_core_1.jb.delay(1);
-        ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
+        console.log('apply');
+        return jb_core_1.jb.delay(1).then(function () {
+            return ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
+        });
     }
     exports_1("apply", apply);
+    function delayOutsideAngular(ctx, func) {
+        return ctx.vars.ngZone.runOutsideAngular(function () {
+            return jb_core_1.jb.delay(1).then(function () {
+                return Promise.resolve(func());
+            });
+        });
+    }
+    exports_1("delayOutsideAngular", delayOutsideAngular);
     function applyPreview(ctx) {
         var _win = jbart.previewWindow || window;
         jb_core_1.jb.delay(1).then(function () {
@@ -338,7 +347,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         var _this = this;
                         this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
                         this.jbEmitter && this.jbEmitter.next('after-init');
-                        jb_core_1.jb.delay(1).then(function () {
+                        delayOutsideAngular(this.ctx, function () {
                             if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
                                 _this.jbEmitter.next('after-init-children');
                                 if (_this.readyCounter == null)
@@ -523,10 +532,10 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         return x;
                     })
                         .subscribe(function (comp) {
-                        _this.comp = comp;
                         _this.draw(comp);
-                        //					if (comp != this.comp)
-                        applyPreview(comp.ctx);
+                        if (comp != _this.comp)
+                            applyPreview(comp.ctx);
+                        _this.comp = comp;
                     });
                 };
                 jbComp.prototype.draw = function (comp) {
@@ -547,6 +556,22 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         _this.flattenjBComp(cmp_ref);
                     });
                 };
+                jbComp.prototype.jbWait = function () {
+                    var _this = this;
+                    this.readyCounter = (this.readyCounter || 0) + 1;
+                    if (this.parentCmp && this.parentCmp.jbWait)
+                        this.parentWaiting = this.parentCmp.jbWait();
+                    return {
+                        ready: function () {
+                            _this.readyCounter--;
+                            if (!_this.readyCounter) {
+                                _this.jbEmitter && _this.jbEmitter.next('ready');
+                                if (_this.parentWaiting)
+                                    _this.parentWaiting.ready();
+                            }
+                        }
+                    };
+                };
                 // very ugly: flatten the structure and pushing the dispose function to the group parent.
                 jbComp.prototype.flattenjBComp = function (cmp_ref) {
                     var cmp = this;
@@ -554,8 +579,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         return cmp_ref.destroy();
                     };
                     this._nativeElement = cmp_ref._hostElement.nativeElement;
-                    if (!cmp.flatten)
-                        return;
                     // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
                     var parentInjector = cmp_ref.hostView._view.parentInjector._view.parentInjector._view;
                     var parentCmp = parentInjector && (parentInjector._Cmp_0_4 || parentInjector.context);
@@ -563,6 +586,9 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
                     if (cmp._deleted_parent)
                         return jb_core_1.jb.logError('flattenjBComp: deleted parent exists');
+                    this.parentCmp = parentCmp;
+                    if (!cmp.flatten)
+                        return;
                     var to_keep = cmp_ref._hostElement.nativeElement;
                     var to_delete = to_keep.parentNode;
                     cmp._deleted_parent = to_delete;

@@ -288,6 +288,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
             });
             // ************** tests ******************
             jb_1.jb.component('rx-test', {
+                type: 'test',
                 params: {
                     result: { as: 'observable', dynamic: true },
                     expectedResult: { type: 'boolean', dynamic: true },

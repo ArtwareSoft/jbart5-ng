@@ -87,9 +87,10 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                             .map(function (e) { return e.path; }));
                     }
                     function flattenArray(prop) {
-                        if (Array.isArray(val[prop]))
-                            return Object.getOwnPropertyNames(val[prop])
-                                .map(function (x) { return x == 'length' ? val.length : x; })
+                        var innerVal = val[prop];
+                        if (Array.isArray(innerVal))
+                            return Object.getOwnPropertyNames(innerVal)
+                                .map(function (x) { return x == 'length' ? innerVal.length : x; })
                                 .map(function (k) { return path + '~' + prop + '~' + k; });
                         else
                             return [path + '~' + prop];

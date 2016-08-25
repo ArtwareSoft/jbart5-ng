@@ -201,7 +201,8 @@ function jbProjectModules(project) {
       .split('[')[1]
       .split(']')[0]
       .replace(/'|"/g,'')
-      .split(',');
+      .replace(/\s/g,'')
+      .split(',')
   })
 }
 

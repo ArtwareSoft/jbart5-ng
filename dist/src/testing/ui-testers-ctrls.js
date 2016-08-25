@@ -8,32 +8,33 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 jb_1 = jb_1_1;
             }],
         execute: function() {
-            jb_1.jb.component('ui-tests.show-project-tests', {
-                type: 'control',
-                impl: { $: 'group',
-                    features: { $: 'group.watch', data: '%$window/jbart/studioGlobals/profile_path%' },
-                    controls: { $: 'itemlog',
-                        items: [
-                            '%$window.jbart.comps%',
-                            { $: 'objectToArray' },
-                            { $filter: '%val/type% == "test"' },
-                            { $filter: function (ctx) {
-                                    var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
-                                    if (!selectedTst)
-                                        selectedTst = location.href.split('/')[6];
-                                    if (!selectedTst || selectedTst.slice(-6) == '.tests')
-                                        return true;
-                                    return ctx.data.id == selectedTst;
-                                }
-                            },
-                            function (ctx) {
-                                return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
-                            },
-                        ],
-                        controls: { $: 'ui-tests.show-one-test-in-project' }
-                    }
-                }
-            });
+            // jb.component('ui-tests.show-project-tests', {
+            // 	type: 'control',
+            // 	impl :{$: 'group',
+            // 	    features: {$: 'group.watch', data: '%$window/jbart/studioGlobals/profile_path%' }, 
+            //  		controls: {$: 'itemlog',
+            // 			items: [
+            // 				'%$window.jbart.comps%',
+            // 				{ $: 'objectToArray' },
+            // 				{$filter: '%val/type% == "test"' },
+            // 				{$filter: ctx => {
+            // 						var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
+            // 						if (!selectedTst)
+            // 							selectedTst = location.href.split('/')[6];
+            // 						if (!selectedTst || selectedTst.slice(-6) == '.tests') 
+            // 							return true;
+            // 						return ctx.data.id == selectedTst;
+            // 					}
+            // 				},
+            // 				ctx => 
+            // 					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+            // 				// { $rxParallelKeepOrder: ctx => 
+            // 				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
+            // 			],
+            // 			controls :{$: 'ui-tests.show-one-test-in-project' } 
+            // 		}
+            // 	}
+            // })
             jb_1.jb.component('ui-tests.show-tests', {
                 type: 'control',
                 impl: { $: 'group',
@@ -47,7 +48,8 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         },
                         tests: ['%$window.jbart.comps%',
                             { $: 'objectToArray' },
-                            { $filter: '%val/type% == "test"' },
+                            { $filter: { $: 'studio.is-of-type', type: 'test', path: '%id%' } },
+                            { $filter: { $: 'contains', allText: '%id%', text: '.' } },
                             { $filter: { $or: [{ $: 'equals', item1: '%$module%', item2: { $: 'prefix', text: '%id%', separator: '.' } }, { $isEmpty: '%$module%' }] } },
                         ],
                         parallel_tests: ['%$tests%',
@@ -112,7 +114,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     testResult: { as: 'single', defaultValue: '%%' },
                 },
                 impl: { $: 'group',
-                    layout: { $: 'md-layout', layout: 'row', },
+                    //		layout :{$: 'md-layout', layout: 'row',  },
                     controls: [
                         { $: 'button', title: { $firstSucceeding: ['%$testResult/title%', '%$testResult/id%'] },
                             style: { $: 'button.href' },

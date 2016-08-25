@@ -29,7 +29,7 @@ export var jb = {
 	extend: jb_extend,
 	map: jb_map,
 	obj: jb_obj,
-	ownPropertyNames: jb_ownPropertyNames,
+	ownPropertyNames: jb_ownPropertyNames, // keeps the order (unlike Object.getOwn..)
 	firstProp: jb_firstProp,
 	range: jb_range,
 	entries: jb_entries,

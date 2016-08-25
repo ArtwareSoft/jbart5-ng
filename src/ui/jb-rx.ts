@@ -287,6 +287,7 @@ jb.component('rx.urlPath',{
 // ************** tests ******************
 
 jb.component('rx-test', {
+	type: 'test',
 	params: {
 		result: { as: 'observable', dynamic: true },
 		expectedResult: { type: 'boolean', dynamic: true },

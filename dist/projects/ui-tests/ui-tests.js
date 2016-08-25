@@ -53,14 +53,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'inner-label2-tst', cssClass: 'inner-label3-tst', title: { $call: 'title' } }
             });
             jb_core_1.jb.component('ui-test.label', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'label', title: 'Hello World2' },
                     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
                 },
             });
             jb_core_1.jb.component('ui-test.expandable-group', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', title: 'test1',
                         style: { $: 'group.expandable' },
@@ -73,14 +71,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.button', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'button', title: 'ccc' },
                     expectedHtmlResult: { $: 'contains', text: 'cc' }
                 },
             });
             jb_core_1.jb.component('ui-test.group', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'button', title: 'button1' },
@@ -91,7 +87,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.button-click', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'button',
                         //style :{$: 'button.x'}, 
@@ -102,7 +97,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.button-x', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'button',
                         style: { $: 'button.x' },
@@ -113,14 +107,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.resource', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'button', title: '%$person.name%' },
                     expectedHtmlResult: { $: 'contains', text: ['Homer'] },
                 },
             });
             jb_core_1.jb.component('ui-test.features-css', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'label',
                         title: 'Hello World2',
@@ -130,7 +122,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'itemlist', items: '%$people%',
                         controls: { $: 'label', title: '%$item.name% - %name%' },
@@ -139,7 +130,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-with-select', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'itemlist', items: '%$people%',
                         controls: { $: 'label', title: '%$item.name% - %name%' },
@@ -149,7 +139,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.http-get', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         controls: { $: 'itemlist',
@@ -171,7 +160,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-DD', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test', control: { $: 'group', controls: [
                             { $: 'itemlist', items: '%$people%',
                                 controls: { $: 'label', title: '%name%' },
@@ -190,7 +178,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-basic', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test', control: { $: 'itemlist', items: '%$people%',
                         controls: { $: 'label', title: '%name%' }
                     },
@@ -198,7 +185,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-heading', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test', control: { $: 'group', controls: [
                             { $: 'itemlist-with-groups', items: '%$people%',
                                 controls: { $: 'label', title: '%name%' },
@@ -217,7 +203,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('ui-test.tree', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'tree',
                         nodeModel: { $: 'tree.json-read-only',
@@ -232,7 +217,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.tree-DD', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'tree',
                         nodeModel: { $: 'tree.json-read-only',
@@ -248,7 +232,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-add-button', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'itemlist',
@@ -264,7 +247,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-selection', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'itemlist', items: '%$people%',
                         controls: { $: 'label', title: '%$item.name%' },
@@ -276,7 +258,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.itemlist-MD', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         controls: [
@@ -299,8 +280,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             // jb.component('ui-test.ngShow-label', {
-            //   type: 'test',
-            //   impl :{$: 'ng2-ui-test',  
+            // //   impl :{$: 'ng2-ui-test',  
             //   control :{$: 'label', 
             //         title: 'Dan',
             //         features :{$ngAtts: {'[hidden]': '12==12'} }
@@ -309,8 +289,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             // },
             // })
             // jb.component('ui-test.ngShow-list', {
-            //   type: 'test',
-            //   impl :{$: 'ng2-ui-test',  
+            // //   impl :{$: 'ng2-ui-test',  
             //   control :{$: 'itemlist', 
             //       items: '%$people%', 
             //       controls :{$: 'label', 
@@ -340,7 +319,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
             // },
             // })
             jb_core_1.jb.component('ui-test.layout-horizontal', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         style: { $: 'layout.horizontal' },
@@ -353,7 +331,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-text', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'editable-text',
                         title: 'name',
@@ -363,7 +340,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-text-in-group', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         controls: [
@@ -376,7 +352,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-text-with-jb-val', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         $vars: {
@@ -406,7 +381,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.property-sheet.growing', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         style: { $: 'property-sheet.growing' },
@@ -428,7 +402,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.property-sheet.style-on-focus', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         style: { $: 'property-sheet.style-on-focus' },
@@ -455,7 +428,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.property-sheet.titles-above', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         controls: [
@@ -473,7 +445,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.property-sheet.titles-left', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         controls: [
@@ -491,7 +462,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-number', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'editable-number', title: 'age',
@@ -508,7 +478,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-boolean.all-styles', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'editable-boolean',
@@ -535,7 +504,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-boolean-settings', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'editable-boolean',
@@ -552,7 +520,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.editable-boolean.expand-collapse', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         $vars: {
@@ -572,7 +539,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.code-mirror', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         $vars: {
@@ -600,7 +566,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.prettyPrintComp', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test', waitForPromise: { $delay: 50 },
                     control: { $: 'group', controls: [
                             { $: 'text',
@@ -617,7 +582,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.picklist', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'group',
@@ -637,7 +601,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.picklist-groups', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group', controls: [
                             { $: 'group',
@@ -658,8 +621,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             // jb.component('dialog', {
-            //   type: 'test',
-            //   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+            // //   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
             //   control :{$: 'button', title: 'Open Dialog', $click: true,
             //       action :{$: 'openDialog', 
             //         title: 'Hello' , 
@@ -671,8 +633,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             // },
             // })
             // jb.component('popup-menu', {
-            //   type: 'test',
-            //   impl :{$: 'ng2-ui-test', 
+            // //   impl :{$: 'ng2-ui-test', 
             //   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
             //       controls: 
             //       [
@@ -684,7 +645,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
             // },
             // })
             jb_core_1.jb.component('ui-test.dynamic-controls', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         style: { $: 'property-sheet.titles-left' },
@@ -697,7 +657,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.tabs', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'tabs',
                         tabs: [
@@ -713,7 +672,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.group.accordion', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'group',
                         style: { $: 'group.accordion' },
@@ -726,7 +684,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 },
             });
             jb_core_1.jb.component('ui-test.inner-label', {
-                type: 'test',
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'inner-label3-tst', title: 'Hello World2' },
                     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }

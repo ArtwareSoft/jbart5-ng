@@ -1,7 +1,6 @@
 import {jb} from 'jb-core';
 
 jb.component('path-test.single-control', {
-	type: 'test',
 	impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -14,7 +13,6 @@ jb.component('path-test.single-control', {
 })
 
 jb.component('path-test.pt-by-example', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -30,7 +28,6 @@ jb.component('path-test.pt-by-example', {
 })
 
 jb.component('path-test.using-global', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -56,7 +53,6 @@ jb.component('test.inner-label-template', {
 })
 
 jb.component('path-test.inner-in-template', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -71,7 +67,6 @@ jb.component('path-test.inner-in-template', {
 })
 
 jb.component('path-test.pipeline-sugar1', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -84,7 +79,6 @@ jb.component('path-test.pipeline-sugar1', {
 })
 
 jb.component('path-test.pipeline-sugar2', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -97,7 +91,6 @@ jb.component('path-test.pipeline-sugar2', {
 })
 
 jb.component('path-test.pipeline-no-sugar', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -110,7 +103,6 @@ jb.component('path-test.pipeline-no-sugar', {
 })
 
 jb.component('path-test.pipeline-one-elem', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -123,7 +115,6 @@ jb.component('path-test.pipeline-one-elem', {
 })
 
 jb.component('path-test.filter-sugar', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -136,7 +127,6 @@ jb.component('path-test.filter-sugar', {
 })
 
 jb.component('path-test.filter-no-sugar', {
-	type: 'test',
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -149,8 +139,7 @@ jb.component('path-test.filter-no-sugar', {
 })
 
 // jb.component('path-test.asIs', {
-// 	type: 'test',
-// 	 impl :{$: 'jb-path-test', 
+// // 	 impl :{$: 'jb-path-test', 
 // 	 	$vars: { tst: 10 },
 // 		controlWithMark: {$: 'group', 
 // 			controls :{$: 'label', title :{ $asIs: '$mark:hello'} },

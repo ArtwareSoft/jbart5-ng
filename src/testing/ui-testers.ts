@@ -1,6 +1,7 @@
 import { jb } from 'jb-core/jb';
 
 jb.component('ng2-ui-test', {
+	type: 'test',
 	params: {
 		control: { type: 'control', dynamic: true },
 		expectedTemplateResult: { type: 'boolean', dynamic: true, as: 'boolean' },
@@ -38,6 +39,7 @@ jb.component('ng2-ui-test', {
 })
 
 jb.component('data-test', {
+	type: 'test',
 	params: {
 		calculate: { dynamic: true },
 		runBefore: { type: 'action', dynamic: true },

@@ -80,11 +80,11 @@ export class TgpModel {
 		}
 
 		function flattenArray(prop) {
-			if (Array.isArray(val[prop]))
-				return Object.getOwnPropertyNames(val[prop])
-					.map(x=>x=='length'? val.length : x)
+			var innerVal = val[prop];
+			if (Array.isArray(innerVal))
+				return Object.getOwnPropertyNames(innerVal)
+					.map(x=>x=='length'? innerVal.length : x)
 					.map(k=> path +'~'+prop + '~' + k)
-//				return val[prop].map((inner, i) => path + '~' + prop + '~' + i)
 			else
 				return [path + '~' + prop]
 		}

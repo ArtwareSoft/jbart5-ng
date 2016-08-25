@@ -22,7 +22,8 @@ jb.component('group.wait', {
                 return [context.vars.$model.controls(cmp.ctx.setData(data))];
               })
             .do(x=>
-              waiting.ready())
+              jb_ui.delayOutsideAngular(context,() => 
+                waiting.ready()))
             .startWith([loading(context)])
             .catch(e=> 
               jb_rx.Observable.of([error(context.setVars({error:e}))]));

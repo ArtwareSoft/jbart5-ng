@@ -123,19 +123,6 @@ jb_component('objectToArray',{
 			({id: id, val: object[id], index: index}))
 });
 
-jb_component('objectMap',{
-	type: "data",
-	params: {
-		object: { defaultValue: '%%', as: 'single' },
-		map: { dynamic: true }
-	},
-	impl: function(context,object,map) {
-		var ret = {};
-		jb_ownPropertyNames(object).forEach(function(k) { ret[k] = map(jb_ctx(context,{ data: object[k]})) });
-		return ret;
-  }
-})
-
 jb_component('propertyName',{
 	type: "data",
 	impl: function(context) {
@@ -394,16 +381,20 @@ jb_component('count',{
 	params: {
 		items: { as:'array', defaultValue: '%%'}
 	},
-	impl: function(context,items) {
-		return items.length;
-	}
+	impl: (ctx,items) =>
+		items.length
 });
 
-jb_component('toUpperCase',{
-	impl: function(context,filter) {
-		return jb_tostring(context.data).toUpperCase();
-	}
+jb_component('toUpperCase', {
+	impl: ctx =>
+		jb_tostring(ctx.data).toUpperCase()
 });
+
+jb_component('toLowerCase', {
+	impl: ctx =>
+		jb_tostring(ctx.data).toLowerCase()
+});
+
 
 jb_component('join',{
 	params: {
@@ -738,19 +729,6 @@ jb_component('runActions', {
 			def.then(() =>
 				$.when(jb_run(jb_ctx(context,{profile: action, path: innerPath + index }),{ as: 'single'}))),
 			$.Deferred().resolve())
-
-		// var deferred = $.Deferred();
-		// function runFromIndex(index,last_result) {
-		// 	if (index >= actions.length)
-		// 		return deferred.resolve(last_result);
-		// 	var promise = jb_run(jb_ctx(context,{profile: actions[index], path: innerPath + index }),{ as: 'single'});
-		// 	$.when(promise).then(
-		// 			function(res) { runFromIndex(index+1,last_result) },
-		// 			deferred.reject
-		// 	);
-		// }
-		// runFromIndex(0);
-		// return deferred.promise();
 	}
 });
 

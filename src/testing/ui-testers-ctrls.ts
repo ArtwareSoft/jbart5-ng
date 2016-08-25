@@ -1,32 +1,32 @@
 import { jb } from 'jb-core/jb';
 
-jb.component('ui-tests.show-project-tests', {
-	type: 'control',
-	impl :{$: 'group',
-	    features: {$: 'group.watch', data: '%$window/jbart/studioGlobals/profile_path%' }, 
- 		controls: {$: 'itemlog',
-			items: [
-				'%$window.jbart.comps%',
-				{ $: 'objectToArray' },
-				{$filter: '%val/type% == "test"' },
-				{$filter: ctx => {
-						var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
-						if (!selectedTst)
-							selectedTst = location.href.split('/')[6];
-						if (!selectedTst || selectedTst.slice(-6) == '.tests') 
-							return true;
-						return ctx.data.id == selectedTst;
-					}
-				},
-				ctx => 
-					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
-				// { $rxParallelKeepOrder: ctx => 
-				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
-			],
-			controls :{$: 'ui-tests.show-one-test-in-project' } 
-		}
-	}
-})
+// jb.component('ui-tests.show-project-tests', {
+// 	type: 'control',
+// 	impl :{$: 'group',
+// 	    features: {$: 'group.watch', data: '%$window/jbart/studioGlobals/profile_path%' }, 
+//  		controls: {$: 'itemlog',
+// 			items: [
+// 				'%$window.jbart.comps%',
+// 				{ $: 'objectToArray' },
+// 				{$filter: '%val/type% == "test"' },
+// 				{$filter: ctx => {
+// 						var selectedTst = ctx.exp('%$window/jbart/studioGlobals/profile_path%');
+// 						if (!selectedTst)
+// 							selectedTst = location.href.split('/')[6];
+// 						if (!selectedTst || selectedTst.slice(-6) == '.tests') 
+// 							return true;
+// 						return ctx.data.id == selectedTst;
+// 					}
+// 				},
+// 				ctx => 
+// 					ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+// 				// { $rxParallelKeepOrder: ctx => 
+// 				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val) },
+// 			],
+// 			controls :{$: 'ui-tests.show-one-test-in-project' } 
+// 		}
+// 	}
+// })
 
 jb.component('ui-tests.show-tests', {
 	type: 'control',
@@ -40,7 +40,8 @@ jb.component('ui-tests.show-tests', {
 			},
 			tests: ['%$window.jbart.comps%',
 				{ $: 'objectToArray' },
-				{ $filter: '%val/type% == "test"' },
+				{ $filter: {$: 'studio.is-of-type', type: 'test', path: '%id%'}},
+				{ $filter: {$: 'contains', allText: '%id%', text: '.' } },
 				{ $filter: {$or: [{$: 'equals', item1: '%$module%', item2: {$: 'prefix', text: '%id%', separator: '.' } }, {$isEmpty: '%$module%'} ]} },
 			],
 			parallel_tests: [ '%$tests%', 
@@ -106,7 +107,7 @@ jb.component('ui-tests.show-one-test', {
 		testResult: {as: 'single', defaultValue: '%%'},
 	},
 	impl :{$: 'group',
-		layout :{$: 'md-layout', layout: 'row',  },
+//		layout :{$: 'md-layout', layout: 'row',  },
 		controls: 
 			[
 				{	$: 'button', title: {$firstSucceeding: ['%$testResult/title%','%$testResult/id%']},
