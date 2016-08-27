@@ -247,7 +247,17 @@ jb.component('studio.jb-editor-menu', {
             '%$controlItem%', 
             {$: 'suffix', separator: '~' }
           ], 
-          action :{$: 'studio.addProperty', path: '%$controlItem%' }, 
+          action :{$: 'runActions', 
+            $vars: {
+              nextPath: '%$path%~%$controlItem%',
+            },
+            actions: [
+              {$: 'studio.addProperty', path: '%$controlItem%' }, 
+              {$: 'closeContainingPopup' },
+              {$: 'writeValue', value:'%$nextPath%', to: '%$globals/jb_editor_selection%'},
+              {$: 'studio.open-jb-editor-menu', path: '%$nextPath%' }
+            ]
+          }, 
           
         }
       }, 
@@ -286,6 +296,11 @@ jb.component('studio.jb-editor-menu', {
         type: 'boolean', 
         path: '%$path%', 
         components :{$: 'list', items: ['and', 'or', 'not'] }
+      }, 
+      {$: 'pulldown.studio-wrap-with', 
+        type: 'action', 
+        path: '%$path%', 
+        components :{$: 'list', items: ['runActions', 'runActionOnItems'] }
       }, 
       {$: 'pulldown.menu-item', 
         title: 'Add property', 

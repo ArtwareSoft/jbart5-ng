@@ -60,7 +60,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         ],
                         total: function (ctx) {
                             return ctx.exp('%$tests%')
-                                .reduce(function (acc, test) { return acc + (test.val.impl.$ == 'jb-path-test' ? 3 : 1); }, 0);
+                                .reduce(function (acc, test) { return acc + (test.val.impl.$ == 'jb-path-test' ? 2 : 1); }, 0);
                         }
                     },
                     controls: [
@@ -119,7 +119,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         { $: 'button', title: { $firstSucceeding: ['%$testResult/title%', '%$testResult/id%'] },
                             style: { $: 'button.href' },
                             features: { $: 'css', css: '{ padding: 0 5px 0 5px }' },
-                            action: { $: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
+                            action: { $: 'goto-url', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
                         },
                         { $: 'label', title: 'success',
                             features: [

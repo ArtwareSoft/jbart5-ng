@@ -71,7 +71,7 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
                 var comp = path.split('~')[0];
                 var before = studio_utils_1.compAsStr(comp);
                 _ref.$jb_val(value);
-                notifyModifcation(path, before, ctx);
+                studio_utils_1.notifyModification(path, before, ctx);
             }
         };
     }
@@ -157,6 +157,7 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
                 studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
+            jbart.profileFromPath = profileFromPath;
             exports_1("pathFixer", pathFixer = {
                 fixIndexPaths: fixIndexPaths,
                 fixReplacingPaths: fixReplacingPaths,

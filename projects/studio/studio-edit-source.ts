@@ -64,7 +64,7 @@ jb.component('studio.goto-sublime', {
 		path: { as: 'string'}
 	},
 	impl: (ctx,path) => {
-		var compName = path.indexOf('~') == -1 ? path : model.compName(path);
+		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
 		compName && $.ajax(`/?op=gotoSource&comp=${compName}`)
 	}
 }) 

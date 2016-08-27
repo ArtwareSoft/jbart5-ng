@@ -153,6 +153,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                                 .distinctUntilChanged()) || jb_rx.Observable.of();
                             tree.selectionEmitter
                                 .merge(databindObs)
+                                .filter(function (x) { return x; })
                                 .subscribe(function (selected) {
                                 if (tree.selected == selected)
                                     return;

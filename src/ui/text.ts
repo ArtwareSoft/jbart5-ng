@@ -46,55 +46,6 @@ jb.component('text.paragraph', {
     }
 })
 
-jb.component('text.codemirror', {
-    type: 'text.style',
-    params: {
-        cm_settings: { as: 'single' },
-        resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
-        mode: { as: 'string' },
-        lineWrapping: { as: 'boolean' },
-    },
-    impl: function(context, cm_settings, resizer, mode, lineWrapping) {
-        return {
-            template: '<textarea></textarea>',
-            cssClass: 'jb-codemirror',
-            observable: () => {},
-            init: function(cmp) {
-                mode = mode || 'javascript';
-                var field = context.vars.field;
-                cm_settings = { 
-                    readOnly: true,
-                    mode: mode,
-                    lineWrapping: lineWrapping,
-                    theme: 'solarized light', 
-                };
-                var $el = $(cmp.elementRef.nativeElement);
-                var $textarea = $el.findIncludeSelf('textarea');
-                //$textarea.val(field.getValue());
-                //if (resizer) jb_codemirrorResizer(editor, $el);
-
-                context.vars.ngZone.runOutsideAngular(() => {
-                    try {
-                        var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
-                    } catch(e) {
-                        jb.logException(e,'editable-text.codemirror');
-                        return;
-                    }
-                    $(editor.getWrapperElement()).css('box-shadow', 'none'); //.css('height', '200px');
-                    var modelChangeEm = cmp.jbEmitter.filter(x => x == 'check')
-                        .map(()=> context.vars.$model.text())
-                        .filter(x=>x) 
-                        .distinctUntilChanged()
-                        .skip(1);
-
-                    modelChangeEm.subscribe(x=>
-                            editor.setValue(x));
-                })
-            }
-        }
-    }
-})
-
 jb.component('rich-text', {
     type: 'control',
     params: {

@@ -2,6 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {model} from './studio-tgp-model';
+import {getComp} from './studio-utils';
 
 function rev(str) {
   return str.split('').reverse().join('');
@@ -47,6 +48,7 @@ export class suggestions {
             return { 
               text: ns ? `${name} (${ns})` : name, 
               value: compName,
+              description: getComp(compName).description || '',
               toPaste: compName,
           }
         })
@@ -69,7 +71,7 @@ export class suggestions {
         .filter(x=> x.toPaste.indexOf('$$') != 0)
         .filter(x=>['$ngZone','$window'].indexOf(x.toPaste) == -1)
         .filter(x=>
-          this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.toLowerCase().indexOf(this.tail) != -1)
+          this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(this.tail) != -1)
         .map(x=>
           jb.extend(x,{ text: x.text || x.toPaste + this.valAsText(x.value) }))
     if (this.tail)
@@ -209,7 +211,7 @@ jb.component('studio.jb-open-suggestions', {
             ]
           }, 
           {$: 'css.height', height: '500', overflow: 'auto', minMax: 'max' }, 
-          {$: 'css.width', width: '200', overflow: 'auto'  }
+          {$: 'css.width', width: '250', overflow: 'auto' }
         ]
       }, 
       features :{$: 'studio.suggestions-emitter' }

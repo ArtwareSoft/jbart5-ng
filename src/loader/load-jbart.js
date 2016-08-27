@@ -77,6 +77,7 @@ jb_modules =
 'jb-ui/editable-number',
 'jb-ui/picklist',
 'jb-ui/features',
+'jb-ui/css-features',
 'jb-ui/group',
 'jb-ui/button',
 'jb-ui/itemlist',
@@ -97,6 +98,7 @@ jb_modules =
 'jb-ui/styles/property-sheet-styles',
 'jb-ui/styles/layout-styles',
 'jb-ui/styles/picklist-styles',
+'jb-ui/styles/codemirror-styles',
 //'jb-ui/styles/itemlist-styles',
 
 'jb-ui/md-styles/button-md',
@@ -123,7 +125,7 @@ jb_system_config = {
         'testing': '/dist/src/testing',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
-//        'rxjs' : '/node_modules/rxjs',
+        'hammerjs' : '/node_modules/hammerjs',
         '@angular2-material': '/node_modules/@angular2-material',
         '@angular':  '/node_modules/@angular'
       },

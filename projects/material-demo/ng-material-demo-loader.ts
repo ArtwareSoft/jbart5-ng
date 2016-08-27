@@ -2,6 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
 import {Component,NgModule,Injectable} from '@angular/core';
+import {ViewChildren,QueryList,ViewEncapsulation,ViewChild,ViewContainerRef} from '@angular/core';
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input/input';
 import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card/card';
@@ -16,8 +17,11 @@ import {MD_LIST_DIRECTIVES} from '@angular2-material/list/list';
 import {MD_MENU_DIRECTIVES} from '@angular2-material/menu/menu';
 import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
 import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
+import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar/progress-bar'; // bug fix for @angular2-material
+import {MD_SLIDER_DIRECTIVES} from '@angular2-material/slider/slider'; // bug fix for @angular2-material
 
 import {MdLiveAnnouncer} from '@angular2-material/core/a11y/live-announcer';
+import { Overlay, OverlayState,OverlayOrigin, OVERLAY_PROVIDERS, ComponentPortal, Portal,TemplatePortalDirective} from '@angular2-material/core/core';
 
 import {
   MdUniqueSelectionDispatcher
@@ -27,7 +31,7 @@ import {
 jb_ui.registerProviders({
   MdUniqueSelectionDispatcher: MdUniqueSelectionDispatcher,
   MdLiveAnnouncer: MdLiveAnnouncer,
-//  OVERLAY_PROVIDERS: OVERLAY_PROVIDERS,
+  OVERLAY_PROVIDERS: OVERLAY_PROVIDERS,
 });
 jb_ui.registerDirectives({
   MD_CHECKBOX_DIRECTIVES: MD_CHECKBOX_DIRECTIVES, 
@@ -37,7 +41,9 @@ jb_ui.registerDirectives({
   MD_LIST_DIRECTIVES: MD_LIST_DIRECTIVES,
   MD_MENU_DIRECTIVES: MD_MENU_DIRECTIVES,
   PORTAL_DIRECTIVES: PORTAL_DIRECTIVES,
-  MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES
+  MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES,
+  MD_PROGRESS_BAR_DIRECTIVES: MD_PROGRESS_BAR_DIRECTIVES,
+  MD_SLIDER_DIRECTIVES: MD_SLIDER_DIRECTIVES
 });
 
 export class GesturesDemo {
@@ -154,20 +160,24 @@ export class LiveAnnouncerDemo {
   }
 }
 
-@Injectable()
-export class MenuDemo {
-  selected = '';
-  items = [
-    {text: 'Refresh'},
-    {text: 'Settings'},
-    {text: 'Help'},
-    {text: 'Sign Out', disabled: true}
-  ];
-
-  select(text: string) { this.selected = text; }
-}
-
 jb_ui.registerProviders({
   LiveAnnouncerDemo: LiveAnnouncerDemo,
-  MenuDemo: MenuDemo
 });
+
+export class ProgressBarDemo {
+  determinateProgressValue: number = 30;
+  bufferProgressValue: number = 30;
+  bufferBufferValue: number = 40;
+
+  stepDeterminateProgressVal(val: number) {
+    this.determinateProgressValue += val;
+  }
+
+  stepBufferProgressVal(val: number) {
+    this.bufferProgressValue += val;
+  }
+
+  stepBufferBufferVal(val: number) {
+    this.bufferBufferValue += val;
+  }
+}

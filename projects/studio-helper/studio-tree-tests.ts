@@ -11,12 +11,19 @@ jb.component('studio-tree-test.cmp2', {
   controls: [
     {$: 'label', 
       title: '%%', 
-      style :{$: 'label.span' }
+      style :{$: 'label.span' },
     }
   ], 
-}
+}})
 
+jb.component('studio-tree-test.actions-sugar-example1', {
+  impl: {$: 'button', title : 'hello', action: [ {$: 'goto-url', url: 'google', $mark: true }] } 
 })
+
+jb.component('studio-tree-test.actions-sugar-example2', {
+  impl: {$: 'button', title : 'hello', action: {$runActions: [ {$: 'goto-url', url: 'google', $mark: true }] }} 
+})
+
 
 
 jb.component('studio-tree-test.extra-elem-in-list', {
@@ -35,3 +42,18 @@ jb.component('studio-tree-test.extra-elem-in-list-bug', {
 	}
 })
 
+jb.component('studio-tree-test.actions-sugar1', {
+	impl :{$: 'studio-tree-children-test',
+		path: 'studio-tree-test.actions-sugar-example1~action', 
+		childrenType: 'jb-editor',
+		expectedResult :{ $and: [{$: 'contains', text: ['action[0]','action[1]'] }, { $not: { $contains: 'actions'}}]}
+	}
+})
+
+jb.component('studio-tree-test.actions-sugar2', {
+	impl :{$: 'studio-tree-children-test',
+		path: 'studio-tree-test.actions-sugar-example2~action', 
+		childrenType: 'jb-editor',
+		expectedResult :{ $and: [{$: 'contains', text: ['action[0]','action[1]'] }, { $not: { $contains: 'actions'}}]}
+	}
+})

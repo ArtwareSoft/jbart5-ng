@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1;
+    var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1, studio_utils_1;
     var suggestions;
     function rev(str) {
         return str.split('').reverse().join('');
@@ -19,6 +19,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
             },
             function (studio_tgp_model_1_1) {
                 studio_tgp_model_1 = studio_tgp_model_1_1;
+            },
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             suggestions = (function () {
@@ -61,6 +64,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                             return {
                                 text: ns ? name + " (" + ns + ")" : name,
                                 value: compName,
+                                description: studio_utils_1.getComp(compName).description || '',
                                 toPaste: compName,
                             };
                         });
@@ -83,7 +87,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                         .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
                         .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; })
                         .filter(function (x) {
-                        return _this.tail == '' || typeof x.toPaste != 'string' || x.toPaste.toLowerCase().indexOf(_this.tail) != -1;
+                        return _this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(_this.tail) != -1;
                     })
                         .map(function (x) {
                         return jb_core_1.jb.extend(x, { text: x.text || x.toPaste + _this.valAsText(x.value) });
@@ -222,7 +226,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                                     ]
                                 },
                                 { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
-                                { $: 'css.width', width: '200', overflow: 'auto' }
+                                { $: 'css.width', width: '250', overflow: 'auto' }
                             ]
                         },
                         features: { $: 'studio.suggestions-emitter' }

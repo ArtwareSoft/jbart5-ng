@@ -139,7 +139,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                             return 'add';
                     }
                     if (this.paramType(path) == 'control') {
-                        if (this.compName(path + '~style') == 'layout.horizontal')
+                        if (studio_path_1.profileFromPath(path + '~style', true) && this.compName(path + '~style') == 'layout.horizontal')
                             return 'view_column';
                         return 'folder_open'; //'view_headline' , 'folder_open'
                     }
@@ -281,7 +281,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var val = studio_path_1.profileFromPath(path);
                     var arr = this.getOrCreateArray(studio_path_1.parentPath(studio_path_1.parentPath(path)));
                     if (Array.isArray(arr)) {
-                        var clone = evalProfile(jb_core_1.jb.prettyPrint(val));
+                        var clone = studio_utils_1.evalProfile(jb_core_1.jb.prettyPrint(val));
                         var index = Number(prop);
                         arr.splice(index, 0, clone);
                         if (index < arr.length - 2)
@@ -353,7 +353,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         var pVal = '' + (profile[p[0]] || p[1].defaultValue || ''); // only primitives
                         res = res.replace(new RegExp("%\\$" + p[0] + "%", 'g'), pVal);
                     });
-                    jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), evalProfile(res));
+                    jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), studio_utils_1.evalProfile(res));
                 };
                 TgpModel.prototype.children = function (path, childrenType) {
                     childrenType = childrenType || this.childrenType || 'controls';
@@ -368,7 +368,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return;
                     if (!isNaN(Number(path.split('~').pop())))
                         path = studio_path_1.parentPath(path);
-                    var parent_prof = studio_path_1.profileFromPath(studio_path_1.parentPath(path));
+                    var parent_prof = studio_path_1.profileFromPath(studio_path_1.parentPath(path), true);
                     var compDef = parent_prof && studio_utils_1.getComp(jb_core_1.jb.compName(parent_prof));
                     var params = (compDef || {}).params;
                     var paramName = path.split('~').pop();
@@ -402,7 +402,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return this.controlParams(path)[0];
                 };
                 TgpModel.prototype.controlParams = function (path) {
-                    var prof = studio_path_1.profileFromPath(path);
+                    var prof = studio_path_1.profileFromPath(path, true);
                     if (!prof)
                         return [];
                     var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params;

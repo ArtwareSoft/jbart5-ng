@@ -74,7 +74,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     path: { as: 'string' }
                 },
                 impl: function (ctx, path) {
-                    var compName = path.indexOf('~') == -1 ? path : studio_tgp_model_1.model.compName(path);
+                    var compName = path.indexOf('~') != -1 ? path.split('~')[0] : studio_tgp_model_1.model.compName(path);
                     compName && $.ajax("/?op=gotoSource&comp=" + compName);
                 }
             });

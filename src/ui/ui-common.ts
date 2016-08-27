@@ -6,7 +6,7 @@ declare var $: any;
 declare var jbart: any;
 declare var System: any;
 
-jb.component('addCssClass',{
+jb.component('add-css-class',{
 	type: 'action',
 	params: {
 		cssClass: { as: 'string' }
@@ -17,24 +17,7 @@ jb.component('addCssClass',{
 	}
 });
 
-jb.component('setText',{
-	type: 'action',
-	params: {
-		text: { as: 'string' },
-		controlID: { as: 'string' }
-	},
-	impl: function(context,text,controlID) {
-		var elem = ui_utils.findControlElement(context.vars.control.$el[0],controlID);
-		if (!elem) return;
-		var input = $(elem).findIncludeSelf('input,textarea')[0];
-		if (input) {
-			$(input).val(text);
-			input.jbUpdated && input.jbUpdated();
-		}
-	}
-});
-
-jb.component('urlParam',{
+jb.component('url-param',{
 	type: 'data',
 	params: {
 		param: { as: 'string' }
@@ -44,64 +27,9 @@ jb.component('urlParam',{
 	}
 });
 
-jb.component('url',{
-	type: 'data',
-	impl: function(context,param) {
-		ui_utils.listenToUrlChange();
-		return window.location.href;
-	}
-});
-
-jb.component('urlHashParam',{
-	type: 'data',
-	params: {
-		param: { as: 'string' }
-	},
-	impl: function(context,param) {
-		if (!jbart.classes.urlHashParam) {
-			jbart.classes.urlHashParam = function(param) { this.param = this.$jb_property = param; this.type = 'urlHashParam'; }
-			jbart.classes.urlHashParam.prototype.$jb_val = function(val) { return ui_utils.urlHashParam(this.param, typeof val == 'undefined' ? undefined : jb.tostring(val)); }
-			jbart.classes.urlHashParam.prototype.$jb_equals = function(other) { return other && other.type == this.type && other.param == this.param; }
-			}
-		return new jbart.classes.urlHashParam(param);
-	}
-});
-
-jb.component('runDOMEvent',{
-	type: 'action',
-	params: {
-		eventType: { as: 'string' },
-		on: { as: 'string' }
-	},
-	impl: function(context,eventType,on) {
-		context.vars.control.$(on).trigger(eventType);
-	}
-})
-
-jb.component('htmlContainsText',{
-	params: {
-		text: { type: 'data[]', as: 'array' }
-	},
-	impl: function(context,text) {
-		var htmlText = context.data;
-		if (context.data.innerHTML) {
-			var $htmlText = $(htmlText).clone();
-			$htmlText.find('input,textarea').each(function() { 
-				this.setAttribute('jb-test-val',this.value); 
-			});
-			$htmlText.find('*').each(function() { if (this.style.display == 'none') $(this).remove(); });
-			var div = $('<div/>').append($htmlText)[0];
-			htmlText = div.innerHTML;
-		}
-		var lastPos = 0;
-		for(var i=0;i<text.length;i++)
-		  if ((lastPos = htmlText.indexOf(text[i],lastPos)) == -1) return false;
-
-		return true;
-	}
-});
 
 jb.component('sessionStorage',{
+	type: 'data',
 	params: {
 		key: { as: 'string'}
 	},
@@ -117,10 +45,11 @@ jb.component('sessionStorage',{
 	}
 });
 
-jb.component('openUrl', {
+jb.component('goto-url', {
 	type: 'action',
+	description: 'navigate/open a new web page, change href location',
 	params: {
-		url: { as:'string' },
+		url: { as:'string', essential: true },
 		target: { type:'enum', values: ['new tab','self'], defaultValue:'new tab', as:'string'}
 	},
 	impl: function(context,url,target) {

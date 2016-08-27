@@ -52,7 +52,7 @@ jb.component('studio.probe', {
       var _jbart = jbart_base();
       var _win = jbart.previewWindow || window;
       var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
-      var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: '', fullPath: circuit} );
+      var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: null} );
       return new Probe(path(),context).observable().toPromise();
     }
 })

@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import {model} from './studio-tgp-model';
-import {compAsStrFromPath,modifyOperationsEm,notifyModifcation,pathChangesEm} from './studio-utils';
+import {compAsStrFromPath,modifyOperationsEm,notifyModification,pathChangesEm} from './studio-utils';
 
 
 jb.component('studio.open-properties', {
@@ -86,7 +86,7 @@ jb.component('studio.properties', {
           'Features (%%)'
         ], 
         features :{$: 'group.studio-watch-path', path: '%$path%' }, 
-        controls: [{$: 'studio.property-array', path: '%$path%~features' }]
+        controls :{$: 'studio.property-array', path: '%$path%~features' }
       }
     ], 
     features: [
@@ -134,14 +134,14 @@ jb.component('studio.property-field',{
 			fieldPT = 'studio.property-enum';
 		else if ( ['data','boolean'].indexOf(paramDef.type || 'data') != -1) {
 			if ( model.compName(path) || valType == 'object')
-				fieldPT = 'studio.property-data-script';
+				fieldPT = 'studio.property-script';
 			else if (paramDef.type == 'boolean' && (valType == 'boolean' || val == null))
 				fieldPT = 'studio.property-boolean';
 			else
 				fieldPT = 'studio.property-primitive';
 		}
 		else if ( (paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
-			fieldPT = 'studio.property-array';
+			fieldPT = 'studio.property-script';
 		// else if ( (paramDef.type || '').indexOf('.style') > -1 )
 		//  	fieldPT = 'studio.property-Style';
     // else if ( model.compName(path) == 'customStyle')
@@ -181,7 +181,7 @@ jb.component('studio.property-primitive', {
   }
 })
 
-jb.component('studio.property-data-script', {
+jb.component('studio.property-script', {
   type: 'control', 
   params: {
     path: { as: 'string' }
@@ -195,7 +195,7 @@ jb.component('studio.property-data-script', {
     controls :{$: 'button', 
         title :{$: 'studio.data-script-summary', path: '%$path%' }, 
         action :{$: 'studio.open-jb-editor',path: '%$path%' } ,
-        style :{$: 'button.studio-data-script'}
+        style :{$: 'button.studio-script'}
     }
   }
 })
@@ -516,7 +516,7 @@ jb.component('studio.undo-support', {
   				);
   				cmp.codeMirror.on('blur',()=>{
   					if (before != compAsStrFromPath(path))
-						notifyModifcation(path,before,ctx)
+						notifyModification(path,before,ctx)
   				});
   			} else {
   			$(cmp.elementRef.nativeElement).findIncludeSelf('input')
@@ -525,7 +525,7 @@ jb.component('studio.undo-support', {
   				})
   				.blur(e=> {
   					if (before != compAsStrFromPath(path))
-						notifyModifcation(path,before,ctx)
+						notifyModification(path,before,ctx)
   				})
   			}
   		}

@@ -1,17 +1,11 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe', './studio-suggestions', './studio-tgp-model'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, jb_rx, studio_probe_1, studio_suggestions_1, studio_tgp_model_1;
+    var jb_core_1, studio_probe_1, studio_suggestions_1, studio_tgp_model_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
-            },
-            function (jb_ui_1) {
-                jb_ui = jb_ui_1;
-            },
-            function (jb_rx_1) {
-                jb_rx = jb_rx_1;
             },
             function (studio_probe_1_1) {
                 studio_probe_1 = studio_probe_1_1;
@@ -65,28 +59,29 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe', './studio-
                 type: 'test',
                 params: {
                     controlWithMark: { type: 'control', dynamic: true },
-                    expectedStaticPath: { as: 'string' },
+                    staticPath: { as: 'string' },
                     expectedDynamicCounter: { as: 'number' },
                     probeCheck: { type: 'boolean', dynamic: true, as: 'boolean' }
                 },
-                impl: function (ctx, control, expectedStaticPath, expectedDynamicCounter, probeCheck) {
+                impl: function (ctx, control, staticPath, expectedDynamicCounter, probeCheck) {
                     var testId = ctx.vars.testID;
                     // ********** static path
                     var probProf = findProbeProfile(control.profile);
                     if (!probProf)
                         return;
-                    var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
-                    if (probProf.$parent)
-                        static_path += '~' + probProf.$prop;
-                    var actual_path = static_path.replace('~controlWithMark', '');
-                    var staticPathTst = (static_path.split('controlWithMark~')[1] == expectedStaticPath) ? jb_rx.Observable.of(success('static path')) :
-                        jb_rx.Observable.of(failure('static path', 'static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath));
+                    // var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
+                    // if (probProf.$parent)
+                    //   static_path += '~' + probProf.$prop;
+                    // var static_path = static_path.replace('~controlWithMark','');
+                    // var staticPathTst = (static_path.split('controlWithMark~')[1] == staticPath) ? jb_rx.Observable.of(success('static path')) :
+                    //   jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + staticPath ));
                     // ********** dynamic counter
-                    var probeObs = new studio_probe_1.Probe(actual_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' }), true).observable();
+                    var static_path = testId + '~' + staticPath;
+                    var probeObs = new studio_probe_1.Probe(static_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' }), true).observable();
                     var expectedDynamicCounterTst = probeObs.filter(function (res) { return res.element; })
                         .map(function (res) {
                         try {
-                            var match = Array.from(res.element.querySelectorAll("[jb-path=\"" + actual_path + "\"]"));
+                            var match = Array.from(res.element.querySelectorAll("[jb-path=\"" + static_path + "\"]"));
                         }
                         catch (e) {
                             var match = [];
@@ -94,7 +89,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe', './studio-
                         if (match.length == expectedDynamicCounter)
                             return success('dynamic counter');
                         else
-                            return failure('dynamic counter', 'jb-path error: ' + actual_path + ' found ' + match.length + ' times. expecting ' + expectedDynamicCounter + ' occurrences');
+                            return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + match.length + ' times. expecting ' + expectedDynamicCounter + ' occurrences');
                     }).take(1);
                     // ********** prob check
                     var probeCheckTst = probeObs.filter(function (res) { return res.finalResult; })
@@ -106,7 +101,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-probe', './studio-
                             return failure('probe');
                         }
                     }).take(1);
-                    return staticPathTst.merge(expectedDynamicCounterTst).merge(probeCheckTst);
+                    return expectedDynamicCounterTst.merge(probeCheckTst);
                     function failure(part, reason) { return { id: testId, title: testId + '- ' + part, success: false, reason: reason }; }
                     ;
                     function success(part) { return { id: testId, title: testId + '- ' + part, success: true }; }

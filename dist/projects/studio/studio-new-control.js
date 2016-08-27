@@ -17,31 +17,64 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             jb_core_1.jb.component('studio.openNewCtrlDialog', {
                 type: 'action',
                 impl: { $: 'openDialog',
-                    modal: true,
-                    title: 'New Control',
-                    style: { $: 'dialog.md-dialog-ok-cancel',
-                        features: [
-                            { $: 'dialogFeature.autoFocusOnFirstInput' },
-                            { $: 'dialogFeature.maxZIndexOnClick', minZIndex: 5000 },
-                            { $: 'dialogFeature.nearLauncherLocation' }
-                        ]
-                    },
-                    content: { $: 'picklist',
-                        databind: '%$dialogData/comp%',
-                        options: { $: 'studio.tgp-type-options', type: 'control' },
-                        features: { $: 'field.subscribe',
-                            action: { $: 'closeContainingPopup' }
-                        }
-                    },
-                    onOK: { $runActions: [
-                            { $: 'studio.onNextModifiedPath',
-                                action: { $: 'studio.openModifiedPath' }
+                    style: { $: 'dialog.md-dialog-ok-cancel', okLabel: 'OK', cancelLabel: 'Cancel' },
+                    content: { $: 'group',
+                        controls: [
+                            { $: 'editable-text',
+                                databind: '%$globals/ctrl_pattern%',
+                                style: { $: 'editable-text.md-input' },
+                                title: 'search',
                             },
-                            { $: 'studio.insertComp',
-                                path: { $: 'studio.currentProfilePath' },
-                                comp: '%$dialogData/comp%'
+                            { $: 'itemlist-with-groups',
+                                items: [
+                                    { $: 'studio.PTs-of-type', type: 'control' },
+                                    { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+                                ],
+                                groupBy: { $: 'itemlist-heading.group-by' },
+                                headingCtrl: { $: 'label',
+                                    style: { $: 'label.h2' },
+                                    title: '%title%',
+                                    features: [{ $: 'css.margin', top: '10' }]
+                                },
+                                controls: [
+                                    { $: 'button',
+                                        action: {
+                                            $runActions: [
+                                                { $: 'studio.onNextModifiedPath',
+                                                    action: [
+                                                        { $: 'closeContainingPopup' },
+                                                        { $: 'studio.openModifiedPath' },
+                                                        { $: 'studio.refreshPreview' },
+                                                    ]
+                                                },
+                                                { $: 'studio.insertComp',
+                                                    path: { $: 'studio.currentProfilePath' },
+                                                    comp: '%%'
+                                                },
+                                            ]
+                                        },
+                                        style: { $: 'customStyle',
+                                            template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
+                                            directives: 'MdButton',
+                                            css: 'button { width: 300px; text-align: left }'
+                                        },
+                                        title: '%%'
+                                    }
+                                ],
+                                features: { $: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
                             }
-                        ] }
+                        ],
+                        style: { $: 'layout.vertical', spacing: 3 },
+                        title: 'itemlist-with-find',
+                        features: [{ $: 'css.margin', top: '10', left: '20' }]
+                    },
+                    title: 'New Control',
+                    modal: true,
+                    features: [
+                        { $: 'css.height', height: '420', overflow: 'hidden' },
+                        { $: 'css.width', width: '350', overflow: 'hidden' },
+                        { $: 'dialogFeature.dragTitle', id: 'new control' }
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.onNextModifiedPath', {

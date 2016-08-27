@@ -3,10 +3,10 @@ import * as jb_ui from 'jb-ui';
 
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import { Component, ElementRef } from '@angular/core';
-import {modifiedCtrlsEm,modifyOperationsEm,studioActivityEm} from './studio-utils';
+import {modifyOperationsEm,studioActivityEm} from './studio-utils';
 
 
-jbart.studio = jbart.studio || {}
+//jbart.studio = jbart.studio || {}
 
 jb.component('studio.all', {
   type: 'control', 
@@ -211,7 +211,7 @@ jb.component('studio.renderWidget',{
 						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 						w.jbart.modifyOperationsEm = modifyOperationsEm;
 						w.jbart.studioActivityEm = studioActivityEm;
-						w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm = modifiedCtrlsEm;
+						w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm;
 						jbart.previewWindow = w;
 						jbart.previewjbart = w.jbart;
 						jbart.preview_jbart_widgets = w.jbart_widgets;

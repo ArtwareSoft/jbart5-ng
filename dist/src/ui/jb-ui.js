@@ -100,37 +100,6 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
             host: host
         });
     }
-    function profilePath(profile) {
-        // caching last component
-        var lastFound = window.jb_lastFoundAt;
-        if (lastFound && getPath(jb_core_1.jb.comps[lastFound].impl, profile, 0))
-            return lastFound + '~' + getPath(jb_core_1.jb.comps[lastFound].impl, profile, 0).replace(/~*$/g, '');
-        for (var comp in jb_core_1.jb.comps) {
-            var impl = jb_core_1.jb.comps[comp].impl;
-            if (typeof impl == 'function')
-                continue;
-            var res = getPath(impl, profile, 0, impl);
-            if (res) {
-                window.jb_lastFoundAt = comp; // a kind of cache
-                return (comp + '~' + res).replace(/~*$/g, '');
-            }
-        }
-        function getPath(parent, dest, depth, comp) {
-            if (depth > 50)
-                debugger;
-            if (!parent)
-                return '';
-            if (parent === dest)
-                return '~'; // will be removed
-            return Object.getOwnPropertyNames(parent)
-                .filter(function (p) { return typeof parent[p] === 'object' && p.indexOf('$jb') != 0; })
-                .map(function (p) {
-                var path = getPath(parent[p], dest, (depth || 0) + 1, comp);
-                return path ? (p + '~' + path) : '';
-            }).join(''); // only one will succeed
-        }
-    }
-    exports_1("profilePath", profilePath);
     function twoWayBind(ref) {
         if (!ref)
             return {
@@ -508,6 +477,32 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 };
                 return jbComponent;
             }());
+            // export function profilePath(profile) { // export for tests
+            // 	// caching last component
+            // 	var lastFound = window.jb_lastFoundAt;
+            // 	if (lastFound && getPath(jb.comps[lastFound].impl, profile,0))
+            // 		return lastFound + '~' + getPath(jb.comps[lastFound].impl, profile,0).replace(/~*$/g,'')
+            // 	for(var comp in jb.comps) {
+            // 		var impl = jb.comps[comp].impl;
+            // 		if (typeof impl == 'function') continue;
+            // 		var res = getPath(impl, profile,0,impl);
+            // 		if (res) {
+            // 			window.jb_lastFoundAt = comp; // a kind of cache
+            // 			return (comp +'~'+res).replace(/~*$/g,'');
+            // 		}
+            // 	}
+            // 	function getPath(parent, dest, depth,comp) {
+            // 		if (depth > 50) debugger;
+            // 		if (!parent) return '';
+            // 		if (parent === dest) return '~'; // will be removed
+            // 		return Object.getOwnPropertyNames(parent)
+            // 			.filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0)
+            // 			.map(function(p) {
+            // 				var path = getPath(parent[p], dest, (depth || 0) + 1,comp);
+            // 				return path ? (p + '~' + path) : '';
+            // 			}).join(''); // only one will succeed
+            // 	}
+            // }
             jbComp = (function () {
                 function jbComp(compiler, ngZone) {
                     this.compiler = compiler;
@@ -522,8 +517,12 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                             jb_core_1.jb.delay(100).then(function () {
                                 return $(_this._nativeElement).addClass('jb-highlight-comp-changed');
                             });
-                            var comp = _this.comp.ctx.runItself();
-                            return [comp];
+                            if (jbart.profileFromPath) {
+                                var prof = jbart.profileFromPath(_this.comp.callerPath);
+                                var ctxToRun = _this.comp.ctx.ctx({ profile: prof, comp: _this.comp.callerPath, path: '' });
+                                var comp = ctxToRun.runItself();
+                                return [comp];
+                            }
                         }
                         return [];
                     })

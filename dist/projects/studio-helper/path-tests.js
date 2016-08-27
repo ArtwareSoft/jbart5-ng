@@ -14,7 +14,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: 'hello', $mark: true }
                     },
-                    expectedStaticPath: 'controls',
+                    staticPath: 'controls',
                     expectedDynamicCounter: 1,
                     probeCheck: '%$tst% == 10'
                 }
@@ -28,7 +28,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             controls: { $: 'label', title: 'hello', $mark: true }
                         }
                     },
-                    expectedStaticPath: 'controls~controls',
+                    staticPath: 'controls~controls',
                     expectedDynamicCounter: 2,
                     probeCheck: '%$tst% == 10'
                 }
@@ -39,7 +39,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'test.inner-label', $mark: true }
                     },
-                    expectedStaticPath: 'controls',
+                    staticPath: 'controls',
                     expectedDynamicCounter: 1,
                     probeCheck: '%$tst% == 10'
                 }
@@ -63,7 +63,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             ctrl: { $: 'label', title: 'hello', $mark: true }
                         }
                     },
-                    expectedStaticPath: 'controls~ctrl',
+                    staticPath: 'controls~ctrl',
                     expectedDynamicCounter: 1,
                     probeCheck: '%$tst% == 10'
                 }
@@ -74,7 +74,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: ['$mark:hello'] }
                     },
-                    expectedStaticPath: 'controls~title~0',
+                    staticPath: 'controls~title~0',
                     expectedDynamicCounter: 0,
                     probeCheck: '%$tst% == 10'
                 }
@@ -85,7 +85,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: { $pipeline: ['$mark:hello'] } }
                     },
-                    expectedStaticPath: 'controls~title~$pipeline~0',
+                    staticPath: 'controls~title~$pipeline~0',
                     expectedDynamicCounter: 0,
                     probeCheck: '%$tst% == 10'
                 }
@@ -96,7 +96,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: { $: 'pipeline', items: ['$mark:hello'] } }
                     },
-                    expectedStaticPath: 'controls~title~items~0',
+                    staticPath: 'controls~title~items~0',
                     expectedDynamicCounter: 0,
                     probeCheck: '%$tst% == 10'
                 }
@@ -107,7 +107,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: { $: 'pipeline', items: '$mark:hello' } }
                     },
-                    expectedStaticPath: 'controls~title~items',
+                    staticPath: 'controls~title~items',
                     expectedDynamicCounter: 0,
                     probeCheck: '%$tst% == 10'
                 }
@@ -118,7 +118,18 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: ['hello', { $filter: '$mark:%% == "hello"' }] }
                     },
-                    expectedStaticPath: 'controls~title~1~$filter',
+                    staticPath: 'controls~title~1~$filter',
+                    expectedDynamicCounter: 0,
+                    probeCheck: '%$tst% == 10'
+                }
+            });
+            jb_core_1.jb.component('path-test.actions-sugar', {
+                impl: { $: 'jb-path-test',
+                    $vars: { tst: 10 },
+                    controlWithMark: { $: 'group',
+                        controls: { $: 'button', title: 'hello', action: [{ $: 'goto-url', url: 'google', $mark: true }] }
+                    },
+                    staticPath: 'controls~action~0',
                     expectedDynamicCounter: 0,
                     probeCheck: '%$tst% == 10'
                 }
@@ -129,7 +140,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controlWithMark: { $: 'group',
                         controls: { $: 'label', title: ['hello', { $: 'filter', filter: '$mark:%% == "hello"' }] }
                     },
-                    expectedStaticPath: 'controls~title~1~filter',
+                    staticPath: 'controls~title~1~filter',
                     expectedDynamicCounter: 0,
                     probeCheck: '%$tst% == 10'
                 }
@@ -143,7 +154,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
 // 		controlWithMark: {$: 'group', 
 // 			controls :{$: 'label', title :{ $asIs: '$mark:hello'} },
 // 		},
-// 		expectedStaticPath : 'controls~title~$asIs',
+// 		staticPath : 'controls~title~$asIs',
 // 		expectedDynamicCounter: 0,
 // 		probeCheck : '%$tst% == ""'
 // 	}

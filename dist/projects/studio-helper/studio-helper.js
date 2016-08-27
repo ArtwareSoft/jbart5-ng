@@ -138,21 +138,6 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                     features: { $: 'css', css: '{ height: 200px; padding: 50px }' }
                 }
             });
-            jb_1.jb.component('studio-helper.jb-editor-fullpath', {
-                type: 'control',
-                params: {
-                    path: { defaultValue: 'studio-helper.insert-control' }
-                },
-                impl: { $: 'group',
-                    $vars: { circuit: 'studio-helper.insert-control' },
-                    title: 'main',
-                    controls: [
-                        //      {$: 'studio.jb-edit-property', path: '%$path%~title~0' }, 
-                        { $: 'studio.jb-editor', path: '%$path%' },
-                    ],
-                    features: { $: 'css', css: '{ height: 200px; padding: 50px }' }
-                }
-            });
             jb_1.jb.component('studio-helper.sample-control', {
                 type: 'control',
                 impl: { $: 'group',
@@ -162,7 +147,10 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             title: '2.0',
                             controls: [
                                 { $: 'label', title: '2.1' },
-                                { $: 'button', title: '2.2' }
+                                { $: 'button',
+                                    title: '2.2',
+                                    action: { $: 'toggleBooleanValue', of: '' }
+                                }
                             ]
                         },
                         { $: 'label', title: '1.0' }
@@ -314,7 +302,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 },
                                 modal: false,
                                 title: 'new property'
-                            }
+                            },
                         }
                     ]
                 }
@@ -324,26 +312,6 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 impl: { $: 'group',
                     title: 'itemlist-with-find',
                     controls: [
-                        { $: 'group',
-                            style: { $: 'layout.horizontal', spacing: '23' },
-                            title: 'buttons',
-                            controls: [
-                                { $: 'button',
-                                    title: 'Insert group',
-                                    style: { $: 'button.md-raised' }
-                                },
-                                { $: 'button',
-                                    title: 'Insert editable-text',
-                                    style: { $: 'button.md-raised' }
-                                },
-                                { $: 'button',
-                                    title: 'Insert button',
-                                    style: { $: 'button.md-raised' },
-                                    features: { $: 'css.margin', left: '' }
-                                }
-                            ],
-                            features: { $: 'css.margin', bottom: '7' }
-                        },
                         { $: 'editable-text',
                             databind: '%$globals/ctrl_pattern%',
                             title: 'search',
@@ -367,8 +335,12 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             groupBy: { $: 'itemlist-heading.group-by' },
                             headingCtrl: { $: 'label',
                                 title: '%title%',
-                                features: { $: 'css.margin', top: '10' },
+                                features: [{ $: 'css.margin', top: '10' }],
                                 style: { $: 'label.md-card-title' }
+                            },
+                            features: { $: 'itemlist.selection',
+                                databind: '%$dialogData/comp%',
+                                onSelection: { $: 'closeContainingPopup' },
                             }
                         }
                     ],

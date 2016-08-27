@@ -49,37 +49,38 @@ jb.component('jb-path-test', {
   type: 'test',
   params: {
     controlWithMark: { type: 'control', dynamic: true },
-    expectedStaticPath: { as: 'string' },
+    staticPath: { as: 'string' },
     expectedDynamicCounter: { as: 'number' },
     probeCheck: { type: 'boolean', dynamic: true, as: 'boolean' }
   },
-  impl: (ctx,control,expectedStaticPath,expectedDynamicCounter,probeCheck)=> {
+  impl: (ctx,control,staticPath,expectedDynamicCounter,probeCheck)=> {
     var testId = ctx.vars.testID;
 
     // ********** static path
     var probProf = findProbeProfile(control.profile);
     if (!probProf)
       return;
-    var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
-    if (probProf.$parent)
-      static_path += '~' + probProf.$prop;
-    var actual_path = static_path.replace('~controlWithMark','');
-    var staticPathTst = (static_path.split('controlWithMark~')[1] == expectedStaticPath) ? jb_rx.Observable.of(success('static path')) :
-      jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + expectedStaticPath ));
+    // var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
+    // if (probProf.$parent)
+    //   static_path += '~' + probProf.$prop;
+    // var static_path = static_path.replace('~controlWithMark','');
+    // var staticPathTst = (static_path.split('controlWithMark~')[1] == staticPath) ? jb_rx.Observable.of(success('static path')) :
+    //   jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + staticPath ));
 
     // ********** dynamic counter
-    var probeObs = new Probe(actual_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true).observable();
+    var static_path = testId + '~' + staticPath;
+    var probeObs = new Probe(static_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true).observable();
     var expectedDynamicCounterTst = probeObs.filter(res=>res.element)
         .map(res=>{
           try {
-            var match = Array.from(res.element.querySelectorAll(`[jb-path="${actual_path}"]`));
+            var match = Array.from(res.element.querySelectorAll(`[jb-path="${static_path}"]`));
           } catch(e) {
             var match = [];
           }
           if (match.length ==  expectedDynamicCounter)
             return success('dynamic counter');
           else
-            return failure('dynamic counter', 'jb-path error: ' + actual_path + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
+            return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
       }).take(1);
 
     // ********** prob check
@@ -93,7 +94,7 @@ jb.component('jb-path-test', {
         }
       }).take(1)
 
-    return staticPathTst.merge(expectedDynamicCounterTst).merge(probeCheckTst);
+    return expectedDynamicCounterTst.merge(probeCheckTst);
 
 
     function failure(part,reason) { return { id: testId, title: testId + '- ' + part, success:false, reason: reason } };

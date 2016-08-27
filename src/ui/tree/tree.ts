@@ -138,6 +138,7 @@ jb.component('tree.selection', {
 
 		  tree.selectionEmitter
 		  	.merge(databindObs)
+		  	.filter(x=>x)
 		  	.subscribe(selected=> { // .distinctUntilChanged()
 		  	  if (tree.selected == selected)
 		  	  	return;

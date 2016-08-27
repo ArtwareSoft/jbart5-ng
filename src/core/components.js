@@ -713,7 +713,6 @@ jb_component('pluralize', {
 	}
 })
 
-// todo - write with reduce
 jb_component('runActions', {
 	type: 'action',
 	params: { 

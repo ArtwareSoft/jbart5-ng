@@ -29,11 +29,11 @@ class Undo {
 		}
 	}
 	copy(ctx,path) {
-		this.clipboard = ctx.run({$:'studio.profile-as-text', path: path}, {as: 'string'});
+		this.clipboard = ctx.run({$:'studio.profile-as-text'}, {as: 'string'});
 	}
 	paste(ctx,path) {
 		if (this.clipboard != null) {
-			var ref = ctx.run({$:'studio.profile-as-text', path: path});
+			var ref = ctx.run({$:'studio.profile-as-text'});
 			jb.writeValue(ref,this.clipboard)
 		}
 	}

@@ -53,7 +53,7 @@ jb.component('ui-tests.show-tests', {
 
 			total: ctx =>
 				ctx.exp('%$tests%')
-					.reduce((acc,test)=>acc+(test.val.impl.$ == 'jb-path-test' ? 3: 1),0)
+					.reduce((acc,test)=>acc+(test.val.impl.$ == 'jb-path-test' ? 2: 1),0)
 
 		},
  		controls: [
@@ -113,7 +113,7 @@ jb.component('ui-tests.show-one-test', {
 				{	$: 'button', title: {$firstSucceeding: ['%$testResult/title%','%$testResult/id%']},
 					style :{$: 'button.href' },
 					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
-					action :{$: 'openUrl', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
+					action :{$: 'goto-url', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
 				},
 				{ $: 'label', title: 'success', 
 					features: [

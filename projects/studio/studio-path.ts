@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import {jbart_base,compAsStr,findjBartToLook,pathChangesEm} from './studio-utils';
+import {jbart_base,compAsStr,findjBartToLook,pathChangesEm,notifyModification} from './studio-utils';
 
 export function parentPath(path) {
 	return path.split('~').slice(0,-1).join('~');
@@ -60,6 +60,8 @@ export function profileFromPath(path,silent) {
 	}, comp);
 }
 
+jbart.profileFromPath = profileFromPath;
+
 export var pathFixer = {
 	fixIndexPaths: fixIndexPaths,
 	fixReplacingPaths: fixReplacingPaths,
@@ -77,7 +79,7 @@ function profileRefFromPathWithNotification(path,ctx) {
 			var comp = path.split('~')[0];
 			var before = compAsStr(comp);
 			_ref.$jb_val(value);
-			notifyModifcation(path,before,ctx);
+			notifyModification(path,before,ctx);
 		}
 	}
 }

@@ -44,12 +44,17 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             controls: { $: 'button',
                                 title: '%$project%',
                                 style: { $: 'button.md-flat' },
-                                action: [
-                                    { $: 'closeContainingPopup' },
-                                    { $: 'writeValue', value: '%$project%', to: '%$globals/project%' },
-                                    { $: 'writeValue', value: 'main', to: '%$globals/page%' },
-                                    { $: 'writeValue', value: '', to: '%$globals/profile_path%' }
-                                ],
+                                action: { $: 'runActions',
+                                    actions: { $: 'runActions',
+                                        actions: [
+                                            { $: 'goto-url',
+                                                target: 'new tab',
+                                                url: '/project/studio/%$project%'
+                                            },
+                                            { $: 'closeContainingPopup' }
+                                        ]
+                                    }
+                                },
                                 features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
                             }
                         }

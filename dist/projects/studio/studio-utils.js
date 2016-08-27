@@ -2,12 +2,12 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx, studio_tgp_model_1, studio_path_1;
-    var modifyOperationsEm, studioActivityEm, pathChangesEm, modifiedCtrlsEm, intervalID;
-    function notifyModifcation(path, before, ctx) {
+    var modifyOperationsEm, studioActivityEm, pathChangesEm, intervalID;
+    function notifyModification(path, before, ctx) {
         var comp = path.split('~')[0];
         modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
     }
-    exports_1("notifyModifcation", notifyModifcation);
+    exports_1("notifyModification", notifyModification);
     function message(message, error) {
         $('.studio-message').text(message); // add animation
         $('.studio-message').css('background', error ? 'red' : '#327DC8');
@@ -72,7 +72,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
             intervalID = window.setInterval(function () {
                 if (modifyOperationsEm.flatMap) {
                     window.clearInterval(intervalID);
-                    exports_1("modifiedCtrlsEm", modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
+                    jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
                         var path_parts = x.path.split('~');
                         var sub_paths = path_parts.map(function (e, i) {
                             return path_parts.slice(0, i + 1).join('~');
@@ -82,7 +82,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
                             return studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(studio_path_1.profileFromPath(p)), 'control');
                         })[0];
                         return firstCtrl ? [{ path: firstCtrl }] : [];
-                    }));
+                    });
                 }
             }, 30);
             // ********* Components ************

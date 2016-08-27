@@ -858,87 +858,100 @@ md-list, md-nav-list {
             }
           }, 
           {$: 'custom-control', 
-            title: 'menu', 
-            html: `<div class="demo-menu">
-  <div class="menu-section">
-    <p>You clicked on: {{ selected }}</p>
-
-    <md-toolbar>
-      <button md-icon-button [md-menu-trigger-for]="menu">
-        <md-icon>more_vert</md-icon>
-      </button>
-    </md-toolbar>
-
-    <md-menu #menu="mdMenu">
-      <button md-menu-item *ngFor="let item of items" (click)="select(item.text)" [disabled]="item.disabled">
-        {{ item.text }}
-      </button>
-    </md-menu>
-  </div>
-  <div class="menu-section">
-    <p> Clicking these will navigate:</p>
-    <md-toolbar>
-      <button md-icon-button [md-menu-trigger-for]="anchorMenu">
-        <md-icon>more_vert</md-icon>
-      </button>
-    </md-toolbar>
-
-    <md-menu #anchorMenu="mdMenu">
-      <a md-menu-item *ngFor="let item of items" href="http://www.google.com" [disabled]="item.disabled">
-        {{ item.text }}
-      </a>
-    </md-menu>
-  </div>
-  <div class="menu-section">
-    <p>
-      Position x: before
-    </p>
-    <md-toolbar class="end-icon">
-      <button md-icon-button [md-menu-trigger-for]="posXMenu">
-        <md-icon>more_vert</md-icon>
-      </button>
-    </md-toolbar>
-
-    <md-menu x-position="before" #posXMenu="mdMenu" class="before">
-      <button md-menu-item *ngFor="let item of items" [disabled]="item.disabled">
-        {{ item.text }}
-      </button>
-    </md-menu>
-  </div>
-  <div class="menu-section">
-    <p>
-      Position y: above
-    </p>
-    <md-toolbar>
-      <button md-icon-button [md-menu-trigger-for]="posYMenu">
-        <md-icon>more_vert</md-icon>
-      </button>
-    </md-toolbar>
-
-    <md-menu y-position="above" #posYMenu="mdMenu">
-      <button md-menu-item *ngFor="let item of items" [disabled]="item.disabled">
-        {{ item.text }}
-      </button>
-    </md-menu>
-  </div>
+            title: 'progress bar', 
+            html: `<h1>Determinate</h1>
+<div class="demo-progress-bar-container">
+  <md-progress-bar mode="determinate"
+                   [value]="determinateProgressValue"
+                   color="primary"
+                   class="demo-progress-bar-margins"></md-progress-bar>
 </div>
-`, 
-            css: `.demo-menu {
-  display: flex;
-  flex-flow: row wrap;
+<span>Value: {{determinateProgressValue}}</span>
+<button md-raised-button (click)="stepDeterminateProgressVal(10)">Increase</button>
+<button md-raised-button (click)="stepDeterminateProgressVal(-10)">Decrease</button>
+<h1>Buffer</h1>
+<div class="demo-progress-bar-container">
+  <md-progress-bar [value]="bufferProgressValue"
+                   [bufferValue]="bufferBufferValue"
+                   mode="buffer"
+                   color="warn"
+                   class="demo-progress-bar-margins"></md-progress-bar>
+</div>
+<span>Value: {{bufferProgressValue}}</span>
+<button md-raised-button (click)="stepBufferProgressVal(10)">Increase</button>
+<button md-raised-button (click)="stepBufferProgressVal(-10)">Decrease</button>
+<span class="demo-progress-bar-spacer"></span>
+<span>Buffer Value: {{bufferBufferValue}}</span>
+<button md-raised-button (click)="stepBufferBufferVal(10)">Increase</button>
+<button md-raised-button (click)="stepBufferBufferVal(-10)">Decrease</button>
+
+<h1>Indeterminate</h1>
+<div class="demo-progress-bar-container">
+  <md-progress-bar mode="indeterminate"
+                   class="demo-progress-bar-margins"></md-progress-bar>
+</div>
+
+<h1>Query</h1>
+<div class="demo-progress-bar-container">
+  <md-progress-bar mode="query"
+                   class="demo-progress-bar-margins"></md-progress-bar>
+</div>`, 
+            css: `.demo-progress-bar-container {
+  width: 100%;
 }
 
-.menu-section {
-    width: 300px;
-    margin: 20px;
-  }
+.demo-progress-bar-margins {
+  margin: 20px 0;
+}
 
-  .end-icon {
-    align-items: flex-end;
-  }
-`, 
+.demo-progress-bar-spacer {
+  display: inline-block;
+  width: 50px;
+}`, 
             features :{$: 'feature.ng-attach-object', 
-              data :{$: 'injector-get', provider: 'MenuDemo' }
+              data :{$: 'new-instance', 
+                module: 'projects/material-demo/ng-material-demo-loader', 
+                class: 'ProgressBarDemo'
+              }
+            }
+          }, 
+          {$: 'custom-control', 
+            title: 'slider', 
+            html: `<h1>Default Slider</h1>
+Label <md-slider #slidey></md-slider>
+{{slidey.value}}
+
+<h1>Slider with Min and Max</h1>
+<md-slider min="5" max="7" #slider2></md-slider>
+{{slider2.value}}
+
+<h1>Disabled Slider</h1>
+<md-slider disabled #slider3></md-slider>
+{{slider3.value}}
+
+<h1>Slider with set value</h1>
+<md-slider value="43"></md-slider>
+
+<h1>Slider with step defined</h1>
+<md-slider min="1" max="100" step="20" #slider5></md-slider>
+{{slider5.value}}
+
+<h1>Slider with set tick interval</h1>
+<md-slider tick-interval="auto"></md-slider>
+<md-slider tick-interval="9"></md-slider>
+
+<h1>Slider with Thumb Label</h1>
+<md-slider thumb-label></md-slider>
+
+<h1>Slider with two-way binding</h1>
+<md-slider [(ngModel)]="demo" step="40"></md-slider>
+<input [(ngModel)]="demo">`, 
+            css: '', 
+            features :{$: 'feature.ng-attach-object', 
+              data :{$: 'new-instance', 
+                module: 'projects/material-demo/ng-material-demo-loader', 
+                class: 'ProgressBarDemo'
+              }
             }
           }
         ]

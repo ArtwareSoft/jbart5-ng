@@ -20,7 +20,7 @@ input[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }
 	}
 })
 
-jb.component('button.studio-data-script',{
+jb.component('button.studio-script',{
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
           template: '<div [title]="title" (click)="clicked()"><div class="inner-text">{{title}}</div></div>', 

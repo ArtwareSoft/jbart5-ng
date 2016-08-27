@@ -3,7 +3,7 @@ import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 import {profileFromPath,parentPath,profileRefFromPath,pathFixer} from './studio-path';
-import {jbart_base,findjBartToLook,compAsStr,getComp,modifyOperationsEm} from './studio-utils';
+import {jbart_base,findjBartToLook,compAsStr,getComp,modifyOperationsEm,evalProfile} from './studio-utils';
 
 // The jbart control model return string paths and methods to fix them on change
 export class TgpModel {
@@ -140,7 +140,7 @@ export class TgpModel {
 				return 'add';
 		}
 		if (this.paramType(path) == 'control') {
-			if (this.compName(path+'~style') == 'layout.horizontal')
+			if (profileFromPath(path+'~style',true) && this.compName(path+'~style') == 'layout.horizontal')
 				return 'view_column'
 			return 'folder_open'; //'view_headline' , 'folder_open'
 		}
@@ -393,7 +393,7 @@ export class TgpModel {
 			return;
 		if (!isNaN(Number(path.split('~').pop()))) // array elements
 			path = parentPath(path);
-		var parent_prof = profileFromPath(parentPath(path));
+		var parent_prof = profileFromPath(parentPath(path),true);
 		var compDef = parent_prof && getComp(jb.compName(parent_prof));
 		var params = (compDef || {}).params;
 		var paramName = path.split('~').pop();
@@ -426,7 +426,7 @@ export class TgpModel {
 		return this.controlParams(path)[0];
 	}
 	controlParams(path) {
-		var prof = profileFromPath(path);
+		var prof = profileFromPath(path,true);
 		if (!prof) return [];
 		var params = (getComp(jb.compName(prof)) || {}).params;
 		return jb.entries(params).filter(p=>(p[1].type||'').indexOf('control')!=-1).map(p=>p[0])

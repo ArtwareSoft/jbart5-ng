@@ -10,13 +10,11 @@ export var modifyOperationsEm = new jb_rx.Subject();
 export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
-export var modifiedCtrlsEm;
-
 // ng BUG FIX - very strange bug after upgrading to rc4 - no flatmap at init phase
 var intervalID = window.setInterval(()=> {
 		if (modifyOperationsEm.flatMap) {
 			window.clearInterval(intervalID);
-			modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
+			jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
 			    var path_parts = x.path.split('~');
 			    var sub_paths = path_parts.map((e,i)=>
 			      path_parts.slice(0,i+1).join('~')).reverse();
@@ -30,7 +28,7 @@ var intervalID = window.setInterval(()=> {
 	}
 ,30);
 
-export function notifyModifcation(path,before,ctx) {
+export function notifyModification(path,before,ctx) {
 	var comp = path.split('~')[0];
 	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
 }

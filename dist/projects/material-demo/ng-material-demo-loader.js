@@ -1,4 +1,4 @@
-System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox', '@angular2-material/radio/radio', '@angular2-material/button-toggle/button-toggle', '@angular2-material/grid-list/grid-list', '@angular2-material/list/list', '@angular2-material/menu/menu', '@angular2-material/core/portal/portal-directives', '@angular2-material/core/ripple/ripple', '@angular2-material/core/a11y/live-announcer', '@angular2-material/core/coordination/unique-selection-dispatcher'], function(exports_1, context_1) {
+System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox', '@angular2-material/radio/radio', '@angular2-material/button-toggle/button-toggle', '@angular2-material/grid-list/grid-list', '@angular2-material/list/list', '@angular2-material/menu/menu', '@angular2-material/core/portal/portal-directives', '@angular2-material/core/ripple/ripple', '@angular2-material/progress-bar/progress-bar', '@angular2-material/slider/slider', '@angular2-material/core/a11y/live-announcer', '@angular2-material/core/core', '@angular2-material/core/coordination/unique-selection-dispatcher'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_ui, core_1, checkbox_1, radio_1, button_toggle_1, grid_list_1, list_1, menu_1, portal_directives_1, ripple_1, live_announcer_1, unique_selection_dispatcher_1;
-    var GesturesDemo, GridListDemo, max, InputDemo, ListDemo, LiveAnnouncerDemo, MenuDemo;
+    var jb_ui, core_1, checkbox_1, radio_1, button_toggle_1, grid_list_1, list_1, menu_1, portal_directives_1, ripple_1, progress_bar_1, slider_1, live_announcer_1, core_2, unique_selection_dispatcher_1;
+    var GesturesDemo, GridListDemo, max, InputDemo, ListDemo, LiveAnnouncerDemo, ProgressBarDemo;
     return {
         setters:[
             function (jb_ui_1) {
@@ -44,8 +44,17 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
             function (ripple_1_1) {
                 ripple_1 = ripple_1_1;
             },
+            function (progress_bar_1_1) {
+                progress_bar_1 = progress_bar_1_1;
+            },
+            function (slider_1_1) {
+                slider_1 = slider_1_1;
+            },
             function (live_announcer_1_1) {
                 live_announcer_1 = live_announcer_1_1;
+            },
+            function (core_2_1) {
+                core_2 = core_2_1;
             },
             function (unique_selection_dispatcher_1_1) {
                 unique_selection_dispatcher_1 = unique_selection_dispatcher_1_1;
@@ -54,6 +63,7 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
             jb_ui.registerProviders({
                 MdUniqueSelectionDispatcher: unique_selection_dispatcher_1.MdUniqueSelectionDispatcher,
                 MdLiveAnnouncer: live_announcer_1.MdLiveAnnouncer,
+                OVERLAY_PROVIDERS: core_2.OVERLAY_PROVIDERS,
             });
             jb_ui.registerDirectives({
                 MD_CHECKBOX_DIRECTIVES: checkbox_1.MD_CHECKBOX_DIRECTIVES,
@@ -63,7 +73,9 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                 MD_LIST_DIRECTIVES: list_1.MD_LIST_DIRECTIVES,
                 MD_MENU_DIRECTIVES: menu_1.MD_MENU_DIRECTIVES,
                 PORTAL_DIRECTIVES: portal_directives_1.PORTAL_DIRECTIVES,
-                MD_RIPPLE_DIRECTIVES: ripple_1.MD_RIPPLE_DIRECTIVES
+                MD_RIPPLE_DIRECTIVES: ripple_1.MD_RIPPLE_DIRECTIVES,
+                MD_PROGRESS_BAR_DIRECTIVES: progress_bar_1.MD_PROGRESS_BAR_DIRECTIVES,
+                MD_SLIDER_DIRECTIVES: slider_1.MD_SLIDER_DIRECTIVES
             });
             GesturesDemo = (function () {
                 function GesturesDemo() {
@@ -180,28 +192,27 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                 return LiveAnnouncerDemo;
             }());
             exports_1("LiveAnnouncerDemo", LiveAnnouncerDemo);
-            MenuDemo = (function () {
-                function MenuDemo() {
-                    this.selected = '';
-                    this.items = [
-                        { text: 'Refresh' },
-                        { text: 'Settings' },
-                        { text: 'Help' },
-                        { text: 'Sign Out', disabled: true }
-                    ];
-                }
-                MenuDemo.prototype.select = function (text) { this.selected = text; };
-                MenuDemo = __decorate([
-                    core_1.Injectable(), 
-                    __metadata('design:paramtypes', [])
-                ], MenuDemo);
-                return MenuDemo;
-            }());
-            exports_1("MenuDemo", MenuDemo);
             jb_ui.registerProviders({
                 LiveAnnouncerDemo: LiveAnnouncerDemo,
-                MenuDemo: MenuDemo
             });
+            ProgressBarDemo = (function () {
+                function ProgressBarDemo() {
+                    this.determinateProgressValue = 30;
+                    this.bufferProgressValue = 30;
+                    this.bufferBufferValue = 40;
+                }
+                ProgressBarDemo.prototype.stepDeterminateProgressVal = function (val) {
+                    this.determinateProgressValue += val;
+                };
+                ProgressBarDemo.prototype.stepBufferProgressVal = function (val) {
+                    this.bufferProgressValue += val;
+                };
+                ProgressBarDemo.prototype.stepBufferBufferVal = function (val) {
+                    this.bufferBufferValue += val;
+                };
+                return ProgressBarDemo;
+            }());
+            exports_1("ProgressBarDemo", ProgressBarDemo);
         }
     }
 });

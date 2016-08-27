@@ -50,54 +50,6 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     features: { $: 'text.bind-text' }
                 }
             });
-            jb_core_1.jb.component('text.codemirror', {
-                type: 'text.style',
-                params: {
-                    cm_settings: { as: 'single' },
-                    resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
-                    mode: { as: 'string' },
-                    lineWrapping: { as: 'boolean' },
-                },
-                impl: function (context, cm_settings, resizer, mode, lineWrapping) {
-                    return {
-                        template: '<textarea></textarea>',
-                        cssClass: 'jb-codemirror',
-                        observable: function () { },
-                        init: function (cmp) {
-                            mode = mode || 'javascript';
-                            var field = context.vars.field;
-                            cm_settings = {
-                                readOnly: true,
-                                mode: mode,
-                                lineWrapping: lineWrapping,
-                                theme: 'solarized light',
-                            };
-                            var $el = $(cmp.elementRef.nativeElement);
-                            var $textarea = $el.findIncludeSelf('textarea');
-                            //$textarea.val(field.getValue());
-                            //if (resizer) jb_codemirrorResizer(editor, $el);
-                            context.vars.ngZone.runOutsideAngular(function () {
-                                try {
-                                    var editor = CodeMirror.fromTextArea($textarea[0], cm_settings);
-                                }
-                                catch (e) {
-                                    jb_core_1.jb.logException(e, 'editable-text.codemirror');
-                                    return;
-                                }
-                                $(editor.getWrapperElement()).css('box-shadow', 'none'); //.css('height', '200px');
-                                var modelChangeEm = cmp.jbEmitter.filter(function (x) { return x == 'check'; })
-                                    .map(function () { return context.vars.$model.text(); })
-                                    .filter(function (x) { return x; })
-                                    .distinctUntilChanged()
-                                    .skip(1);
-                                modelChangeEm.subscribe(function (x) {
-                                    return editor.setValue(x);
-                                });
-                            });
-                        }
-                    };
-                }
-            });
             jb_core_1.jb.component('rich-text', {
                 type: 'control',
                 params: {

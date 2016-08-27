@@ -46,7 +46,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                 studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
-            jbart.studio = jbart.studio || {};
+            //jbart.studio = jbart.studio || {}
             jb_core_1.jb.component('studio.all', {
                 type: 'control',
                 impl: { $: 'group',
@@ -232,7 +232,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 w.jbart.studioGlobals = ctx.exp('{%$globals%}');
                                 w.jbart.modifyOperationsEm = studio_utils_1.modifyOperationsEm;
                                 w.jbart.studioActivityEm = studio_utils_1.studioActivityEm;
-                                w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm = studio_utils_1.modifiedCtrlsEm;
+                                w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm;
                                 jbart.previewWindow = w;
                                 jbart.previewjbart = w.jbart;
                                 jbart.preview_jbart_widgets = w.jbart_widgets;

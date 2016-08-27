@@ -30,7 +30,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 },
                                 { $: 'button',
                                     title: 'preview in github',
-                                    action: { $: 'openUrl', url: 'https://github.com/ArtwareSoft/jbart5-ng' },
+                                    action: { $: 'goto-url', url: 'https://github.com/ArtwareSoft/jbart5-ng' },
                                     style: { $: 'button.md-raised' },
                                     features: [
                                         { $: 'flex-layout-item.align-self', align: 'center' },
@@ -40,7 +40,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 },
                                 { $: 'button',
                                     title: 'install from npm',
-                                    action: { $: 'openUrl', url: 'https://www.npmjs.com/package/jbart5-ng2' },
+                                    action: { $: 'goto-url', url: 'https://www.npmjs.com/package/jbart5-ng2' },
                                     style: { $: 'button.md-raised' },
                                     features: [
                                         { $: 'flex-layout-item.align-self', align: 'center' },

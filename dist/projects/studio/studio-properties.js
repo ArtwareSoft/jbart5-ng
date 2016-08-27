@@ -94,7 +94,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 'Features (%%)'
                             ],
                             features: { $: 'group.studio-watch-path', path: '%$path%' },
-                            controls: [{ $: 'studio.property-array', path: '%$path%~features' }]
+                            controls: { $: 'studio.property-array', path: '%$path%~features' }
                         }
                     ],
                     features: [
@@ -139,14 +139,14 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         fieldPT = 'studio.property-enum';
                     else if (['data', 'boolean'].indexOf(paramDef.type || 'data') != -1) {
                         if (studio_tgp_model_1.model.compName(path) || valType == 'object')
-                            fieldPT = 'studio.property-data-script';
+                            fieldPT = 'studio.property-script';
                         else if (paramDef.type == 'boolean' && (valType == 'boolean' || val == null))
                             fieldPT = 'studio.property-boolean';
                         else
                             fieldPT = 'studio.property-primitive';
                     }
                     else if ((paramDef.type || '').indexOf('[]') != -1 && isNaN(Number(path.split('~').pop())))
-                        fieldPT = 'studio.property-array';
+                        fieldPT = 'studio.property-script';
                     else
                         fieldPT = 'studio.property-tgp';
                     return context.run({ $: fieldPT, path: path });
@@ -178,7 +178,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.property-data-script', {
+            jb_core_1.jb.component('studio.property-script', {
                 type: 'control',
                 params: {
                     path: { as: 'string' }
@@ -192,7 +192,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     controls: { $: 'button',
                         title: { $: 'studio.data-script-summary', path: '%$path%' },
                         action: { $: 'studio.open-jb-editor', path: '%$path%' },
-                        style: { $: 'button.studio-data-script' }
+                        style: { $: 'button.studio-script' }
                     }
                 }
             });
@@ -501,7 +501,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 });
                                 cmp.codeMirror.on('blur', function () {
                                     if (before != studio_utils_1.compAsStrFromPath(path))
-                                        studio_utils_1.notifyModifcation(path, before, ctx);
+                                        studio_utils_1.notifyModification(path, before, ctx);
                                 });
                             }
                             else {
@@ -511,7 +511,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 })
                                     .blur(function (e) {
                                     if (before != studio_utils_1.compAsStrFromPath(path))
-                                        studio_utils_1.notifyModifcation(path, before, ctx);
+                                        studio_utils_1.notifyModification(path, before, ctx);
                                 });
                             }
                         }
