@@ -22,8 +22,11 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
   return { result : result, positions : positions }
 
   function sortedPropertyNames(obj) {
-    var props = jb_entries(obj).map(x=>x[0]) // try to keep the order
+    var props = jb_entries(obj)
+      .filter(p=>p[1] != null)
+      .map(x=>x[0]) // try to keep the order
       .filter(p=>p.indexOf('$jb') != 0)
+
     var comp_name = jb_compName(obj);
     if (comp_name) { // tgp obj - sort by params def
       var params = ((jbart.comps[comp_name] || {}).params || []).map(p=>p.id);

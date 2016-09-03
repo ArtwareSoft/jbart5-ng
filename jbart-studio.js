@@ -154,7 +154,7 @@ extend(op_post_handlers, {
                 var source = ('' + fs.readFileSync(srcPath)).replace(/\r/g,'').split('\n');
                 var toFind = clientReq.original.replace(/\r/g,'').split('\n');
                 var replaceWith = clientReq.toSave.replace(/\r/g,'').split('\n');
-                var found = findSection(source,toFind);
+                var found = findSection(source,toFind,srcFile);
                 if (found) {
                   comp_found = true;
                   //console.log('splice',source,found.index,found.length,replaceWith);
@@ -169,7 +169,7 @@ extend(op_post_handlers, {
         if (!comp_found)
           endWithFailure(res,`Can not find component ${comp} in project`);
 
-        function findSection(source,toFind) {
+        function findSection(source,toFind,srcFile) {
           var index = source.indexOf(toFind[0]);
           if (index == -1)
             index = source.indexOf(toFind[0].replace('jb.','jb_'));
@@ -177,16 +177,19 @@ extend(op_post_handlers, {
             for(end_index=index;end_index<source.length;end_index++)
               if ((source[end_index]||'').match(/^}\)$/m))
                 return { index: index, length: end_index - index +1}
-          } else {
-            if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind))
+          } else if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind)) {
               return { index: index, length: toFind.length }
-
+          } else if (index == -1) {
+            return false;
+          } else {
             // calc error message
             var err = '';
             var src = source.slice(index,index+toFind.length);
+            console.log('origin not found at file ' + srcFile);
+            src.forEach(l=>console.log(l));
             toFind.forEach((line,index) => {
               if (line != src[index])
-                err += line + '#versus source#' + src[index] + '##############';
+                console.log(index + '-' +line + '#versus source#' + src[index]);
             })
 
             // var err = .reduce(function(diff_line,line,index) {
@@ -196,7 +199,7 @@ extend(op_post_handlers, {
             // });
             // err = source.slice(index,index+toFind.length).join('#') + '\n\n' + toFind.join('#');
 
-            endWithFailure(res,`${comp} found with different source, use "force save" to save. ${err}`);
+            endWithFailure(res,`${comp} found with a different source, use "force save" to save. ${err}`);
           }
         }
 

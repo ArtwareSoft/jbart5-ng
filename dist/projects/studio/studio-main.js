@@ -233,6 +233,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 w.jbart.modifyOperationsEm = studio_utils_1.modifyOperationsEm;
                                 w.jbart.studioActivityEm = studio_utils_1.studioActivityEm;
                                 w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm;
+                                w.jbart.profileFromPath = jbart.profileFromPath;
                                 jbart.previewWindow = w;
                                 jbart.previewjbart = w.jbart;
                                 jbart.preview_jbart_widgets = w.jbart_widgets;

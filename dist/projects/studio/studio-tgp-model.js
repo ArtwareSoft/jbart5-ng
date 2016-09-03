@@ -85,7 +85,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         })
                             .map(function (p) { return flattenArray(p.id); });
                         return (composite[0] || []).concat((comp.params || [])
-                            .filter(function (p) { return !p[1].composite; })
+                            .filter(function (p) { return !p.composite; })
                             .map(function (p) { return ({ path: path + '~' + p.id, param: p }); })
                             .filter(function (e) { return studio_path_1.profileFromPath(e.path) != null || e.param.essential; })
                             .map(function (e) { return e.path; }));
@@ -191,7 +191,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 TgpModel.prototype.modify = function (op, path, args, ctx) {
                     var comp = path.split('~')[0];
                     var before = studio_utils_1.getComp(comp) && studio_utils_1.compAsStr(comp);
-                    console.log('modify', path, before);
                     op.call(this, path, args);
                     studio_utils_1.modifyOperationsEm.next({
                         comp: comp,
@@ -384,19 +383,22 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return this.PTsOfType(this.paramType(path), studio_utils_1.findjBartToLook(path));
                 };
                 TgpModel.prototype.PTsOfType = function (type, jbartToLook) {
+                    var single = /([^\[]*)([])?/;
                     var types = [].concat.apply([], (type || '').split(',')
                         .map(function (x) {
-                        return x.match(/([^\[\]*)([])?/)[1];
+                        return x.match(single)[1];
                     })
                         .map(function (x) {
                         return x == 'data' ? ['data', 'aggregator'] : [x];
                     }));
-                    var comp_arr = types.map(function (t) { return jb_entries((jbartToLook || studio_utils_1.jbart_base()).comps)
-                        .filter(function (c) {
-                        return (c[1].type || 'data').split(',').indexOf(t) != -1
-                            || (c[1].typePattern && t.match(c[1].typePattern.match));
-                    })
-                        .map(function (c) { return c[0]; }); });
+                    var comp_arr = types.map(function (t) {
+                        return jb_entries((jbartToLook || studio_utils_1.jbart_base()).comps)
+                            .filter(function (c) {
+                            return (c[1].type || 'data').split(',').indexOf(t) != -1
+                                || (c[1].typePattern && t.match(c[1].typePattern.match));
+                        })
+                            .map(function (c) { return c[0]; });
+                    });
                     return comp_arr.reduce(function (all, ar) { return all.concat(ar); }, []);
                 };
                 TgpModel.prototype.controlParam = function (path) {

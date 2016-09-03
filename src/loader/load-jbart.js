@@ -201,7 +201,7 @@ function jbBootstrap(loadedModules) {
 
 // for tests
 
-jbart.testProjects = ['ui-tests','studio-helper'];
+jbart.testProjects = ['ui-tests','studio-helper','data-tests'];
 
 function jbProjectModules(project) {
   return $.get('/projects/'+project+'/'+project+'.html').then(function(html){

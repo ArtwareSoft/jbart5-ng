@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx, studio_tgp_model_1, studio_path_1;
-    var modifyOperationsEm, studioActivityEm, pathChangesEm, intervalID;
+    var modifyOperationsEm, studioActivityEm, pathChangesEm;
     function notifyModification(path, before, ctx) {
         var comp = path.split('~')[0];
         modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
@@ -68,23 +68,17 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
             exports_1("modifyOperationsEm", modifyOperationsEm = new jb_rx.Subject());
             exports_1("studioActivityEm", studioActivityEm = new jb_rx.Subject());
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
-            // ng BUG FIX - very strange bug after upgrading to rc4 - no flatmap at init phase
-            intervalID = window.setInterval(function () {
-                if (modifyOperationsEm.flatMap) {
-                    window.clearInterval(intervalID);
-                    jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
-                        var path_parts = x.path.split('~');
-                        var sub_paths = path_parts.map(function (e, i) {
-                            return path_parts.slice(0, i + 1).join('~');
-                        }).reverse();
-                        var firstCtrl = sub_paths
-                            .filter(function (p) {
-                            return studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(studio_path_1.profileFromPath(p)), 'control');
-                        })[0];
-                        return firstCtrl ? [{ path: firstCtrl }] : [];
-                    });
-                }
-            }, 30);
+            jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
+                var path_parts = x.path.split('~');
+                var sub_paths = path_parts.map(function (e, i) {
+                    return path_parts.slice(0, i + 1).join('~');
+                }).reverse();
+                var firstCtrl = sub_paths
+                    .filter(function (p) {
+                    return studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(studio_path_1.profileFromPath(p)), 'control');
+                })[0];
+                return firstCtrl ? [{ path: firstCtrl }] : [];
+            });
             // ********* Components ************
             jb_core_1.jb.component('studio.message', {
                 type: 'action',

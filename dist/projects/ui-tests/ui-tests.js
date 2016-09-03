@@ -54,7 +54,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('ui-test.label', {
                 impl: { $: 'ng2-ui-test',
-                    control: { $: 'label', title: 'Hello World2' },
+                    control: { $: 'label', title: 'Hello World2',
+                        features: { $: 'css.margin', top: '30', left: '24' }
+                    },
                     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
                 },
             });

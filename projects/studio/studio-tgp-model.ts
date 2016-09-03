@@ -74,7 +74,7 @@ export class TgpModel {
 				.map(p=>flattenArray(p.id));
 
 			return (composite[0] || []).concat((comp.params || [])
-					.filter(p=>!p[1].composite)
+					.filter(p=>!p.composite)
 					.map(p=> ({ path: path + '~' + p.id, param: p}))
 					.filter(e=>profileFromPath(e.path) != null || e.param.essential)
 					.map(e=>e.path)
@@ -198,7 +198,6 @@ export class TgpModel {
 	modify(op,path,args,ctx) {
 		var comp = path.split('~')[0];
 		var before = getComp(comp) && compAsStr(comp);
-		console.log('modify',path,before);
 		op.call(this,path,args);
 		modifyOperationsEm.next({ 
 			comp: comp, 
@@ -410,17 +409,19 @@ export class TgpModel {
 		return this.PTsOfType(this.paramType(path),findjBartToLook(path))
 	}
 	PTsOfType(type,jbartToLook) {
+		var single = /([^\[]*)([])?/;
 		var types = [].concat.apply([],(type||'').split(',')
 			.map(x=>
-				x.match(/([^\[\]*)([])?/)[1])
+				x.match(single)[1])
 			.map(x=> 
 				x=='data' ? ['data','aggregator'] : [x]));
-		var comp_arr = types.map(t=>jb_entries((jbartToLook || jbart_base()).comps)
-			.filter(c=>
-				(c[1].type||'data').split(',').indexOf(t) != -1
-				|| (c[1].typePattern && t.match(c[1].typePattern.match))
-			)
-			.map(c=>c[0]));
+		var comp_arr = types.map(t=>
+			jb_entries((jbartToLook || jbart_base()).comps)
+				.filter(c=>
+					(c[1].type||'data').split(',').indexOf(t) != -1
+					|| (c[1].typePattern && t.match(c[1].typePattern.match))
+				)
+				.map(c=>c[0]));
 		return comp_arr.reduce((all,ar)=>all.concat(ar),[]);
 	}
 	controlParam(path) {

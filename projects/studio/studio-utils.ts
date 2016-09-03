@@ -10,24 +10,16 @@ export var modifyOperationsEm = new jb_rx.Subject();
 export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
-// ng BUG FIX - very strange bug after upgrading to rc4 - no flatmap at init phase
-
-var intervalID = window.setInterval(()=> {
-		if (modifyOperationsEm.flatMap) {
-			window.clearInterval(intervalID);
-			jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
-			    var path_parts = x.path.split('~');
-			    var sub_paths = path_parts.map((e,i)=>
-			      path_parts.slice(0,i+1).join('~')).reverse();
-			    var firstCtrl = sub_paths
-			      .filter(p=>
-			      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
-			      [0];
-			     return firstCtrl ? [{ path: firstCtrl}] : [];
-				})
-		}
-	}
-,30);
+jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
+    var path_parts = x.path.split('~');
+    var sub_paths = path_parts.map((e,i)=>
+      path_parts.slice(0,i+1).join('~')).reverse();
+    var firstCtrl = sub_paths
+      .filter(p=>
+      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
+      [0];
+     return firstCtrl ? [{ path: firstCtrl}] : [];
+})
 
 export function notifyModification(path,before,ctx) {
 	var comp = path.split('~')[0];

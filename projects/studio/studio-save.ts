@@ -7,7 +7,6 @@ var modified = {};
 modifyOperationsEm.subscribe(e=>{
 	var comp = e.comp;
 	if (!modified[comp]) {
-		console.log('save-subs',e.before);
 		modified[comp] = { original : e.before || '' }
 	}
 })

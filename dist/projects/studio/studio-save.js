@@ -16,7 +16,6 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
             studio_utils_1.modifyOperationsEm.subscribe(function (e) {
                 var comp = e.comp;
                 if (!modified[comp]) {
-                    console.log('save-subs', e.before);
                     modified[comp] = { original: e.before || '' };
                 }
             });

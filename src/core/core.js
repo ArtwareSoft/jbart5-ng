@@ -5,7 +5,8 @@ function jb_run(context,parentParam,settings) {
       if (context.probe.pathToTrace.indexOf(context.path) == 0)
         return context.probe.record(context,parentParam)
     }
-    if (profile === null) return;
+    if (profile === null)
+      return jb_tojstype(profile,parentParam && parentParam.as,context);
     if (profile.$debugger == 0) debugger;
     if (profile.$asIs) return profile.$asIs;
     if (parentParam && (parentParam.type||'').indexOf('[]') > -1 && ! parentParam.as) // fix to array value. e.g. single feature not in array
@@ -353,11 +354,12 @@ function jb_tostring(value) { return jb_tojstype(value,'string'); }
 function jb_toarray(value) { return jb_tojstype(value,'array'); }
 function jb_toboolean(value) { return jb_tojstype(value,'boolean'); }
 function jb_tosingle(value) { return jb_tojstype(value,'single'); }
-function jb_tosingleDataBind(value) { return jb_tojstype(value,'singleDataBind'); }
 function jb_tonumber(value) { return jb_tojstype(value,'number'); }
 
 function jb_initJstypes() {
   jbart.jstypes = {
+    'asIs': x => x,
+    'object': x => x,
     'string': function(value) {
       if (Array.isArray(value)) value = value[0];
       if (value == null) return '';
@@ -385,11 +387,6 @@ function jb_initJstypes() {
       if (Array.isArray(value)) return value[0];
       if (!value) return value;
       value = jb_val(value);
-      return value;
-    },
-    'singleDataBind': function(value) {
-      if (Array.isArray(value)) return value[0];
-      if (!value) return value;
       return value;
     },
     'ref': val=> { 

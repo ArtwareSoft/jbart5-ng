@@ -9,14 +9,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
             }],
         execute: function() {
             jb_core_1.jb.component('data-tests.join', {
-                type: 'test',
                 impl: { $: 'data-test',
                     calculate: [{ $list: [1, 2] }, { $: 'join' }],
                     expectedResult: { $: 'contains', text: '1,2' }
                 },
             });
             jb_core_1.jb.component('data-tests.conditional-text', {
-                type: 'test',
                 impl: { $: 'data-test',
                     calculate: { $: 'pipeline',
                         $vars: { full: 'full', empty: '' },
