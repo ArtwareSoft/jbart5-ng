@@ -2,7 +2,7 @@ function jb_run(context,parentParam,settings) {
   try {
     var profile = context.profile;
     if (context.probe) {
-      if (context.probe.pathToTrace == context.path)
+      if (context.probe.pathToTrace.indexOf(context.path) == 0)
         return context.probe.record(context,parentParam)
     }
     if (profile === null) return;
@@ -33,7 +33,7 @@ function jb_run(context,parentParam,settings) {
       case 'profile':
         for(var varname in profile.$vars || {})
           run.ctx.vars[varname] = jb_run(jb_ctx(run.ctx,{ profile: profile.$vars[varname], path: '$vars~'+varname }));
-        run.paramsArray.forEach(function(paramObj) {
+        run.preparedParams.forEach(function(paramObj) {
           switch (paramObj.type) {
             case 'function': run.ctx.params[paramObj.name] = paramObj.func; break;
             case 'array': run.ctx.params[paramObj.name] = 
@@ -43,7 +43,7 @@ function jb_run(context,parentParam,settings) {
         });
         var out;
         if (run.impl) {
-          run.args = prepareGCArgs(run.ctx);
+          run.args = prepareGCArgs(run.ctx,run.preparedParams);
           if (profile.$debugger) debugger;
           out = run.impl.apply(null,run.args);
         }
@@ -64,9 +64,62 @@ function jb_run(context,parentParam,settings) {
     jb_logException(e,'exception while running jb_run');
   }
 
-  function prepareGCArgs(ctx) {
-    return [ctx].concat(jb_map(ctx.params, function(p) {return [p]}));
+  function prepareGCArgs(ctx,preparedParams) {
+    return [ctx].concat(preparedParams.map(param=>ctx.params[param.name]))
   }
+}
+
+function jb_compParams(comp) {
+  return Array.isArray(comp.params) ? comp.params : jb_entries(comp.params).map(x=>jb_extend(x[1],jb_obj('id',x[0])));
+}
+
+function jb_prepareParams(comp,profile,ctx) {
+  return jb_compParams(comp)
+    .filter(comp=> 
+      !comp.ignore)
+    .map((param,index) => {
+      var p = param.id;
+      var val = profile[p], path =p;
+      if (!val && index == 0 && jb_sugarProp(profile)) {
+        path = jb_sugarProp(profile)[0];
+        val = jb_sugarProp(profile)[1]; 
+      }
+      var valOrDefault = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
+      var valOrDefaultArray = valOrDefault ? valOrDefault : []; // can remain single, if null treated as empty array
+      var arrayParam = param.type && param.type.indexOf('[]') > -1 && Array.isArray(valOrDefaultArray);
+
+      if (param.dynamic) {
+        if (arrayParam)
+          var func = (ctx2,data2) => 
+            jb_flattenArray(valOrDefaultArray.map((prof,i)=>
+              (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i)))
+        else
+          var func = (ctx2,data2) => 
+                valOrDefault && (ctx2||ctx).setData(data2).runInner(valOrDefault,param,path);
+
+        Object.defineProperty(func, "name", { value: p }); // for debug
+        func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
+        func.srcPath = ctx.path;
+        return { name: p, type: 'function', func: func };
+      } 
+
+      if (arrayParam) // array of profiles
+        return { name: p, type: 'array', array: valOrDefaultArray, param: {} };
+      else 
+        return { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault, path: p}), param: param };
+  })
+
+  // function jb_funcDynamicParam(ctx,profileToRun,param,path) {
+  //    if (param && param.type && param.type.indexOf('[') != -1 && Array.isArray(profileToRun)) // array
+  //     var res = jb_func(param.id,(ctx2,data2) => 
+  //       jb_flattenArray(profileToRun.map((prof,i)=>
+  //         (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i))))
+  //   else // single
+  //     var res = jb_func(param.id,(ctx2,data2) => 
+  //       profileToRun && (ctx2||ctx).setData(data2).runInner(profileToRun,param,path))
+  //   return res;
+  // }
+
 }
 
 function jb_prepare(context,parentParam) {
@@ -75,7 +128,6 @@ function jb_prepare(context,parentParam) {
   var parentParam_type = parentParam && parentParam.type;
   var jstype = parentParam && parentParam.as;
   var isArray = Array.isArray(profile);
-  var firstProp = !isArray && profile_jstype === 'object' && jb_firstProp(profile);
 
   if (profile_jstype === 'string' && parentParam_type === 'boolean') return { type: 'booleanExp' };
   if (profile_jstype === 'boolean' || profile_jstype === 'number' || parentParam_type == 'asIs') return { type: 'asIs' };// native primitives
@@ -83,7 +135,7 @@ function jb_prepare(context,parentParam) {
   if (profile_jstype === 'object' && jstype === 'object') return { type: 'object' };
   if (profile_jstype === 'string') return { type: 'expression' };
   if (profile_jstype === 'function') return { type: 'function' };
-  if (firstProp && firstProp.indexOf('$') != 0) return { type: 'asIs' };
+  if (profile_jstype === 'object' && !isArray && jb_entries(profile).filter(p=>p[0].indexOf('$') == 0).length == 0) return { type: 'asIs' };
   if (profile_jstype === 'object' && (profile instanceof RegExp)) return { type: 'asIs' };
   if (!profile) return { type: 'asIs' };
 
@@ -116,47 +168,13 @@ function jb_prepare(context,parentParam) {
 
   var ctx = new jbCtx(context,{});
   ctx.parentParam = parentParam;
-  ctx.params = {};
-  paramsArray = [];
-  var first = true;
-
-  for (var p in comp.params) {
-    var param = comp.params[p];
-    var val = profile[p], path =p;
-    if (!val && first && firstProp != '$') { // $comp sugar
-      val = profile[firstProp]; path = firstProp;
-    }
-    var valOrDefault = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : [];
-
-    if (!param.ignore) {
-      if (param.dynamic) {
-        var func = jb_funcDynamicParam(ctx,valOrDefault,param,p,path);
-        func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
-        func.srcPath = ctx.path;
-        paramsArray.push( { name: p, type: 'function', func: func } );
-      } else if (param.type && param.type.indexOf('[]') > -1 && jb_isArray(valOrDefault)) // array of profiles
-        paramsArray.push( { name: p, type: 'array', array: valOrDefault, param: {} } );
-      else paramsArray.push( { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault, path: p}), param: param } );
-    }
-    first = false;
-  }
-
-  if (typeof comp.impl === 'function')
-    return { type: 'profile', impl: jb_func(comp_name.replace(/[^a-zA-Z0-9]/g,'_'),comp.impl), ctx: ctx, paramsArray: paramsArray }
-  else
-    return { type:'profile', ctx: jb_ctx(ctx,{profile: comp.impl, comp: comp_name, path: ''}), paramsArray: paramsArray };
-}
-
-
-function jb_funcDynamicParam(ctx,profileToRun,param,paramName,path) {
-   if (param && param.type && param.type.indexOf('[') != -1 && jb_isArray(profileToRun)) // array
-    var res = jb_func(paramName,(ctx2,data2) => 
-      jb_flattenArray(profileToRun.map((prof,i)=>
-        (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i))))
-  else // single
-    var res = jb_func(paramName,(ctx2,data2) => 
-      profileToRun && (ctx2||ctx).setData(data2).runInner(profileToRun,param,path))
-  return res;
+  ctx.params = {}; // TODO: try to delete this line
+  var preparedParams = jb_prepareParams(comp,profile,ctx);
+  if (typeof comp.impl === 'function') {
+    Object.defineProperty(comp.impl, "name", { value: comp_name }); // comp_name.replace(/[^a-zA-Z0-9]/g,'_')
+    return { type: 'profile', impl: comp.impl, ctx: ctx, preparedParams: preparedParams }
+  } else
+    return { type:'profile', ctx: jb_ctx(ctx,{profile: comp.impl, comp: comp_name, path: ''}), preparedParams: preparedParams };
 }
 
 function jb_resolveFinishedPromise(val) {
@@ -265,7 +283,7 @@ function jb_evalExpressionPart(expressionPart,context,jstype) {
     else if (part.charAt(0) == '$' && i == 0 && part.length > 1)
       item = jb_var(context,part.substr(1));
 
-    else if (jb_isArray(item))
+    else if (Array.isArray(item))
       item = jb_map(item,function(inner) {
         return typeof inner === "object" ? jb_objectProperty(inner,part,jstype,i == parts.length -1) : inner;
       });
@@ -341,36 +359,36 @@ function jb_tonumber(value) { return jb_tojstype(value,'number'); }
 function jb_initJstypes() {
   jbart.jstypes = {
     'string': function(value) {
-      if (jb_isArray(value)) value = value[0];
+      if (Array.isArray(value)) value = value[0];
       if (value == null) return '';
       value = jb_val(value);
       if (typeof(value) == 'undefined') return '';
       return '' + value;
     },
     'number': function(value) {
-      if (jb_isArray(value)) value = value[0];
+      if (Array.isArray(value)) value = value[0];
       if (value == null || value == undefined) return null;	// 0 is not null
       value = jb_val(value);
       var num = Number(value);
       return isNaN(num) ? null : num;
     },
     'array': function(value) {
-      if (jb_isArray(value)) return value;
+      if (Array.isArray(value)) return value;
       if (value == null) return [];
       return [value];
     },
     'boolean': function(value) {
-      if (jb_isArray(value)) value = value[0];
+      if (Array.isArray(value)) value = value[0];
       return jb_val(value) ? true : false;
     },
     'single': function(value) {
-      if (jb_isArray(value)) return value[0];
+      if (Array.isArray(value)) return value[0];
       if (!value) return value;
       value = jb_val(value);
       return value;
     },
     'singleDataBind': function(value) {
-      if (jb_isArray(value)) return value[0];
+      if (Array.isArray(value)) return value[0];
       if (!value) return value;
       return value;
     },
@@ -386,20 +404,25 @@ function jb_initJstypes() {
 function jb_profileType(profile) {
   if (!profile) return '';
   if (typeof profile == 'string') return 'data';
-  var comp_name = profile.$ || jb_firstProp(profile).split('$').pop();
-
+  var comp_name = jb_compName(profile);
   return (jbart.comps[comp_name] && jbart.comps[comp_name].type) || '';
+}
+
+function jb_sugarProp(profile) {
+  return jb_entries(profile)
+    .filter(p=>p[0].indexOf('$') == 0 && p[0].length > 1)
+    .filter(p=>['$vars','$debugger','$log'].indexOf(p[0]) == -1)[0]
 }
 
 function jb_compName(profile) {
   if (!profile) return;
   if (profile.$) return profile.$;
-  var f = jb_firstProp(profile);
-  return (f.indexOf('$') == 0 && f.indexOf('$jb_') != 0 && jb_firstProp(profile).split('$').pop()); // $comp sugar  
+  var f = jb_sugarProp(profile);
+  return f && f[0].slice(1);
 }
 
 // give a name to the impl function. Used for tgp debugging
-function jb_func(name, fn) {
+function jb_assignNameToFunc(name, fn) {
   Object.defineProperty(fn, "name", { value: name });
   return fn;
 } 

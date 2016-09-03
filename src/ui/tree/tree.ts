@@ -181,16 +181,19 @@ jb.component('tree.keyboard-selection', {
 		onRightClickOfExpanded: { type: 'action', dynamic: true },
 		autoFocus: { type: 'boolean' }
 	},
-	impl: function(context) {
-		return {
+	impl: context => ({
+			observable: () => {},
 			host: {
-				'(keydown)': 'keydown.next($event)',
+        		'(keydown)': 'keydownSrc.next($event)',
 				'tabIndex': '0',
 		        '(mousedown)': 'getKeyboardFocus()',
 			},
 			init: cmp=> {
 				var tree = cmp.tree;
-				cmp.keydown = cmp.keydown || new Subject();
+		        cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+		        cmp.keydown = cmp.keydown || cmp.keydownSrc
+		          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
 				var keyDownNoAlts = cmp.keydown.filter(e=> 
 					!e.ctrlKey && !e.altKey);
 
@@ -235,8 +238,7 @@ jb.component('tree.keyboard-selection', {
 						tree.el.querySelector('.treenode.selected'))()
 				}
 			}
-		}
-	}
+		})
 })
 
 jb.component('tree.regain-focus', {
@@ -251,16 +253,19 @@ jb.component('tree.keyboard-shortcut', {
 		key: { as: 'string', description: 'Ctrl+C or Alt+V' },
 		action: { type: 'action', dynamic: true },
 	},
-	impl: function(context,key,action) {
-		return {
+	impl: (context,key,action) => ({
+			observable: () => {},
 			host: {
-				'(keydown)': 'keydown.next($event)',
+        		'(keydown)': 'keydownSrc.next($event)',
 				'tabIndex': '0',
 		        '(mousedown)': 'getKeyboardFocus()',
 			},
 			init: cmp=> {
 				var tree = cmp.tree;
-				cmp.keydown = cmp.keydown || new Subject();
+		        cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+		        cmp.keydown = cmp.keydown || cmp.keydownSrc
+		          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
 				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {cmp.elementRef.nativeElement.focus(); return false});
 
 				cmp.keydown.subscribe(event=>{
@@ -276,8 +281,7 @@ jb.component('tree.keyboard-shortcut', {
 	                action(context.setData(tree.selected));
 				})
 			}
-		}
-	}
+		})
 })
 
 

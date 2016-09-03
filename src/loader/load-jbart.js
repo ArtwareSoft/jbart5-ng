@@ -10,6 +10,7 @@ if (!window.jbPackaged) {
       'src/core/core.js',
       'src/core/data-binding.js',
       'src/core/utils.js',
+      'src/core/pretty-print.js',
       'src/core/components.js',
       'src/core/functions.js',
 
@@ -35,8 +36,10 @@ if (!window.jbPackaged) {
       'node_modules/history/umd/history.js'
     ].forEach(file =>
       {
-        document.write('<script>jbart.currentFileName = "' + file + '";</script>');
-        document.write('<script src="' + (window.jbDevBase || '/') + file + '"></script>');
+        document.write('<script>jbart.currentFileName = "' + file +
+         '";</script>');
+        document.write('<script src="' + (window.jbDevBase || '/') + file + 
+          '"></script>');
       }
     );
   }
@@ -62,52 +65,52 @@ jb_modules =
 '@angular/core', '@angular/common', '@angular/platform-browser-dynamic',
 'jb-core',
 'jb-ui',
-'jb-ui/jb-ui-utils',
-'jb-ui/jb-rx',
-'jb-ui/styles',
-'jb-ui/tree/tree',
-'jb-ui/tree/json-tree',
-'jb-ui/tree/tree-undo',
-'jb-ui/dialog',
-'jb-ui/label',
-'jb-ui/field',
-'jb-ui/text',
-'jb-ui/editable-text',
-'jb-ui/editable-boolean',
-'jb-ui/editable-number',
-'jb-ui/picklist',
-'jb-ui/features',
-'jb-ui/css-features',
-'jb-ui/group',
-'jb-ui/button',
-'jb-ui/itemlist',
-'jb-ui/itemlist-heading',
-'jb-ui/ui-common',
-'jb-ui/image',
-'jb-ui/pulldown-menu',
-'jb-ui/itemlog',
-'jb-ui/tabs',
-'jb-ui/slider',
-'jb-ui/sidenav',
-'jb-ui/divider',
-'jb-ui/http',
-'jb-ui/theme',
+'ui-ts/jb-ui-utils',
+'ui-ts/jb-rx',
+'ui-ts/http',
+'ui-ts/editable-number',
+'ui-ts/tree/tree',
+'ui-ts/tree/json-tree',
+'ui-ts/slider',
 
-'jb-ui/styles/group-styles',
-'jb-ui/styles/editable-boolean-styles',
-'jb-ui/styles/property-sheet-styles',
-'jb-ui/styles/layout-styles',
-'jb-ui/styles/picklist-styles',
-'jb-ui/styles/codemirror-styles',
-//'jb-ui/styles/itemlist-styles',
+'ui/styles.js',
+'ui/dialog.js',
+'ui/label.js',
+'ui/field.js',
+'ui/text.js',
+'ui/editable-text.js',
+'ui/editable-boolean.js',
+'ui/picklist.js',
+'ui/features.js',
+'ui/css-features.js',
+'ui/group.js',
+'ui/button.js',
+'ui/itemlist.js',
+'ui/itemlist-with-groups.js',
+'ui/ui-common.js',
+'ui/image.js',
+'ui/pulldown-menu.js',
+'ui/itemlog.js',
+'ui/tabs.js',
+'ui/sidenav.js',
+'ui/divider.js',
+'ui/theme.js',
 
-'jb-ui/md-styles/button-md',
-'jb-ui/md-styles/dialog-md',
-'jb-ui/md-styles/input-md',
-'jb-ui/md-styles/editable-boolean-md',
-'jb-ui/md-styles/tabs-md',
-'jb-ui/md-styles/card-md',
-'jb-ui/md-styles/sidenav-md',
+'ui-ts/styles/group-styles',
+'ui-ts/styles/editable-boolean-styles',
+'ui-ts/styles/property-sheet-styles',
+'ui-ts/styles/layout-styles',
+'ui-ts/styles/picklist-styles',
+'ui-ts/styles/codemirror-styles',
+//'ui-ts/styles/itemlist-styles',
+
+'ui-ts/md-styles/button-md',
+'ui-ts/md-styles/dialog-md',
+'ui-ts/md-styles/input-md',
+'ui-ts/md-styles/editable-boolean-md',
+'ui-ts/md-styles/tabs-md',
+'ui-ts/md-styles/card-md',
+'ui-ts/md-styles/sidenav-md',
 
 'testing/ui-testers',
 'testing/ui-testers-ctrls',
@@ -121,6 +124,8 @@ jb_studio_modules = ['tgp-model','model-components','path','utils','main','menu'
 jb_system_config = {
       map: {
         'jb-core': '/dist/src/core',
+        'ui': '/src/ui',
+        'ui-ts': '/dist/src/ui',
         'jb-ui': '/dist/src/ui',
         'testing': '/dist/src/testing',
         projects: '/dist/projects',
@@ -168,6 +173,7 @@ function jbLoadModules(modules) {
     modules.map(x=>{
       System.import(x).then(
         (res)=>{
+          //console.log(x+ ' loaded successfuly');
           loadedModules[x] = res;
           loaded++;
           if (loaded == modules.length) resolve(loadedModules) 

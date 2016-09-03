@@ -177,11 +177,29 @@ extend(op_post_handlers, {
             for(end_index=index;end_index<source.length;end_index++)
               if ((source[end_index]||'').match(/^}\)$/m))
                 return { index: index, length: end_index - index +1}
-          } else if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind))
+          } else {
+            if (index != -1 && compareArrays(source.slice(index,index+toFind.length),toFind))
               return { index: index, length: toFind.length }
-          else if (index != -1)
-              endWithFailure(res,`${comp} found with different source, use "force save" to save.`);
+
+            // calc error message
+            var err = '';
+            var src = source.slice(index,index+toFind.length);
+            toFind.forEach((line,index) => {
+              if (line != src[index])
+                err += line + '#versus#' + src[index] + '\n';
+            })
+
+            // var err = .reduce(function(diff_line,line,index) {
+            //   if (diff_line) return diff_line;
+            //   if (line != toFind[index])
+            //     return index + '#' + line + '# versus #' + toFind(index) + '#';
+            // });
+            // err = source.slice(index,index+toFind.length).join('#') + '\n\n' + toFind.join('#');
+
+            endWithFailure(res,`${comp} found with different source, use "force save" to save. ${err}`);
+          }
         }
+
 
         function compareArrays(arr1,arr2) {
           return arr1.join('\n') == arr2.join('\n')

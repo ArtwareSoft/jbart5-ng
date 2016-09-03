@@ -97,7 +97,6 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
                         if (res.finalResult[0] && probeCheck(res.finalResult[0].in))
                             return success('probe');
                         else {
-                            debugger;
                             return failure('probe');
                         }
                     }).take(1);

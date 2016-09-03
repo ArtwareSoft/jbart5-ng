@@ -48,19 +48,17 @@ function jb_tests(widgetName,tests) {
 }
 
 function jbCtx(context,ctx2) {
-  if (typeof context == 'undefined')
-    this.vars = this.params = this.resources = {}
+  if (typeof context == 'undefined') {
+    this.vars = {};
+    this.params = {};
+    this.resources = {}
+  }
   else {
     if (ctx2.profile && ctx2.path == null) {
       debugger;
       ctx2.path = '?';
     }
     this.profile = (typeof(ctx2.profile) != 'undefined') ?  ctx2.profile : context.profile;
-    this.fullPath = (context.fullPath || '') + (ctx2.path ? '~' + ctx2.path : '');
-    if (ctx2.fullPath != null)
-      this.fullPath = ctx2.fullPath; 
-    if (!this.fullPath && ctx2.comp)
-      this.fullPath = ctx2.comp;
 
     this.path = (context.path || '') + (ctx2.path ? '~' + ctx2.path : '');
     if (ctx2.comp)
@@ -73,11 +71,12 @@ function jbCtx(context,ctx2) {
     this.probe= context.probe;
   }
 }
+
 jbCtx.prototype = {
-  run: function(profile,x,y) { 
-    if (x != null || y != null)
+  run: function(profile,parentParam,path) { 
+    if (path != null)
       debugger;
-    return jb_run(jb_ctx(this,{ profile: profile, comp: profile.$ , path: ''})) },
+    return jb_run(jb_ctx(this,{ profile: profile, comp: profile.$ , path: ''}), parentParam) },
   exp: function(expression,jstype) { return jb_expression(expression, this, {as: jstype}) },
   setVars: function(vars) { return new jbCtx(this,{vars: vars}) },
   setData: function(data) { return new jbCtx(this,{data: data}) },
@@ -94,34 +93,6 @@ function jb_ctx(context,ctx2) {
 }
 
 // end: context creation functions
-
-function jb_paramsWithValues(profile) {
-    var paramsWithValues = []
-    var comp_name = jb_compName(profile);
-    var comp = jbart.comps[comp_name];
-    var first = true;
-    var firstProp = jb_firstProp(comp.params);
-    for (var p in comp.params) {
-      var param = comp.params[p];
-      var val = profile[p];
-      if (!val && first && p != '$') // $comp sugar
-        val = profile[firstProp]; 
-      val = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
-      paramsWithValues.push({id: p, param: param, val: val})
-      first = false;
-    }
-    return paramsWithValues;
-}
-
-function jb_propVal(context,paramName) {
-  return jb_paramsWithValues(context.profile).filter(p=> p.id == paramName)[0];
-}
-
-function jb_run_action_prop(context,prop) {
-  return jb_toarray(context.profile[prop]).reduce(function(deferred,action) {
-    return deferred.then(function() { return $.when(jb_run(jb_ctx(context, { profile: action }))) })
-  },$.Deferred().resolve());
-}
 
 function jb_profileHasValue(context,paramName) {
   return typeof context.profile[paramName] != 'undefined';
@@ -144,18 +115,7 @@ function jb_logException(e,errorStr) {
   jb_logError('exception: ' + errorStr + "\n" + (e.stack||''));
 }
 
-// js type handling functions
-function jb_isArray(obj) {
-  if (typeof Array.isArray === 'undefined') {
-    Array.isArray = function(obj) {
-      return Object.prototype.toString.call(obj) === '[object Array]';
-    }
-  }
-  return Array.isArray(obj);
-}
-
 // functions
-
 function jb_extend(obj,obj1,obj2,obj3) {
   if (!obj) return;
   Object.getOwnPropertyNames(obj1||{})
@@ -176,7 +136,7 @@ function jb_map(array,func) {
   for(var i in array) {
     if (i.indexOf('$jb') == 0) continue;
     var item = func(array[i],i);
-    if (jb_isArray(item))
+    if (Array.isArray(item))
       res = res.concat(item); // to check is faster than: for(var i=0;i<item.length;i++) res.push(item[i]);
     else if (item != null)
       res.push(item);
@@ -201,13 +161,14 @@ function jb_path(object,path,value) {
     return value;
   }
 }
-function jb_firstProp(obj) {
 
+function jb_firstProp(obj) {
   for(var i in obj)
     if (obj.hasOwnProperty(i)) 
       return i;
   return '';
 }
+
 function jb_obj(k,v,base) {
   var ret = base || {};
   ret[k] = v;
@@ -233,7 +194,7 @@ function jb_ownPropertyNames(obj) {
 function jb_pushItemOrArray(arr,item) {
   // adds item to arr. if item is null, it is not added. if item is an array, all of its items are added. if it's a single object, it's just added
   if (typeof item == 'undefined' || item === null) return;
-  if (!jb_isArray(item)) return arr.push(item);
+  if (!Array.isArray(item)) return arr.push(item);
   for(var i=0;i<item.length;i++)
     arr.push(item[i]);
 }
@@ -339,8 +300,12 @@ function jb_ref(obj,top) {
   }
 }
 
-function jb_delay(ms) {
-  return new Promise(function(resolve, reject) { setTimeout(resolve, ms) });
+function jb_delay(ms,ctx) {
+  if (ctx && ctx.vars.ngZone)
+    return ctx.vars.ngZone.runOutsideAngular(() =>
+        new Promise(resolve => setTimeout(resolve, ms)))
+
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function jb_compareArrays(arr1, arr2) {
@@ -351,174 +316,6 @@ function jb_compareArrays(arr1, arr2) {
   for (var i = 0; i < arr1.length; i++)
     if (arr1[i] !== arr2[i]) return false;
   return true;
-}
-
-function jb_prettyPrintComp(compId,comp) {
-  if (comp)
-    return "jb.component('" + compId + "', "
-      + jb_prettyPrintWithPositions(comp).result + ')'
-}
-
-function jb_prettyPrint(profile,colWidth,tabSize,initialPath) {
-  return jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath).result;
-}
-
-function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
-  colWidth = colWidth || 80;
-  tabSize = tabSize || 2;
-
-  var remainedInLine = colWidth;
-  var result = '';
-  var depth = 0;
-  var lineNum = 0;
-  var positions = {};
-
-  printValue(profile,initialPath || '');
-  return { result : result, positions : positions }
-
-  function sortedPropertyNames(obj) {
-    var props = jb_entries(obj).map(x=>x[0]) // keep the order
-      .filter(p=>p.indexOf('$jb') != 0)
-      .filter(p=>p.indexOf('$jbProbe') != 0); 
-    var comp_name = jb_compName(profile);
-    if (comp_name) { // tgp obj
-      var params = jb_entries((jbart.comps[comp_name] || {}).params || {}).map(x=>x[0]);
-      props.sort((p1,p2)=>params.indexOf(p1) - params.indexOf(p2));
-    }
-    if (props.indexOf('$') > 0) { // make the $ first
-      props.splice(props.indexOf('$'),1);
-      props.unshift('$');
-    }
-    return props;
-  }
-
-  function printValue(val,path) {
-    positions[path] = lineNum;
-    if (!val) return;
-    if (val.$jb_arrayShortcut)
-      val = val.items;
-    if (Array.isArray(val)) return printArray(val,path);
-    if (typeof val === 'object') return printObj(val,path);
-    if (typeof val === 'string' && val.indexOf('$jbProbe:') == 0)
-      val = val.split('$jbProbe:')[1];
-    if (typeof val === 'function')
-      result += val.toString();
-    else if (typeof val === 'string' && val.indexOf('\n') == -1) 
-      result += "'" + val + "'";
-    else if (typeof val === 'string' && val.indexOf('\n') != -1) {
-      result += "`" + val + "`"
-      // depth++;
-      // result += "`";
-      // var lines = val.split('\n');
-      // lines.forEach((line,index)=>{
-      //     result += line.trim(); 
-      //     if(index<lines.length-1) 
-      //       newLine();
-      // })
-      // depth--;
-      // result += "`";
-    }  else
-      result += JSON.stringify(val);
-  }
-
-  function printObj(obj,path) {
-      var obj_str = flat_obj(obj);
-      if (!printInLine(obj_str)) { // object does not fit in parent line
-        depth++;
-        result += '{';
-        if (!printInLine(obj_str)) { // object does not fit in its own line
-          sortedPropertyNames(obj).forEach(function(prop,index,array) {
-              if (prop != '$')
-                newLine();
-              if (obj[prop] != null) {
-                printProp(obj,prop,path);
-                if (index < array.length -1)
-                  result += ', ';//newLine();
-              }
-          });
-        }
-        depth--;
-        newLine();
-        result += '}';
-      }
-  }
-  function quotePropName(p) {
-    if (p.match(/^[$a-zA-Z_][$a-zA-Z0-9_]*$/))
-      return p;
-    else
-      return `"${p}"`
-  }
-  function printProp(obj,prop,path) {
-    if (obj[prop] && obj[prop].$jb_arrayShortcut)
-      obj = jb_obj(prop,obj[prop].items);
-
-    if (printInLine(flat_property(obj,prop))) return;
-
-    if (prop == '$')
-      result += '$: '
-    else
-      result += quotePropName(prop) + (jb_compName(obj[prop]) ? ' :' : ': ');
-    //depth++;
-    printValue(obj[prop],path+'~'+prop);
-    //depth--;
-  }
-  function printArray(array,path) {
-    if (printInLine(flat_array(array))) return;
-    result += '[';
-    depth++;
-    newLine();
-    array.forEach(function(val,index) {
-      printValue(val,path+'~'+index);
-      if (index < array.length -1) {
-        result += ', ';
-        newLine();
-      }
-    })
-    depth--;newLine();
-    result += ']';
-  }
-  function printInLine(text) {
-    if (remainedInLine < text.length || text.match(/:\s?{/) || text.match(/, {\$/)) return false;
-    result += text;
-    remainedInLine -= text.length;
-    return true;
-  }
-  function newLine() {
-    result += '\n';
-    lineNum++;
-    for (var i = 0; i < depth; i++) result += '               '.substr(0,tabSize);
-    remainedInLine = colWidth - tabSize * depth;
-  }
-  function flat_obj(obj) {
-    var props = sortedPropertyNames(obj)
-      .filter(p=>obj[p] != null)
-      .filter(x=>x!='$')
-      .map(prop => 
-      quotePropName(prop) + ': ' + flat_val(obj[prop]));
-    if (obj && obj.$) {
-      props.unshift("$: '" + obj.$+ "'");
-      return '{' + props.join(', ') + ' }'
-    }
-    return '{ ' + props.join(', ') + ' }'
-  }
-  function flat_property(obj,prop) {
-    if (jb_compName(obj[prop]))
-      return quotePropName(prop) + ' :' + flat_val(obj[prop]);
-    else
-      return quotePropName(prop) + ': ' + flat_val(obj[prop]);
-  }
-  function flat_val(val) {
-    if (Array.isArray(val)) return flat_array(val);
-    if (typeof val === 'object') return flat_obj(val);
-    if (typeof val === 'function') return val.toString();
-    if (typeof val === 'string') 
-      return "'" + val + "'";
-    else
-      return JSON.stringify(val); // primitives
-  }
-  function flat_array(array) {
-    return '[' + array.map(item=>flat_val(item)).join(', ') + ']';
-  }
 }
 
  function jb_range(start, count) {
@@ -556,13 +353,10 @@ function jb_isProfOfType(prof,type) {
   return types.indexOf(type) != -1;
 }
 
-function jb_onlyUniqueFunc(mapFunc) { 
-  function jb_onlyUnique(value, index, self) { 
+// usage: .filter( jb_unique(x=>x.id) )
+function jb_unique(mapFunc) { 
+  function onlyUnique(value, index, self) { 
       return self.map(mapFunc).indexOf(mapFunc(value)) === index;
   }
-  return jb_onlyUnique;
-}
-
-function jb_onlyUnique(value, index, self) { 
-    return self.indexOf(value) === index;
+  return onlyUnique;
 }

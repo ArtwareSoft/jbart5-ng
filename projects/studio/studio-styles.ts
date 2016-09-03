@@ -60,7 +60,6 @@ jb.component('editable-boolean.studio-slide-toggle', {
     opacity: 1; background-color: #858585 !important; 
     background-color-old: rgba(0, 150, 136, 0.26); }
       `,
-      noViewEncapsulation: true,
       directives: 'MdSlideToggle'
   }
 })

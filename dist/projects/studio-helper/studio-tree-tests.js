@@ -23,10 +23,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     ],
                 } });
             jb_core_1.jb.component('studio-tree-test.actions-sugar-example1', {
-                impl: { $: 'button', title: 'hello', action: [{ $: 'goto-url', url: 'google', $mark: true }] }
+                impl: { $: 'button', title: 'hello', action: [{ $: 'goto-url', url: 'google' }] }
             });
             jb_core_1.jb.component('studio-tree-test.actions-sugar-example2', {
-                impl: { $: 'button', title: 'hello', action: { $runActions: [{ $: 'goto-url', url: 'google', $mark: true }] } }
+                impl: { $: 'button', title: 'hello', action: { $runActions: [{ $: 'goto-url', url: 'google' }] } }
             });
             jb_core_1.jb.component('studio-tree-test.extra-elem-in-list', {
                 impl: { $: 'studio-tree-children-test',
@@ -49,11 +49,18 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     expectedResult: { $and: [{ $: 'contains', text: ['action[0]', 'action[1]'] }, { $not: { $contains: 'actions' } }] }
                 }
             });
-            jb_core_1.jb.component('studio-tree-test.actions-sugar2', {
+            jb_core_1.jb.component('studio-tree-test.actions-sugar2a', {
                 impl: { $: 'studio-tree-children-test',
                     path: 'studio-tree-test.actions-sugar-example2~action',
                     childrenType: 'jb-editor',
-                    expectedResult: { $and: [{ $: 'contains', text: ['action[0]', 'action[1]'] }, { $not: { $contains: 'actions' } }] }
+                    expectedResult: { $contains: '$runActions' }
+                }
+            });
+            jb_core_1.jb.component('studio-tree-test.actions-sugar2b', {
+                impl: { $: 'studio-tree-children-test',
+                    path: 'studio-tree-test.actions-sugar-example2~action~$runActions',
+                    childrenType: 'jb-editor',
+                    expectedResult: { $and: [{ $: 'contains', text: ['runActions[0]', 'runActions[1]'] }, { $not: { $contains: 'actions' } }] }
                 }
             });
         }

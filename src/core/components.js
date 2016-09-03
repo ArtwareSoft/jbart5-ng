@@ -66,9 +66,9 @@ jb_component('run',{
 
 jb_component('list',{
 	type: "data",
-	params: {
-		items: { type: "data[]", as: 'array', composite: true }
-	},
+	params: [
+		{ id: 'items', type: "data[]", as: 'array', composite: true }
+	],
 	impl: function(context,items) {
 		var out = [];
 		items.forEach(function(item) {
@@ -716,7 +716,7 @@ jb_component('pluralize', {
 jb_component('runActions', {
 	type: 'action',
 	params: { 
-		actions: { type:'action[]', ignore: true }
+		actions: { type:'action[]', ignore: true, composite: true, essential: true }
 	},
 	impl: function(context) {
 		var actions = jb_toarray(context.profile.actions || context.profile['$runActions']);
@@ -804,5 +804,8 @@ jb_component('onNextTimer',{
 	params: {
 		action: { type: 'action', dynamic: true }
 	},
-	impl: (ctx,action) => jb_delay(1).then(()=>action())
+	impl: (ctx,action) => {
+		jb_delay(1,ctx).then(()=>
+			action())
+	}
 })

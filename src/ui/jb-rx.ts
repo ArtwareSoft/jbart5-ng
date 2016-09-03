@@ -1,10 +1,31 @@
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/merge';
+import 'rxjs/add/operator/concat';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/concat';
+import 'rxjs/add/operator/concatMap';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/buffer';
+import 'rxjs/add/operator/skip';
+import 'rxjs/add/operator/last';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/toArray';
+import 'rxjs/add/operator/toPromise';
+
+
 import {jb} from 'jb-core/jb';;
 import * as jb_ui from 'jb-ui/jb-ui';
 
 export {Subject} from 'rxjs/Subject';
 export {Observable} from 'rxjs/Observable';
+
 
 // for debug console
 window.Observable = Observable;
@@ -17,7 +38,7 @@ jbart.jstypes.observable = (obj,ctx) =>
 export function tap(label) { return ctx => { console.log('tap'+label||'',ctx.data); return ctx.data } }
 
 export function concat(obs_array) {
-	return Observable.concat.apply(Observable.of(),obs_array)
+	return Observable.prototype.concat.apply(Observable.of(),obs_array)
 		.map(x=> (x instanceof jb.Ctx) ? x.data : x)
 }
 
@@ -96,7 +117,7 @@ function pipe(profiles,observable,context) {
 			//var ctx = context.setData(ctx.data);
 			var res = jb.toarray(ctx.runInner(prof,null,_index)).map(data=>
 				ctxWithVar(ctx.setData(data),prof));
-			return Observable.concat.apply(Observable.of(),res.map(ctx2=>
+			return Observable.prototype.concat.apply(Observable.of(),res.map(ctx2=>
 				observableFromCtx(ctx2).catch(e=>{debugger})))
 		})
 	},observable)
@@ -115,7 +136,7 @@ jb.component('rxParallel', {
 	},
 	impl: (context,item,keepOrder) => { return { $pipe : obs => 
 		obs.flatMap(ctx=>
-			Observable.merge.apply(Observable.of(),
+			Observable.prototype.merge.apply(Observable.of(),
 				jb.toarray(item(ctx)).map(data=>observableFromCtx(ctx.setData(data)))
 			)) 
 	}}
@@ -130,7 +151,7 @@ jb.component('rxParallelKeepOrder', {
 		var parallel_results = [],emitted=0;
 		var out = new Subject();
 		obs.flatMap((ctx,i)=> {
-			return Observable.concat.apply(Observable.of(),
+			return Observable.prototype.concat.apply(Observable.of(),
 				jb.toarray(item(ctx)).map(data=>{
 					var res = observableFromCtx(ctx.setData(data));
 					res.subscribe(x=>{ 

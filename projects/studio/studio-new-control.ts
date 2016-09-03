@@ -13,8 +13,7 @@ jb.component('studio.openNewCtrlDialog', {
         {$: 'editable-text', 
           databind: '%$globals/ctrl_pattern%', 
           style :{$: 'editable-text.md-input' }, 
-          title: 'search', 
-          
+          title: 'search'
         }, 
         {$: 'itemlist-with-groups', 
           items: [
@@ -32,16 +31,16 @@ jb.component('studio.openNewCtrlDialog', {
               action :{
                 $runActions: [
                   {$: 'studio.onNextModifiedPath', 
-                    action : [ 
-                      {$: 'closeContainingPopup' },
-                      {$: 'studio.openModifiedPath' },
-                      {$: 'studio.refreshPreview' },
+                    action: [
+                      {$: 'closeContainingPopup' }, 
+                      {$: 'studio.openModifiedPath' }, 
+                      {$: 'studio.refreshPreview' }
                     ]
                   }, 
                   {$: 'studio.insertComp', 
                     path :{$: 'studio.currentProfilePath' }, 
                     comp: '%%'
-                  },
+                  }
                 ]
               }, 
               style :{$: 'customStyle', 
@@ -64,7 +63,8 @@ jb.component('studio.openNewCtrlDialog', {
     features: [
       {$: 'css.height', height: '420', overflow: 'hidden' }, 
       {$: 'css.width', width: '350', overflow: 'hidden' }, 
-      {$: 'dialogFeature.dragTitle', id: 'new control' }
+      {$: 'dialogFeature.dragTitle', id: 'new control' }, 
+      {$: 'dialogFeature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }
     ]
   }
 })

@@ -371,6 +371,7 @@ function jbTemplate(options) {
 // 	}
 // }
 
+
 @Component({
     selector: 'jb_comp',
     template: '<div #jb_comp></div>',
@@ -383,7 +384,7 @@ export class jbComp {
 
   ngOnInit() {
   	// redraw if script changed at studio
-	(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
 				.flatMap(e=> {
 					if (this.comp && e.path == this.comp.callerPath) {
 						jb.delay(100).then(() => // height in delay

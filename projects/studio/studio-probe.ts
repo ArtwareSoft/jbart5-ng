@@ -3,6 +3,8 @@ import * as jb_rx from 'jb-ui/jb-rx';
 
 import {model} from './studio-tgp-model';
 import {jbart_base} from './studio-utils';
+import {parentPath} from './studio-path';
+
 
 export class Probe {
   constructor(public pathToTrace, public context, public depth, public forTests) {
@@ -11,7 +13,7 @@ export class Probe {
     this.circuit = this.context.profile;
   }
 
-  runCircuitNoGaps() {
+  runCircuit() {
     var _win = jbart.previewWindow || window;
     if (model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
       return testControl(this.context, this.em, this.forTests);
@@ -23,24 +25,43 @@ export class Probe {
     this.em = new jb_rx.Subject();
     this.probe[this.pathToTrace] = [];
     this.probe[this.pathToTrace].visits = 0;
-    this.runCircuitNoGaps().then(()=>{
-        this.em.next({finalResult: this.probe[this.pathToTrace]});
-        this.em.complete();
-    })
+    this.runCircuit().then( ()=>
+          this.handleGaps().then(()=>{
+            this.em.next({finalResult: this.probe[this.pathToTrace]});
+            this.em.complete();
+      }))
+
     return this.em;
   }
 
+  handleGaps() {
+    if (this.probe[this.pathToTrace].length == 0) {
+      // find closest path
+      var _path = parentPath(this.pathToTrace);
+      while (!this.probe[_path] && _path.indexOf('~') != -1)
+        _path = parentPath(_path);
+      if (this.probe[_path])
+        this.probe[this.pathToTrace] = this.probe[_path];
+    }
+    return Promise.resolve();
+  }
+
   record(context,parentParam) {
+      var path = context.path;
       var input = context.ctx({});
       input.probe = null;
       var out = input.runItself(parentParam);
 
-      this.probe[this.pathToTrace].visits++;
-      var found = this.probe[this.pathToTrace].map(x=>x.in.data).indexOf(input.data);
+      if (!this.probe[path]) {
+        this.probe[path] = [];
+        this.probe[path].visits = 0;
+      }
+      this.probe[path].visits++;
+      var found = this.probe[path].map(x=>x.in.data).indexOf(input.data);
       if (found != -1)
-        this.probe[this.pathToTrace][found].counter++;
+        this.probe[path][found].counter++;
       else 
-        this.probe[this.pathToTrace].push({in: input, out: jb_val(out), counter: 0});
+        this.probe[path].push({in: input, out: jb_val(out), counter: 0});
       return out;
   }
 }
@@ -120,7 +141,7 @@ var bridge = {
   //   return bridge[compName][prop](path,inCtx);
   // }
 
-      // return this.runCircuitNoGaps().then(()=>{
+      // return this.runCircuit().then(()=>{
       //   if (this.probe[this.pathToTrace].length > 0) {
       //     _jbart.probe = null;
       //     return this.probe[this.pathToTrace];

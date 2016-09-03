@@ -77,7 +77,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'button',
                             title: 'insert control',
                             action: { $: 'studio.openNewCtrlDialog' },
-                            style: { $: 'button.md-icon', icon: 'add' }
+                            style: { $: 'button.md-icon', icon: 'add' },
                         },
                         { $: 'button',
                             title: 'responsive-phone',
@@ -97,7 +97,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'feature.keyboard-shortcut',
                             key: 'Alt+N',
                             action: { $: 'studio.pickAndOpen', from: 'studio' }
-                        },
+                        }
                     ]
                 }
             });

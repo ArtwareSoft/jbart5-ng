@@ -59,19 +59,21 @@ export class TgpModel {
 
 	jbEditorSubNodes(path) {
 		var val = profileFromPath(path);
-		var comp = getComp(jb.compName(val||{}));
+		var compName = jb.compName(val||{});
+		var comp = getComp(compName);
 		if (Array.isArray(val))
 			return Object.getOwnPropertyNames(val)
 				.map(x=>x=='length'? val.length : x)
 				.map(k=> path +'~'+k)
-		else if (comp) {
+		else if (val['$'+compName]) { // sugar
+			return [path + '~$' + compName];
+		} else if (comp) {
 			var composite = jb.entries(comp.params)
 				.filter(p=>
 					p[1].composite)
-				.map(p=>flattenArray(p[0]))
-				[0];
+				.map(p=>flattenArray(p[0]));
 
-			return (composite || []).concat(jb.entries(comp.params)
+			return (composite[0] || []).concat(jb.entries(comp.params)
 					.filter(p=>!p[1].composite)
 					.map(p=> ({ path: path + '~' + p[0], param: p[1]}))
 					.filter(e=>profileFromPath(e.path) != null || e.param.essential)

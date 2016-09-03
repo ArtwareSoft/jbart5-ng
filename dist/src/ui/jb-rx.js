@@ -1,11 +1,11 @@
-System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(exports_1, context_1) {
+System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'jb-core/jb'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var Subject_1, Observable_1, jb_1;
     function tap(label) { return function (ctx) { console.log('tap' + label || '', ctx.data); return ctx.data; }; }
     exports_1("tap", tap);
     function concat(obs_array) {
-        return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), obs_array)
+        return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), obs_array)
             .map(function (x) { return (x instanceof jb_1.jb.Ctx) ? x.data : x; });
     }
     exports_1("concat", concat);
@@ -47,7 +47,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                 var res = jb_1.jb.toarray(ctx.runInner(prof, null, _index)).map(function (data) {
                     return ctxWithVar(ctx.setData(data), prof);
                 });
-                return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) {
+                return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) {
                     return observableFromCtx(ctx2).catch(function (e) { debugger; });
                 }));
             });
@@ -95,6 +95,23 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                     "Observable": Observable_1_1["Observable"]
                 });
             },
+            function (_1) {},
+            function (_2) {},
+            function (_3) {},
+            function (_4) {},
+            function (_5) {},
+            function (_6) {},
+            function (_7) {},
+            function (_8) {},
+            function (_9) {},
+            function (_10) {},
+            function (_11) {},
+            function (_12) {},
+            function (_13) {},
+            function (_14) {},
+            function (_15) {},
+            function (_16) {},
+            function (_17) {},
             function (jb_1_1) {
                 jb_1 = jb_1_1;
             }],
@@ -150,7 +167,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                 impl: function (context, item, keepOrder) {
                     return { $pipe: function (obs) {
                             return obs.flatMap(function (ctx) {
-                                return Observable_1.Observable.merge.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) { return observableFromCtx(ctx.setData(data)); }));
+                                return Observable_1.Observable.prototype.merge.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) { return observableFromCtx(ctx.setData(data)); }));
                             });
                         }
                     };
@@ -166,7 +183,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'jb-core/jb'], function(expo
                             var parallel_results = [], emitted = 0;
                             var out = new Subject_1.Subject();
                             obs.flatMap(function (ctx, i) {
-                                return Observable_1.Observable.concat.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) {
+                                return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) {
                                     var res = observableFromCtx(ctx.setData(data));
                                     res.subscribe(function (x) {
                                         parallel_results[i] = parallel_results[i] || [];

@@ -71,10 +71,11 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             jb_core_1.jb.component('studio.goto-sublime', {
                 type: 'action',
                 params: {
-                    path: { as: 'string' }
+                    path: { as: 'string' },
                 },
                 impl: function (ctx, path) {
-                    var compName = path.indexOf('~') != -1 ? path.split('~')[0] : studio_tgp_model_1.model.compName(path);
+                    //		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
+                    var compName = path.split('~')[0];
                     compName && $.ajax("/?op=gotoSource&comp=" + compName);
                 }
             });

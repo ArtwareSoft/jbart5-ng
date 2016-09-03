@@ -57,14 +57,14 @@ jb.component('studio.string-property-ref', {
 		})
 })
 
-
 jb.component('studio.goto-sublime', {
 	type: 'action',
 	params: {
-		path: { as: 'string'}
+		path: { as: 'string'},
 	},
 	impl: (ctx,path) => {
-		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
+//		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
+		var compName = path.split('~')[0];
 		compName && $.ajax(`/?op=gotoSource&comp=${compName}`)
 	}
 }) 

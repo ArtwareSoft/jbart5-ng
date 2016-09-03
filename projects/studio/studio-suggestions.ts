@@ -66,7 +66,7 @@ export class suggestions {
           .map(x=>jb.entries(x).map(x=>({toPaste: x[0], value: x[1]}))) )
 
     this.options = this.options
-        .filter( jb_onlyUniqueFunc(x=>x.toPaste) )
+        .filter( jb_unique(x=>x.toPaste) )
         .filter(x=> x.toPaste != this.tail)
         .filter(x=> x.toPaste.indexOf('$$') != 0)
         .filter(x=>['$ngZone','$window'].indexOf(x.toPaste) == -1)

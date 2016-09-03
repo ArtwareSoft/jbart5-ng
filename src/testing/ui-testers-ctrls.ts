@@ -40,7 +40,7 @@ jb.component('ui-tests.show-tests', {
 			},
 			tests: ['%$window.jbart.comps%',
 				{ $: 'objectToArray' },
-				{ $filter: {$: 'studio.is-of-type', type: 'test', path: '%id%'}},
+				{ $filter: {$: 'studio.is-of-type', type: 'test', path: '%id%'} },
 				{ $filter: {$: 'contains', allText: '%id%', text: '.' } },
 				{ $filter: {$or: [{$: 'equals', item1: '%$module%', item2: {$: 'prefix', text: '%id%', separator: '.' } }, {$isEmpty: '%$module%'} ]} },
 			],

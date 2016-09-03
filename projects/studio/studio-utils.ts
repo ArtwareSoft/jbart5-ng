@@ -11,6 +11,7 @@ export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
 // ng BUG FIX - very strange bug after upgrading to rc4 - no flatmap at init phase
+
 var intervalID = window.setInterval(()=> {
 		if (modifyOperationsEm.flatMap) {
 			window.clearInterval(intervalID);
@@ -40,7 +41,6 @@ export function message(message,error) {
 	jb.delay(1).then(()=>
 		$('.studio-message').css('animation','slide_from_top 5s ease')
 	)
-
 }
 
 export function jbart_base() {

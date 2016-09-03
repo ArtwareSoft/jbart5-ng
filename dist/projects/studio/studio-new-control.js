@@ -23,7 +23,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             { $: 'editable-text',
                                 databind: '%$globals/ctrl_pattern%',
                                 style: { $: 'editable-text.md-input' },
-                                title: 'search',
+                                title: 'search'
                             },
                             { $: 'itemlist-with-groups',
                                 items: [
@@ -44,13 +44,13 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                                     action: [
                                                         { $: 'closeContainingPopup' },
                                                         { $: 'studio.openModifiedPath' },
-                                                        { $: 'studio.refreshPreview' },
+                                                        { $: 'studio.refreshPreview' }
                                                     ]
                                                 },
                                                 { $: 'studio.insertComp',
                                                     path: { $: 'studio.currentProfilePath' },
                                                     comp: '%%'
-                                                },
+                                                }
                                             ]
                                         },
                                         style: { $: 'customStyle',
@@ -73,7 +73,8 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     features: [
                         { $: 'css.height', height: '420', overflow: 'hidden' },
                         { $: 'css.width', width: '350', overflow: 'hidden' },
-                        { $: 'dialogFeature.dragTitle', id: 'new control' }
+                        { $: 'dialogFeature.dragTitle', id: 'new control' },
+                        { $: 'dialogFeature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }
                     ]
                 }
             });

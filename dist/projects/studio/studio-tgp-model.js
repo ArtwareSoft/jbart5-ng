@@ -69,18 +69,22 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 };
                 TgpModel.prototype.jbEditorSubNodes = function (path) {
                     var val = studio_path_1.profileFromPath(path);
-                    var comp = studio_utils_1.getComp(jb_core_1.jb.compName(val || {}));
+                    var compName = jb_core_1.jb.compName(val || {});
+                    var comp = studio_utils_1.getComp(compName);
                     if (Array.isArray(val))
                         return Object.getOwnPropertyNames(val)
                             .map(function (x) { return x == 'length' ? val.length : x; })
                             .map(function (k) { return path + '~' + k; });
+                    else if (val['$' + compName]) {
+                        return [path + '~$' + compName];
+                    }
                     else if (comp) {
                         var composite = jb_core_1.jb.entries(comp.params)
                             .filter(function (p) {
                             return p[1].composite;
                         })
-                            .map(function (p) { return flattenArray(p[0]); })[0];
-                        return (composite || []).concat(jb_core_1.jb.entries(comp.params)
+                            .map(function (p) { return flattenArray(p[0]); });
+                        return (composite[0] || []).concat(jb_core_1.jb.entries(comp.params)
                             .filter(function (p) { return !p[1].composite; })
                             .map(function (p) { return ({ path: path + '~' + p[0], param: p[1] }); })
                             .filter(function (e) { return studio_path_1.profileFromPath(e.path) != null || e.param.essential; })

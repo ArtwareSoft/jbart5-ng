@@ -82,7 +82,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
                             .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ toPaste: x[0], value: x[1] }); }); }));
                     this.options = this.options
-                        .filter(jb_onlyUniqueFunc(function (x) { return x.toPaste; }))
+                        .filter(jb_unique(function (x) { return x.toPaste; }))
                         .filter(function (x) { return x.toPaste != _this.tail; })
                         .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
                         .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; })

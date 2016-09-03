@@ -1,4 +1,4 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, jb_ui, jb_rx, Rx_1, core_1;
+    var jb_core_1, jb_ui, jb_rx, core_1;
     var TreeNodeLine, TreeNode;
     return {
         setters:[
@@ -22,9 +22,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
             },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
-            },
-            function (Rx_1_1) {
-                Rx_1 = Rx_1_1;
             },
             function (core_1_1) {
                 core_1 = core_1_1;
@@ -192,59 +189,60 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                     onRightClickOfExpanded: { type: 'action', dynamic: true },
                     autoFocus: { type: 'boolean' }
                 },
-                impl: function (context) {
-                    return {
-                        host: {
-                            '(keydown)': 'keydown.next($event)',
-                            'tabIndex': '0',
-                            '(mousedown)': 'getKeyboardFocus()',
-                        },
-                        init: function (cmp) {
-                            var tree = cmp.tree;
-                            cmp.keydown = cmp.keydown || new Rx_1.Subject();
-                            var keyDownNoAlts = cmp.keydown.filter(function (e) {
-                                return !e.ctrlKey && !e.altKey;
-                            });
-                            cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
-                                cmp.elementRef.nativeElement.focus();
-                                return false;
-                            });
-                            if (context.params.autoFocus)
-                                setTimeout(function () {
-                                    return cmp.elementRef.nativeElement.focus();
-                                }, 1);
-                            keyDownNoAlts
-                                .filter(function (e) { return e.keyCode == 13; })
-                                .subscribe(function (e) {
-                                return runActionInTreeContext(context.params.onEnter);
-                            });
-                            keyDownNoAlts.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
-                                .map(function (event) {
-                                //						event.stopPropagation();
-                                var diff = event.keyCode == 40 ? 1 : -1;
-                                var nodes = Array.from(tree.el.querySelectorAll('.treenode'));
-                                var selected = tree.el.querySelector('.treenode.selected');
-                                return tree.elemToPath(nodes[nodes.indexOf(selected) + diff]) || tree.selected;
-                            }).subscribe(function (x) {
-                                return tree.selectionEmitter.next(x);
-                            });
-                            // expand collapse
-                            keyDownNoAlts
-                                .filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; })
-                                .subscribe(function (event) {
-                                //						event.stopPropagation();
-                                var isArray = tree.nodeModel.isArray(tree.selected);
-                                if (!isArray || (tree.expanded[tree.selected] && event.keyCode == 39))
-                                    runActionInTreeContext(context.params.onRightClickOfExpanded);
-                                if (isArray && tree.selected)
-                                    tree.expanded[tree.selected] = (event.keyCode == 39);
-                            });
-                            function runActionInTreeContext(action) {
-                                jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
-                            }
+                impl: function (context) { return ({
+                    observable: function () { },
+                    host: {
+                        '(keydown)': 'keydownSrc.next($event)',
+                        'tabIndex': '0',
+                        '(mousedown)': 'getKeyboardFocus()',
+                    },
+                    init: function (cmp) {
+                        var tree = cmp.tree;
+                        cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+                        cmp.keydown = cmp.keydown || cmp.keydownSrc
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
+                        var keyDownNoAlts = cmp.keydown.filter(function (e) {
+                            return !e.ctrlKey && !e.altKey;
+                        });
+                        cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
+                            cmp.elementRef.nativeElement.focus();
+                            return false;
+                        });
+                        if (context.params.autoFocus)
+                            setTimeout(function () {
+                                return cmp.elementRef.nativeElement.focus();
+                            }, 1);
+                        keyDownNoAlts
+                            .filter(function (e) { return e.keyCode == 13; })
+                            .subscribe(function (e) {
+                            return runActionInTreeContext(context.params.onEnter);
+                        });
+                        keyDownNoAlts.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
+                            .map(function (event) {
+                            //						event.stopPropagation();
+                            var diff = event.keyCode == 40 ? 1 : -1;
+                            var nodes = Array.from(tree.el.querySelectorAll('.treenode'));
+                            var selected = tree.el.querySelector('.treenode.selected');
+                            return tree.elemToPath(nodes[nodes.indexOf(selected) + diff]) || tree.selected;
+                        }).subscribe(function (x) {
+                            return tree.selectionEmitter.next(x);
+                        });
+                        // expand collapse
+                        keyDownNoAlts
+                            .filter(function (e) { return e.keyCode == 37 || e.keyCode == 39; })
+                            .subscribe(function (event) {
+                            //						event.stopPropagation();
+                            var isArray = tree.nodeModel.isArray(tree.selected);
+                            if (!isArray || (tree.expanded[tree.selected] && event.keyCode == 39))
+                                runActionInTreeContext(context.params.onRightClickOfExpanded);
+                            if (isArray && tree.selected)
+                                tree.expanded[tree.selected] = (event.keyCode == 39);
+                        });
+                        function runActionInTreeContext(action) {
+                            jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
                         }
-                    };
-                }
+                    }
+                }); }
             });
             jb_core_1.jb.component('tree.regain-focus', {
                 type: 'action',
@@ -258,36 +256,37 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'rxjs/Rx', '@angular/core'],
                     key: { as: 'string', description: 'Ctrl+C or Alt+V' },
                     action: { type: 'action', dynamic: true },
                 },
-                impl: function (context, key, action) {
-                    return {
-                        host: {
-                            '(keydown)': 'keydown.next($event)',
-                            'tabIndex': '0',
-                            '(mousedown)': 'getKeyboardFocus()',
-                        },
-                        init: function (cmp) {
-                            var tree = cmp.tree;
-                            cmp.keydown = cmp.keydown || new Rx_1.Subject();
-                            cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () { cmp.elementRef.nativeElement.focus(); return false; });
-                            cmp.keydown.subscribe(function (event) {
-                                var keyCode = key.split('+').pop().charCodeAt(0);
-                                if (key == 'Delete')
-                                    keyCode = 46;
-                                if (key.match(/\+Up$/))
-                                    keyCode = 38;
-                                if (key.match(/\+Down$/))
-                                    keyCode = 40;
-                                var helper = (key.match('([A-Za-z]*)+') || ['', ''])[1];
-                                if (helper == 'Ctrl' && !event.ctrlKey)
-                                    return;
-                                if (helper == 'Alt' && !event.altKey)
-                                    return;
-                                if (event.keyCode == keyCode)
-                                    action(context.setData(tree.selected));
-                            });
-                        }
-                    };
-                }
+                impl: function (context, key, action) { return ({
+                    observable: function () { },
+                    host: {
+                        '(keydown)': 'keydownSrc.next($event)',
+                        'tabIndex': '0',
+                        '(mousedown)': 'getKeyboardFocus()',
+                    },
+                    init: function (cmp) {
+                        var tree = cmp.tree;
+                        cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+                        cmp.keydown = cmp.keydown || cmp.keydownSrc
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
+                        cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () { cmp.elementRef.nativeElement.focus(); return false; });
+                        cmp.keydown.subscribe(function (event) {
+                            var keyCode = key.split('+').pop().charCodeAt(0);
+                            if (key == 'Delete')
+                                keyCode = 46;
+                            if (key.match(/\+Up$/))
+                                keyCode = 38;
+                            if (key.match(/\+Down$/))
+                                keyCode = 40;
+                            var helper = (key.match('([A-Za-z]*)+') || ['', ''])[1];
+                            if (helper == 'Ctrl' && !event.ctrlKey)
+                                return;
+                            if (helper == 'Alt' && !event.altKey)
+                                return;
+                            if (event.keyCode == keyCode)
+                                action(context.setData(tree.selected));
+                        });
+                    }
+                }); }
             });
             jb_core_1.jb.component('tree.drag-and-drop', {
                 type: 'feature',

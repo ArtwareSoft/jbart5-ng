@@ -123,7 +123,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                     features: [
                                         { $: 'itemlist.selection',
                                             databind: '%$globals/page%',
-                                            onSelection: { $: 'onNextTimer', $debugger: 0,
+                                            onSelection: { $: 'onNextTimer',
                                                 action: { $: 'writeValue',
                                                     to: '%$globals/profile_path%',
                                                     value: '{%$globals/project%}.{%$globals/page%}'
