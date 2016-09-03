@@ -2,9 +2,9 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 
 jb.component('field.default', {
   type: 'feature',
-  params: {
-    value: { type: 'data'},
-  },
+  params: [
+    { id: 'value', type: 'data'},
+  ],
   impl: function(context,defaultValue) {
     var field = context.vars.field;
     if (field && field.getValue() == null)
@@ -14,10 +14,10 @@ jb.component('field.default', {
 
 jb.component('field.subscribe', {
   type: 'feature',
-  params: {
-    action: { type: 'action', essential: true, dynamic: true },
-    includeFirst: { type: 'boolean', as: 'boolean'},
-  },
+  params: [
+    { id: 'action', type: 'action', essential: true, dynamic: true },
+    { id: 'includeFirst', type: 'boolean', as: 'boolean'},
+  ],
   impl: (context,action,includeFirst) => ({
     init: cmp => {
       var field = context.vars.field;
@@ -33,9 +33,9 @@ jb.component('field.subscribe', {
 
 jb.component('field.toolbar', {
   type: 'feature',
-  params: {
-    toolbar: { type: 'control', essential: true, dynamic: true },
-  },
+  params: [
+    { id: 'toolbar', type: 'control', essential: true, dynamic: true },
+  ],
   impl: (context,toolbar) => ({
     extendComp: { jb_toolbar: toolbar() }
   })

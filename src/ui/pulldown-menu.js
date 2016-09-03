@@ -8,24 +8,24 @@ jb.component('pulldown.menu-item-separator', {
 
 jb.component('pulldown.menu-item-group', {
 	type: 'control',
-	params: {
-		title: { as: 'string', dynamic: true, essential: true },
-	},
+	params: [
+		{ id: 'title', as: 'string', dynamic: true, essential: true },
+	],
 	impl: ctx => 
 		jb_ui.Comp({ template: '<div class="pulldown-menu-separator"></div>'},ctx)
 })
 
 jb.component('pulldown.menu-item', {
 	type: 'control',
-	params: {
-		title: { as: 'string', dynamic: true, essential: true },
-		icon: { as: 'string' },
-		shortcut: { as: 'string' },
-		action: { type: 'action', dynamic: true },
-	    style: { type: 'pulldown-menu-item.style', defaultValue: { $: 'pulldown-menu-item.default' }, dynamic: true },
-		features: { type: 'feature[]', dynamic: true },
-		$click: { type: 'boolean'},
-	},
+	params: [
+		{ id: 'title', as: 'string', dynamic: true, essential: true },
+		{ id: 'icon', as: 'string' },
+		{ id: 'shortcut', as: 'string' },
+		{ id: 'action', type: 'action', dynamic: true },
+	    { id: 'style', type: 'pulldown-menu-item.style', defaultValue: { $: 'pulldown-menu-item.default' }, dynamic: true },
+		{ id: 'features', type: 'feature[]', dynamic: true },
+		{ id: '$click', type: 'boolean'},
+	],
 	  impl: function(context,title,icon,shortcut) {
 	    if (context.params.$click) try { context.params.action() } catch (e) { jb.logException(e) } // for test debug
 	    return jb_ui.ctrl(context).jbExtend({
@@ -54,9 +54,9 @@ jb.component('pulldown.menu-item', {
 
 jb.component('pulldown-menu-item.default', {
   type: 'button.style',
-  params: {
-	  icon: { as: 'string' }
-  },
+  params: [
+	  { id: 'icon', as: 'string' }
+  ],
   impl :{$: 'customStyle',
   	template: `<div><div class="line noselect" (click)="clicked()">
   		<i class="material-icons">{{icon}}</i><span class="title">{{title}}</span><span class="shortcut">{{shortcut}}</span>
@@ -74,12 +74,12 @@ jb.component('pulldown-menu-item.default', {
 
 jb.component('pulldown.topMenuItem', {
 	type: 'control',
-	params: {
-		title: { dynamic: true, as: 'string' },
-		style: { type: 'pulldownTopMenuItem.style', dynamic: true, defaultValue: { $: 'pulldownTopMenuItem.default' } },
-		controls: { type: 'control[]', dynamic: true, flattenArray: true },
-		open: { type: 'boolean'},
-	},
+	params: [
+		{ id: 'title', dynamic: true, as: 'string' },
+		{ id: 'style', type: 'pulldownTopMenuItem.style', dynamic: true, defaultValue: { $: 'pulldownTopMenuItem.default' } },
+		{ id: 'controls', type: 'control[]', dynamic: true, flattenArray: true },
+		{ id: 'open', type: 'boolean'},
+	],
 	impl: function(context) { 
 		var openPopup = function(ctx,cmp) {
 			return ctx.setVars({
@@ -153,9 +153,9 @@ jb.component('pulldownPopup.contextMenuPopup',{
 
 jb.component('group.menu-keyboard-selection', {
   type: 'feature',
-  params: {
-    autoFocus: { type: 'boolean' }
-  },
+  params: [
+    { id: 'autoFocus', type: 'boolean' }
+  ],
   impl: ctx => 
   	({
 	  observable: () => {},

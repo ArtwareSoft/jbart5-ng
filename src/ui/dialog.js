@@ -2,16 +2,16 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 
 jb.component('openDialog', {
 	type: 'action',
-	params: {
-		id: { as: 'string' },
-		style: { type: 'dialog.style', dynamic: true, defaultValue: { $:'dialog.default' }	},
-		content: { type: 'control', dynamic: true, defaultValue :{$: 'group'}, forceDefaultCreation: true },
-		menu: { type: 'control', dynamic: true },
-		title: { as: 'string', dynamic: true  },
-		onOK: { type: 'action', dynamic: true },
-		modal: { type: 'boolean', as: 'boolean' },
-		features: { type: 'dialogFeature[]', dynamic: true }
-	},
+	params: [
+		{ id: 'id', as: 'string' },
+		{ id: 'style', type: 'dialog.style', dynamic: true, defaultValue: { $:'dialog.default' }	},
+		{ id: 'content', type: 'control', dynamic: true, defaultValue :{$: 'group'}, forceDefaultCreation: true },
+		{ id: 'menu', type: 'control', dynamic: true },
+		{ id: 'title', as: 'string', dynamic: true  },
+		{ id: 'onOK', type: 'action', dynamic: true },
+		{ id: 'modal', type: 'boolean', as: 'boolean' },
+		{ id: 'features', type: 'dialogFeature[]', dynamic: true }
+	],
 	impl: function(context,id) {
 		var modal = context.params.modal;
 		var dialog = { 
@@ -44,9 +44,9 @@ jb.component('openDialog', {
 
 jb.component('closeContainingPopup', {
 	type: 'action',
-	params: {
-		OK: { type: 'boolean', as: 'boolean', defaultValue: true}
-	},
+	params: [
+		{ id: 'OK', type: 'boolean', as: 'boolean', defaultValue: true}
+	],
 	impl: function(context,OK) {
 		context.vars.$dialog && context.vars.$dialog.close({OK:OK});
 	}
@@ -79,10 +79,10 @@ jb.component('dialog.popup', {
 
 jb.component('dialogFeature.uniqueDialog', {
 	type: 'dialogFeature',
-	params: {
-		id: { as: 'string' },
-		remeberLastLocation: { type: 'boolean', as: 'boolean' }
-	},
+	params: [
+		{ id: 'id', as: 'string' },
+		{ id: 'remeberLastLocation', type: 'boolean', as: 'boolean' }
+	],
 	impl: function(context,id,remeberLastLocation) {
 		if (!id) return;
 		var dialog = context.vars.$dialog;
@@ -108,10 +108,10 @@ function fixDialogOverflow($control,$dialog,offsetLeft,offsetTop) {
 
 jb.component('dialogFeature.nearLauncherLocation', {
 	type: 'dialogFeature',
-	params: {
-		offsetLeft: { as: 'number', defaultValue: 0 },
-		offsetTop: { as: 'number' , defaultValue: 0 },
-	},
+	params: [
+		{ id: 'offsetLeft', as: 'number', defaultValue: 0 },
+		{ id: 'offsetTop', as: 'number' , defaultValue: 0 },
+	],
 	impl: function(context,offsetLeft,offsetTop) {
 		return {
 			afterViewInit: function(cmp) {
@@ -136,10 +136,10 @@ jb.component('dialogFeature.nearLauncherLocation', {
 
 jb.component('dialogFeature.launcherLocationNearSelectedNode', {
 	type: 'dialogFeature',
-	params: {
-		offsetLeft: { as: 'number' },
-		offsetTop: { as: 'number' },
-	},
+	params: [
+		{ id: 'offsetLeft', as: 'number' },
+		{ id: 'offsetTop', as: 'number' },
+	],
 	impl: function(context, offsetLeft, offsetTop) {
 		return {
 			afterViewInit: function(cmp) {
@@ -155,9 +155,9 @@ jb.component('dialogFeature.launcherLocationNearSelectedNode', {
 
 jb.component('dialogFeature.onClose', {
 	type: 'dialogFeature',
-	params: {
-		action: { type: 'action', dynamic: true}
-	},
+	params: [
+		{ id: 'action', type: 'action', dynamic: true}
+	],
 	impl: function(context,action) { 
 		context.vars.$dialog.em
 			.filter(e => e.type == 'close')
@@ -231,9 +231,9 @@ jb.component('dialogFeature.cssClassOnLaunchingControl', {
 
 jb.component('dialogFeature.maxZIndexOnClick', {
 	type: 'dialogFeature',
-	params: {
-		minZIndex: { as: 'number'}
-	},
+	params: [
+		{ id: 'minZIndex', as: 'number'}
+	],
 	impl: function(context,minZIndex) {
 		var dialog = context.vars.$dialog;
 
@@ -256,9 +256,9 @@ jb.component('dialogFeature.maxZIndexOnClick', {
 
 jb.component('dialogFeature.dragTitle', {
 	type: 'dialogFeature',
-	params: {
-		id: { as: 'string' }
-	},
+	params: [
+		{ id: 'id', as: 'string' }
+	],
 	impl: function(context, id) { 
 		var dialog = context.vars.$dialog;
 		return {

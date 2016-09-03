@@ -17,12 +17,12 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/sidenav/sidenav'], func
             jb_ui.registerDirectives({ MD_SIDENAV_DIRECTIVES: sidenav_1.MD_SIDENAV_DIRECTIVES });
             jb_core_1.jb.component('sidenav.md', {
                 type: 'sidenav.style',
-                params: {
-                    width: { as: 'number' },
-                    align: { options: 'start,end', as: 'string' },
-                    mode: { options: 'over,push,side', as: 'string' },
-                    opened: { as: 'boolean', type: 'boolean' }
-                },
+                params: [
+                    { id: 'width', as: 'number' },
+                    { id: 'align', options: 'start,end', as: 'string' },
+                    { id: 'mode', options: 'over,push,side', as: 'string' },
+                    { id: 'opened', as: 'boolean', type: 'boolean' }
+                ],
                 impl: { $: 'customStyle',
                     template: "<md-sidenav-layout>\n      <md-sidenav>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" align=\"%$align%\" mode=\"%$mode%\"></jb_comp>\n      </md-sidenav>\n      </md-sidenav-layout>",
                     css: "md-sidenav { width: %$width%px }",

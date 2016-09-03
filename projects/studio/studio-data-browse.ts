@@ -3,10 +3,10 @@ import * as jb_ui from 'jb-ui';
 
 jb.component('studio.open-resource', {
 	type: 'action',
-	params: {
-	    resource: { type: 'data' },
-	    id: { as: 'string' }
-	}, 
+	params: [
+	    { id: 'resource', type: 'data' },
+	    { id: 'id', as: 'string' }
+	], 
 	impl :{$: 'openDialog',
 		title: '%$id%',
 		style :{$: 'dialog.studio-floating', id: 'resource %$id%', width: 500 },

@@ -10,9 +10,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('studio.pickAndOpen', {
                 type: 'action',
-                params: {
-                    from: { options: 'studio,preview', as: 'string', defaultValue: 'preview' }
-                },
+                params: [
+                    { id: 'from', options: 'studio,preview', as: 'string', defaultValue: 'preview' }
+                ],
                 impl: { $: 'studio.pick',
                     from: '%$from%',
                     onSelect: [
@@ -103,9 +103,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio_button.toolbarButton', {
                 type: 'button.style',
-                params: {
-                    spritePosition: { as: 'string', defaultValue: '0,0' }
-                },
+                params: [
+                    { id: 'spritePosition', as: 'string', defaultValue: '0,0' }
+                ],
                 impl: function (context, spritePosition) {
                     return {
                         jbTemplate: '<button (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',

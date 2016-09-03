@@ -2,11 +2,11 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 
 jb.component('tabs', {
 	type: 'control',
-	params: {
-		tabs: { type: 'control[]', essential: true, flattenArray: true, dynamic: true },
-		style: { type: 'tabs.style', dynamic: true, defaultValue: { $: 'tabs.simple' } },
-		features: { type: 'feature[]', dynamic: true },
-	},
+	params: [
+		{ id: 'tabs', type: 'control[]', essential: true, flattenArray: true, dynamic: true },
+		{ id: 'style', type: 'tabs.style', dynamic: true, defaultValue: { $: 'tabs.simple' } },
+		{ id: 'features', type: 'feature[]', dynamic: true },
+	],
   impl: function(context) { 
     return jb_ui.ctrl(context).jbExtend({
       beforeInit(cmp) {

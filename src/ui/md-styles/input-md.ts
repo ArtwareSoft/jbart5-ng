@@ -6,9 +6,9 @@ jb_ui.registerDirectives({MdInput: MdInput});
 
 jb.component('editable-text.md-input',{
   type: 'editable-text.style',
-  params: {
-    width: { as: 'number' }
-  },
+  params: [
+    { id: 'width', as: 'number' }
+  ],
   impl :{$: 'customStyle', 
    features :{$: 'editable-text.bindField' },
    template: `<div><md-input %$field.modelExp% placeholder="{{title}}"></md-input></div>`,

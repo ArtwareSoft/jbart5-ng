@@ -71,9 +71,9 @@ jb.component('studio.openNewCtrlDialog', {
 
 jb.component('studio.onNextModifiedPath', {
 	type: 'action',
-	params: {
-		action: { type: 'action', dynamic: true, essential: true }
-	},
+	params: [
+		{ id: 'action', type: 'action', dynamic: true, essential: true }
+	],
 	impl: (ctx,action) =>  
 		modifyOperationsEm.take(1)
             .subscribe(e =>

@@ -5,20 +5,20 @@ jb.type('editable-number.style');
 
 jb.component('editable-number',{
   type: 'control',
-  params: {
-    databind: { as: 'ref'},
-    title: { as: 'string' , dynamic: true },
-    style: { type: 'editable-number.style', defaultValue: { $: 'editable-number.input' }, dynamic: true },
-    symbol: { as: 'string', description: 'leave empty to parse symbol from value' },
-    min: { as: 'number' },
-    max: { as: 'number' },
-    displayString: { as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
-    dataString: { as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
+  params: [
+    { id: 'databind', as: 'ref'},
+    { id: 'title', as: 'string' , dynamic: true },
+    { id: 'style', type: 'editable-number.style', defaultValue: { $: 'editable-number.input' }, dynamic: true },
+    { id: 'symbol', as: 'string', description: 'leave empty to parse symbol from value' },
+    { id: 'min', as: 'number' },
+    { id: 'max', as: 'number' },
+    { id: 'displayString', as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
+    { id: 'dataString', as: 'string', dynamic: true, defaultValue: '%$Value%%$Symbol%' },
 
-    step: { as: 'number', defaultValue: 1, description: 'used by slider' },
-    initialPixelsPerUnit: { as: 'number', description: 'used by slider' },
-    features: { type: 'feature[]', dynamic: true },
-  },
+    { id: 'step', as: 'number', defaultValue: 1, description: 'used by slider' },
+    { id: 'initialPixelsPerUnit', as: 'number', description: 'used by slider' },
+    { id: 'features', type: 'feature[]', dynamic: true },
+  ],
   impl: (context,databind,title,style,symbol,min,max,displayString,dataString,step,initialPixelsPerUnit) => {
     var ctx = context.setVars({ 
       editableNumber: new editableNumber(symbol,min,max,displayString,dataString,step||1,initialPixelsPerUnit),

@@ -19,11 +19,11 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
         execute: function() {
             jb_core_1.jb.component('suggestions-test', {
                 type: 'test',
-                params: {
-                    expression: { as: 'string' },
-                    selectionStart: { as: 'number', defaultValue: -1 },
-                    expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
-                },
+                params: [
+                    { id: 'expression', as: 'string' },
+                    { id: 'selectionStart', as: 'number', defaultValue: -1 },
+                    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' }
+                ],
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
                         var params = ctx.componentContext.params;
@@ -37,11 +37,11 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
             });
             jb_core_1.jb.component('studio-tree-children-test', {
                 type: 'test',
-                params: {
-                    path: { as: 'string' },
-                    childrenType: { as: 'string', type: ',jb-editor' },
-                    expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'childrenType', as: 'string', type: ',jb-editor' },
+                    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' }
+                ],
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
                         var params = ctx.componentContext.params;
@@ -57,24 +57,17 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
             });
             jb_core_1.jb.component('jb-path-test', {
                 type: 'test',
-                params: {
-                    controlWithMark: { type: 'control', dynamic: true },
-                    staticPath: { as: 'string' },
-                    expectedDynamicCounter: { as: 'number' },
-                    probeCheck: { type: 'boolean', dynamic: true, as: 'boolean' }
-                },
+                params: [
+                    { id: 'controlWithMark', type: 'control', dynamic: true },
+                    { id: 'staticPath', as: 'string' },
+                    { id: 'expectedDynamicCounter', as: 'number' },
+                    { id: 'probeCheck', type: 'boolean', dynamic: true, as: 'boolean' }
+                ],
                 impl: function (ctx, control, staticPath, expectedDynamicCounter, probeCheck) {
                     var testId = ctx.vars.testID;
-                    // ********** static path
                     var probProf = findProbeProfile(control.profile);
                     if (!probProf)
                         return;
-                    // var static_path = jb_ui.profilePath(probProf.$parent ? probProf.$parent : probProf);
-                    // if (probProf.$parent)
-                    //   static_path += '~' + probProf.$prop;
-                    // var static_path = static_path.replace('~controlWithMark','');
-                    // var staticPathTst = (static_path.split('controlWithMark~')[1] == staticPath) ? jb_rx.Observable.of(success('static path')) :
-                    //   jb_rx.Observable.of(failure('static path','static paths match error: ' + staticPathTst + ' expected ' + staticPath ));
                     // ********** dynamic counter
                     var static_path = testId + '~' + staticPath;
                     var probeObs = new studio_probe_1.Probe(static_path, jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' }), true).observable();
@@ -126,63 +119,3 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
         }
     }
 });
-// jb.component('studio-test', {
-//   params: {
-//     project : { as: 'string', defaultValue: 'hello-world'},
-//     page : { as: 'string', defaultValue: 'group1'},
-//     profile_path: { as: 'string', defaultValue: 'hello-world.group1'},
-//     control: { type: 'control', dynamic: true },
-//     expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
-//   },
-//   impl :{$: 'ng2-ui-test', 
-//     control :{$: 'group',
-//       features :
-//         [ 
-//           { $: 'feature.init', action:
-//             [
-//               { $: 'writeValue', to: '%$globals/project%', value: '%$project%' },
-//               { $: 'writeValue', to: '%$globals/page%', value: '%$page%' },
-//               { $: 'writeValue', to: '%$globals/profile_path%', value: '%$profile_path%' },
-//             ]
-//           },
-//           { $: 'feature.emitter', varName: 'studioTestEm' }
-//         ],
-//       controls: [
-//         { $: 'studio.renderWidget' },
-//         { $: 'group', 
-//             controls :{$: 'group',
-//                 features :{$: 'feature.afterLoad', action :{$: 'rx.emit', from: 'ready', to: '%$studioTestEm%' }},
-//                 controls :{$call: 'control' } 
-//             },
-//             features :{$: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }}
-//         }
-//       ]
-//     },
-//     expectedHtmlResult: { $call: 'expectedHtmlResult' }
-//   }
-// })
-// jb.component('run-studio-test', {
-//   params: { 
-//     project : { as: 'string', defaultValue: 'hello-world'},
-//     page : { as: 'string', defaultValue: 'group1'},
-//     profile_path: { as: 'string', defaultValue: 'hello-world.group1'},
-//     control : { dynamic: true },
-//   },
-//   impl :{$: 'group',
-//     features :{$: 'feature.init', action: [
-//       { $: 'writeValue', to: '%$globals/project%', value: '%$project%' },
-//       { $: 'writeValue', to: '%$globals/page%', value: '%$page%' },
-//       { $: 'writeValue', to: '%$globals/profile_path%', value: '%$profile_path%' },
-//     ] },
-//     controls: [
-//       { $: 'studio.renderWidget' },
-//       { $: 'group', controls: { $call: 'control' }, 
-//           atts: {style: 'margin-left: 100px'},
-//           features : [
-//             { $: 'group.wait', for :{$: 'studio.waitForPreviewIframe' }},
-//           ]
-//         }
-//     ]
-//   }
-// })
-//  

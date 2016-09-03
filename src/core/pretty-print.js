@@ -22,11 +22,11 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
   return { result : result, positions : positions }
 
   function sortedPropertyNames(obj) {
-    var props = jb_entries(obj).map(x=>x[0]) // keep the order
+    var props = jb_entries(obj).map(x=>x[0]) // try to keep the order
       .filter(p=>p.indexOf('$jb') != 0)
-    var comp_name = jb_compName(profile);
-    if (comp_name) { // tgp obj
-      var params = jb_entries((jbart.comps[comp_name] || {}).params || {}).map(x=>x[0]);
+    var comp_name = jb_compName(obj);
+    if (comp_name) { // tgp obj - sort by params def
+      var params = ((jbart.comps[comp_name] || {}).params || []).map(p=>p.id);
       props.sort((p1,p2)=>params.indexOf(p1) - params.indexOf(p2));
     }
     if (props.indexOf('$') > 0) { // make the $ first

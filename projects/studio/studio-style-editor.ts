@@ -3,9 +3,9 @@ import {model} from './studio-tgp-model';
 
 jb.component('studio.open-style-editor', {
 	type: 'action',
-	  params: {
-	    path: { as: 'string' }
-	  }, 
+	  params: [
+	    { id: 'path', as: 'string' }
+	  ], 
 	impl :{$: 'openDialog',
     $vars: {
       styleSource :{$: 'studio.style-source', path: '%$path%' }
@@ -23,9 +23,9 @@ jb.component('studio.open-style-editor', {
 
 jb.component('studio.open-style-menu', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
     style :{$: 'pulldownPopup.contextMenuPopup' }, 
     content :{$: 'group',
@@ -62,9 +62,9 @@ jb.component('studio.open-style-menu', {
 
 jb.component('studio.style-editor', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     style :{$: 'property-sheet.titles-above' }, 
     controls: [
@@ -85,17 +85,17 @@ jb.component('studio.style-editor', {
 })
 
 jb.component('studio.style-source', {
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl: (ctx,path) =>
     model.getStyleComp(path) 
 })
 
 jb.component('studio.format-css', {
-  params: {
-    css: { as: 'string' }
-  }, 
+  params: [
+    { id: 'css', as: 'string' }
+  ], 
   impl: (ctx,css) => {
     return css
       .replace(/{\s*/g,'{ ')
@@ -107,9 +107,9 @@ jb.component('studio.format-css', {
 
 jb.component('studio.open-make-global-style', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  },
+  params: [
+    { id: 'path', as: 'string' }
+  ],
   impl :{$: 'openDialog', 
     modal: true, 
     title: 'Style Name', 
@@ -135,9 +135,9 @@ jb.component('studio.open-make-global-style', {
 })
 
 jb.component('studio.custom-style-make-local', {
-  params: {
-    template: { as: 'string'},
-    css: { as: 'string'},
-  },
+  params: [
+    { id: 'template', as: 'string'},
+    { id: 'css', as: 'string'},
+  ],
   impl: {$: 'object', template: '%$template%', css: '%$css%' }
 })

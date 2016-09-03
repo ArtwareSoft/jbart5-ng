@@ -4,12 +4,12 @@ jb.type('group.style');
 
 jb.component('group',{
   type: 'control',
-  params: {
-    title: { as: 'string' , dynamic: true },
-    style: { type: 'group.style', defaultValue: { $: 'group.section' }, essential: true , dynamic: true },
-    controls: { type: 'control[]', essential: true, flattenArray: true, dynamic: true },
-    features: { type: 'feature[]', dynamic: true },
-  },
+  params: [
+    { id: 'title', as: 'string' , dynamic: true },
+    { id: 'style', type: 'group.style', defaultValue: { $: 'group.section' }, essential: true , dynamic: true },
+    { id: 'controls', type: 'control[]', essential: true, flattenArray: true, dynamic: true },
+    { id: 'features', type: 'feature[]', dynamic: true },
+  ],
   impl: function(context) { 
     return jb_ui.ctrl(context).jbExtend({
       beforeInit(cmp) {
@@ -55,11 +55,11 @@ jb.component('group.dynamic-sub-titles', {
 
 jb.component('dynamic-controls', {
   type: 'control',
-  params: {
-    controlItems: { type: 'data', as: 'array', essential: true, dynamic: true },
-    genericControl: { type: 'control', essential: true, dynamic: true },
-    itemVariable: { as: 'string', defaultValue: 'controlItem'}
-  },
+  params: [
+    { id: 'controlItems', type: 'data', as: 'array', essential: true, dynamic: true },
+    { id: 'genericControl', type: 'control', essential: true, dynamic: true },
+    { id: 'itemVariable', as: 'string', defaultValue: 'controlItem'}
+  ],
   impl: function(context,controlItems,genericControl,itemVariable) {
     return controlItems()
       .map(controlItem => jb_tosingle(genericControl(
@@ -86,16 +86,16 @@ jb.component('group.section', {
 
 jb.component('wait', {
   type: 'control',
-  params: {
-    title: { as: 'string' , dynamic: true },
-    for: { essential: true },
-    resource: { as: 'string' },
-    dataVariable: { as: 'string' },
-    mapToResource: { dynamic: true, defaultValue: '%%' },
-    control: { type: 'control' , dynamic: true },
-    loadingControl: { type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
-    errorControl: { type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
-  },
+  params: [
+    { id: 'title', as: 'string' , dynamic: true },
+    { id: 'for', essential: true },
+    { id: 'resource', as: 'string' },
+    { id: 'dataVariable', as: 'string' },
+    { id: 'mapToResource', dynamic: true, defaultValue: '%%' },
+    { id: 'control', type: 'control' , dynamic: true },
+    { id: 'loadingControl', type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
+    { id: 'errorControl', type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
+  ],
   impl :{$: 'group', 
       controls :{$: 'group',
           controls :{$call: 'control' },

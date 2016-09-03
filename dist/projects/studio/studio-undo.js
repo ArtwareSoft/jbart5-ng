@@ -73,13 +73,13 @@ System.register(['jb-core', 'jb-ui', './studio-utils'], function(exports_1, cont
                 impl: function (ctx) { return undo.redo(ctx); }
             });
             jb_core_1.jb.component('studio.copy', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (ctx, path) {
                     return undo.copy(ctx, path);
                 }
             });
             jb_core_1.jb.component('studio.paste', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (ctx, path) {
                     return undo.paste(ctx, path);
                 }

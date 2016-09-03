@@ -4,12 +4,12 @@ jb.type('editable-text.style');
 
 jb.component('editable-text',{
   type: 'control',
-  params: {
-    title: { as: 'string' , dynamic: true },
-    databind: { as: 'ref'},
-    style: { type: 'editable-text.style', defaultValue: { $: 'editable-text.input' }, dynamic: true },
-    features: { type: 'feature[]', dynamic: true },
-  },
+  params: [
+    { id: 'title', as: 'string' , dynamic: true },
+    { id: 'databind', as: 'ref'},
+    { id: 'style', type: 'editable-text.style', defaultValue: { $: 'editable-text.input' }, dynamic: true },
+    { id: 'features', type: 'feature[]', dynamic: true },
+  ],
   impl: ctx => 
   	jb_ui.ctrl(ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) }))
 });

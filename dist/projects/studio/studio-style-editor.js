@@ -13,9 +13,9 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
         execute: function() {
             jb_core_1.jb.component('studio.open-style-editor', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     $vars: {
                         styleSource: { $: 'studio.style-source', path: '%$path%' }
@@ -32,9 +32,9 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
             });
             jb_core_1.jb.component('studio.open-style-menu', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',
@@ -70,9 +70,9 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
             });
             jb_core_1.jb.component('studio.style-editor', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     style: { $: 'property-sheet.titles-above' },
                     controls: [
@@ -92,17 +92,17 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                 }
             });
             jb_core_1.jb.component('studio.style-source', {
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: function (ctx, path) {
                     return studio_tgp_model_1.model.getStyleComp(path);
                 }
             });
             jb_core_1.jb.component('studio.format-css', {
-                params: {
-                    css: { as: 'string' }
-                },
+                params: [
+                    { id: 'css', as: 'string' }
+                ],
                 impl: function (ctx, css) {
                     return css
                         .replace(/{\s*/g, '{ ')
@@ -113,9 +113,9 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
             });
             jb_core_1.jb.component('studio.open-make-global-style', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     modal: true,
                     title: 'Style Name',
@@ -140,10 +140,10 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                 }
             });
             jb_core_1.jb.component('studio.custom-style-make-local', {
-                params: {
-                    template: { as: 'string' },
-                    css: { as: 'string' },
-                },
+                params: [
+                    { id: 'template', as: 'string' },
+                    { id: 'css', as: 'string' },
+                ],
                 impl: { $: 'object', template: '%$template%', css: '%$css%' }
             });
         }

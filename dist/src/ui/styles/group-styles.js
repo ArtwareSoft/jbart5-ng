@@ -56,39 +56,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: { $: 'group.initGroup' }
                 },
             });
-            // jb.component('group.expandable-subgroups-old', {
-            //   type: 'group.style',
-            //   params: {
-            //     icon: { as: 'string ', defaultValue: 'code' }
-            //   },
-            //   impl :{$: 'customStyle', 
-            //       features :{$: 'group.initGroup' },
-            //       methods: {
-            //         init: ctx => cmp => {
-            //           cmp.selected = cmp.ctrls[0];
-            //           cmp.select = function(ctrl) {
-            //             cmp.selected = ctrl;
-            //           }
-            //         }
-            //     },
-            //     template: `<section class="jb-group">
-            //         <section *ngFor="let ctrl of ctrls" class="md-whiteframe-z3" [ngClass]="{'open': selected==ctrl}">
-            //           <md-toolbar class="md-primary">
-            //             <div class="md-toolbar-tools">
-            //               <h3>{{ ctrl.title }}</h3>
-            //               <span flex></span>
-            //               <button md-button
-            //                       class="md-icon-button"
-            //                       aria-label="Open"
-            //                       (click)="select(ctrl)">
-            //                 <i md-icon>%$icon%</i>
-            //               </button>
-            //             </div>
-            //           </md-toolbar>
-            //           <jb_comp *ngIf="selected==ctrl" [comp]="ctrl.comp"></jb_comp>
-            //       </section></section>`,
-            //   }
-            // })
             jb_core_1.jb.component('toolbar.simple', {
                 type: 'group.style',
                 impl: { $: 'customStyle',

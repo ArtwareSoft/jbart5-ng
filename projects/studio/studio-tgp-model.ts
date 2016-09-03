@@ -68,14 +68,14 @@ export class TgpModel {
 		else if (val['$'+compName]) { // sugar
 			return [path + '~$' + compName];
 		} else if (comp) {
-			var composite = jb.entries(comp.params)
+			var composite = (comp.params || [])
 				.filter(p=>
-					p[1].composite)
-				.map(p=>flattenArray(p[0]));
+					p.composite)
+				.map(p=>flattenArray(p.id));
 
-			return (composite[0] || []).concat(jb.entries(comp.params)
+			return (composite[0] || []).concat((comp.params || [])
 					.filter(p=>!p[1].composite)
-					.map(p=> ({ path: path + '~' + p[0], param: p[1]}))
+					.map(p=> ({ path: path + '~' + p.id, param: p}))
 					.filter(e=>profileFromPath(e.path) != null || e.param.essential)
 					.map(e=>e.path)
 				)
@@ -98,8 +98,8 @@ export class TgpModel {
 		var comp = getComp(jb.compName(val||{}));
 		if (comp) {
 			var existing = this.jbEditorSubNodes(path);
-			return jb.entries(comp.params)
-					.map(p=> path + '~' + p[0])
+			return (comp.params || [])
+					.map(p=> path + '~' + p.id)
 					.filter(p=> existing.indexOf(p) == -1)
 		}
 		return [];
@@ -198,6 +198,7 @@ export class TgpModel {
 	modify(op,path,args,ctx) {
 		var comp = path.split('~')[0];
 		var before = getComp(comp) && compAsStr(comp);
+		console.log('modify',path,before);
 		op.call(this,path,args);
 		modifyOperationsEm.next({ 
 			comp: comp, 
@@ -273,9 +274,9 @@ export class TgpModel {
 	}
 	wrap(path,args) {
 		var compDef = getComp(args.compName);
-		var paramNames = Object.getOwnPropertyNames((compDef || {}).params);
-		if (paramNames[0]) {
-			var result = jb.extend({$: args.compName}, jb.obj(paramNames[0],[ profileFromPath(path) ]));
+		var firstParam = ((compDef || {}).params || [])[0];
+		if (firstParam) {
+			var result = jb.extend({ $: args.compName }, jb.obj(firstParam.id, [profileFromPath(path)]));
 			jb.writeValue(profileRefFromPath(path),result);
 		}
 	}
@@ -319,13 +320,13 @@ export class TgpModel {
 		var existing = profileFromPath(path);
 		// copy properties from existing & default values
 		if (existing && typeof existing == 'object')
-			jb.entries(comp.params).forEach(p=>{
-				if (existing[p[0]])
-					result[p[0]] = existing[p[0]];
-				if (typeof p[1].defaultValue != 'object')
-					result[p[0]] = p[1].defaultValue
-				if (typeof p[1].defaultValue == 'object' && p[1].forceDefaultCreation)
-					result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue));
+			(comp.params || []).forEach(p=>{
+				if (existing[p.id])
+					result[p.id] = existing[p.id];
+				if (typeof p.defaultValue != 'object')
+					result[p.id] = p.defaultValue
+				if (typeof p.defaultValue == 'object' && p.forceDefaultCreation)
+					result[p.id] = JSON.parse(JSON.stringify(p.defaultValue));
 			})
 		jb.writeValue(profileRefFromPath(path),result);
 	}
@@ -336,9 +337,9 @@ export class TgpModel {
 		if (!compName || !comp) return;
 		var result = { $: compName };
 		// copy default values
-		jb.entries(comp.params).forEach(p=>{
-			if (p[1].defaultValue)
-				result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue))
+		(comp.params || []).forEach(p=>{
+			if (p.defaultValue)
+				result[p.id] = JSON.parse(JSON.stringify(p.defaultValue))
 		})
 		// find group parent that can insert the control
 		var group_path = path;
@@ -360,10 +361,10 @@ export class TgpModel {
 
 		var profile = profileFromPath(path);
 		// inject conditional param values
-		jb.entries(comp.params)
+		(comp.params||[])
 			.forEach(p=>{ 
-				var pUsage = '%$'+p[0]+'%';
-				var pVal = '' + (profile[p[0]] || p[1].defaultValue || '');
+				var pUsage = '%$'+p.id+'%';
+				var pVal = '' + (profile[p.id] || p.defaultValue || '');
 				res = res.replace(new RegExp('{\\?(.*?)\\?}','g'),(match,condition_exp)=>{ // conditional exp
 						if (condition_exp.indexOf(pUsage) != -1)
 							return pVal ? condition_exp : '';
@@ -371,10 +372,10 @@ export class TgpModel {
 					});
 			})
 		// inject param values 
-		jb.entries(comp.params)
+		(comp.params||[])
 			.forEach(p=>{ 
-				var pVal = '' + (profile[p[0]] || p[1].defaultValue || ''); // only primitives
-				res = res.replace(new RegExp(`%\\$${p[0]}%`,'g') , pVal);
+				var pVal = '' + (profile[p.id] || p.defaultValue || ''); // only primitives
+				res = res.replace(new RegExp(`%\\$${p.id}%`,'g') , pVal);
 			})
 
 		jb.writeValue(profileRefFromPath(path),evalProfile(res));
@@ -397,11 +398,9 @@ export class TgpModel {
 			path = parentPath(path);
 		var parent_prof = profileFromPath(parentPath(path),true);
 		var compDef = parent_prof && getComp(jb.compName(parent_prof));
-		var params = (compDef || {}).params;
+		var params = (compDef || {}).params || [];
 		var paramName = path.split('~').pop();
-		return jb.entries(params)
-			.filter(p=>p[0]==paramName)
-			.map(p=>p[1])[0] || {};
+		return params.filter(p=>p.id==paramName)[0] || {};
 	}
 
 	paramType(path) {
@@ -413,7 +412,7 @@ export class TgpModel {
 	PTsOfType(type,jbartToLook) {
 		var types = [].concat.apply([],(type||'').split(',')
 			.map(x=>
-				x.match(/([^\[]*)([])?/)[1])
+				x.match(/([^\[\]*)([])?/)[1])
 			.map(x=> 
 				x=='data' ? ['data','aggregator'] : [x]));
 		var comp_arr = types.map(t=>jb_entries((jbartToLook || jbart_base()).comps)
@@ -430,17 +429,16 @@ export class TgpModel {
 	controlParams(path) {
 		var prof = profileFromPath(path,true);
 		if (!prof) return [];
-		var params = (getComp(jb.compName(prof)) || {}).params;
-		return jb.entries(params).filter(p=>(p[1].type||'').indexOf('control')!=-1).map(p=>p[0])
+		var params = (getComp(jb.compName(prof)) || {}).params || [];
+		return params.filter(p=>(p.type||'').indexOf('control')!=-1).map(p=>p.id)
 	}
 	nonControlParams(path) {
 		var prof = profileFromPath(path);
 		if (!prof) return [];
-		var params = (getComp(jb.compName(prof)) || {}).params;
-		return jb.entries(params)
-			.filter(p=>
-				(p[1].type||'').indexOf('control')==-1)
-			.map(p=>p[0])
+		var params = (getComp(jb.compName(prof)) || {}).params || [];
+		return params.filter(p=>
+				(p.type||'').indexOf('control')==-1)
+			.map(p=>p.id)
 	}
 
 	getOrCreateArray(path) {
@@ -507,97 +505,97 @@ export function groups_of_data(dataComps) {
 // ************** components
 
 jb.component('studio.short-title',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.shortTitle(path)
 })
 
 jb.component('studio.val',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.val(path)
 })
 
 jb.component('studio.is-primitive-value', {
-  params: { path: { as: 'string' } },
+  params: [ {id: 'path', as: 'string' } ],
   impl: (context,path) => 
       typeof model.val(path) == 'string'
 })
 
 jb.component('studio.is-of-type', {
-  params: { 
-  	path: { as: 'string', essential: true },
-  	type: { as: 'string', essential: true },
-  },
+  params: [ 
+  	{ id: 'path', as: 'string', essential: true },
+  	{ id: 'type', as: 'string', essential: true },
+  ],
   impl: (context,path,_type) => 
       model.isOfType(path,_type)
 })
 
 jb.component('studio.PTs-of-type', {
-  params: { 
-  	type: { as: 'string', essential: true },
-  },
+  params: [ 
+  	{ id: 'type', as: 'string', essential: true },
+  ],
   impl: (context,_type) => 
       model.PTsOfType(_type)
 })
 
 jb.component('studio.short-title', {
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.shortTitle(path)
 })
 
 jb.component('studio.has-param', {
-	params: { 
-		path: { as: 'string' }, 
-		param: { as: 'string' }, 
-	},
+	params: [ 
+		{ id: 'path', as: 'string' }, 
+		{ id: 'param', as: 'string' }, 
+	],
 	impl: (context,path,param) => 
 		model.paramDef(path+'~'+param)
 })
 
 jb.component('studio.non-control-children',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.children(path,'non-controls')
 })
 
 jb.component('studio.array-children',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.children(path,'array')
 })
 
 jb.component('studio.compName',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.compName(path) || ''
 })
 
 jb.component('studio.paramDef',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.paramDef(path)
 })
 
 jb.component('studio.enum-options',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		((model.paramDef(path) || {}).options ||'').split(',').map(x=>{return {code:x,text:x}})
 })
 
 jb.component('studio.prop-name',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.propName(path)
 })
 
 jb.component('studio.more-params',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
         model.jbEditorMoreParams(path)
 })
 
 
 jb.component('studio.compName-ref',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => { return {
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') 
@@ -611,60 +609,60 @@ jb.component('studio.compName-ref',{
 
 jb.component('studio.insertComp',{
 	type: 'action',
-	params: { 
-		path: { as: 'string' },
-		comp: { as: 'string' },
-	},
+	params: [ 
+		{ id: 'path', as: 'string' },
+		{ id: 'comp', as: 'string' },
+	],
 	impl: (context,path,comp) => 
 		model.modify(model.insertComp, path, { comp: comp },context)
 })
 
 jb.component('studio.wrap', {
 	type: 'action',
-	params: { 
-		path: { as: 'string' }, 
-		compName: { as: 'string' } 
-	},
+	params: [ 
+		{ id: 'path', as: 'string' }, 
+		{ id: 'compName', as: 'string' } 
+	],
 	impl: (context,path,compName) => 
 		model.modify(model.wrap, path, {compName: compName},context)
 })
 
 jb.component('studio.wrapWithGroup', {
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.wrapWithGroup, path, {},context)
 })
 
 jb.component('studio.addProperty', {
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.addProperty, path, {},context)
 })
 
 jb.component('studio.wrapWithPipeline', {
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.wrapWithPipeline, path, {},context)
 })
 
 jb.component('studio.duplicate',{
 	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
+	params: [ 
+		{ id: 'path', as: 'string' },
+	],
 	impl: (context,path) => 
 		model.modify(model.duplicate, path, {},context)
 })
 
 jb.component('studio.moveInArray',{
 	type: 'action',
-	params: { 
-		path: { as: 'string' },
-		moveUp: { type: 'boolean', as: 'boolean'} 
-	},
+	params: [ 
+		{ id: 'path', as: 'string' },
+		{ id: 'moveUp', type: 'boolean', as: 'boolean'} 
+	],
 	impl: (context,path,moveUp) => 
 		model.modify(model.moveInArray, 
 					path, { moveUp: moveUp },context)
@@ -672,7 +670,7 @@ jb.component('studio.moveInArray',{
 
 jb.component('studio.newArrayItem',{
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.addArrayItem, path, {},context)
 })
@@ -680,20 +678,20 @@ jb.component('studio.newArrayItem',{
 
 jb.component('studio.delete',{
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.modify(model._delete,path,{},context)
 })
 
 jb.component('studio.make-local',{
 	type: 'action',
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context)
 })
 
 jb.component('studio.projectSource',{
-	params: { 
-		project: { as: 'string', defaultValue: '%$globals/project%' } 
-	},
+	params: [ 
+		{ id: 'project', as: 'string', defaultValue: '%$globals/project%' } 
+	],
 	impl: (context,project) => {
 		if (!project) return;
 		var comps = jb.entries(jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
@@ -702,9 +700,9 @@ jb.component('studio.projectSource',{
 })
 
 jb.component('studio.compSource',{
-	params: { 
-		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
-	},
+	params: [ 
+		{ id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
+	],
 	impl: (context,comp) => 
 		compAsStr(comp.split('~')[0])
 })

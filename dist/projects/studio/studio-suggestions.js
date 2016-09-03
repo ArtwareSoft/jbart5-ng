@@ -118,12 +118,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
             exports_1("suggestions", suggestions);
             jb_core_1.jb.component('editable-text.suggestions-input-feature', {
                 type: 'feature',
-                params: {
-                    path: { as: 'string' },
-                    action: { type: 'action', dynamic: true },
-                    onEnter: { type: 'action', dynamic: true },
-                    floatingInput: { type: 'boolean', as: 'boolean', description: 'used to close the floating input popup' }
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'action', type: 'action', dynamic: true },
+                    { id: 'onEnter', type: 'action', dynamic: true },
+                    { id: 'floatingInput', type: 'boolean', as: 'boolean', description: 'used to close the floating input popup' }
+                ],
                 impl: function (ctx) {
                     return ({
                         observable: function () { },
@@ -202,9 +202,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
             });
             jb_core_1.jb.component('studio.jb-open-suggestions', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-suggestions-popup' },
                     content: { $: 'group',
@@ -256,9 +256,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
             });
             jb_core_1.jb.component('itemlist.studio-suggestions-selection', {
                 type: 'feature',
-                params: {
-                    onEnter: { type: 'action', dynamic: true },
-                },
+                params: [
+                    { id: 'onEnter', type: 'action', dynamic: true },
+                ],
                 impl: function (ctx) {
                     return ({
                         init: function (cmp) {
@@ -301,9 +301,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 }
             });
             jb_core_1.jb.component('studio.jb-paste-suggestion', {
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 type: 'action',
                 impl: function (ctx, path) {
                     var suggestionsCtx = ctx.vars.suggestionContext;

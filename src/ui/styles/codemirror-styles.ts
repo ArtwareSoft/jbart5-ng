@@ -4,15 +4,15 @@ import * as jb_ui from 'jb-ui';
 
 jb.component('editable-text.codemirror', {
 	type: 'editable-text.style',
-	params: {
-		cm_settings: { as: 'single' },
-		enableFullScreen: { type: 'boolean', as: 'boolean', defaultValue: true},
-		resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
-		height: { as: 'number' },
-		mode: { as: 'string' },
-		debounceTime: { as: 'number', defaultValue: 300 },
-		lineWrapping: { as: 'boolean' },
-	},
+	params: [
+		{ id: 'cm_settings', as: 'single' },
+		{ id: 'enableFullScreen', type: 'boolean', as: 'boolean', defaultValue: true},
+		{ id: 'resizer', type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
+		{ id: 'height', as: 'number' },
+		{ id: 'mode', as: 'string' },
+		{ id: 'debounceTime', as: 'number', defaultValue: 300 },
+		{ id: 'lineWrapping', as: 'boolean' },
+	],
 	impl: function(context, cm_settings, _enableFullScreen, resizer, height, mode, debounceTime, lineWrapping) {
 		return {
 			template: '<textarea></textarea>',
@@ -151,14 +151,14 @@ function enableFullScreen(editor,width,height) {
 
 jb.component('text.codemirror', {
     type: 'text.style',
-    params: {
-        cm_settings: { as: 'single' },
-		enableFullScreen: { type: 'boolean', as: 'boolean', defaultValue: true},
-        resizer: { type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
-		height: { as: 'number' },
-        mode: { as: 'string' },
-        lineWrapping: { as: 'boolean' },
-    },
+    params: [
+        { id: 'cm_settings', as: 'single' },
+		{ id: 'enableFullScreen', type: 'boolean', as: 'boolean', defaultValue: true},
+        { id: 'resizer', type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
+		{ id: 'height', as: 'number' },
+        { id: 'mode', as: 'string' },
+        { id: 'lineWrapping', as: 'boolean' },
+    ],
     impl: function(context, cm_settings, _enableFullScreen, resizer,height, mode, lineWrapping) {
         return {
             template: '<textarea></textarea>',

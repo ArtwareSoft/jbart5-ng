@@ -80,9 +80,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.onNextModifiedPath', {
                 type: 'action',
-                params: {
-                    action: { type: 'action', dynamic: true, essential: true }
-                },
+                params: [
+                    { id: 'action', type: 'action', dynamic: true, essential: true }
+                ],
                 impl: function (ctx, action) {
                     return studio_utils_1.modifyOperationsEm.take(1)
                         .subscribe(function (e) {

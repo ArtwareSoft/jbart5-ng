@@ -4,16 +4,16 @@ jb.type('image.style');
 
 jb.component('image',{
 	type: 'control',
-	params: {
-		url: { as: 'string', dynamic:true },
-		imageWidth: { as: 'number' },
-		imageHeight: { as: 'number' },
-		width: { as: 'number' },
-		height: { as: 'number' },
-		units: { as: 'string', defaultValue : 'px'},
-		style: { type: 'image.style', dynamic: true, defaultValue: { $: 'image.default' } },
-		features: { type: 'feature[]', dynamic: true }
-	},
+	params: [
+		{ id: 'url', as: 'string', dynamic:true },
+		{ id: 'imageWidth', as: 'number' },
+		{ id: 'imageHeight', as: 'number' },
+		{ id: 'width', as: 'number' },
+		{ id: 'height', as: 'number' },
+		{ id: 'units', as: 'string', defaultValue : 'px'},
+		{ id: 'style', type: 'image.style', dynamic: true, defaultValue: { $: 'image.default' } },
+		{ id: 'features', type: 'feature[]', dynamic: true }
+	],
 	impl: function(context) {
 		return jb_ui.ctrl(context).jbExtend({ init: function(cmp) {
 			var image = context.params;

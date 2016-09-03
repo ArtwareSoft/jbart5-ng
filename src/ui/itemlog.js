@@ -4,15 +4,15 @@ jb.type('itemlog.style');
 
 jb.component('itemlog',{
 	type: 'control',
-	params: {
-		title: { as: 'string' },
-		items: { as: 'observable' , dynamic: true, essential: true },
-    controls: { type: 'control[]', essential: true, dynamic: true},
-		style: { type: 'itemlog.style', dynamic: true , defaultValue: { $: 'itemlog.div' } },
-    itemVariable: { as: 'string', defaultValue: 'item' },
-    counter: {as : 'ref'},
-		features: { type: 'feature[]', dynamic: true },
-	},
+	params: [
+		{ id: 'title', as: 'string' },
+		{ id: 'items', as: 'observable' , dynamic: true, essential: true },
+    { id: 'controls', type: 'control[]', essential: true, dynamic: true},
+		{ id: 'style', type: 'itemlog.style', dynamic: true , defaultValue: { $: 'itemlog.div' } },
+    { id: 'itemVariable', as: 'string', defaultValue: 'item' },
+    { id: 'counter',as : 'ref'},
+		{ id: 'features', type: 'feature[]', dynamic: true },
+	],
 	impl: function(context) {
     return jb_ui.ctrl(context).jbExtend({
         beforeInit(cmp) {

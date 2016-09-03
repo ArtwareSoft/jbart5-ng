@@ -2,9 +2,9 @@ import {jb} from 'jb-core';
 
 jb.component('studio.property-toobar-feature', {
   type: 'feature', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'field.toolbar', 
         toolbar :{$: 'studio.property-toobar', path: '%$path%' } 
     }
@@ -12,9 +12,9 @@ jb.component('studio.property-toobar-feature', {
 
 jb.component('studio.property-toobar-feature2', {
   type: 'feature', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'field.toolbar', $trace1:true,
         toolbar :{$: 'studio.property-toobar', path: '%$path%', $trace1:true } 
     }
@@ -22,9 +22,9 @@ jb.component('studio.property-toobar-feature2', {
 
 jb.component('studio.property-toobar', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
         style :{$: 'layout.horizontal' }, 
         controls : [
@@ -78,9 +78,9 @@ jb.component('studio.property-toobar', {
 
 jb.component('studio.open-property-menu', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
     $vars: {
       compName :{$: 'studio.compName', path: '%$path%' }

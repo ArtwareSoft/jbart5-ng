@@ -4,12 +4,12 @@ jb.type('text.style');
 
 jb.component('text', {
     type: 'control',
-    params: {
-        text: { essential: true, dynamic: true },
-        style: { type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
-        title: { as: 'string', defaultValue: 'text' },
-        features: { type: 'feature[]', dynamic: true },
-    },
+    params: [
+        { id: 'text', essential: true, dynamic: true },
+        { id: 'style', type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
+        { id: 'title', as: 'string', defaultValue: 'text' },
+        { id: 'features', type: 'feature[]', dynamic: true },
+    ],
     impl: (ctx,text) => 
         jb_ui.ctrl(ctx.setVars({text: ctx.params.text()}))
 })
@@ -26,10 +26,10 @@ jb.component('text.bind-text', {
 
 jb.component('text.multi-line', {
     type: 'text.style',
-    params: {
-        rows: {as: 'number', defaultValue: '8'},
-        cols: {as: 'number', defaultValue: '80'},
-    },
+    params: [
+        { id: 'rows',as: 'number', defaultValue: '8'},
+        { id: 'cols',as: 'number', defaultValue: '80'},
+    ],
     impl :{$: 'customStyle', 
         template: '<div><textarea readonly cols="%$cols%" rows="%$rows%">{{text}}</textarea></div>',
         features :{$: 'text.bind-text'}
@@ -46,12 +46,12 @@ jb.component('text.paragraph', {
 
 jb.component('rich-text', {
     type: 'control',
-    params: {
-        text: { essential: true, as: 'string', dynamic: true },
-        title: { as: 'string', defaultValue: 'rich-text', dynamic: true },
-        style: { type: 'rich-text.style', defaultValue: { $: 'rich-text.html' }, dynamic: true },
-        features: { type: 'feature[]', dynamic: true },
-    },
+    params: [
+        { id: 'text', essential: true, as: 'string', dynamic: true },
+        { id: 'title', as: 'string', defaultValue: 'rich-text', dynamic: true },
+        { id: 'style', type: 'rich-text.style', defaultValue: { $: 'rich-text.html' }, dynamic: true },
+        { id: 'features', type: 'feature[]', dynamic: true },
+    ],
     impl: (ctx,text,title) => 
         jb_ui.ctrl(ctx.setVars({text: text(), title: title() }))
 })

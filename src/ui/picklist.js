@@ -5,13 +5,13 @@ jb.type('picklist.options');
 
 jb.component('picklist', {
   type: 'control',
-  params: {
-    title: { as: 'string' , dynamic: true },
-    databind: { as: 'ref'},
-    options: { type: 'picklist.options', dynamic: true, essential: true, defaultValue: {$ : 'picklist.optionsByComma'} },
-    style: { type: 'picklist.style', defaultValue: { $: 'picklist.native' }, dynamic: true },
-    features: { type: 'feature[]', dynamic: true },
-  },
+  params: [
+    { id: 'title', as: 'string' , dynamic: true },
+    { id: 'databind', as: 'ref'},
+    { id: 'options', type: 'picklist.options', dynamic: true, essential: true, defaultValue: {$ : 'picklist.optionsByComma'} },
+    { id: 'style', type: 'picklist.style', defaultValue: { $: 'picklist.native' }, dynamic: true },
+    { id: 'features', type: 'feature[]', dynamic: true },
+  ],
   impl: ctx => {
     ctx = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
     return jb_ui.ctrl(ctx).jbExtend({
@@ -47,9 +47,9 @@ function groupOfOpt(opt) {
 
 jb.component('picklist.dynamic-options', {
   type: 'feature',
-  params: {
-    recalcEm: { as: 'observable'}
-  },
+  params: [
+    { id: 'recalcEm', as: 'observable'}
+  ],
   impl: (ctx,recalcEm) => ({
     init: cmp => 
       recalcEm
@@ -63,10 +63,10 @@ jb.component('picklist.dynamic-options', {
 
 jb.component('picklist.optionsByComma',{
   type: 'picklist.options',
-  params: { 
-    options: { as: 'string', essential: true},
-    allowEmptyValue: { type: 'boolean' },
-  },
+  params: [ 
+    { id: 'options', as: 'string', essential: true},
+    { id: 'allowEmptyValue', type: 'boolean' },
+  ],
   impl: function(context,options,allowEmptyValue) {
     var emptyValue = allowEmptyValue ? [{code:'',value:''}] : [];
     return emptyValue.concat((options||'').split(',').map(function(code) { 
@@ -77,10 +77,10 @@ jb.component('picklist.optionsByComma',{
 
 jb.component('picklist.options',{
   type: 'picklist.options',
-  params: { 
-    options: { as: 'array', essential: true},
-    allowEmptyValue: { type: 'boolean' },
-  },
+  params: [ 
+    { id: 'options', as: 'array', essential: true},
+    { id: 'allowEmptyValue', type: 'boolean' },
+  ],
   impl: function(context,options,allowEmptyValue) {
     var emptyValue = allowEmptyValue ? [{code:'',value:''}] : [];
     return emptyValue.concat(options.map(function(code) { return { code: code, text: code } } ));
@@ -89,12 +89,12 @@ jb.component('picklist.options',{
 
 jb.component('picklist.coded-options',{
   type: 'picklist.options',
-  params: { 
-    options: { as: 'array',essential: true },
-    code: { as: 'string', dynamic:true , essential: true }, 
-    text: { as: 'string', dynamic:true, essential: true } ,
-    allowEmptyValue: { type: 'boolean' },
-  },
+  params: [ 
+    { id: 'options', as: 'array',essential: true },
+    { id: 'code', as: 'string', dynamic:true , essential: true }, 
+    { id: 'text', as: 'string', dynamic:true, essential: true } ,
+    { id: 'allowEmptyValue', type: 'boolean' },
+  ],
   impl: function(context,options,code,text,allowEmptyValue) {
     var emptyValue = allowEmptyValue ? [{code:'',value:''}] : [];
     return emptyValue.concat(options.map(function(option) { 

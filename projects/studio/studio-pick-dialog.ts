@@ -5,10 +5,10 @@ import {model} from './studio-tgp-model';
 
 jb.component('studio.pick', {
 	type: 'action',
-	params: {
-		from: { options: 'studio,preview', as: 'string', defaultValue: 'preview'},
-		onSelect: { type:'action', dynamic:true }
-	},
+	params: [
+		{ id: 'from', options: 'studio,preview', as: 'string', defaultValue: 'preview'},
+		{ id: 'onSelect', type:'action', dynamic:true }
+	],
 	impl :{$: 'openDialog',
 		$vars: {
 			pickPath: { path: ''}
@@ -23,9 +23,9 @@ jb.component('studio.pick', {
 jb.component('dialog.studio-pick-dialog', {
 	hidden: true,
 	type: 'dialog.style',
-	params: {
-		from: { as: 'string' },
-	},
+	params: [
+		{ id: 'from', as: 'string' },
+	],
 	impl: {$: 'customStyle',
 			template: `<div class="jb-dialog">
 <div class="edge top" [style.width]="width+'px'" [style.top]="top+'px'" [style.left]="left+'px'"></div>
@@ -67,9 +67,9 @@ jb.component('dialog.studio-pick-dialog', {
 
 jb.component('dialogFeature.studio-pick', {
 	type: 'dialogFeature',
-	params: {
-		from: { as: 'string' },
-	},
+	params: [
+		{ id: 'from', as: 'string' },
+	],
 	impl: ctx =>
 	({
       init: cmp=> {
@@ -143,9 +143,9 @@ function showBox(cmp,profElem,_window,previewOffset) {
 }
 
 jb.component('studio.highlight-in-preview',{
-	params: {
-		path: { as: 'string' }
-	},
+	params: [
+		{ id: 'path', as: 'string' }
+	],
 	impl: (ctx,path) => {
 		var _window = jbart.previewWindow || window;
 		if (!_window) return;

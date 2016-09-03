@@ -16,9 +16,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
         execute: function() {
             jb_core_1.jb.component('studio.open-jb-editor', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     content: { $: 'studio.jb-editor', path: '%$path%' },
                     style: { $: 'dialog.studio-floating',
@@ -35,9 +35,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.jb-editor', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     title: 'main',
                     controls: [
@@ -121,10 +121,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.data-browse', {
                 type: 'control',
-                params: {
-                    data: {},
-                    title: { as: 'string' }
-                },
+                params: [
+                    { id: 'data', },
+                    { id: 'title', as: 'string' }
+                ],
                 impl: { $: 'group',
                     title: '%$title%',
                     controls: { $: 'tree', cssClass: 'jb-control-tree',
@@ -140,16 +140,16 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.jb-editor.nodes', {
                 type: 'tree.nodeModel',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return new studio_tgp_model_1.TgpModel(path, 'jb-editor');
                 }
             });
             jb_core_1.jb.component('studio.open-jb-edit-property', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-jb-editor-popup' },
                     content: { $: 'studio.jb-floating-input', path: '%$path%' },
@@ -163,7 +163,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.jb-floating-input', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'editable-text',
                     databind: { $: 'studio.profile-value-as-text', path: '%$path%' },
                     features: [
@@ -185,9 +185,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.profile-value-as-text', {
                 type: 'data',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: function (context, path) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
@@ -222,9 +222,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.open-jb-editor-menu', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'studio.jb-editor-menu', path: '%$path%' },
@@ -233,9 +233,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.jb-editor-menu', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     features: { $: 'group.menu-keyboard-selection', autoFocus: true },
                     controls: [
@@ -327,11 +327,11 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('pulldown.studio-wrap-with', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' },
-                    type: { as: 'string' },
-                    components: { as: 'array' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'type', as: 'string' },
+                    { id: 'components', as: 'array' },
+                ],
                 impl: { $: 'dynamic-controls',
                     controlItems: {
                         $if: { $: 'studio.is-of-type', path: '%$path%', type: '%$type%' },

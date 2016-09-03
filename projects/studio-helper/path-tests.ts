@@ -46,9 +46,9 @@ jb.component('test.inner-label', {
 
 jb.component('test.inner-label-template', {
 	type: 'control',
-	params: {
-		ctrl :{ type: 'control', dynamic: true }
-	},
+	params: [
+		{ id: 'ctrl', type: 'control', dynamic: true }
+	],
 	impl :{$: 'group', controls :{ $call: 'ctrl'} }
 })
 

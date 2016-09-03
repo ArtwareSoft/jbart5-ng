@@ -2,13 +2,13 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 
 jb.component('group.wait', {
   type: 'feature',
-  params: { 
-    for: { essential: true },
-    loadingControl: { type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
-    error: { type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
-    resource: { as: 'string' },
-    mapToResource: { dynamic: true, defaultValue: '%%' },
-  },
+  params: [ 
+    { id: 'for', essential: true },
+    { id: 'loadingControl', type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
+    { id: 'error', type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
+    { id: 'resource', as: 'string' },
+    { id: 'mapToResource', dynamic: true, defaultValue: '%%' },
+  ],
   impl: function(context,waitFor,loading,error) { 
     return {
       beforeInit: function(cmp) {
@@ -33,11 +33,11 @@ jb.component('group.wait', {
 // bind data and watch the data to refresh the control
 jb.component('group.data', {
   type: 'feature',
-  params: {
-    data: { essential: true, dynamic: true, as: 'ref' },
-    itemVariable: { as: 'string' },
-    watch: { type: 'boolean', as: 'boolean', defaultValue: true }
-  },
+  params: [
+    { id: 'data', essential: true, dynamic: true, as: 'ref' },
+    { id: 'itemVariable', as: 'string' },
+    { id: 'watch', type: 'boolean', as: 'boolean', defaultValue: true }
+  ],
   impl: function(context, data, itemVariable,watch) {
     return {
       beforeInit: function(cmp) {
@@ -60,9 +60,9 @@ jb.component('group.data', {
 
 jb.component('group.watch', {
   type: 'feature',
-  params: {
-    data: { essential: true, dynamic: true },
-  },
+  params: [
+    { id: 'data', essential: true, dynamic: true },
+  ],
   impl: (context, data) => ({
       beforeInit: function(cmp) {
           cmp.jbWatchGroupChildrenEm = (cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
@@ -84,9 +84,9 @@ jb.component('group.watch', {
 
 jb.component('group-item.if', {
   type: 'feature',
-  params: {
-    showCondition: { type: 'boolean', as: 'boolean', essential: true },
-  },
+  params: [
+    { id: 'showCondition', type: 'boolean', as: 'boolean', essential: true },
+  ],
   impl: (context, condition) => ({
     invisible: !condition
   })
@@ -96,9 +96,9 @@ jb.component('group-item.if', {
 
 jb.component('feature.init', {
   type: 'feature',
-  params: {
-    action: { type: 'action[]', essential: true, dynamic: true }
-  },
+  params: [
+    { id: 'action', type: 'action[]', essential: true, dynamic: true }
+  ],
   impl: (ctx,action) => ({init: cmp => 
       action(cmp.ctx)
   })
@@ -106,9 +106,9 @@ jb.component('feature.init', {
 
 jb.component('feature.ng-attach-object', {
   type: 'feature',
-  params: {
-    data: { as: 'single', dynamic: true }
-  },
+  params: [
+    { id: 'data', as: 'single', dynamic: true }
+  ],
   impl: (ctx,data) => ({init: cmp => {
       var obj = data(cmp.ctx);
       jb.extend(cmp,obj);
@@ -124,9 +124,9 @@ jb.component('feature.disableChangeDetection', {
 
 jb.component('feature.onEnter', {
   type: 'feature',
-  params: {
-    action: { type: 'action[]', essential: true, dynamic: true }
-  },
+  params: [
+    { id: 'action', type: 'action[]', essential: true, dynamic: true }
+  ],
   impl: ctx => ({ 
       host: {
         '(keydown)': 'keydownSrc.next($event)',
@@ -148,18 +148,18 @@ jb.component('feature.onEnter', {
 
 jb.component('ngAtts', {
   type: 'feature',
-  params: {
-    atts: { as: 'object' }
-  },
+  params: [
+    { id: 'atts', as: 'object' }
+  ],
   impl: (ctx,atts) => 
     ({atts:atts})
 })
 
 jb.component('feature.afterLoad', {
   type: 'feature',
-  params: {
-    action: { type: 'action[]', essential: true, dynamic: true }
-  },
+  params: [
+    { id: 'action', type: 'action[]', essential: true, dynamic: true }
+  ],
   impl: function(context) { return  { 
     afterViewInit: cmp => jb.delay(1).then(() => context.params.action(cmp.ctx))
   }}
@@ -167,9 +167,9 @@ jb.component('feature.afterLoad', {
 
 jb.component('feature.emitter',{
   type: 'feature',
-  params: {
-    varName: { as: 'string'},
-  },
+  params: [
+    { id: 'varName', as: 'string'},
+  ],
   impl: function(context,varName) { return  { 
     extendCtx: (ctx,cmp) => 
       ctx.setVars(jb.obj(varName,cmp.jbEmitter)),
@@ -179,10 +179,10 @@ jb.component('feature.emitter',{
 
 jb.component('var',{
   type: 'feature',
-  params: {
-    name: { as: 'string'},
-    value: { dynamic: true },
-  },
+  params: [
+    { id: 'name', as: 'string'},
+    { id: 'value', dynamic: true },
+  ],
   impl: (context,name,value) => 
     jb.extend({}, name && {
       extendCtx: ctx =>
@@ -192,9 +192,9 @@ jb.component('var',{
 
 jb.component('hidden', {
   type: 'feature',
-  params: {
-    showCondition: { type: 'boolean', essential: true, dynamic: true },
-  },
+  params: [
+    { id: 'showCondition', type: 'boolean', essential: true, dynamic: true },
+  ],
   impl: function(context,showCondition) { return {
       init: function(cmp) {
         cmp.jb_hidden = () =>
@@ -207,9 +207,9 @@ jb.component('hidden', {
 
 jb.component('field.style-on-focus', {
   type: 'feature',
-  params: {
-    style: { type: 'style', essential: true, dynamic: true },
-  },
+  params: [
+    { id: 'style', type: 'style', essential: true, dynamic: true },
+  ],
   impl: ctx => ({
     extendComp: { jb_styleOnFocus: ctx.profile.style }
   })
@@ -218,10 +218,10 @@ jb.component('field.style-on-focus', {
 
 jb.component('feature.keyboard-shortcut', {
   type: 'feature',
-  params: {
-    key: { as: 'string', description: 'e.g. Alt+C' },
-    action: { type: 'action', dynamic: true }
-  },
+  params: [
+    { id: 'key', as: 'string', description: 'e.g. Alt+C' },
+    { id: 'action', type: 'action', dynamic: true }
+  ],
   impl: (context,key,action) => 
     ({
       init: function(cmp) {

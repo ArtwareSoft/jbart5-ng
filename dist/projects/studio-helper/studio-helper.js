@@ -33,9 +33,9 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             // fake current path
             jb_1.jb.component('studio-helper.properties', {
                 type: 'control',
-                params: {
-                    path: { defaultValue: 'studio-helper-dummy.label' }
-                },
+                params: [
+                    { id: 'path', defaultValue: 'studio-helper-dummy.label' }
+                ],
                 impl: { $: 'group',
                     $vars: { circuit: 'studio-helper-dummy.label' },
                     style: { $: 'group.studio-properties-accordion' },
@@ -75,9 +75,9 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             });
             jb_1.jb.component('studio-helper.property-array', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     $vars: {
                         arrayCtrl: { $: 'object', expanded: true }
@@ -114,9 +114,9 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             });
             jb_1.jb.component('studio-helper.control-tree', {
                 type: 'control',
-                params: {
-                    path: { defaultValue: 'studio-helper.sample-control' }
-                },
+                params: [
+                    { id: 'path', defaultValue: 'studio-helper.sample-control' }
+                ],
                 impl: { $: 'studio.control-tree',
                     $vars: {
                         simulateProfilePath: '%$path%'
@@ -125,9 +125,9 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             });
             jb_1.jb.component('studio-helper.jb-editor', {
                 type: 'control',
-                params: {
-                    path: { defaultValue: 'studio-helper-dummy.label' }
-                },
+                params: [
+                    { id: 'path', defaultValue: 'studio-helper-dummy.label' }
+                ],
                 impl: { $: 'group',
                     $vars: { circuit: 'studio-helper-dummy.label' },
                     title: 'main',

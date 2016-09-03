@@ -28,11 +28,11 @@ jb.component('button.md-raised', {
 
 jb.component('button.md-icon', {
   type: 'button.style',
-  params: {
-    icon: { as: 'string', default: 'code' },
-    size: { as: 'number', defaultValue: 20 },
-    aria: { as: 'string' },
-  },
+  params: [
+    { id: 'icon', as: 'string', default: 'code' },
+    { id: 'size', as: 'number', defaultValue: 20 },
+    { id: 'aria', as: 'string' },
+  ],
   impl :{$: 'customStyle', 
       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons" style="font-size:%$size%px;">%$icon%</i>
@@ -44,10 +44,10 @@ jb.component('button.md-icon', {
 
 jb.component('button.md-icon-12', {
   type: 'button.style',
-  params: {
-    icon: { as: 'string', default: 'code' },
-    aria: { as: 'string' },
-  },
+  params: [
+    { id: 'icon', as: 'string', default: 'code' },
+    { id: 'aria', as: 'string' },
+  ],
   impl :{$: 'customStyle', 
       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons">%$icon%</i>
@@ -62,11 +62,11 @@ jb.component('button.md-icon-12', {
 
 jb.component('button.md-icon-fab', {
   type: 'button.style',
-  params: {
-    icon: { as: 'string', default: 'code' },
-    size: { as: 'number', defaultValue: '24' },
-    aria: { as: 'string' },
-  },
+  params: [
+    { id: 'icon', as: 'string', default: 'code' },
+    { id: 'size', as: 'number', defaultValue: '24' },
+    { id: 'aria', as: 'string' },
+  ],
   impl :{$: 'customStyle', 
       template: `<div><button md-fab aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons md-24">%$icon%</i>
@@ -77,11 +77,11 @@ jb.component('button.md-icon-fab', {
 
 jb.component('button.md-mini-fab', {
   type: 'button.style',
-  params: {
-    icon: { as: 'string', default: 'code' },
-    size: { as: 'number', defaultValue: '24' },
-    aria: { as: 'string' },
-  },
+  params: [
+    { id: 'icon', as: 'string', default: 'code' },
+    { id: 'size', as: 'number', defaultValue: '24' },
+    { id: 'aria', as: 'string' },
+  ],
   impl :{$: 'customStyle', 
       template: `<div><button md-mini-fab aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons md-24">%$icon%</i>

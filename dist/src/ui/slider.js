@@ -21,9 +21,9 @@ System.register(['jb-core/jb', 'jb-ui', 'jb-ui/jb-ui-utils', 'jb-ui/jb-rx'], fun
             ;
             jb_1.jb.component('editable-number.slider', {
                 type: 'editable-number.style',
-                params: {
-                    width: { as: 'number', defaultValue: '200' },
-                },
+                params: [
+                    { id: 'width', as: 'number', defaultValue: '200' },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-slider\">\n\t\t\t\t\t\t<div class=\"slider_scale\">\n\t\t\t\t\t\t\t<div class=\"slider_text\"></div>\n\t\t\t\t\t\t\t<div class=\"slider_thumb\"></div>\n\t\t\t\t\t\t\t<input class=\"slider_input\">\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>",
                     css: "{ height: 30px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 12px; }\n\t\t\t.slider_scale { position:relative; float: left; background-color:#aaa; width: %$width%px; \n\t\t\t  height: 1px; border-radius: 3px; margin-top: 13px; margin-right: 6px; \n\t\t\t  margin-bottom: 13px; margin-left: 6px; \n\t\t\t  border-bottom: 1px solid #efefef; }\n\t\t\t.slider_thumb { cursor: pointer; position: absolute; color:black; \n\t\t\t  background-color:#efefef; width: 6px; height: 13px; \n\t\t\t  border-radius: 2px; border: 1px solid #adadad; \n\t\t\t  box-shadow:  inset 0 0 3px 0px gray; top: -7px; left: 0px; }\n\t\t\t.slider_thumb:hover { background-color:#eee; border-color: #777; }\n\t\t\t.slider_scale:hover .aa_slider_text { color:black; }\n\t\t\t.slider_thumb:focus { background-color:#383838; }\n\t\t\t.slider_text { color:#aaa; font-size: 10px; margin-top: -12px; margin-right: 0px; margin-bottom: 0px; margin-left: -19px; }\n\t\t\t.slider_scale.empty_value { opacity: 0.5; transition: opacity, 0.5s; }\n\t\t\t.slider_text:hover { cursor: pointer; text-decoration:underline; }\n\t\t\t.slider_input { position:absolute; width: 98px; height: 20px; border-radius: 6px; \n\t\t\t  padding-top: 4px; padding-right: 4px; padding-bottom: 4px; \n\t\t\t  padding-left: 18px; margin-top: -13px; margin-left: 24px; \n\t\t\t  border: 1px solid #D1D1D1; box-shadow:  2px 2px 6px 1px gray; \n\t\t\t}\n\t\t\t.slider_thumb.aa_disabled { opacity: 0.5 }\n\t\t\t.slider_text.aa_disabled { opacity: 0.5 }\n\t\t\t.slider_scale.aa_disabled { opacity: 0.5 }\n",

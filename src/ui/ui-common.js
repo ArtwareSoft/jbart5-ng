@@ -3,9 +3,9 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx','jb-ui/jb-ui-utils']).then(loaded
 
 jb.component('add-css-class',{
 	type: 'action',
-	params: {
-		cssClass: { as: 'string' }
-	},
+	params: [
+		{ id: 'cssClass', as: 'string' }
+	],
 	impl: function(context,cssClass) {
 		if (context.vars.control && context.vars.control.$el) 
 			context.vars.control.$el.addClass(cssClass);
@@ -14,9 +14,9 @@ jb.component('add-css-class',{
 
 jb.component('url-param',{
 	type: 'data',
-	params: {
-		param: { as: 'string' }
-	},
+	params: [
+		{ id: 'param', as: 'string' }
+	],
 	impl: function(context,param) {
 		return ui_utils.urlParam(param);
 	}
@@ -25,9 +25,9 @@ jb.component('url-param',{
 
 jb.component('sessionStorage',{
 	type: 'data',
-	params: {
-		key: { as: 'string'}
-	},
+	params: [
+		{ id: 'key', as: 'string'}
+	],
 	impl: function(context,key) {
 		return {
 			$jb_val: function(value) {
@@ -43,10 +43,10 @@ jb.component('sessionStorage',{
 jb.component('goto-url', {
 	type: 'action',
 	description: 'navigate/open a new web page, change href location',
-	params: {
-		url: { as:'string', essential: true },
-		target: { type:'enum', values: ['new tab','self'], defaultValue:'new tab', as:'string'}
-	},
+	params: [
+		{ id: 'url', as:'string', essential: true },
+		{ id: 'target', type:'enum', values: ['new tab','self'], defaultValue:'new tab', as:'string'}
+	],
 	impl: function(context,url,target) {
 		var _target = (target == 'new tab') ? '_blank' : '_self';
 		window.open(url,_target);
@@ -60,9 +60,9 @@ jb.component('apply', {
 
 jb.component('search-filter',{
 	type: 'aggregator',
-	params: {
-		pattern: { as: 'string' }
-	},
+	params: [
+		{ id: 'pattern', as: 'string' }
+	],
 	impl: (context,pattern) =>
 		context.data.filter(item => {
 			var itemText = JSON.stringify(item).toLowerCase();
@@ -72,11 +72,11 @@ jb.component('search-filter',{
 
 jb.component('new-instance', {
 	type: 'data',
-	params: {
-		module: { as: 'string', essential: true },
-		class: { as: 'string', essential: true},
+	params: [
+		{ id: 'module', as: 'string', essential: true },
+		{ id: 'class', as: 'string', essential: true},
 		// todo - constructor
-	},
+	],
 	impl: (ctx,module,_class) => {
 		try {
 			return new (jb.entries(System._loader.modules).filter(p=>p[0].indexOf(module) != -1)[0][1].module[_class])()
@@ -88,9 +88,9 @@ jb.component('new-instance', {
 
 jb.component('injector-get', {
 	type: 'data',
-	params: {
-		provider: { as: 'string', essential: true },
-	},
+	params: [
+		{ id: 'provider', as: 'string', essential: true },
+	],
 	impl: (ctx,providerId) => {
 		var provider = jbart.ng.providers[providerId];
 		if (provider)

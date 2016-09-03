@@ -5,14 +5,14 @@ jb.type('editable-boolean.yes-no-settings');
 
 jb.component('editable-boolean',{
   type: 'control',
-  params: {
-    databind: { as: 'ref'},
-    style: { type: 'editable-boolean.style', defaultValue: { $: 'editable-boolean.checkbox' }, dynamic: true },
-    title: { as: 'string' , dynamic: true },
-    textForTrue: { as: 'string', defaultValue: 'yes' },
-    textForFalse: { as: 'string', defaultValue: 'no' },
-    features: { type: 'feature[]', dynamic: true },
-  },
+  params: [
+    { id: 'databind', as: 'ref'},
+    { id: 'style', type: 'editable-boolean.style', defaultValue: { $: 'editable-boolean.checkbox' }, dynamic: true },
+    { id: 'title', as: 'string' , dynamic: true },
+    { id: 'textForTrue', as: 'string', defaultValue: 'yes' },
+    { id: 'textForFalse', as: 'string', defaultValue: 'no' },
+    { id: 'features', type: 'feature[]', dynamic: true },
+  ],
   impl: (ctx) => {
     var ctx2 = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
   	return jb_ui.ctrl(ctx2).jbExtend({

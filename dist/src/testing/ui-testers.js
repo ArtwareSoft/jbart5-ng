@@ -10,14 +10,14 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
         execute: function() {
             jb_1.jb.component('ng2-ui-test', {
                 type: 'test',
-                params: {
-                    control: { type: 'control', dynamic: true },
-                    expectedTemplateResult: { type: 'boolean', dynamic: true, as: 'boolean' },
-                    expectedHtmlResult: { type: 'boolean', dynamic: true, as: 'boolean' },
-                    runBefore: { type: 'action', dynamic: true },
-                    cleanAfter: { type: 'action', dynamic: true },
-                    waitFor: {},
-                },
+                params: [
+                    { id: 'control', type: 'control', dynamic: true },
+                    { id: 'expectedTemplateResult', type: 'boolean', dynamic: true, as: 'boolean' },
+                    { id: 'expectedHtmlResult', type: 'boolean', dynamic: true, as: 'boolean' },
+                    { id: 'runBefore', type: 'action', dynamic: true },
+                    { id: 'cleanAfter', type: 'action', dynamic: true },
+                    { id: 'waitFor', },
+                ],
                 impl: function (ctx) {
                     return new Promise(function (resolve, reject) {
                         ctx.run({ $: 'openDialog', content: ctx.profile.control,
@@ -51,13 +51,13 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             });
             jb_1.jb.component('data-test', {
                 type: 'test',
-                params: {
-                    calculate: { dynamic: true },
-                    runBefore: { type: 'action', dynamic: true },
-                    resultVariable: { as: 'string', defaultValue: 'result' },
-                    action: { type: 'action', dynamic: true },
-                    expectedResult: { type: 'boolean', dynamic: true, as: 'boolean' }
-                },
+                params: [
+                    { id: 'calculate', dynamic: true },
+                    { id: 'runBefore', type: 'action', dynamic: true },
+                    { id: 'resultVariable', as: 'string', defaultValue: 'result' },
+                    { id: 'action', type: 'action', dynamic: true },
+                    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' }
+                ],
                 impl: function (context, calculate, runBefore, resultVariable, action, expectedResult) {
                     runBefore();
                     var value = calculate();

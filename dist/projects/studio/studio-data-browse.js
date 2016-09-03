@@ -10,10 +10,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('studio.open-resource', {
                 type: 'action',
-                params: {
-                    resource: { type: 'data' },
-                    id: { as: 'string' }
-                },
+                params: [
+                    { id: 'resource', type: 'data' },
+                    { id: 'id', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     title: '%$id%',
                     style: { $: 'dialog.studio-floating', id: 'resource %$id%', width: 500 },

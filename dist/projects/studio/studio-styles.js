@@ -67,20 +67,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
-            // jb.component('button.studio-properties-toolbar', {
-            //   type: 'button.style',
-            //   params: {
-            //     icon: { as: 'string', default: 'code' },
-            //   },
-            //   impl :{$: 'customStyle', 
-            //       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
-            //                 <i class="material-icons">%$icon%</i>
-            //               </button></div>`,
-            //       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
-            //      	.material-icons { font-size:12px;  }
-            //       `
-            //   }
-            // })
             jb_core_1.jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',

@@ -28,9 +28,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.open-tree-menu', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',
@@ -136,7 +136,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.control-tree.nodes', {
                 type: 'tree.nodeModel',
-                params: {},
                 impl: function (context) {
                     var currentPath = context.run({ $: 'studio.currentProfilePath' });
                     var compPath = currentPath.split('~')[0] || '';

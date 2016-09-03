@@ -64,11 +64,11 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 },
                                 { $: 'group',
                                     url: '/projects/studio/css/logo470x200.png',
-                                    title: 'title and menu ',
+                                    title: 'title and menu',
                                     style: { $: 'layout.vertical', spacing: '14' },
                                     controls: [
                                         { $: 'label',
-                                            title: 'message ',
+                                            title: 'message',
                                             style: { $: 'customStyle',
                                                 template: '<span class="studio-message">{{title}}</span> ',
                                                 css: "{ position: absolute;\n                    color: white;  padding: 20px;  background: #327DC8;\n                    width: 1000px;\n                    margin-top: -100px;\n                    }\n                    ",
@@ -268,10 +268,10 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
             });
             jb_core_1.jb.component('studio.setPreviewSize', {
                 type: 'action',
-                params: {
-                    width: { as: 'number' },
-                    height: { as: 'number' },
-                },
+                params: [
+                    { id: 'width', as: 'number' },
+                    { id: 'height', as: 'number' },
+                ],
                 impl: function (ctx, width, height) {
                     if (width)
                         $('#jb-preview').width(width);

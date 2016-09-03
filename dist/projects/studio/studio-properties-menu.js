@@ -10,27 +10,27 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('studio.property-toobar-feature', {
                 type: 'feature',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'field.toolbar',
                     toolbar: { $: 'studio.property-toobar', path: '%$path%' }
                 }
             });
             jb_core_1.jb.component('studio.property-toobar-feature2', {
                 type: 'feature',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'field.toolbar', $trace1: true,
                     toolbar: { $: 'studio.property-toobar', path: '%$path%', $trace1: true }
                 }
             });
             jb_core_1.jb.component('studio.property-toobar', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     style: { $: 'layout.horizontal' },
                     controls: [
@@ -82,9 +82,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.open-property-menu', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     $vars: {
                         compName: { $: 'studio.compName', path: '%$path%' }

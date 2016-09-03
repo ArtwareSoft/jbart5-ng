@@ -5,9 +5,9 @@ import * as jb_rx from 'jb-ui/jb-rx';
 
 jb.component('editable-number.slider', {
 	type: 'editable-number.style',
-	params: {
-		width: { as: 'number', defaultValue: '200' },
-	},
+	params: [
+		{ id: 'width', as: 'number', defaultValue: '200' },
+	],
 	impl :{$:'customStyle',
 		template: `<div class="jb-slider">
 						<div class="slider_scale">

@@ -79,7 +79,7 @@ export function evalProfile(prof_str) {
 
 jb.component('studio.message', {
 	type: 'action',
-	params: { message: { as: 'string' } },
+	params: [ { id: 'message', as: 'string' } ],
 	impl: (ctx,message) => 
 		message(message)
 })
@@ -100,9 +100,9 @@ jb.component('studio.redrawStudio', {
 
 jb.component('studio.goto-path', {
 	type: 'action',
-	params: { 
-		path: { as: 'string' },
-	},
+	params: [ 
+		{ id: 'path', as: 'string' },
+	],
 	impl :{$runActions: [ 
 		{$: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' }, 
 		{$: 'studio.open-properties'},
@@ -111,9 +111,9 @@ jb.component('studio.goto-path', {
 })
 
 jb.component('studio.projectSource',{
-	params: { 
-		project: { as: 'string', defaultValue: '%$globals/project%' } 
-	},
+	params: [ 
+		{ id: 'project', as: 'string', defaultValue: '%$globals/project%' } 
+	],
 	impl: (context,project) => {
 		if (!project) return;
 		var comps = jb.entries(jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
@@ -122,9 +122,9 @@ jb.component('studio.projectSource',{
 })
 
 jb.component('studio.compSource',{
-	params: { 
-		comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
-	},
+	params: [ 
+		{ id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
+	],
 	impl: (context,comp) => 
 		compAsStr(comp.split('~')[0])
 })

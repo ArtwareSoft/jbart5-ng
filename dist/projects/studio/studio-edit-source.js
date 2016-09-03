@@ -16,9 +16,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
         execute: function() {
             jb_core_1.jb.component('studio.editSource', {
                 type: 'action',
-                params: {
-                    path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
-                },
+                params: [
+                    { id: 'path', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+                ],
                 impl: {
                     $: 'openDialog',
                     title: { $: 'studio.short-title', path: '%$path%' },
@@ -33,9 +33,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.profile-as-text', {
                 type: 'data',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
                 impl: function (context, path, stringOnly) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
@@ -54,9 +54,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.string-property-ref', {
                 type: 'data',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
                 impl: function (context, path, stringOnly) { return ({
                     $jb_val: function (value) {
                         if (typeof value == 'undefined') {
@@ -70,9 +70,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.goto-sublime', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
                 impl: function (ctx, path) {
                     //		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
                     var compName = path.split('~')[0];

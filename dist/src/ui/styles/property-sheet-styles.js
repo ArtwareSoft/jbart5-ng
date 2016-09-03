@@ -10,9 +10,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('property-sheet.titles-above', {
                 type: 'group.style',
-                params: {
-                    spacing: { as: 'number', defaultValue: 20 }
-                },
+                params: [
+                    { id: 'spacing', as: 'number', defaultValue: 20 }
+                ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n      </div>\n    ",
@@ -21,10 +21,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('property-sheet.titles-above-float-left', {
                 type: 'group.style',
-                params: {
-                    spacing: { as: 'number', defaultValue: 20 },
-                    fieldWidth: { as: 'number', defaultValue: 200 },
-                },
+                params: [
+                    { id: 'spacing', as: 'number', defaultValue: 20 },
+                    { id: 'fieldWidth', as: 'number', defaultValue: 200 },
+                ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     template: "<div>\n        <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n          <label class=\"property-title\">{{ctrl.title}}</label>\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n        </div>\n        <div class=\"clearfix\"></div>\n      </div>\n    ",
@@ -33,11 +33,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('property-sheet.titles-left', {
                 type: 'group.style',
-                params: {
-                    vSpacing: { as: 'number', defaultValue: 20 },
-                    hSpacing: { as: 'number', defaultValue: 20 },
-                    titleWidth: { as: 'number', defaultValue: 100 },
-                },
+                params: [
+                    { id: 'vSpacing', as: 'number', defaultValue: 20 },
+                    { id: 'hSpacing', as: 'number', defaultValue: 20 },
+                    { id: 'titleWidth', as: 'number', defaultValue: 100 },
+                ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <jb_comp [comp]=\"ctrl.comp\" class=\"property-ctrl\"></jb_comp>\n      </div>\n    </div>",
@@ -46,11 +46,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('property-sheet.style-on-focus', {
                 type: 'group.style',
-                params: {
-                    vSpacing: { as: 'number', defaultValue: 20 },
-                    hSpacing: { as: 'number', defaultValue: 20 },
-                    titleWidth: { as: 'number', defaultValue: 100 },
-                },
+                params: [
+                    { id: 'vSpacing', as: 'number', defaultValue: 20 },
+                    { id: 'hSpacing', as: 'number', defaultValue: 20 },
+                    { id: 'titleWidth', as: 'number', defaultValue: 100 },
+                ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     methods: {
@@ -99,11 +99,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('property-sheet.growing', {
                 type: 'group.style',
-                params: {
-                    vSpacing: { as: 'number', defaultValue: 20 },
-                    hSpacing: { as: 'number', defaultValue: 20 },
-                    titleWidth: { as: 'number', defaultValue: 100 },
-                },
+                params: [
+                    { id: 'vSpacing', as: 'number', defaultValue: 20 },
+                    { id: 'hSpacing', as: 'number', defaultValue: 20 },
+                    { id: 'titleWidth', as: 'number', defaultValue: 100 },
+                ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
                     methods: {

@@ -186,7 +186,7 @@ extend(op_post_handlers, {
             var src = source.slice(index,index+toFind.length);
             toFind.forEach((line,index) => {
               if (line != src[index])
-                err += line + '#versus#' + src[index] + '\n';
+                err += line + '#versus source#' + src[index] + '##############';
             })
 
             // var err = .reduce(function(diff_line,line,index) {

@@ -25,11 +25,11 @@ jb.component('studio.all', {
           }, 
           {$: 'group', 
             url: '/projects/studio/css/logo470x200.png', 
-            title: 'title and menu ', 
+            title: 'title and menu', 
             style :{$: 'layout.vertical', spacing: '14' }, 
             controls: [
               {$: 'label', 
-                title: 'message ', 
+                title: 'message', 
                 style :{$: 'customStyle', 
                   template: '<span class="studio-message">{{title}}</span> ', 
                   css: `{ position: absolute;
@@ -242,10 +242,10 @@ jb.component('studio.renderWidget',{
 
 jb.component('studio.setPreviewSize', {
 	type: 'action',
-	params: {
-		width: { as: 'number'},
-		height: { as: 'number'},
-	},
+	params: [
+		{ id: 'width', as: 'number'},
+		{ id: 'height', as: 'number'},
+	],
 	impl: (ctx,width,height) => {
 		if (width)
 			$('#jb-preview').width(width);

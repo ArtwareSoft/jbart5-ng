@@ -76,17 +76,17 @@ jb.type('rx.elem');
 
 jb.component('rxLog',{
 	type: 'rx.elem',
-	params: {
-		pipe: { as: 'observable' }
-	},
+	params: [
+		{ id: 'pipe', as: 'observable' }
+	],
 	impl: (ctx,pipe) => pipe.subscribe(x=>console.log(x.data))
 })
 
 jb.component('rxPipe', {
 	type: 'rx.elem',
-	params: {
-		items: { type: 'data,rx.elem[]', ignore: true, essential: true }
-	},
+	params: [
+		{ id: 'items', type: 'data,rx.elem[]', ignore: true, essential: true }
+	],
 	impl: function(context) { return { 
 		$pipe: function(obs) {
 			var profiles = jb_toarray(context.profile.items || context.profile['$rxPipe'] || context.profile['$pipeline']);
@@ -98,9 +98,9 @@ jb.component('rxPipe', {
 
 jb.component('rxFilter',{
 	type: 'rx.elem',
-	params: {
-		filter: { type: 'boolean', dynamic: true }
-	},
+	params: [
+		{ id: 'filter', type: 'boolean', dynamic: true }
+	],
 	impl: function(context,filter) { return { 
 		$pipe: function(obs) {
 			return obs.filter(ctx=>filter(ctx))
@@ -131,9 +131,9 @@ function pipe(profiles,observable,context) {
 
 jb.component('rxParallel', {
 	type: 'rx.elem',
-	params: {
-		item: { dynamic: true },
-	},
+	params: [
+		{ id: 'item', dynamic: true },
+	],
 	impl: (context,item,keepOrder) => { return { $pipe : obs => 
 		obs.flatMap(ctx=>
 			Observable.prototype.merge.apply(Observable.of(),
@@ -144,9 +144,9 @@ jb.component('rxParallel', {
 
 jb.component('rxParallelKeepOrder', {
 	type: 'rx.elem',
-	params: {
-		item: { dynamic: true },
-	},
+	params: [
+		{ id: 'item', dynamic: true },
+	],
 	impl: (context,item,keepOrder) => { return { $pipe : obs => {
 		var parallel_results = [],emitted=0;
 		var out = new Subject();
@@ -180,10 +180,10 @@ jb.component('rxParallelKeepOrder', {
 
 jb.component('rx.distinctUntilChanged', {
 	type: 'rx.elem',
-	params: {
-	    keySelector: { type: 'rx.keySelector' },
-	    comparer: { type: 'rx.comparer' },
-	},
+	params: [
+	    { id: 'keySelector', type: 'rx.keySelector' },
+	    { id: 'comparer', type: 'rx.comparer' },
+	],
 	impl: context => ({ $pipe : obs => 
 		obs.concatMap(ctx=>
 			obs.map(ctx=>ctx.data)
@@ -194,9 +194,9 @@ jb.component('rx.distinctUntilChanged', {
 
 jb.component('rx.concat', {
 	type: 'rx.elem',
-	params: {
-		items: { type: 'data,rx.elem[]', ignore: true, essential: true }
-	},
+	params: [
+		{ id: 'items', type: 'data,rx.elem[]', ignore: true, essential: true }
+	],
 	impl: (context,items) => ({
 		$pipe: obs => {
 			var profiles = jb_toarray(context.profile.items);
@@ -232,9 +232,9 @@ export function toRxElem(obj,context) {
 
 jb.component('rx.subject',{
 	type: 'rx.subject,rx.observable,rx.observer',
-	params: {
-		pipe: { type: 'rx.elem', dynamic : true, defaultValue: {$: 'rx.distinctUntilChanged'} },
-	},
+	params: [
+		{ id: 'pipe', type: 'rx.elem', dynamic : true, defaultValue: {$: 'rx.distinctUntilChanged'} },
+	],
 	impl: function(context,pipe) {
 		var subject = new Subject();
 		return Subject.create(x=>subject.next(x),pipe().$pipe(subject))
@@ -243,10 +243,10 @@ jb.component('rx.subject',{
 
 jb.component('rx.emit',{
 	type: 'action',
-	params: {
-		from: { as: 'observable'},
-		to: { type: 'rx.observer' },
-	},
+	params: [
+		{ id: 'from', as: 'observable'},
+		{ id: 'to', type: 'rx.observer' },
+	],
 	impl: function(context,from,_to) {
 		from.subscribe(item =>_to.next(item));
 	}
@@ -254,12 +254,12 @@ jb.component('rx.emit',{
 
 jb.component('rx.urlPath',{
 	type: 'application-feature',
-	params: {
-		params: { type: 'data[]', as: 'array'},
-		databind: { as: 'single' , essential: true },
-		base: { as: 'string'},
-		zoneId: { as: 'string'},
-	},
+	params: [
+		{ id: 'params', type: 'data[]', as: 'array'},
+		{ id: 'databind', as: 'single' , essential: true },
+		{ id: 'base', as: 'string'},
+		{ id: 'zoneId', as: 'string'},
+	],
 	impl: function(context,params,databind,base,zoneId) {
 		if (jbart.location) return;
 
@@ -309,11 +309,11 @@ jb.component('rx.urlPath',{
 
 jb.component('rx-test', {
 	type: 'test',
-	params: {
-		result: { as: 'observable', dynamic: true },
-		expectedResult: { type: 'boolean', dynamic: true },
-		timeout: { as: 'number', defaultValue: 5000 }
-	},
+	params: [
+		{ id: 'result', as: 'observable', dynamic: true },
+		{ id: 'expectedResult', type: 'boolean', dynamic: true },
+		{ id: 'timeout', as: 'number', defaultValue: 5000 }
+	],
 	impl: function(context, result, expectedResult,timeout) {
 		var res = result();
 		return expectedResult(context.setData(res))
@@ -324,10 +324,10 @@ jb.component('rx-test', {
 
 jb.component('containsSeq',{
 	type: 'boolean',
-	params: {
-		seq: { type: 'data[]', as: 'array' },
-		observable: { defaultValue: '%%', as: 'observable'}
-	},
+	params: [
+		{ id: 'seq', type: 'data[]', as: 'array' },
+		{ id: 'observable', defaultValue: '%%', as: 'observable'}
+	],
 	impl: function(context,seq,observable) {
 		return observable.take(seq.length)
 			.map(x=>x.data).toArray()

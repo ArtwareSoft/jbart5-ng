@@ -179,13 +179,13 @@ function fixArrayWrapperPath() {
 // ******* components ***************
 
 jb.component('studio.ref',{
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		profileRefFromPathWithNotification(path,context)
 });
 
 jb.component('studio.fix-to-closest-path', {
-	params: { path: { as: 'ref' } },
+	params: [ {id: 'path', as: 'ref' } ],
 	impl: (ctx,pathRef) => {
 		var path = jb.val(pathRef);
 		var closest_path = closest(path);

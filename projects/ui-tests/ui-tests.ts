@@ -32,23 +32,23 @@ jb.resource('ui-tests','wait2sec', new Promise(res => setTimeout(()=>{res(2)}, 2
 //jb.resource('ui-tests','err2sec', new Promise((res,err) => setTimeout(()=>err('simulate error'), 2000)));
 
 jb.component('inner-label1-tst', {
-  params: {
-     title: { essential: true, dynamic: true },
-  },
+  params: [
+     { id: 'title', essential: true, dynamic: true },
+  ],
   impl :{$: 'label', cssClass: 'inner-label1-tst', title: {$call: 'title' }}
 })
 
 jb.component('inner-label2-tst', {
-  params: {
-     title: { essential: true, dynamic: true },
-  },
+  params: [
+     { id: 'title', essential: true, dynamic: true },
+  ],
   impl :{$: 'inner-label1-tst', cssClass: 'inner-label2-tst', title: {$call: 'title' }}
 })
 
 jb.component('inner-label3-tst', {
-  params: {
-     title: { essential: true, dynamic: true },
-  },
+  params: [
+     { id: 'title', essential: true, dynamic: true },
+  ],
   impl :{$: 'inner-label2-tst', cssClass: 'inner-label3-tst', title: {$call: 'title' }}
 })
 

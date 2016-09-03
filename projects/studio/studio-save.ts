@@ -6,14 +6,16 @@ var modified = {};
 
 modifyOperationsEm.subscribe(e=>{
 	var comp = e.comp;
-	if (!modified[comp])
+	if (!modified[comp]) {
+		console.log('save-subs',e.before);
 		modified[comp] = { original : e.before || '' }
+	}
 })
 
 jb.component('studio.saveComponents', {
-	params: {
-		force: {as: 'boolean', type: 'boolean' }
-	},
+	params: [
+		{ id: 'force',as: 'boolean', type: 'boolean' }
+	],
 	impl :{$rxLog : [
 			ctx => jb.entries(modified).map(x=>
 				({key:x[0],val:x[1]})),

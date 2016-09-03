@@ -4,9 +4,9 @@ import {model} from './studio-tgp-model';
 
 jb.component('studio.open-multiline-edit', {
 	type: 'action',
-	params: {
-	    path: { as: 'string' }
-	}, 
+	params: [
+	    { id: 'path', as: 'string' }
+	], 
 	impl: {
 		$: 'openDialog',
 		style :{$: 'dialog.studio-multiline-edit' },
@@ -22,11 +22,11 @@ jb.component('studio.open-multiline-edit', {
 
 jb.component('dialog.studio-floating', {
 	type: 'dialog.style',
-	params: {
-		id: { as: 'string' },
-		width: { as: 'number', default: 300},
-		height: { as: 'number', default: 100},
-	},
+	params: [
+		{ id: 'id', as: 'string' },
+		{ id: 'width', as: 'number', default: 300},
+		{ id: 'height', as: 'number', default: 100},
+	],
 	impl :{$: 'customStyle',
 			template: `<div class="jb-dialog jb-default-dialog">
 				      		  <div class="dialog-title noselect">{{title}}</div>
@@ -96,7 +96,7 @@ jb.component('studio-dialogFeature.studioPopupLocation',{
 })
 
 jb.component('studio.code-mirror-mode',{
-	params: { path: { as: 'string' }},
+	params: [ {id: 'path', as: 'string' } ],
 	impl: function(ctx,path) {
 		if (path.match(/css/))
 			return 'css';
@@ -108,9 +108,9 @@ jb.component('studio.code-mirror-mode',{
 
 jb.component('studio.open-responsive-phone-popup', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating', id: 'responsive' }, 
     content :{$: 'tabs', 

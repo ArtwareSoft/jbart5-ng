@@ -50,9 +50,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('test.inner-label-template', {
                 type: 'control',
-                params: {
-                    ctrl: { type: 'control', dynamic: true }
-                },
+                params: [
+                    { id: 'ctrl', type: 'control', dynamic: true }
+                ],
                 impl: { $: 'group', controls: { $call: 'ctrl' } }
             });
             jb_core_1.jb.component('path-test.inner-in-template', {

@@ -164,21 +164,6 @@ jb.component('property-sheet.studio-plain', {
   }
 })
 
-// jb.component('button.studio-properties-toolbar', {
-//   type: 'button.style',
-//   params: {
-//     icon: { as: 'string', default: 'code' },
-//   },
-//   impl :{$: 'customStyle', 
-//       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
-//                 <i class="material-icons">%$icon%</i>
-//               </button></div>`,
-//       css: `button { width: 24px; height: 24px; padding: 0; margin-top: -3px;}
-//      	.material-icons { font-size:12px;  }
-//       `
-//   }
-// })
-
 jb.component('editable-boolean.studio-expand-collapse-in-toolbar', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle',

@@ -10,9 +10,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('studio.open-multiline-edit', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: {
                     $: 'openDialog',
                     style: { $: 'dialog.studio-multiline-edit' },
@@ -27,11 +27,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('dialog.studio-floating', {
                 type: 'dialog.style',
-                params: {
-                    id: { as: 'string' },
-                    width: { as: 'number', default: 300 },
-                    height: { as: 'number', default: 100 },
-                },
+                params: [
+                    { id: 'id', as: 'string' },
+                    { id: 'width', as: 'number', default: 300 },
+                    { id: 'height', as: 'number', default: 100 },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      \t\t  <div class=\"dialog-title noselect\">{{title}}</div>\n\t\t\t\t      \t\t  <jb_comp *ngIf=\"hasMenu\" class=\"dialog-menu\" [comp]=\"menuComp\"></jb_comp>\n\t\t\t\t\t\t\t  <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t  <div class=\"jb-dialog-content-parent\">\n \t\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t  \t  </div>\n\t\t\t\t\t\t</div>",
                     features: [
@@ -56,7 +56,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 }
             });
             jb_core_1.jb.component('studio.code-mirror-mode', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (ctx, path) {
                     if (path.match(/css/))
                         return 'css';
@@ -67,9 +67,9 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('studio.open-responsive-phone-popup', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-floating', id: 'responsive' },
                     content: { $: 'tabs',

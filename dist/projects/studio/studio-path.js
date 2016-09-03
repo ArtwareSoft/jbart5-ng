@@ -180,13 +180,13 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
             }());
             // ******* components ***************
             jb_core_1.jb.component('studio.ref', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return profileRefFromPathWithNotification(path, context);
                 }
             });
             jb_core_1.jb.component('studio.fix-to-closest-path', {
-                params: { path: { as: 'ref' } },
+                params: [{ id: 'path', as: 'ref' }],
                 impl: function (ctx, pathRef) {
                     var path = jb_core_1.jb.val(pathRef);
                     var closest_path = closest(path);

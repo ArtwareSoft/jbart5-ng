@@ -103,12 +103,12 @@ export class suggestions {
 
 jb.component('editable-text.suggestions-input-feature', {
   type: 'feature', 
-  params: {
-    path: { as: 'string' },
-    action: { type: 'action', dynamic:true },
-    onEnter: { type: 'action', dynamic:true },
-    floatingInput: {type: 'boolean', as : 'boolean', description: 'used to close the floating input popup'}
-  }, 
+  params: [
+    { id: 'path', as: 'string' },
+    { id: 'action', type: 'action', dynamic:true },
+    { id: 'onEnter', type: 'action', dynamic:true },
+    { id: 'floatingInput',type: 'boolean', as : 'boolean', description: 'used to close the floating input popup'}
+  ], 
   impl: ctx => 
     ({
       observable: () => {}, // register jbEmitter
@@ -187,9 +187,9 @@ jb.component('editable-text.suggestions-input-feature', {
 
 jb.component('studio.jb-open-suggestions', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-suggestions-popup' }, 
     content :{$: 'group', 
@@ -241,9 +241,9 @@ jb.component('studio.suggestions-emitter', {
   
 jb.component('itemlist.studio-suggestions-selection', {
   type: 'feature',
-  params: {
-    onEnter: { type: 'action', dynamic: true },
-  },
+  params: [
+    { id: 'onEnter', type: 'action', dynamic: true },
+  ],
   impl: ctx => 
     ({
       init: function(cmp) {
@@ -287,9 +287,9 @@ jb.component('itemlist.studio-suggestions-selection', {
 })
 
 jb.component('studio.jb-paste-suggestion', {
-  params: {
-    path: {as: 'string'}
-  },
+  params: [
+    { id: 'path',as: 'string'}
+  ],
   type: 'action',
   impl: (ctx,path) => {
     var suggestionsCtx = ctx.vars.suggestionContext;

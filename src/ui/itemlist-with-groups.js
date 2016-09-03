@@ -5,17 +5,17 @@ jb.type('itemlist-heading.style');
 
 jb.component('itemlist-with-groups', {
   type: 'control',
-  params: {
-    title: { as: 'string' },
-    items: { as: 'array' , dynamic: true, essential: true },
-    controls: { type: 'control[]', essential: true, dynamic: true },
-    style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
-    groupBy: { type: 'itemlist.group-by', essential: true, dynamic: true },
-    headingCtrl: { type: 'control', dynamic: true , defaultValue: {$: 'label', title: '%title%' } },
-    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
-    itemVariable: { as: 'string', defaultValue: 'item' },
-    features: { type: 'feature[]', dynamic: true, flattenArray: true },
-  },
+  params: [
+    { id: 'title', as: 'string' },
+    { id: 'items', as: 'array' , dynamic: true, essential: true },
+    { id: 'controls', type: 'control[]', essential: true, dynamic: true },
+    { id: 'style', type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+    { id: 'groupBy', type: 'itemlist.group-by', essential: true, dynamic: true },
+    { id: 'headingCtrl', type: 'control', dynamic: true , defaultValue: {$: 'label', title: '%title%' } },
+    { id: 'watchItems', type: 'boolean', as: 'boolean', defaultValue: true },
+    { id: 'itemVariable', as: 'string', defaultValue: 'item' },
+    { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true },
+  ],
   impl :{$: 'group', 
     title: '%$title%',
     style :{$call: 'style'},
@@ -41,12 +41,12 @@ jb.component('itemlist-with-groups', {
 
 jb.component('itemlist.watch-items-with-heading', {
   type: 'feature',
-  params: {
-    items: { essential: true, dynamic: true },
-    itemsArrayVariable: { as: 'string' },
-    watch: { type: 'boolean', as: 'boolean', defaultValue: true },
-    groupBy: { type: 'itemlist.group-by', essential: true, dynamic: true },
-  },
+  params: [
+    { id: 'items', essential: true, dynamic: true },
+    { id: 'itemsArrayVariable', as: 'string' },
+    { id: 'watch', type: 'boolean', as: 'boolean', defaultValue: true },
+    { id: 'groupBy', type: 'itemlist.group-by', essential: true, dynamic: true },
+  ],
   impl: function(context, items, itemsArrayVariable,watch,groupBy) {
     return {
       beforeInit: function(cmp) {
@@ -86,10 +86,10 @@ jb.component('itemlist-default-heading', {
 
 jb.component('itemlist-heading.group-by', {
   type: 'itemlist.group-by',
-  params: {
-    itemToGroupID: { dynamic: true, defaultValue: { $: 'prefix', separator: '.' } },
-    promoteGroups: { type: 'data[]', as: 'array' },
-  },
+  params: [
+    { id: 'itemToGroupID', dynamic: true, defaultValue: { $: 'prefix', separator: '.' } },
+    { id: 'promoteGroups', type: 'data[]', as: 'array' },
+  ],
   impl: (ctx,itemToGroupID,promoteGroups) => {
       var items = ctx.data.map(item=>({ item: item, groupId: itemToGroupID(ctx.setData(item)) }));
       var groups = {};

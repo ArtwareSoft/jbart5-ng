@@ -50,13 +50,13 @@ jb.component('studio.redo', {
 })
 
 jb.component('studio.copy', {
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (ctx,path) => 
 		undo.copy(ctx,path)
 })
 
 jb.component('studio.paste', {
-	params: { path: { as: 'string' } },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: (ctx,path) => 
 		undo.paste(ctx,path)
 })

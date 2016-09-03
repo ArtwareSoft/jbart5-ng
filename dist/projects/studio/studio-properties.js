@@ -48,9 +48,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.properties', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     style: { $: 'group.studio-properties-accordion' },
                     controls: [
@@ -109,7 +109,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.properties-in-tgp', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     style: { $: 'property-sheet.studio-properties' },
                     features: { $: 'group.studio-watch-path', path: '%$path%' },
@@ -121,9 +121,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-field', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
                 impl: function (context, path) {
                     var fieldPT = 'studio.property-label';
                     var val = studio_tgp_model_1.model.val(path);
@@ -154,16 +154,16 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-label', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'label',
                     title: { $: 'studio.prop-name', path: '%$path%' },
                 }
             });
             jb_core_1.jb.component('studio.property-primitive', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'editable-text',
                     style: { $: 'editable-text.studio-primitive-text' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
@@ -180,9 +180,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-script', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     features: [
@@ -198,9 +198,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.data-script-summary', {
                 type: 'data',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: function (ctx, path) {
                     var val = studio_tgp_model_1.model.val(path);
                     if (studio_tgp_model_1.model.compName(path))
@@ -213,7 +213,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-boolean', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'editable-boolean',
                     style: { $: 'editable-boolean.studio-slide-toggle' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
@@ -226,7 +226,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-enum', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'picklist',
                     style: { $: 'picklist.studio-enum' },
                     title: { $: 'studio.prop-name', path: '%$path%' },
@@ -236,7 +236,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-slider', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'editable-number',
                     $vars: {
                         paramDef: { $: 'studio.paramDef', path: '%$path%' }
@@ -252,9 +252,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-tgp', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     $vars: {
                         tgpCtrl: { $: 'object', expanded: true }
@@ -339,7 +339,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-custom-style', {
                 type: 'control',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     features: [
@@ -364,9 +364,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-tgp-in-array', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     $vars: {
                         tgpCtrl: { $: 'object', expanded: false }
@@ -429,9 +429,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-array', {
                 type: 'control',
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: { $: 'group',
                     $vars: {
                         arrayCtrl: { $: 'object', expanded: true }
@@ -468,9 +468,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.tgp-path-options', {
                 type: 'picklist.options',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
                 impl: function (context, path) {
                     return [{ code: '', text: '' }]
                         .concat(studio_tgp_model_1.model.PTsOfPath(path).map(function (op) { return ({ code: op, text: op }); }));
@@ -478,18 +478,18 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.tgp-type-options', {
                 type: 'picklist.options',
-                params: {
-                    type: { as: 'string' }
-                },
+                params: [
+                    { id: 'type', as: 'string' }
+                ],
                 impl: function (context, type) {
                     return studio_tgp_model_1.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
                 }
             });
             jb_core_1.jb.component('studio.undo-support', {
                 type: 'feature',
-                params: {
-                    path: { essential: true, as: 'string' },
-                },
+                params: [
+                    { id: 'path', essential: true, as: 'string' },
+                ],
                 impl: function (ctx, path) {
                     return ({
                         // saving state on focus and setting the change on blur
@@ -520,10 +520,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.bindto-modifyOperations', {
                 type: 'feature',
-                params: {
-                    path: { essential: true, as: 'string' },
-                    data: { as: 'ref' }
-                },
+                params: [
+                    { id: 'path', essential: true, as: 'string' },
+                    { id: 'data', as: 'ref' }
+                ],
                 impl: function (context, path, _data) {
                     studio_utils_1.modifyOperationsEm
                         .filter(function (e) {
@@ -536,9 +536,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('group.studio-watch-path', {
                 type: 'feature',
-                params: {
-                    path: { essential: true, as: 'string' },
-                },
+                params: [
+                    { id: 'path', essential: true, as: 'string' },
+                ],
                 impl: function (context, initialPath) {
                     var path = initialPath;
                     studio_utils_1.pathChangesEm.subscribe(function (fixer) { path = fixer.fix(path); });

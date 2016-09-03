@@ -15,13 +15,15 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
             modified = {};
             studio_utils_1.modifyOperationsEm.subscribe(function (e) {
                 var comp = e.comp;
-                if (!modified[comp])
+                if (!modified[comp]) {
+                    console.log('save-subs', e.before);
                     modified[comp] = { original: e.before || '' };
+                }
             });
             jb_core_1.jb.component('studio.saveComponents', {
-                params: {
-                    force: { as: 'boolean', type: 'boolean' }
-                },
+                params: [
+                    { id: 'force', as: 'boolean', type: 'boolean' }
+                ],
                 impl: { $rxLog: [
                         function (ctx) { return jb_core_1.jb.entries(modified).map(function (x) {
                             return ({ key: x[0], val: x[1] });

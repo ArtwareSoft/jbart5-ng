@@ -3,9 +3,9 @@ import * as jb_ui from 'jb-ui';
 
 jb.component('layout.vertical', {
   type: 'group.style',
-  params: {
-    spacing: { as: 'number', defaultValue: 3 }
-  },
+  params: [
+    { id: 'spacing', as: 'number', defaultValue: 3 }
+  ],
   impl :{$: 'customStyle',
     template: `<div class="jb-group">
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
@@ -18,9 +18,9 @@ jb.component('layout.vertical', {
 
 jb.component('layout.horizontal', {
   type: 'group.style',
-  params: {
-    spacing: { as: 'number', defaultValue: 3 }
-  },
+  params: [
+    { id: 'spacing', as: 'number', defaultValue: 3 }
+  ],
   impl :{$: 'customStyle',
     template: `<div class="jb-group">
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
@@ -34,11 +34,11 @@ jb.component('layout.horizontal', {
 
 jb.component('layout.flex', {
   type: 'group.style',
-  params: {
-      align: { as: 'string', options: ',flex-start,flex-end,center,space-between,space-around' },
-      direction: { as: 'string', options: ',row,row-reverse,column,column-reverse' },
-      wrap: { as: 'string', options:',wrap' },
-  },
+  params: [
+      { id: 'align', as: 'string', options: ',flex-start,flex-end,center,space-between,space-around' },
+      { id: 'direction', as: 'string', options: ',row,row-reverse,column,column-reverse' },
+      { id: 'wrap', as: 'string', options:',wrap' },
+  ],
   impl :{$: 'customStyle',
     // $vars: {
     //    flexProps: ctx => {
@@ -65,9 +65,9 @@ jb.component('layout.flex', {
 
 jb.component('flex-layout-container.align-main-axis', {
     type: 'feature',
-    params: {
-      align: { as: 'string', options: 'flex-start,flex-end,center,space-between,space-around', defaultValue: 'flex-start' }
-    },
+    params: [
+      { id: 'align', as: 'string', options: 'flex-start,flex-end,center,space-between,space-around', defaultValue: 'flex-start' }
+    ],
     impl : (ctx,factor) => ({
       css: `{ justify-content: ${align} }`
     })
@@ -76,9 +76,9 @@ jb.component('flex-layout-container.align-main-axis', {
 
 jb.component('flex-layout-item.grow', {
     type: 'feature',
-    params: {
-      factor: { as: 'number', defaultValue: '1' }
-    },
+    params: [
+      { id: 'factor', as: 'number', defaultValue: '1' }
+    ],
     impl : (ctx,factor) => ({
       css: `{ flex-grow: ${factor} }`
     })
@@ -86,9 +86,9 @@ jb.component('flex-layout-item.grow', {
 
 jb.component('flex-layout-item.basis', {
     type: 'feature',
-    params: {
-      factor: { as: 'number', defaultValue: '1' }
-    },
+    params: [
+      { id: 'factor', as: 'number', defaultValue: '1' }
+    ],
     impl : (ctx,factor) => ({
       css: `{ flex-basis: ${factor} }`
     })
@@ -96,9 +96,9 @@ jb.component('flex-layout-item.basis', {
 
 jb.component('flex-layout-item.align-self', {
     type: 'feature',
-    params: {
-      align: { as: 'string', options: 'auto,flex-start,flex-end,center,baseline,stretch', defaultValue: 'auto' }
-    },
+    params: [
+      { id: 'align', as: 'string', options: 'auto,flex-start,flex-end,center,baseline,stretch', defaultValue: 'auto' }
+    ],
     impl : (ctx,align) => ({
       css: `{ align-self: ${align} }`
     })
@@ -106,12 +106,12 @@ jb.component('flex-layout-item.align-self', {
 
 jb.component('flex-filler', {
     type: 'control',
-    params: {
-        title: { as: 'string', defaultValue: 'flex filler' },
-        basis: { as: 'number', defaultValue: '1' },
-        grow: { as: 'number', defaultValue: '1' },
-        shrink: { as: 'number', defaultValue: '0' },
-    },
+    params: [
+        { id: 'title', as: 'string', defaultValue: 'flex filler' },
+        { id: 'basis', as: 'number', defaultValue: '1' },
+        { id: 'grow', as: 'number', defaultValue: '1' },
+        { id: 'shrink', as: 'number', defaultValue: '0' },
+    ],
     impl: (ctx,title,basis,grow,shrink) => {
       var css = [
         `flex-basis: ${basis}`, 

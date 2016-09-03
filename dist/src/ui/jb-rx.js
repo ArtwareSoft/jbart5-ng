@@ -127,16 +127,16 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             jb_1.jb.type('rx.elem');
             jb_1.jb.component('rxLog', {
                 type: 'rx.elem',
-                params: {
-                    pipe: { as: 'observable' }
-                },
+                params: [
+                    { id: 'pipe', as: 'observable' }
+                ],
                 impl: function (ctx, pipe) { return pipe.subscribe(function (x) { return console.log(x.data); }); }
             });
             jb_1.jb.component('rxPipe', {
                 type: 'rx.elem',
-                params: {
-                    items: { type: 'data,rx.elem[]', ignore: true, essential: true }
-                },
+                params: [
+                    { id: 'items', type: 'data,rx.elem[]', ignore: true, essential: true }
+                ],
                 impl: function (context) {
                     return {
                         $pipe: function (obs) {
@@ -148,9 +148,9 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rxFilter', {
                 type: 'rx.elem',
-                params: {
-                    filter: { type: 'boolean', dynamic: true }
-                },
+                params: [
+                    { id: 'filter', type: 'boolean', dynamic: true }
+                ],
                 impl: function (context, filter) {
                     return {
                         $pipe: function (obs) {
@@ -161,9 +161,9 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rxParallel', {
                 type: 'rx.elem',
-                params: {
-                    item: { dynamic: true },
-                },
+                params: [
+                    { id: 'item', dynamic: true },
+                ],
                 impl: function (context, item, keepOrder) {
                     return { $pipe: function (obs) {
                             return obs.flatMap(function (ctx) {
@@ -175,9 +175,9 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rxParallelKeepOrder', {
                 type: 'rx.elem',
-                params: {
-                    item: { dynamic: true },
-                },
+                params: [
+                    { id: 'item', dynamic: true },
+                ],
                 impl: function (context, item, keepOrder) {
                     return { $pipe: function (obs) {
                             var parallel_results = [], emitted = 0;
@@ -205,10 +205,10 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rx.distinctUntilChanged', {
                 type: 'rx.elem',
-                params: {
-                    keySelector: { type: 'rx.keySelector' },
-                    comparer: { type: 'rx.comparer' },
-                },
+                params: [
+                    { id: 'keySelector', type: 'rx.keySelector' },
+                    { id: 'comparer', type: 'rx.comparer' },
+                ],
                 impl: function (context) { return ({ $pipe: function (obs) {
                         return obs.concatMap(function (ctx) {
                             return obs.map(function (ctx) { return ctx.data; })
@@ -220,9 +220,9 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rx.concat', {
                 type: 'rx.elem',
-                params: {
-                    items: { type: 'data,rx.elem[]', ignore: true, essential: true }
-                },
+                params: [
+                    { id: 'items', type: 'data,rx.elem[]', ignore: true, essential: true }
+                ],
                 impl: function (context, items) { return ({
                     $pipe: function (obs) {
                         var profiles = jb_toarray(context.profile.items);
@@ -233,9 +233,9 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rx.subject', {
                 type: 'rx.subject,rx.observable,rx.observer',
-                params: {
-                    pipe: { type: 'rx.elem', dynamic: true, defaultValue: { $: 'rx.distinctUntilChanged' } },
-                },
+                params: [
+                    { id: 'pipe', type: 'rx.elem', dynamic: true, defaultValue: { $: 'rx.distinctUntilChanged' } },
+                ],
                 impl: function (context, pipe) {
                     var subject = new Subject_1.Subject();
                     return Subject_1.Subject.create(function (x) { return subject.next(x); }, pipe().$pipe(subject));
@@ -243,22 +243,22 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('rx.emit', {
                 type: 'action',
-                params: {
-                    from: { as: 'observable' },
-                    to: { type: 'rx.observer' },
-                },
+                params: [
+                    { id: 'from', as: 'observable' },
+                    { id: 'to', type: 'rx.observer' },
+                ],
                 impl: function (context, from, _to) {
                     from.subscribe(function (item) { return _to.next(item); });
                 }
             });
             jb_1.jb.component('rx.urlPath', {
                 type: 'application-feature',
-                params: {
-                    params: { type: 'data[]', as: 'array' },
-                    databind: { as: 'single', essential: true },
-                    base: { as: 'string' },
-                    zoneId: { as: 'string' },
-                },
+                params: [
+                    { id: 'params', type: 'data[]', as: 'array' },
+                    { id: 'databind', as: 'single', essential: true },
+                    { id: 'base', as: 'string' },
+                    { id: 'zoneId', as: 'string' },
+                ],
                 impl: function (context, params, databind, base, zoneId) {
                     if (jbart.location)
                         return;
@@ -306,11 +306,11 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             // ************** tests ******************
             jb_1.jb.component('rx-test', {
                 type: 'test',
-                params: {
-                    result: { as: 'observable', dynamic: true },
-                    expectedResult: { type: 'boolean', dynamic: true },
-                    timeout: { as: 'number', defaultValue: 5000 }
-                },
+                params: [
+                    { id: 'result', as: 'observable', dynamic: true },
+                    { id: 'expectedResult', type: 'boolean', dynamic: true },
+                    { id: 'timeout', as: 'number', defaultValue: 5000 }
+                ],
                 impl: function (context, result, expectedResult, timeout) {
                     var res = result();
                     return expectedResult(context.setData(res))
@@ -321,10 +321,10 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             });
             jb_1.jb.component('containsSeq', {
                 type: 'boolean',
-                params: {
-                    seq: { type: 'data[]', as: 'array' },
-                    observable: { defaultValue: '%%', as: 'observable' }
-                },
+                params: [
+                    { id: 'seq', type: 'data[]', as: 'array' },
+                    { id: 'observable', defaultValue: '%%', as: 'observable' }
+                ],
                 impl: function (context, seq, observable) {
                     return observable.take(seq.length)
                         .map(function (x) { return x.data; }).toArray()

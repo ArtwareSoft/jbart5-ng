@@ -11,10 +11,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('tree.json-read-only', {
                 type: 'tree.nodeModel',
-                params: {
-                    object: {},
-                    rootPath: { as: 'string' }
-                },
+                params: [
+                    { id: 'object' },
+                    { id: 'rootPath', as: 'string' }
+                ],
                 impl: function (context, json, rootPath) {
                     return new ROjson(json, rootPath);
                 }

@@ -7,12 +7,12 @@ jb_ui.registerDirectives({MD_SIDENAV_DIRECTIVES: MD_SIDENAV_DIRECTIVES});
 
 jb.component('sidenav.md', {
   type: 'sidenav.style',
-  params: {
-    width: { as: 'number' },
-    align: { options: 'start,end', as: 'string'},
-    mode: { options: 'over,push,side', as: 'string'},
-    opened: { as: 'boolean', type: 'boolean' }
-  },
+  params: [
+    { id: 'width', as: 'number' },
+    { id: 'align', options: 'start,end', as: 'string'},
+    { id: 'mode', options: 'over,push,side', as: 'string'},
+    { id: 'opened', as: 'boolean', type: 'boolean' }
+  ],
   impl :{$: 'customStyle',
     template: `<md-sidenav-layout>
       <md-sidenav>

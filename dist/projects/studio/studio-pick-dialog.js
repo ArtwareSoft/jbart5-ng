@@ -48,10 +48,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         execute: function() {
             jb_core_1.jb.component('studio.pick', {
                 type: 'action',
-                params: {
-                    from: { options: 'studio,preview', as: 'string', defaultValue: 'preview' },
-                    onSelect: { type: 'action', dynamic: true }
-                },
+                params: [
+                    { id: 'from', options: 'studio,preview', as: 'string', defaultValue: 'preview' },
+                    { id: 'onSelect', type: 'action', dynamic: true }
+                ],
                 impl: { $: 'openDialog',
                     $vars: {
                         pickPath: { path: '' }
@@ -66,9 +66,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
             jb_core_1.jb.component('dialog.studio-pick-dialog', {
                 hidden: true,
                 type: 'dialog.style',
-                params: {
-                    from: { as: 'string' },
-                },
+                params: [
+                    { id: 'from', as: 'string' },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-dialog\">\n<div class=\"edge top\" [style.width]=\"width+'px'\" [style.top]=\"top+'px'\" [style.left]=\"left+'px'\"></div>\n<div class=\"edge left\" [style.height]=\"height+'px'\" [style.top]=\"top+'px'\" [style.left]=\"left+'px'\"></div>\n<div class=\"edge right\" [style.height]=\"height+'px'\" [style.top]=\"top+'px'\" [style.left]=\"left+width+'px'\"></div>\n<div class=\"edge bottom\" [style.width]=\"width+'px'\" [style.top]=\"top+height+'px'\" [style.left]=\"left+'px'\"></div>\n<div class=\"title\" [class.bottom]=\"titleBelow\" [style.top]=\"titleTop+'px'\" [style.left]=\"titleLeft+'px'\">\n\t<div class=\"text\">{{title}}</div>\n\t<div class=\"triangle\"></div>\n</div>\n\n</div>",
                     css: "\n.edge { \n\tz-index: 6001;\n\tposition: absolute;\n\tbackground: red;\n\tbox-shadow: 0 0 1px 1px gray;\n\twidth: 1px; height: 1px;\n\tcursor: pointer;\n}\n.title {\n\tz-index: 6001;\n\tposition: absolute;\n\tfont: 14px arial; padding: 0; cursor: pointer;\n\ttransition:top 100ms, left 100ms;\n}\n.title .triangle {\twidth:0;height:0; border-style: solid; \tborder-color: #e0e0e0 transparent transparent transparent; border-width: 6px; margin-left: 14px;}\n.title .text {\tbackground: #e0e0e0; font: 14px arial; padding: 3px; }\n.title.bottom .triangle { background: #fff; border-color: transparent transparent #e0e0e0 transparent; transform: translateY(-28px);}\n.title.bottom .text { transform: translateY(6px);}\n\t\t\t\t",
@@ -79,9 +79,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
             });
             jb_core_1.jb.component('dialogFeature.studio-pick', {
                 type: 'dialogFeature',
-                params: {
-                    from: { as: 'string' },
-                },
+                params: [
+                    { id: 'from', as: 'string' },
+                ],
                 impl: function (ctx) {
                     return ({
                         init: function (cmp) {
@@ -120,9 +120,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                 }
             });
             jb_core_1.jb.component('studio.highlight-in-preview', {
-                params: {
-                    path: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
                 impl: function (ctx, path) {
                     var _window = jbart.previewWindow || window;
                     if (!_window)

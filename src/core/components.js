@@ -8,9 +8,9 @@ jb_type('feature');
 
 jb_component('call',{
  	type: '*',
- 	params: {
- 		param: { as: 'string' }
- 	},
+ 	params: [
+ 		{ id: 'param', as: 'string' }
+ 	],
  	impl: function(context,param) {
  	  var paramObj = context.componentContext && context.componentContext.params[param];
       if (typeof(paramObj) == 'function')
@@ -27,9 +27,9 @@ jb_component('call',{
 
 jb_component('pipeline',{
 	type: "data",
-	params: {
-		items: { type: "data,aggregator[]", ignore: true, essential: true, composite: true }
-	},
+	params: [
+		{ id: 'items', type: "data,aggregator[]", ignore: true, essential: true, composite: true }
+	],
 	impl: function(context,items) {
 		var data = jb_toarray(context.data);
 		var curr = [data[0]]; // use only one data item, the first or null
@@ -56,9 +56,9 @@ jb_component('pipeline',{
 
 jb_component('run',{
  	type: '*',
- 	params: {
- 		profile: { as: 'single'},
- 	},
+ 	params: [
+ 		{ id: 'profile', as: 'single'},
+ 	],
  	impl: function(context,profile) {
  	  	return context.run(profile);
  	}
@@ -83,9 +83,9 @@ jb_component('list',{
 
 jb_component('firstSucceeding',{
 	type: "data",
-	params: {
-		items: { type: "data[]", as: 'array' }
-	},
+	params: [
+		{ id: 'items', type: "data[]", as: 'array' }
+	],
 	impl: function(context,items) {
 		for(var i=0;i<items.length;i++)
 			if (jb_val(items[i]))
@@ -95,19 +95,19 @@ jb_component('firstSucceeding',{
 
 jb_component('objectProperties',{
 	type: "data",
-	params: {
-		object: { defaultValue: '%%', as: 'single' }
-	},
+	params: [
+		{ id: 'object', defaultValue: '%%', as: 'single' }
+	],
 	impl: (ctx,object) =>
 		jb_ownPropertyNames(object)
 })
 
 jb_component('extend',{
 	type: "data",
-	params: {
-		with: { as: 'single' },
-		object: { defaultValue: '%%', as: 'single' }
-	},
+	params: [
+		{ id: 'with', as: 'single' },
+		{ id: 'object', defaultValue: '%%', as: 'single' }
+	],
 	impl: function(context,_with,object) {
 		return jb_extend({},object,_with);
 	}
@@ -115,9 +115,9 @@ jb_component('extend',{
 
 jb_component('objectToArray',{
 	type: "data",
-	params: {
-		object: { defaultValue: '%%', as: 'single' }
-	},
+	params: [
+		{ id: 'object', defaultValue: '%%', as: 'single' }
+	],
 	impl: (context,object) =>
 		jb_ownPropertyNames(object).map((id,index) => 
 			({id: id, val: object[id], index: index}))
@@ -132,10 +132,10 @@ jb_component('propertyName',{
 
 jb_component('prefix', {
 	type: 'data',
-	params: {
-		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '%%' },
-	},
+	params: [
+		{ id: 'separator', as: 'string', essential: true },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+	],
 	impl: function(context,separator,text) {
 		return (text||'').substring(0,text.indexOf(separator))
 	}
@@ -143,10 +143,10 @@ jb_component('prefix', {
 
 jb_component('suffix', {
 	type: 'data',
-	params: {
-		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '%%' },
-	},
+	params: [
+		{ id: 'separator', as: 'string', essential: true },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+	],
 	impl: function(context,separator,text) {
 		return (text||'').substring(text.lastIndexOf(separator)+separator.length)
 	}
@@ -154,10 +154,10 @@ jb_component('suffix', {
 
 jb_component('removePrefix',{
 	type: 'data',
-	params: {
-		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '%%' },
-	},
+	params: [
+		{ id: 'separator', as: 'string', essential: true },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+	],
 	impl: function(context,separator,text) {
 		return (text||'').substring(text.indexOf(separator)+separator.length)
 	}
@@ -165,10 +165,10 @@ jb_component('removePrefix',{
 
 jb_component('removePrefixRegex',{
 	type: 'data',
-	params: {
-		prefix: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '%%' },
-	},
+	params: [
+		{ id: 'prefix', as: 'string', essential: true },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+	],
 	impl: function(context,prefix,text) {
 		context.profile.prefixRegexp = context.profile.prefixRegexp || new RegExp('^'+prefix);
 		var m = (text||'').match(context.profile.prefixRegexp);
@@ -178,10 +178,10 @@ jb_component('removePrefixRegex',{
 
 jb_component('removeSuffix',{
 	type: 'data',
-	params: {
-		separator: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '%%' },
-	},
+	params: [
+		{ id: 'separator', as: 'string', essential: true },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+	],
 	impl: function(context,separator,text) {
 		return (text||'').substring(0,text.lastIndexOf(separator))
 	}
@@ -189,10 +189,10 @@ jb_component('removeSuffix',{
 
 jb_component('removeSuffixRegex',{
 	type: 'data',
-	params: {
-		suffix: { as: 'string', essential: true },
-		text: { as: 'string', defaultValue: '%%' },
-	},
+	params: [
+		{ id: 'suffix', as: 'string', essential: true },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+	],
 	impl: function(context,suffix,text) {
 		context.profile.prefixRegexp = context.profile.prefixRegexp || new RegExp(suffix+'$');
 		var m = (text||'').match(context.profile.prefixRegexp);
@@ -202,41 +202,29 @@ jb_component('removeSuffixRegex',{
 
 jb_component('writeValue',{
 	type: 'action',
-	params: {
-		to: { as: 'ref' },
-		value: {}
-	},
+	params: [
+		{ id: 'to', as: 'ref' },
+		{ id: 'value',}
+	],
 	impl: (ctx,to,value) =>
 		jb_writeValue(to,value)
 });
 
-// jb_component('assign',{
-// 	type: 'action',
-// 	params: {
-// 		parent: { as:'single', defaultValue: '%%'},
-// 		property: { as:'string'},
-// 		value: { }
-// 	},
-// 	impl: function(context,parent,property,value) {
-// 		jb_assign(parent,property,value);
-// 	}
-// });
-
 jb_component('toggleBooleanValue',{
 	type: 'action',
-	params: {
-		of: { as: 'ref' },
-	},
+	params: [
+		{ id: 'of', as: 'ref' },
+	],
 	impl: (ctx,of) =>
 		jb_writeValue(of,jb_val(of) ? false : true)
 });
 
 jb_component('addToArray', {
 	type: 'action',
-	params: {
-		array: {},
-		add: {}
-	},
+	params: [
+		{ id: 'array',},
+		{ id: 'add',}
+	],
 	impl: function(context,array,add) {
 		jb_addToArray(array,add,true);
 	}
@@ -244,10 +232,10 @@ jb_component('addToArray', {
 
 jb_component('removeFromArray',{
 	type: 'action',
-	params: {
-		array: { as:'array' },
-		remove: { as:'array' }
-	},
+	params: [
+		{ id: 'array', as:'array' },
+		{ id: 'remove', as:'array' }
+	],
 	impl: function(context,array,remove) {
 		for (var i=0; i<array.length; i++)
 			if (remove.indexOf(array[i]) >= 0)
@@ -257,7 +245,7 @@ jb_component('removeFromArray',{
 
 jb_component('remove', {
 	type: 'action',
-	params: {	value: {}	},
+	params: [{ id: 'value' }],
 	impl: function(context,value) {
 		jb_remove(value,true);
 	}
@@ -265,10 +253,10 @@ jb_component('remove', {
 
 
 jb_component('slice', {
-	params: {
-		start: { as: 'number', defaultValue: 0, description: '0-based index', essential: true },
-		end: { as: 'number', essential: true, description: '0-based index of where to end the selection (not including itself)' }
-	},
+	params: [
+		{ id: 'start', as: 'number', defaultValue: 0, description: '0-based index', essential: true },
+		{ id: 'end', as: 'number', essential: true, description: '0-based index of where to end the selection (not including itself)' }
+	],
 	type: 'aggregator',
 	impl: function(context,begin,end) {
 		if (!context.data || !context.data.slice) return null;
@@ -278,9 +266,9 @@ jb_component('slice', {
 
 jb_component('not',{
 	type: 'boolean',
-	params: { 
-		of: { type: 'boolean', as: 'boolean', essential: true} 
-	},
+	params: [ 
+		{ id: 'of', type: 'boolean', as: 'boolean', essential: true} 
+	],
 	impl: function(context, of) {
 		return !of;
 	}
@@ -288,9 +276,9 @@ jb_component('not',{
 
 jb_component('and',{
 	type: 'boolean',
-	params: { 
-		items: { type: 'boolean[]', ignore: true, essential: true } 
-	},
+	params: [ 
+		{ id: 'items', type: 'boolean[]', ignore: true, essential: true } 
+	],
 	impl: function(context) {
 		var items = context.profile.$and || context.profile.items || [];
 		for(var i=0;i<items.length;i++) {
@@ -303,9 +291,9 @@ jb_component('and',{
 
 jb_component('or',{
 	type: 'boolean',
-	params: { 
-		items: { type: 'boolean[]', ignore: true, essential: true } 
-	},
+	params: [ 
+		{ id: 'items', type: 'boolean[]', ignore: true, essential: true } 
+	],
 	impl: function(context) {
 		var items = context.profile.$or || context.profile.items || [];
 		for(var i=0;i<items.length;i++) {
@@ -318,10 +306,10 @@ jb_component('or',{
 
 jb_component('contains',{
 	type: 'boolean',
-	params: {
-		text: { type: 'data[]', as: 'array', essential: true },
-		allText: { defaultValue: '%%', as:'array'}
-	},
+	params: [
+		{ id: 'text', type: 'data[]', as: 'array', essential: true },
+		{ id: 'allText', defaultValue: '%%', as:'array'}
+	],
 	impl: function(context,text,allText) {
       var all = "";
       allText.forEach(function(allTextItem) {
@@ -344,10 +332,10 @@ jb_component('contains',{
 
 jb_component('startsWith',{
 	type: 'boolean',
-	params: {
-		startsWith: { as: 'string', essential: true },
-		text: { defaultValue: '%%', as:'string'}
-	},
+	params: [
+		{ id: 'startsWith', as: 'string', essential: true },
+		{ id: 'text', defaultValue: '%%', as:'string'}
+	],
 	impl: function(context,startsWith,text) {
 		return text.lastIndexOf(startsWith,0) == 0;
 	}
@@ -355,10 +343,10 @@ jb_component('startsWith',{
 
 jb_component('endsWith',{
 	type: 'boolean',
-	params: {
-		endsWith: { as: 'string', essential: true },
-		text: { defaultValue: '%%', as:'string'}
-	},
+	params: [
+		{ id: 'endsWith', as: 'string', essential: true },
+		{ id: 'text', defaultValue: '%%', as:'string'}
+	],
 	impl: function(context,endsWith,text) {
 		return text.indexOf(endsWith,text.length-endsWith.length) !== -1;
 	}
@@ -367,9 +355,9 @@ jb_component('endsWith',{
 
 jb_component('filter',{
 	type: 'aggregator',
-	params: {
-		filter: { type: 'boolean', as: 'boolean', dynamic: true, essential: true }
-	},
+	params: [
+		{ id: 'filter', type: 'boolean', as: 'boolean', dynamic: true, essential: true }
+	],
 	impl: (context,filter) =>
 		jb_toarray(context.data).filter(item =>
 			filter(context,item)
@@ -378,9 +366,9 @@ jb_component('filter',{
 
 jb_component('count',{
 	type: 'aggregator',
-	params: {
-		items: { as:'array', defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'items', as:'array', defaultValue: '%%'}
+	],
 	impl: (ctx,items) =>
 		items.length
 });
@@ -397,14 +385,14 @@ jb_component('toLowerCase', {
 
 
 jb_component('join',{
-	params: {
-		separator: { as: 'string', defaultValue:',', essential: true },
-		prefix: { as: 'string' },
-		suffix: { as: 'string' },
-		items: { as: 'array', defaultValue: '%%'},
-		itemName: { as: 'string', defaultValue: 'item'},
-		itemText: { as: 'string', dynamic:true, defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'separator', as: 'string', defaultValue:',', essential: true },
+		{ id: 'prefix', as: 'string' },
+		{ id: 'suffix', as: 'string' },
+		{ id: 'items', as: 'array', defaultValue: '%%'},
+		{ id: 'itemName', as: 'string', defaultValue: 'item'},
+		{ id: 'itemText', as: 'string', dynamic:true, defaultValue: '%%'}
+	],
 	type: 'aggregator',
 	impl: function(context,separator,prefix,suffix,items,itemName,itemText) {
 		var itemToText = (context.profile.itemText) ?
@@ -416,10 +404,10 @@ jb_component('join',{
 });
 
 jb_component('unique',{
-	params: {
-		id: { as: 'string', dynamic: true, defaultValue: '%%' },
-		items: { as:'array', defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'id', as: 'string', dynamic: true, defaultValue: '%%' },
+		{ id: 'items', as:'array', defaultValue: '%%'}
+	],
 	type: 'aggregator',
 	impl: function(context,id,items) {
 		var out = [];
@@ -435,9 +423,9 @@ jb_component('unique',{
 });
 
 jb_component('log',{
-	params: {
-		obj: { as: 'single', defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'obj', as: 'single', defaultValue: '%%'}
+	],
 	impl: function(context,obj) {
 		var out = obj;
 		if (typeof GLOBAL != 'undefined' && typeof(obj) == 'object')
@@ -450,7 +438,7 @@ jb_component('log',{
 	}
 });
 
-jb_component('asIs',{ params: {$asIs: {}}, impl: function(context) { return context.profile.$asIs } });
+jb_component('asIs',{ params: [{id: '$asIs'}], impl: function(context) { return context.profile.$asIs } });
 jb_component('profile',{ impl: function(context) { return jb_handledObject(context.profile.$profile); } });
 
 jb_component('object',{
@@ -470,10 +458,10 @@ jb_component('object',{
 });
 
 jb_component('stringify',{
-	params: {
-		value: { defaultValue: '%%', as:'single'},
-		space: { as: 'string', description: 'use space or tab to make pretty output' }
-	},
+	params: [
+		{ id: 'value', defaultValue: '%%', as:'single'},
+		{ id: 'space', as: 'string', description: 'use space or tab to make pretty output' }
+	],
 	impl: function(context,value,space) {		
 		if (typeof value == 'object')
 			return JSON.stringify(value,null,space);
@@ -481,9 +469,9 @@ jb_component('stringify',{
 });
 
 jb_component('jbart', {
-	params: {
-		script: { description: 'jbart script to run' }
-	},
+	params: [
+		{ id: 'script', description: 'jbart script to run' }
+	],
 	impl: function(context,script) {
 		return jb_run(jb_ctx(context,{profile: script.$jb_object }))
 	}
@@ -491,11 +479,11 @@ jb_component('jbart', {
 
 jb_component('split',{
 	type: 'data',
-	params: {
-		separator: { as: 'string', defaultValue: ',' },
-		text : { as: 'string', defaultValue: '%%'},
-		part: { type:'enum', values: 'first,second,last,but first,but last' }
-	},
+	params: [
+		{ id: 'separator', as: 'string', defaultValue: ',' },
+		{ id: 'text', as: 'string', defaultValue: '%%'},
+		{ id: 'part', type:'enum', values: 'first,second,last,but first,but last' }
+	],
 	impl: function(context,separator,text,part) {
 		var out = text.split(separator);
 		switch (part) {
@@ -511,13 +499,13 @@ jb_component('split',{
 
 jb_component('replace',{
 	type: 'data',
-	params: {
-		find: { as: 'string' },
-		replace: { as: 'string' },
-		text: { as: 'string', defaultValue: '%%' },
-		useRegex: { type: 'boolean', as: 'boolean', defaultValue: true},
-		regexFlags: { as: 'string', defaultValue: 'g', description: 'g,i,m' }
-	},
+	params: [
+		{ id: 'find', as: 'string' },
+		{ id: 'replace', as: 'string' },
+		{ id: 'text', as: 'string', defaultValue: '%%' },
+		{ id: 'useRegex', type: 'boolean', as: 'boolean', defaultValue: true},
+		{ id: 'regexFlags', as: 'string', defaultValue: 'g', description: 'g,i,m' }
+	],
 	impl: function(context,find,replace,text,useRegex,regexFlags) {
 		if (useRegex) {
 			return text.replace(new RegExp(find,regexFlags) ,replace);
@@ -528,12 +516,12 @@ jb_component('replace',{
 
 jb_component('foreach', {
 	type: 'action',
-	params: {
-		items: { as: 'array', defaultValue: '%%'},
-		action: { type:'action', dynamic:true },
-		itemVariable: { as:'string' },
-		inputVariable: { as:'string' }
-	},
+	params: [
+		{ id: 'items', as: 'array', defaultValue: '%%'},
+		{ id: 'action', type:'action', dynamic:true },
+		{ id: 'itemVariable', as:'string' },
+		{ id: 'inputVariable', as:'string' }
+	],
 	impl: function(context,items,action,itemVariable,inputVariable) {
 		items.forEach(function(item) {
 			action(jb_ctx(context,{ data:item, vars: jb_obj(itemVariable,item, jb_obj(inputVariable,context.data)) }));
@@ -543,9 +531,9 @@ jb_component('foreach', {
 
 jb_component('isNull',{
 	type: 'boolean',
-	params: {
-		item: { as: 'single', defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'item', as: 'single', defaultValue: '%%'}
+	],
 	impl: function(context, item) {
 		return (item == null);
 	}
@@ -553,9 +541,9 @@ jb_component('isNull',{
 
 jb_component('isEmpty',{
 	type: 'boolean',
-	params: {
-		item: { as: 'single', defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'item', as: 'single', defaultValue: '%%'}
+	],
 	impl: function(context, item) {
 		return (!item || (Array.isArray(item) && item.length == 0));
 	}
@@ -563,9 +551,9 @@ jb_component('isEmpty',{
 
 jb_component('notEmpty',{
 	type: 'boolean',
-	params: {
-		item: { as: 'single', defaultValue: '%%'}
-	},
+	params: [
+		{ id: 'item', as: 'single', defaultValue: '%%'}
+	],
 	impl: function(context, item) {
 		return (item && !(Array.isArray(item) && item.length == 0));
 	}
@@ -573,10 +561,10 @@ jb_component('notEmpty',{
 
 jb_component('equals',{
 	type: 'boolean',
-	params: {
-		item1: { as: 'single', essential: true },
-		item2: { defaultValue: '%%', as: 'single' }
-	},
+	params: [
+		{ id: 'item1', as: 'single', essential: true },
+		{ id: 'item2', defaultValue: '%%', as: 'single' }
+	],
 	impl: function(context, item1, item2) {
 		if (!item1 && !item2) return true;
 		return JSON.stringify(openObject(item1)) == JSON.stringify(openObject(item2));
@@ -589,10 +577,10 @@ jb_component('equals',{
 
 jb_component('notEquals',{
 	type: 'boolean',
-	params: {
-		item1: { as: 'single', essential: true },
-		item2: { defaultValue: '%%', as: 'single' }
-	},
+	params: [
+		{ id: 'item1', as: 'single', essential: true },
+		{ id: 'item2', defaultValue: '%%', as: 'single' }
+	],
 	impl: { $not: { $: 'equals', item1: '%$item1%', item2: '%$item2%'} }
 });
 
@@ -606,9 +594,9 @@ jb_component('parent',{
 
 jb_component('writableText', {
 	type: 'data',
-	params: {
-		defaultValue: { as: 'string' }
-	},
+	params: [
+		{ id: 'defaultValue', as: 'string' }
+	],
 	impl: function(context,defaultValue) {
 		return jb_handledObject(jb_obj('v',defaultValue));
 	}
@@ -616,11 +604,11 @@ jb_component('writableText', {
 
 jb_component('searchFilter', {
 	type: 'aggregator',
-	params: {
-		pattern: { as:'string'},
-		itemText: { dynamic:true, as:'string', defaultValue:'%%'},
-		ignoreCase: { type:'boolean', as:'boolean', defaultValue:true }
-	},
+	params: [
+		{ id: 'pattern', as:'string'},
+		{ id: 'itemText', dynamic:true, as:'string', defaultValue:'%%'},
+		{ id: 'ignoreCase', type:'boolean', as:'boolean', defaultValue:true }
+	],
 	impl: function(context,pattern,itemText,ignoreCase) {
 		if (!pattern) return context.data;
 		var patternLowCase = pattern.toLowerCase();
@@ -637,11 +625,11 @@ jb_component('searchFilter', {
 
 jb_component('queryFilter', {
 	type: 'aggregator',
-	params: {
-		query: { as:'single' },
-		filters: { type:'filter{}', ingore: true },
-		mainFilter: { type:'filter', as:'single', defaultValue: { $:'substringFilter' } }
-	},
+	params: [
+		{ id: 'query', as:'single' },
+		{ id: 'filters', type:'filter{}', ingore: true },
+		{ id: 'mainFilter', type:'filter', as:'single', defaultValue: { $:'substringFilter' } }
+	],
 	impl: function(context,query,_filters,mainFilter) {
 		if (typeof(query) != 'object') return context.data;
 
@@ -697,12 +685,12 @@ jb_component('numericFilter',{
 
 jb_component('pluralize', {
 	type: 'data',
-	params: {
-		count: { as:'number', defaultValue: '%%' },
-		zero: { as:'string', dynamic:true },
-		one: { as:'string', dynamic:true },
-		other: { as:'string', dynamic:true }
-	},
+	params: [
+		{ id: 'count', as:'number', defaultValue: '%%' },
+		{ id: 'zero', as:'string', dynamic:true },
+		{ id: 'one', as:'string', dynamic:true },
+		{ id: 'other', as:'string', dynamic:true }
+	],
 	impl: function(context,count,zero,one,other) {
 		switch (count) {
 			case 0: return (jb_profileHasValue(context,'zero') ? zero : other)(null,count);
@@ -715,9 +703,9 @@ jb_component('pluralize', {
 
 jb_component('runActions', {
 	type: 'action',
-	params: { 
-		actions: { type:'action[]', ignore: true, composite: true, essential: true }
-	},
+	params: [ 
+		{ id: 'actions', type:'action[]', ignore: true, composite: true, essential: true }
+	],
 	impl: function(context) {
 		var actions = jb_toarray(context.profile.actions || context.profile['$runActions']);
 		if (context.profile.actions && context.profile.actions.sugar)
@@ -733,10 +721,10 @@ jb_component('runActions', {
 
 jb_component('runActionOnItems', {
 	type: 'action',
-	params: { 
-		items: { type:'data[]', as:'array', essential: true},
-		action: { type:'action', ignore: true, essential: true }
-	},
+	params: [ 
+		{ id: 'items', type:'data[]', as:'array', essential: true},
+		{ id: 'action', type:'action', ignore: true, essential: true }
+	],
 	impl: function(context,items) {
 		var deferred = $.Deferred();
 		function runFromIndex(index) {
@@ -755,20 +743,20 @@ jb_component('runActionOnItems', {
 });
 
 jb_component('delay', {
-	params: {
-		mSec: { type: 'number', defaultValue: 1}
-	},
+	params: [
+		{ id: 'mSec', type: 'number', defaultValue: 1}
+	],
 	impl: ctx => jb_delay(ctx.params.mSec)
 })
 
 jb_component('extractPrefix',{
 	type: 'data',
-	params: {
-		separator: { as: 'string', description: '/w- alphnumberic, /s- whitespace, ^- beginline, $-endline'},
-		text : { as: 'string', defaultValue: '%%'},
-		regex: { type: 'boolean', as: 'boolean', description: 'separator is regex' },
-		keepSeparator: { type: 'boolean', as: 'boolean' }
-	},
+	params: [
+		{ id: 'separator', as: 'string', description: '/w- alphnumberic, /s- whitespace, ^- beginline, $-endline'},
+		{ id: 'text', as: 'string', defaultValue: '%%'},
+		{ id: 'regex', type: 'boolean', as: 'boolean', description: 'separator is regex' },
+		{ id: 'keepSeparator', type: 'boolean', as: 'boolean' }
+	],
 	impl: function(context,separator,text,regex,keepSeparator) {
 		if (!regex) {
 			return text.substring(0,text.indexOf(separator)) + (keepSeparator ? separator : '');
@@ -782,12 +770,12 @@ jb_component('extractPrefix',{
 
 jb_component('extractSuffix',{
 	type: 'data',
-	params: {
-		separator: { as: 'string', description: '/w- alphnumberic, /s- whitespace, ^- beginline, $-endline'},
-		text : { as: 'string', defaultValue: '%%'},
-		regex: { type: 'boolean', as: 'boolean', description: 'separator is regex' },
-		keepSeparator: { type: 'boolean', as: 'boolean' }
-	},
+	params: [
+		{ id: 'separator', as: 'string', description: '/w- alphnumberic, /s- whitespace, ^- beginline, $-endline'},
+		{ id: 'text', as: 'string', defaultValue: '%%'},
+		{ id: 'regex', type: 'boolean', as: 'boolean', description: 'separator is regex' },
+		{ id: 'keepSeparator', type: 'boolean', as: 'boolean' }
+	],
 	impl: function(context,separator,text,regex,keepSeparator) {
 		if (!regex) {
 			return text.substring(text.lastIndexOf(separator) + (keepSeparator ? 0 : separator.length));
@@ -801,9 +789,9 @@ jb_component('extractSuffix',{
 
 jb_component('onNextTimer',{
 	type: 'action',
-	params: {
-		action: { type: 'action', dynamic: true }
-	},
+	params: [
+		{ id: 'action', type: 'action', dynamic: true }
+	],
 	impl: (ctx,action) => {
 		jb_delay(1,ctx).then(()=>
 			action())

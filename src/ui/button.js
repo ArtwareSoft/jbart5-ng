@@ -4,13 +4,13 @@ jb.type('button.style')
 
 jb.component('button', {
   type: "control",
-  params: {
-    title: { as: 'string', dynamic: true, essential: true, defaultValue: 'Hello' },
-    action: { type: 'action', essential: true, dynamic: true },
-    style: { type: 'button.style', defaultValue: { $: 'button.md-flat' }, dynamic: true },
-    features: { type: 'feature[]', dynamic: true },
-    $click: { type: 'boolean' }, // used by tests to simulate click
-  },
+  params: [
+    { id: 'title', as: 'string', dynamic: true, essential: true, defaultValue: 'Hello' },
+    { id: 'action', type: 'action', essential: true, dynamic: true },
+    { id: 'style', type: 'button.style', defaultValue: { $: 'button.md-flat' }, dynamic: true },
+    { id: 'features', type: 'feature[]', dynamic: true },
+    { id: '$click', type: 'boolean' }, // used by tests to simulate click
+  ],
   impl: function(context) {
     if (context.params.$click) try { context.params.action() } catch (e) { jb.logException(e) } // for test debug
     return jb_ui.ctrl(context).jbExtend({
@@ -31,9 +31,9 @@ jb.component('button.href', {
 
 jb.component('button.x', {
   type: 'button.style',
-  params: {
-    size: { as: 'number', defaultValue: '21'}
-  },
+  params: [
+    { id: 'size', as: 'number', defaultValue: '21'}
+  ],
   impl :{$: 'customStyle', 
       template: '<div><button (click)="clicked()" [title]="title" style=":hover { opacity: .5 }">&#215;</button></div>',
       css: `button {

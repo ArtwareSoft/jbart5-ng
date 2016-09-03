@@ -10,17 +10,17 @@ var responsiveSelectors = '<600,>600,600-960,>960,960-1280,>1280,1280-1920,>1920
 
 jb.component('layout.md',{
   type: 'group.style,md-layout',
-  params: {
-    layout: { as:'string', options: 'row,column' },
-    align: { as:'string', options: 'start,center,end,space-around,space-between,' },
-    subAlign: { as:'string', options: 'start,center,end,' },
-    margin: { type: 'boolean' },
-    fill: { type: 'boolean' },
-    padding: { type: 'boolean' },
-    wrap: { type: 'boolean' },
-    children: { type: 'md-layout-child[]'},
-    responsive: { type: 'md-layout-responsive-layout[]'},
-  },
+  params: [
+    { id: 'layout', as:'string', options: 'row,column' },
+    { id: 'align', as:'string', options: 'start,center,end,space-around,space-between,' },
+    { id: 'subAlign', as:'string', options: 'start,center,end,' },
+    { id: 'margin', type: 'boolean' },
+    { id: 'fill', type: 'boolean' },
+    { id: 'padding', type: 'boolean' },
+    { id: 'wrap', type: 'boolean' },
+    { id: 'children', type: 'md-layout-child[]'},
+    { id: 'responsive', type: 'md-layout-responsive-layout[]'},
+  ],
   impl: function(context) { 
     var responsiveSelector = context.vars.responsiveSelector || '';
     var atts = {}
@@ -50,14 +50,14 @@ jb.component('layout.md',{
 
 jb.component('md-layout-child',{
   type: 'md-layout-child',
-  params: {
-    flex: { as:'string', options: flexOptions },
-    marginLeft: { as: 'string', options: offsetOptions },
-    order: { as: 'string' },
-    show: { type: 'boolean' },
-    hide: { type: 'boolean' },
-    responsive: { type: 'md-layout-child-responsive-child[]', as: 'array'},
-  },
+  params: [
+    { id: 'flex', as:'string', options: flexOptions },
+    { id: 'marginLeft', as: 'string', options: offsetOptions },
+    { id: 'order', as: 'string' },
+    { id: 'show', type: 'boolean' },
+    { id: 'hide', type: 'boolean' },
+    { id: 'responsive', type: 'md-layout-child-responsive-child[]', as: 'array'},
+  ],
   impl: ctx => { 
     var responsiveSelector = ctx.vars.responsiveSelector || '';
     var atts = {};
@@ -74,20 +74,20 @@ jb.component('md-layout-child',{
 
 jb.component('md-layout-responsive-layout', {
   type: 'md-layout-responsive-layout',
-  params: {
-    selector: { as: 'string', options: responsiveSelectors, essential: true },
-    layout: { type: 'md-layout', essential: true, dynamic: true}
-  },
+  params: [
+    { id: 'selector', as: 'string', options: responsiveSelectors, essential: true },
+    { id: 'layout', type: 'md-layout', essential: true, dynamic: true}
+  ],
   impl: ctx => 
     ctx.params.layout(ctx.setVars({responsiveSelector: '-' + responsive_dictionary[ctx.params.selector]}))
 })
 
 jb.component('md-layout-child-responsive-child', {
   type: 'md-layout-child-responsive-child',
-  params: {
-    selector: { as: 'string', options: responsiveSelectors, essential: true },
-    child: { type: 'md-layout-child', essential: true, dynamic: true}
-  },
+  params: [
+    { id: 'selector', as: 'string', options: responsiveSelectors, essential: true },
+    { id: 'child', type: 'md-layout-child', essential: true, dynamic: true}
+  ],
   impl: ctx =>
     ctx.params.child(ctx.setVars({responsiveSelector: '-' + responsive_dictionary[ctx.params.selector]}))
 })

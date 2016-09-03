@@ -44,11 +44,11 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@an
             });
             jb_core_1.jb.component('button.md-icon', {
                 type: 'button.style',
-                params: {
-                    icon: { as: 'string', default: 'code' },
-                    size: { as: 'number', defaultValue: 20 },
-                    aria: { as: 'string' },
-                },
+                params: [
+                    { id: 'icon', as: 'string', default: 'code' },
+                    { id: 'size', as: 'number', defaultValue: 20 },
+                    { id: 'aria', as: 'string' },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons\" style=\"font-size:%$size%px;\">%$icon%</i>\n              </button></div>",
                     css: 'button {min-width: 2px; margin-top: -3px; padding: 4px}',
@@ -57,10 +57,10 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@an
             });
             jb_core_1.jb.component('button.md-icon-12', {
                 type: 'button.style',
-                params: {
-                    icon: { as: 'string', default: 'code' },
-                    aria: { as: 'string' },
-                },
+                params: [
+                    { id: 'icon', as: 'string', default: 'code' },
+                    { id: 'aria', as: 'string' },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons\">%$icon%</i>\n              </button></div>",
                     css: "button { width: 24px; height: 24px; padding: 0; margin-left: 2px; margin-top: -2px;}\n      .material-icons { font-size:12px;  }\n      ",
@@ -69,11 +69,11 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@an
             });
             jb_core_1.jb.component('button.md-icon-fab', {
                 type: 'button.style',
-                params: {
-                    icon: { as: 'string', default: 'code' },
-                    size: { as: 'number', defaultValue: '24' },
-                    aria: { as: 'string' },
-                },
+                params: [
+                    { id: 'icon', as: 'string', default: 'code' },
+                    { id: 'size', as: 'number', defaultValue: '24' },
+                    { id: 'aria', as: 'string' },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-fab aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons md-24\">%$icon%</i>\n              </button></div>",
                     directives: 'MdButton'
@@ -81,11 +81,11 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@an
             });
             jb_core_1.jb.component('button.md-mini-fab', {
                 type: 'button.style',
-                params: {
-                    icon: { as: 'string', default: 'code' },
-                    size: { as: 'number', defaultValue: '24' },
-                    aria: { as: 'string' },
-                },
+                params: [
+                    { id: 'icon', as: 'string', default: 'code' },
+                    { id: 'size', as: 'number', defaultValue: '24' },
+                    { id: 'aria', as: 'string' },
+                ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-mini-fab aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons md-24\">%$icon%</i>\n              </button></div>",
                     directives: 'MdButton'

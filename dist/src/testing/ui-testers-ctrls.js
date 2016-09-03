@@ -110,9 +110,9 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
             });
             jb_1.jb.component('ui-tests.show-one-test', {
                 type: 'control',
-                params: {
-                    testResult: { as: 'single', defaultValue: '%%' },
-                },
+                params: [
+                    { id: 'testResult', as: 'single', defaultValue: '%%' },
+                ],
                 impl: { $: 'group',
                     //		layout :{$: 'md-layout', layout: 'row',  },
                     controls: [

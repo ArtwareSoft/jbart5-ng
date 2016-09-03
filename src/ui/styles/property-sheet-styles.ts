@@ -2,9 +2,9 @@ import {jb} from 'jb-core';
 
 jb.component('property-sheet.titles-above', {
   type: 'group.style',
-  params: {
-    spacing: { as: 'number', defaultValue: 20 }
-  },
+  params: [
+    { id: 'spacing', as: 'number', defaultValue: 20 }
+  ],
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup'},
     template: `<div>
@@ -30,10 +30,10 @@ jb.component('property-sheet.titles-above', {
 
 jb.component('property-sheet.titles-above-float-left', {
   type: 'group.style',
-  params: {
-    spacing: { as: 'number', defaultValue: 20 },
-    fieldWidth: { as: 'number', defaultValue: 200 },
-  },
+  params: [
+    { id: 'spacing', as: 'number', defaultValue: 20 },
+    { id: 'fieldWidth', as: 'number', defaultValue: 200 },
+  ],
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup'},
     template: `<div>
@@ -63,11 +63,11 @@ jb.component('property-sheet.titles-above-float-left', {
 
 jb.component('property-sheet.titles-left', {
   type: 'group.style',
-  params: {
-    vSpacing: { as: 'number', defaultValue: 20 },
-    hSpacing: { as: 'number', defaultValue: 20 },
-    titleWidth: { as: 'number', defaultValue: 100 },
-  },
+  params: [
+    { id: 'vSpacing', as: 'number', defaultValue: 20 },
+    { id: 'hSpacing', as: 'number', defaultValue: 20 },
+    { id: 'titleWidth', as: 'number', defaultValue: 100 },
+  ],
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup'},
     template: `<div>
@@ -93,11 +93,11 @@ jb.component('property-sheet.titles-left', {
 
 jb.component('property-sheet.style-on-focus', {
   type: 'group.style',
-  params: {
-    vSpacing: { as: 'number', defaultValue: 20 },
-    hSpacing: { as: 'number', defaultValue: 20 },
-    titleWidth: { as: 'number', defaultValue: 100 },
-  },
+  params: [
+    { id: 'vSpacing', as: 'number', defaultValue: 20 },
+    { id: 'hSpacing', as: 'number', defaultValue: 20 },
+    { id: 'titleWidth', as: 'number', defaultValue: 100 },
+  ],
   impl :{$: 'customStyle', 
     features : {$: 'group.initGroup'},
     methods: {
@@ -166,11 +166,11 @@ jb.component('property-sheet.style-on-focus', {
 
 jb.component('property-sheet.growing', {
   type: 'group.style',
-  params: {
-    vSpacing: { as: 'number', defaultValue: 20 },
-    hSpacing: { as: 'number', defaultValue: 20 },
-    titleWidth: { as: 'number', defaultValue: 100 },
-  },
+  params: [
+    { id: 'vSpacing', as: 'number', defaultValue: 20 },
+    { id: 'hSpacing', as: 'number', defaultValue: 20 },
+    { id: 'titleWidth', as: 'number', defaultValue: 100 },
+  ],
   impl :{$: 'customStyle', 
     features : {$: 'group.initGroup'},
     methods: {

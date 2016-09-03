@@ -2,15 +2,15 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 
 jb.component('itemlist', {
   type: 'control',
-  params: {
-    title: { as: 'string' },
-    items: { as: 'array' , dynamic: true, essential: true },
-    controls: { type: 'control[]', essential: true, dynamic: true },
-    style: { type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
-    watchItems: { type: 'boolean', as: 'boolean', defaultValue: true },
-    itemVariable: { as: 'string', defaultValue: 'item' },
-    features: { type: 'feature[]', dynamic: true, flattenArray: true },
-  },
+  params: [
+    { id: 'title', as: 'string' },
+    { id: 'items', as: 'array' , dynamic: true, essential: true },
+    { id: 'controls', type: 'control[]', essential: true, dynamic: true },
+    { id: 'style', type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+    { id: 'watchItems', type: 'boolean', as: 'boolean', defaultValue: true },
+    { id: 'itemVariable', as: 'string', defaultValue: 'item' },
+    { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true },
+  ],
   impl :{$: 'group', 
     title: '%$title%',
     style :{$call: 'style'},
@@ -28,11 +28,11 @@ jb.component('itemlist', {
 
 jb.component('itemlist.init', {
   type: 'feature',
-  params: {
-    items: { essential: true, dynamic: true },
-    itemsArrayVariable: { as: 'string' },
-    watch: { type: 'boolean', as: 'boolean', defaultValue: true }
-  },
+  params: [
+    { id: 'items', essential: true, dynamic: true },
+    { id: 'itemsArrayVariable', as: 'string' },
+    { id: 'watch', type: 'boolean', as: 'boolean', defaultValue: true }
+  ],
   impl: function(context, items, itemsArrayVariable,watch) {
     return {
       beforeInit: function(cmp) {
@@ -76,9 +76,9 @@ jb.component('itemlist.ul-li', {
 
 jb.component('itemlist.divider', {
   type: 'feature',
-  params: {
-    space: { as: 'number', defaultValue: 5}
-  },
+  params: [
+    { id: 'space', as: 'number', defaultValue: 5}
+  ],
   impl : (ctx,space) =>
     ({css: `.jb-item:not(:first-of-type) { border-top: 1px solid rgba(0,0,0,0.12); padding-top: ${space}px }`})
 })
@@ -87,12 +87,12 @@ jb.component('itemlist.divider', {
 
 jb.component('itemlist.selection', {
   type: 'feature',
-  params: {
-    databind: { as: 'ref' },
-    onSelection: { type: 'action', dynamic: true },
-    onDoubleClick: { type: 'action', dynamic: true },
-    autoSelectFirst: { type: 'boolean'}
-  },
+  params: [
+    { id: 'databind', as: 'ref' },
+    { id: 'onSelection', type: 'action', dynamic: true },
+    { id: 'onDoubleClick', type: 'action', dynamic: true },
+    { id: 'autoSelectFirst', type: 'boolean'}
+  ],
   impl: ctx => ({
     init: cmp => {
         cmp.clickSrc = new jb_rx.Subject();
@@ -157,10 +157,10 @@ jb.component('itemlist.selection', {
 
 jb.component('itemlist.keyboard-selection', {
   type: 'feature',
-  params: {
-    onKeyboardSelection: { type: 'action', dynamic: true },
-    autoFocus: { type: 'boolean' }
-  },
+  params: [
+    { id: 'onKeyboardSelection', type: 'action', dynamic: true },
+    { id: 'autoFocus', type: 'boolean' }
+  ],
   impl: function(context) {
     return {
       init: function(cmp) {
@@ -192,8 +192,8 @@ jb.component('itemlist.keyboard-selection', {
 
 jb.component('itemlist.drag-and-drop', {
   type: 'feature',
-  params: {
-  },
+  params: [
+  ],
   impl: ctx => ({
       init: function(cmp) {
         var drake = dragula($(cmp.elementRef.nativeElement).findIncludeSelf('.jb-itemlist').get(), {

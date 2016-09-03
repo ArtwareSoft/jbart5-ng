@@ -4,9 +4,9 @@ import {evalProfile} from './studio-utils';
 
 jb.component('studio.editSource', {
 	type: 'action',
-	params: {
-		path: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
-	},
+	params: [
+		{ id: 'path', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+	],
 	impl: {
 		$: 'openDialog',
 		title :{$: 'studio.short-title', path: '%$path%' },
@@ -22,9 +22,9 @@ jb.component('studio.editSource', {
 
 jb.component('studio.profile-as-text', {
 	type: 'data',
-	params: {
-		path: { as: 'string' },
-	},
+	params: [
+		{ id: 'path', as: 'string' },
+	],
 	impl: (context,path,stringOnly) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') {
@@ -43,9 +43,9 @@ jb.component('studio.profile-as-text', {
 
 jb.component('studio.string-property-ref', {
 	type: 'data',
-	params: {
-		path: { as: 'string' },
-	},
+	params: [
+		{ id: 'path', as: 'string' },
+	],
 	impl: (context,path,stringOnly) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') {
@@ -59,9 +59,9 @@ jb.component('studio.string-property-ref', {
 
 jb.component('studio.goto-sublime', {
 	type: 'action',
-	params: {
-		path: { as: 'string'},
-	},
+	params: [
+		{ id: 'path', as: 'string'},
+	],
 	impl: (ctx,path) => {
 //		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
 		var compName = path.split('~')[0];

@@ -16,9 +16,9 @@ System.register(['jb-core', 'jb-ui', '@angular/http'], function(exports_1, conte
         execute: function() {
             jb_ui.registerProviders({ HTTP_PROVIDERS: http_1.HTTP_PROVIDERS });
             jb_core_1.jb.component('http.get', {
-                params: {
-                    url: { as: 'string' },
-                },
+                params: [
+                    { id: 'url', as: 'string' },
+                ],
                 impl: function (ctx, url) {
                     return ctx.vars.injector.get(http_1.Http)
                         .get(url)

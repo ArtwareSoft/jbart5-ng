@@ -19,9 +19,9 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/tabs/tabs.js', '@angula
         execute: function() {
             jb_ui.registerDirectives({ MD_TABS_DIRECTIVES: tabs_js_1.MD_TABS_DIRECTIVES, MdToolbar: toolbar_1.MdToolbar, TABS_INTERNAL_DIRECTIVES: tabs_js_1.TABS_INTERNAL_DIRECTIVES });
             jb_core_1.jb.component('tabs.md-tabs', {
-                params: {
-                    tabWidth: { as: 'number' }
-                },
+                params: [
+                    { id: 'tabWidth', as: 'number' }
+                ],
                 type: 'tabs.style',
                 impl: { $: 'customStyle',
                     template: "<div><md-tab-group>\n  <md-tab *ngFor=\"let tab of comps\">\n    <template md-tab-label>{{tab.jb_title()}}</template>\n    <template md-tab-content>\n      <jb_comp [comp]=\"tab\"></jb_comp>\n    </template>\n  </md-tab>\n</md-tab-group></div>",

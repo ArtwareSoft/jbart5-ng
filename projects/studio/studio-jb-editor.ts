@@ -7,9 +7,9 @@ import {findjBartToLook} from './studio-utils';
 
 jb.component('studio.open-jb-editor', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
       content :{$: 'studio.jb-editor', path: '%$path%' }, 
       style :{$: 'dialog.studio-floating', 
@@ -27,9 +27,9 @@ jb.component('studio.open-jb-editor', {
 
 jb.component('studio.jb-editor', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     title: 'main', 
     controls: [
@@ -115,10 +115,10 @@ jb.component('studio.jb-editor', {
 
 jb.component('studio.data-browse', {
   type: 'control',
-  params: { 
-    data: { },
-    title: { as: 'string'}
-  },
+  params: [ 
+    { id: 'data', },
+    { id: 'title', as: 'string'}
+  ],
   impl :{$: 'group', 
     title: '%$title%',
     controls :{$: 'tree', cssClass: 'jb-control-tree', 
@@ -135,7 +135,7 @@ jb.component('studio.data-browse', {
 
 jb.component('studio.jb-editor.nodes', {
 	type: 'tree.nodeModel',
-	params: { path: { as: 'string'} },
+	params: [ {id: 'path', as: 'string' } ],
 	impl: function(context,path) {
 		return new TgpModel(path,'jb-editor');
 	}
@@ -143,9 +143,9 @@ jb.component('studio.jb-editor.nodes', {
 
 jb.component('studio.open-jb-edit-property', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-jb-editor-popup' }, 
     content :{$: 'studio.jb-floating-input', path: '%$path%' }, 
@@ -160,7 +160,7 @@ jb.component('studio.open-jb-edit-property', {
 
 jb.component('studio.jb-floating-input', {
   type: 'control',
-  params: { path: { as: 'string'} },
+  params: [ {id: 'path', as: 'string' } ],
   impl :{$: 'editable-text', 
       databind :{$: 'studio.profile-value-as-text', path: '%$path%' }, 
       features: [
@@ -183,9 +183,9 @@ jb.component('studio.jb-floating-input', {
 
 jb.component('studio.profile-value-as-text', {
   type: 'data',
-  params: {
-    path: { as: 'string' }
-  },
+  params: [
+    { id: 'path', as: 'string' }
+  ],
   impl: (context,path) => ({
       $jb_val: function(value) {
         if (typeof value == 'undefined') {
@@ -222,9 +222,9 @@ jb.component('studio.profile-value-as-text', {
 
 jb.component('studio.open-jb-editor-menu', {
   type: 'action', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'openDialog', 
     style :{$: 'pulldownPopup.contextMenuPopup' }, 
     content :{$: 'studio.jb-editor-menu', path: '%$path%' } ,
@@ -234,9 +234,9 @@ jb.component('studio.open-jb-editor-menu', {
 
 jb.component('studio.jb-editor-menu', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     features :{$: 'group.menu-keyboard-selection', autoFocus: true }, 
     controls: [
@@ -330,11 +330,11 @@ jb.component('studio.jb-editor-menu', {
 
 jb.component('pulldown.studio-wrap-with', {
   type: 'control', 
-  params: {
-    path: { as: 'string'},
-    type: { as: 'string' },
-    components: { as: 'array' },
-  }, 
+  params: [
+    { id: 'path', as: 'string'},
+    { id: 'type', as: 'string' },
+    { id: 'components', as: 'array' },
+  ], 
   impl :{$: 'dynamic-controls',
             controlItems : { 
               $if: {$: 'studio.is-of-type', path: '%$path%', type: '%$type%' }, 

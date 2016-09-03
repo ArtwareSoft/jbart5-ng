@@ -103,9 +103,9 @@ jb.component('ui-tests.single-test', {
 
 jb.component('ui-tests.show-one-test', {
 	type: 'control',
-	params: {
-		testResult: {as: 'single', defaultValue: '%%'},
-	},
+	params: [
+		{ id: 'testResult',as: 'single', defaultValue: '%%'},
+	],
 	impl :{$: 'group',
 //		layout :{$: 'md-layout', layout: 'row',  },
 		controls: 

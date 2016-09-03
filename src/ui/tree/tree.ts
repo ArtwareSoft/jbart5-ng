@@ -22,11 +22,11 @@ export interface jbTree {
 
 jb.component('tree', {
 	type: 'control',
-	params: {
-		nodeModel: { type: 'tree.nodeModel', dynamic: true, essential: true },
-		style: { type: "tree.style", defaultValue: { $: "tree.ul-li" }, dynamic: true },
-		features: { type: "feature[]", dynamic: true }
-	},
+	params: [
+		{ id: 'nodeModel', type: 'tree.nodeModel', dynamic: true, essential: true },
+		{ id: 'style', type: "tree.style", defaultValue: { $: "tree.ul-li" }, dynamic: true },
+		{ id: 'features', type: "feature[]", dynamic: true }
+	],
 	impl: function(context) { 
 		var nodeModel = context.params.nodeModel();
 		if (!nodeModel)
@@ -115,12 +115,12 @@ jb_ui.registerDirectives({TreeNode: TreeNode, TreeNodeLine:TreeNodeLine});
 
 jb.component('tree.selection', {
   type: 'feature',
-  params: {
-	  databind: { as: 'ref' },
-	  onSelection: { type: 'action', dynamic: true },
-	  onDoubleClick: { type: 'action', dynamic: true },
-	  autoSelectFirst: { type: 'boolean' }
-  },
+  params: [
+	  { id: 'databind', as: 'ref' },
+	  { id: 'onSelection', type: 'action', dynamic: true },
+	  { id: 'onDoubleClick', type: 'action', dynamic: true },
+	  { id: 'autoSelectFirst', type: 'boolean' }
+  ],
   impl: function(context) {
   	return {
   		init: function(cmp) {
@@ -175,12 +175,12 @@ jb.component('tree.selection', {
 
 jb.component('tree.keyboard-selection', {
 	type: 'feature',
-	params: {
-		onKeyboardSelection: { type: 'action', dynamic: true },
-		onEnter: { type: 'action', dynamic: true },
-		onRightClickOfExpanded: { type: 'action', dynamic: true },
-		autoFocus: { type: 'boolean' }
-	},
+	params: [
+		{ id: 'onKeyboardSelection', type: 'action', dynamic: true },
+		{ id: 'onEnter', type: 'action', dynamic: true },
+		{ id: 'onRightClickOfExpanded', type: 'action', dynamic: true },
+		{ id: 'autoFocus', type: 'boolean' }
+	],
 	impl: context => ({
 			observable: () => {},
 			host: {
@@ -249,10 +249,10 @@ jb.component('tree.regain-focus', {
 
 jb.component('tree.keyboard-shortcut', {
 	type: 'feature',
-	params: {
-		key: { as: 'string', description: 'Ctrl+C or Alt+V' },
-		action: { type: 'action', dynamic: true },
-	},
+	params: [
+		{ id: 'key', as: 'string', description: 'Ctrl+C or Alt+V' },
+		{ id: 'action', type: 'action', dynamic: true },
+	],
 	impl: (context,key,action) => ({
 			observable: () => {},
 			host: {
@@ -287,8 +287,8 @@ jb.component('tree.keyboard-shortcut', {
 
 jb.component('tree.drag-and-drop', {
   type: 'feature',
-  params: {
-  },
+  params: [
+  ],
   impl: function(context) {
   	return {
   		init: function(cmp) {

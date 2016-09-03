@@ -2,10 +2,10 @@ import {jb} from 'jb-core';
 
 jb.component('tree.json-read-only',{
 	type: 'tree.nodeModel',
-	params: {
-		object : {},
-		rootPath: { as: 'string'}
-	},
+	params: [
+		{ id: 'object'},
+		{ id: 'rootPath', as: 'string'}
+	],
 	impl: function(context, json, rootPath) {
 		return new ROjson(json,rootPath)
 	}

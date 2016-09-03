@@ -79,14 +79,14 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return [path + '~$' + compName];
                     }
                     else if (comp) {
-                        var composite = jb_core_1.jb.entries(comp.params)
+                        var composite = (comp.params || [])
                             .filter(function (p) {
-                            return p[1].composite;
+                            return p.composite;
                         })
-                            .map(function (p) { return flattenArray(p[0]); });
-                        return (composite[0] || []).concat(jb_core_1.jb.entries(comp.params)
+                            .map(function (p) { return flattenArray(p.id); });
+                        return (composite[0] || []).concat((comp.params || [])
                             .filter(function (p) { return !p[1].composite; })
-                            .map(function (p) { return ({ path: path + '~' + p[0], param: p[1] }); })
+                            .map(function (p) { return ({ path: path + '~' + p.id, param: p }); })
                             .filter(function (e) { return studio_path_1.profileFromPath(e.path) != null || e.param.essential; })
                             .map(function (e) { return e.path; }));
                     }
@@ -105,8 +105,8 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var comp = studio_utils_1.getComp(jb_core_1.jb.compName(val || {}));
                     if (comp) {
                         var existing = this.jbEditorSubNodes(path);
-                        return jb_core_1.jb.entries(comp.params)
-                            .map(function (p) { return path + '~' + p[0]; })
+                        return (comp.params || [])
+                            .map(function (p) { return path + '~' + p.id; })
                             .filter(function (p) { return existing.indexOf(p) == -1; });
                     }
                     return [];
@@ -191,6 +191,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 TgpModel.prototype.modify = function (op, path, args, ctx) {
                     var comp = path.split('~')[0];
                     var before = studio_utils_1.getComp(comp) && studio_utils_1.compAsStr(comp);
+                    console.log('modify', path, before);
                     op.call(this, path, args);
                     studio_utils_1.modifyOperationsEm.next({
                         comp: comp,
@@ -258,9 +259,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 };
                 TgpModel.prototype.wrap = function (path, args) {
                     var compDef = studio_utils_1.getComp(args.compName);
-                    var paramNames = Object.getOwnPropertyNames((compDef || {}).params);
-                    if (paramNames[0]) {
-                        var result = jb_core_1.jb.extend({ $: args.compName }, jb_core_1.jb.obj(paramNames[0], [studio_path_1.profileFromPath(path)]));
+                    var firstParam = ((compDef || {}).params || [])[0];
+                    if (firstParam) {
+                        var result = jb_core_1.jb.extend({ $: args.compName }, jb_core_1.jb.obj(firstParam.id, [studio_path_1.profileFromPath(path)]));
                         jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
                     }
                 };
@@ -301,13 +302,13 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var existing = studio_path_1.profileFromPath(path);
                     // copy properties from existing & default values
                     if (existing && typeof existing == 'object')
-                        jb_core_1.jb.entries(comp.params).forEach(function (p) {
-                            if (existing[p[0]])
-                                result[p[0]] = existing[p[0]];
-                            if (typeof p[1].defaultValue != 'object')
-                                result[p[0]] = p[1].defaultValue;
-                            if (typeof p[1].defaultValue == 'object' && p[1].forceDefaultCreation)
-                                result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue));
+                        (comp.params || []).forEach(function (p) {
+                            if (existing[p.id])
+                                result[p.id] = existing[p.id];
+                            if (typeof p.defaultValue != 'object')
+                                result[p.id] = p.defaultValue;
+                            if (typeof p.defaultValue == 'object' && p.forceDefaultCreation)
+                                result[p.id] = JSON.parse(JSON.stringify(p.defaultValue));
                         });
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
                 };
@@ -318,9 +319,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return;
                     var result = { $: compName };
                     // copy default values
-                    jb_core_1.jb.entries(comp.params).forEach(function (p) {
-                        if (p[1].defaultValue)
-                            result[p[0]] = JSON.parse(JSON.stringify(p[1].defaultValue));
+                    (comp.params || []).forEach(function (p) {
+                        if (p.defaultValue)
+                            result[p.id] = JSON.parse(JSON.stringify(p.defaultValue));
                     });
                     // find group parent that can insert the control
                     var group_path = path;
@@ -341,21 +342,19 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var res = JSON.stringify(comp.impl, function (key, val) { return typeof val === 'function' ? '' + val : val; }, 4);
                     var profile = studio_path_1.profileFromPath(path);
                     // inject conditional param values
-                    jb_core_1.jb.entries(comp.params)
+                    (comp.params || [])
                         .forEach(function (p) {
-                        var pUsage = '%$' + p[0] + '%';
-                        var pVal = '' + (profile[p[0]] || p[1].defaultValue || '');
+                        var pUsage = '%$' + p.id + '%';
+                        var pVal = '' + (profile[p.id] || p.defaultValue || '');
                         res = res.replace(new RegExp('{\\?(.*?)\\?}', 'g'), function (match, condition_exp) {
                             if (condition_exp.indexOf(pUsage) != -1)
                                 return pVal ? condition_exp : '';
                             return match;
                         });
-                    });
-                    // inject param values 
-                    jb_core_1.jb.entries(comp.params)
+                    })(comp.params || [])
                         .forEach(function (p) {
-                        var pVal = '' + (profile[p[0]] || p[1].defaultValue || ''); // only primitives
-                        res = res.replace(new RegExp("%\\$" + p[0] + "%", 'g'), pVal);
+                        var pVal = '' + (profile[p.id] || p.defaultValue || ''); // only primitives
+                        res = res.replace(new RegExp("%\\$" + p.id + "%", 'g'), pVal);
                     });
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), studio_utils_1.evalProfile(res));
                 };
@@ -374,11 +373,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         path = studio_path_1.parentPath(path);
                     var parent_prof = studio_path_1.profileFromPath(studio_path_1.parentPath(path), true);
                     var compDef = parent_prof && studio_utils_1.getComp(jb_core_1.jb.compName(parent_prof));
-                    var params = (compDef || {}).params;
+                    var params = (compDef || {}).params || [];
                     var paramName = path.split('~').pop();
-                    return jb_core_1.jb.entries(params)
-                        .filter(function (p) { return p[0] == paramName; })
-                        .map(function (p) { return p[1]; })[0] || {};
+                    return params.filter(function (p) { return p.id == paramName; })[0] || {};
                 };
                 TgpModel.prototype.paramType = function (path) {
                     return (this.paramDef(path) || {}).type || 'data';
@@ -389,7 +386,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 TgpModel.prototype.PTsOfType = function (type, jbartToLook) {
                     var types = [].concat.apply([], (type || '').split(',')
                         .map(function (x) {
-                        return x.match(/([^\[]*)([])?/)[1];
+                        return x.match(/([^\[\]*)([])?/)[1];
                     })
                         .map(function (x) {
                         return x == 'data' ? ['data', 'aggregator'] : [x];
@@ -409,19 +406,18 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var prof = studio_path_1.profileFromPath(path, true);
                     if (!prof)
                         return [];
-                    var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params;
-                    return jb_core_1.jb.entries(params).filter(function (p) { return (p[1].type || '').indexOf('control') != -1; }).map(function (p) { return p[0]; });
+                    var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params || [];
+                    return params.filter(function (p) { return (p.type || '').indexOf('control') != -1; }).map(function (p) { return p.id; });
                 };
                 TgpModel.prototype.nonControlParams = function (path) {
                     var prof = studio_path_1.profileFromPath(path);
                     if (!prof)
                         return [];
-                    var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params;
-                    return jb_core_1.jb.entries(params)
-                        .filter(function (p) {
-                        return (p[1].type || '').indexOf('control') == -1;
+                    var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params || [];
+                    return params.filter(function (p) {
+                        return (p.type || '').indexOf('control') == -1;
                     })
-                        .map(function (p) { return p[0]; });
+                        .map(function (p) { return p.id; });
                 };
                 TgpModel.prototype.getOrCreateArray = function (path) {
                     var val = studio_path_1.profileFromPath(path);
@@ -471,93 +467,93 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
             exports_1("model", model = new TgpModel(''));
             // ************** components
             jb_core_1.jb.component('studio.short-title', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.shortTitle(path); }
             });
             jb_core_1.jb.component('studio.val', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.val(path);
                 }
             });
             jb_core_1.jb.component('studio.is-primitive-value', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return typeof model.val(path) == 'string';
                 }
             });
             jb_core_1.jb.component('studio.is-of-type', {
-                params: {
-                    path: { as: 'string', essential: true },
-                    type: { as: 'string', essential: true },
-                },
+                params: [
+                    { id: 'path', as: 'string', essential: true },
+                    { id: 'type', as: 'string', essential: true },
+                ],
                 impl: function (context, path, _type) {
                     return model.isOfType(path, _type);
                 }
             });
             jb_core_1.jb.component('studio.PTs-of-type', {
-                params: {
-                    type: { as: 'string', essential: true },
-                },
+                params: [
+                    { id: 'type', as: 'string', essential: true },
+                ],
                 impl: function (context, _type) {
                     return model.PTsOfType(_type);
                 }
             });
             jb_core_1.jb.component('studio.short-title', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.shortTitle(path);
                 }
             });
             jb_core_1.jb.component('studio.has-param', {
-                params: {
-                    path: { as: 'string' },
-                    param: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'param', as: 'string' },
+                ],
                 impl: function (context, path, param) {
                     return model.paramDef(path + '~' + param);
                 }
             });
             jb_core_1.jb.component('studio.non-control-children', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.children(path, 'non-controls');
                 }
             });
             jb_core_1.jb.component('studio.array-children', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.children(path, 'array');
                 }
             });
             jb_core_1.jb.component('studio.compName', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.compName(path) || ''; }
             });
             jb_core_1.jb.component('studio.paramDef', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.paramDef(path); }
             });
             jb_core_1.jb.component('studio.enum-options', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return ((model.paramDef(path) || {}).options || '').split(',').map(function (x) { return { code: x, text: x }; });
                 }
             });
             jb_core_1.jb.component('studio.prop-name', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.propName(path);
                 }
             });
             jb_core_1.jb.component('studio.more-params', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.jbEditorMoreParams(path);
                 }
             });
             jb_core_1.jb.component('studio.compName-ref', {
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return {
                         $jb_val: function (value) {
@@ -571,85 +567,85 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
             });
             jb_core_1.jb.component('studio.insertComp', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' },
-                    comp: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'comp', as: 'string' },
+                ],
                 impl: function (context, path, comp) {
                     return model.modify(model.insertComp, path, { comp: comp }, context);
                 }
             });
             jb_core_1.jb.component('studio.wrap', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' },
-                    compName: { as: 'string' }
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'compName', as: 'string' }
+                ],
                 impl: function (context, path, compName) {
                     return model.modify(model.wrap, path, { compName: compName }, context);
                 }
             });
             jb_core_1.jb.component('studio.wrapWithGroup', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.modify(model.wrapWithGroup, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.addProperty', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.modify(model.addProperty, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.wrapWithPipeline', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.modify(model.wrapWithPipeline, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.duplicate', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' },
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
                 impl: function (context, path) {
                     return model.modify(model.duplicate, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.moveInArray', {
                 type: 'action',
-                params: {
-                    path: { as: 'string' },
-                    moveUp: { type: 'boolean', as: 'boolean' }
-                },
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'moveUp', type: 'boolean', as: 'boolean' }
+                ],
                 impl: function (context, path, moveUp) {
                     return model.modify(model.moveInArray, path, { moveUp: moveUp }, context);
                 }
             });
             jb_core_1.jb.component('studio.newArrayItem', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.modify(model.addArrayItem, path, {}, context);
                 }
             });
             jb_core_1.jb.component('studio.delete', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.modify(model._delete, path, {}, context); }
             });
             jb_core_1.jb.component('studio.make-local', {
                 type: 'action',
-                params: { path: { as: 'string' } },
+                params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.modify(model.makeLocal, path, { ctx: context }, context); }
             });
             jb_core_1.jb.component('studio.projectSource', {
-                params: {
-                    project: { as: 'string', defaultValue: '%$globals/project%' }
-                },
+                params: [
+                    { id: 'project', as: 'string', defaultValue: '%$globals/project%' }
+                ],
                 impl: function (context, project) {
                     if (!project)
                         return;
@@ -658,9 +654,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 }
             });
             jb_core_1.jb.component('studio.compSource', {
-                params: {
-                    comp: { as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
-                },
+                params: [
+                    { id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
+                ],
                 impl: function (context, comp) {
                     return studio_utils_1.compAsStr(comp.split('~')[0]);
                 }

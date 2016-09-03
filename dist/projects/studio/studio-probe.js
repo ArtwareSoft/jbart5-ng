@@ -121,7 +121,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
             exports_1("Probe", Probe);
             jb_core_1.jb.component('studio.probe', {
                 type: 'data',
-                params: { path: { as: 'string', dynamic: true } },
+                params: [{ id: 'path', as: 'string', dynamic: true }],
                 impl: function (ctx, path) {
                     var _jbart = studio_utils_1.jbart_base();
                     var _win = jbart.previewWindow || window;

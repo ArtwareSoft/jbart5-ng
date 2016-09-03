@@ -40,9 +40,9 @@ jb.component('studio.open-source-dialog', {
 
 jb.component('studio.properties', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     style :{$: 'group.studio-properties-accordion' }, 
     controls: [
@@ -102,7 +102,7 @@ jb.component('studio.properties', {
 
 jb.component('studio.properties-in-tgp',{
   type: 'control',
-  params: { path: { as: 'string' } },
+  params: [ {id: 'path', as: 'string' } ],
   impl :{$: 'group',
     style :{$: 'property-sheet.studio-properties'},
     features :{$: 'group.studio-watch-path', path: '%$path%'},
@@ -115,9 +115,9 @@ jb.component('studio.properties-in-tgp',{
 
 jb.component('studio.property-field',{
 	type: 'control',
-	params: {
-		path: { as: 'string' },
-	},
+	params: [
+		{ id: 'path', as: 'string' },
+	],
 	impl: function(context,path) {
 		var fieldPT = 'studio.property-label';
 
@@ -155,7 +155,7 @@ jb.component('studio.property-field',{
 
 jb.component('studio.property-label',{
 	type: 'control',
-	params: { path: { as: 'string'} },
+	params: [ {id: 'path', as: 'string' } ],
 	impl :{$: 'label', 
 		title :{$: 'studio.prop-name', path: '%$path%' },
 	}
@@ -163,9 +163,9 @@ jb.component('studio.property-label',{
 
 jb.component('studio.property-primitive', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'editable-text', 
     style :{$: 'editable-text.studio-primitive-text' }, 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
@@ -183,9 +183,9 @@ jb.component('studio.property-primitive', {
 
 jb.component('studio.property-script', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     features: [
@@ -202,9 +202,9 @@ jb.component('studio.property-script', {
 
 jb.component('studio.data-script-summary', {
   type: 'data', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl: (ctx,path) => {
   	var val = model.val(path);
   	if (model.compName(path))
@@ -218,7 +218,7 @@ jb.component('studio.data-script-summary', {
 
 jb.component('studio.property-boolean',{
 	type: 'control',
-	params: { path: { as: 'string'} },
+	params: [ {id: 'path', as: 'string' } ],
 	impl :{$: 'editable-boolean',
 		style: {$: 'editable-boolean.studio-slide-toggle'},
 		title :{$: 'studio.prop-name', path: '%$path%' },
@@ -231,7 +231,7 @@ jb.component('studio.property-boolean',{
 })
 jb.component('studio.property-enum',{
 	type: 'control',
-	params: { path: { as: 'string'} },
+	params: [ {id: 'path', as: 'string' } ],
 	impl :{$: 'picklist', 
 		style :{$: 'picklist.studio-enum'},
 		title :{$: 'studio.prop-name', path: '%$path%' },
@@ -242,7 +242,7 @@ jb.component('studio.property-enum',{
 
 jb.component('studio.property-slider', {
 	type: 'control',
-	params: { path: { as: 'string'} },
+	params: [ {id: 'path', as: 'string' } ],
 	impl :{$: 'editable-number', 
 		$vars: { 
 			paramDef :{$: 'studio.paramDef', path: '%$path%' } 
@@ -259,9 +259,9 @@ jb.component('studio.property-slider', {
 
 jb.component('studio.property-tgp', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     $vars: {
       tgpCtrl :{$: 'object', expanded: true }
@@ -349,7 +349,7 @@ jb.component('studio.property-tgp', {
 
 jb.component('studio.property-custom-style', {
   type: 'control', 
-  params: { path: { as: 'string' } }, 
+  params: [ {id: 'path', as: 'string' } ], 
   impl :{$: 'group', 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     features : [
@@ -375,9 +375,9 @@ jb.component('studio.property-custom-style', {
 
 jb.component('studio.property-tgp-in-array', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     $vars: {
       tgpCtrl :{$: 'object', expanded: false }
@@ -442,9 +442,9 @@ jb.component('studio.property-tgp-in-array', {
 
 jb.component('studio.property-array', {
   type: 'control', 
-  params: {
-    path: { as: 'string' }
-  }, 
+  params: [
+    { id: 'path', as: 'string' }
+  ], 
   impl :{$: 'group', 
     $vars: {
       arrayCtrl :{$: 'object', expanded: true }
@@ -483,9 +483,9 @@ jb.component('studio.property-array', {
 
 jb.component('studio.tgp-path-options',{
 	type: 'picklist.options',
-	params: { 
-		path: { as: 'string' },
-	},
+	params: [ 
+		{ id: 'path', as: 'string' },
+	],
 	impl: (context,path) => 
 		[{code:'',text:''}]
 			.concat(model.PTsOfPath(path).map(op=> ({ code: op, text: op})))
@@ -493,18 +493,18 @@ jb.component('studio.tgp-path-options',{
 
 jb.component('studio.tgp-type-options',{
 	type: 'picklist.options',
-	params: { 
-		type: { as: 'string'} 
-	},
+	params: [ 
+		{ id: 'type', as: 'string'} 
+	],
 	impl: (context,type) => 
 			model.PTsOfType(type).map(op=>({ code: op, text: op}))
 })
 
 jb.component('studio.undo-support', {
   type: 'feature',
-  params: {
-    path: { essential: true, as: 'string' },
-  },
+  params: [
+    { id: 'path', essential: true, as: 'string' },
+  ],
   impl: (ctx,path) => 
   	({
   		// saving state on focus and setting the change on blur
@@ -534,10 +534,10 @@ jb.component('studio.undo-support', {
 
 jb.component('studio.bindto-modifyOperations', {
   type: 'feature',
-  params: {
-    path: { essential: true, as: 'string' },
-    data: { as: 'ref' }
-  },
+  params: [
+    { id: 'path', essential: true, as: 'string' },
+    { id: 'data', as: 'ref' }
+  ],
   impl: function(context, path,_data) {
         modifyOperationsEm
           .filter(e=>
@@ -550,9 +550,9 @@ jb.component('studio.bindto-modifyOperations', {
 
 jb.component('group.studio-watch-path', {
   type: 'feature',
-  params: {
-    path: { essential: true, as: 'string' },
-  },
+  params: [
+    { id: 'path', essential: true, as: 'string' },
+  ],
   impl: function(context, initialPath) {
   	var path = initialPath;
   	pathChangesEm.subscribe(fixer => { path = fixer.fix(path) });

@@ -68,7 +68,7 @@ export class Probe {
 
 jb.component('studio.probe', {
   type:'data',
-  params: { path: { as: 'string', dynamic: true } },
+  params: [ { id: 'path', as: 'string', dynamic: true } ],
   impl: (ctx,path) => {
       var _jbart = jbart_base();
       var _win = jbart.previewWindow || window;

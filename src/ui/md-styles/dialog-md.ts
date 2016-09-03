@@ -3,10 +3,10 @@ import {MdButton} from '@angular2-material/button/button.js';
 
 jb.component('dialog.md-dialog-ok-cancel', {
 	type: 'dialog.style',
-	params: {
-		okLabel: { as: 'string', defaultValue: 'OK' },
-		cancelLabel: { as: 'string', defaultValue: 'Cancel' },
-	},
+	params: [
+		{ id: 'okLabel', as: 'string', defaultValue: 'OK' },
+		{ id: 'cancelLabel', as: 'string', defaultValue: 'Cancel' },
+	],
 	impl :{$: 'customStyle',
 		template: `
 				<div class="jb-dialog jb-default-dialog">

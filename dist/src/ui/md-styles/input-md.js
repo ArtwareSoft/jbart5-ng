@@ -17,9 +17,9 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
             jb_ui.registerDirectives({ MdInput: input_js_1.MdInput });
             jb_core_1.jb.component('editable-text.md-input', {
                 type: 'editable-text.style',
-                params: {
-                    width: { as: 'number' }
-                },
+                params: [
+                    { id: 'width', as: 'number' }
+                ],
                 impl: { $: 'customStyle',
                     features: { $: 'editable-text.bindField' },
                     template: "<div><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></div>",

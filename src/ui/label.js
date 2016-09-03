@@ -2,11 +2,11 @@ jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModule
 
 jb.component('label', {
     type: "control",
-    params: {
-        title: { essential: true, defaultValue: 'hello', dynamic: true },
-        style: { type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
-        features: { type: 'feature[]', dynamic: true },
-    },
+    params: [
+        { id: 'title', essential: true, defaultValue: 'hello', dynamic: true },
+        { id: 'style', type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
+        { id: 'features', type: 'feature[]', dynamic: true },
+    ],
     impl: ctx => 
         jb_ui.ctrl(ctx.setVars({title: ctx.params.title() }))
 })
