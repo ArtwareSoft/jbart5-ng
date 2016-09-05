@@ -35,16 +35,16 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      \t\t  <div class=\"dialog-title noselect\">{{title}}</div>\n\t\t\t\t      \t\t  <jb_comp *ngIf=\"hasMenu\" class=\"dialog-menu\" [comp]=\"menuComp\"></jb_comp>\n\t\t\t\t\t\t\t  <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t  <div class=\"jb-dialog-content-parent\">\n \t\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t  \t  </div>\n\t\t\t\t\t\t</div>",
                     features: [
-                        { $: 'dialogFeature.dragTitle', id: '%$id%' },
-                        { $: 'dialogFeature.uniqueDialog', id: '%$id%', remeberLastLocation: true },
-                        { $: 'dialogFeature.maxZIndexOnClick', minZIndex: 5000 },
-                        { $: 'studio-dialogFeature.studioPopupLocation' },
+                        { $: 'dialog-feature.dragTitle', id: '%$id%' },
+                        { $: 'dialog-feature.uniqueDialog', id: '%$id%', remeberLastLocation: true },
+                        { $: 'dialog-feature.maxZIndexOnClick', minZIndex: 5000 },
+                        { $: 'studio-dialog-feature.studioPopupLocation' },
                     ],
                     css: "{ position: fixed;\n\t\t\t\t\t\tbackground: #F9F9F9; \n\t\t\t\t\t\twidth: %$width%px; \n\t\t\t\t\t\tmax-width: 800px;\n\t\t\t\t\t\tmin-height: %$height%px; \n\t\t\t\t\t\toverflow: auto;\n\t\t\t\t\t\tborder-radius: 4px; \n\t\t\t\t\t\tpadding: 0 12px 12px 12px; \n\t\t\t\t\t\tbox-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12)\n\t\t\t\t}\n\t\t\t\t.dialog-title { background: none; padding: 10px 5px; }\n\t\t\t\t.jb-dialog-content-parent { padding: 8px; overflow-y: auto; max-height: 500px }\n\t\t\t\t.dialog-close {\n\t\t\t\t\t\tposition: absolute; \n\t\t\t\t\t\tcursor: pointer; \n\t\t\t\t\t\tright: 4px; top: 4px; \n\t\t\t\t\t\tfont: 21px sans-serif; \n\t\t\t\t\t\tborder: none; \n\t\t\t\t\t\tbackground: transparent; \n\t\t\t\t\t\tcolor: #000; \n\t\t\t\t\t\ttext-shadow: 0 1px 0 #fff; \n\t\t\t\t\t\tfont-weight: 700; \n\t\t\t\t\t\topacity: .2;\n\t\t\t\t}\n\t\t\t\t.dialog-menu {\n\t\t\t\t\t\tposition: absolute; \n\t\t\t\t\t\tcursor: pointer; \n\t\t\t\t\t\tright: 24px; top: 0; \n\t\t\t\t\t\tfont: 21px sans-serif; \n\t\t\t\t\t\tborder: none; \n\t\t\t\t\t\tbackground: transparent; \n\t\t\t\t\t\tcolor: #000; \n\t\t\t\t\t\ttext-shadow: 0 1px 0 #fff; \n\t\t\t\t\t\tfont-weight: 700; \n\t\t\t\t\t\topacity: .2;\n\t\t\t\t}\n\t\t\t\t.dialog-close:hover { opacity: .5 }"
                 }
             });
-            jb_core_1.jb.component('studio-dialogFeature.studioPopupLocation', {
-                type: 'dialogFeature',
+            jb_core_1.jb.component('studio-dialog-feature.studioPopupLocation', {
+                type: 'dialog-feature',
                 impl: function (context) {
                     return {
                         afterViewInit: function (cmp) {

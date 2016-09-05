@@ -1,7 +1,7 @@
 jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
 
 jb.component('css', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'css', essential: true, as: 'string' },
   ],
@@ -10,7 +10,7 @@ jb.component('css', {
 })
 
 jb.component('css.width', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'width', essential: true, as: 'number' },
     { id: 'overflow', as: 'string', options: ',auto,hidden,scroll'},
@@ -21,7 +21,7 @@ jb.component('css.width', {
 })
 
 jb.component('css.height', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'height', essential: true, as: 'number' },
     { id: 'overflow', as: 'string', options: ',auto,hidden,scroll'},
@@ -32,7 +32,7 @@ jb.component('css.height', {
 })
 
 jb.component('css.padding', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'top', as: 'number' },
     { id: 'left', as: 'number' },
@@ -50,7 +50,7 @@ jb.component('css.padding', {
 })
 
 jb.component('css.margin', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'top', as: 'number' },
     { id: 'left', as: 'number' },
@@ -68,7 +68,7 @@ jb.component('css.margin', {
 })
 
 jb.component('css.box-shadow', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'blurRadius', as: 'number', defaultValue: 5 },
     { id: 'spreadRadius', as: 'number', defaultValue: 0 },
@@ -86,7 +86,7 @@ jb.component('css.box-shadow', {
 })
 
 jb.component('css.border', {
-  type: 'feature,dialogFeature',
+  type: 'feature,dialog-feature',
   params: [
     { id: 'width',as: 'number', defaultValue: 1},
     { id: 'side', as: 'string', options: 'top,left,bottom,right' },

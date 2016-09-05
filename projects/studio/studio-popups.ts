@@ -37,10 +37,10 @@ jb.component('dialog.studio-floating', {
 						  	  </div>
 						</div>`,
 			features: [
-					{$: 'dialogFeature.dragTitle', id: '%$id%'}, 
-					{$: 'dialogFeature.uniqueDialog', id: '%$id%', remeberLastLocation: true },
-					{$: 'dialogFeature.maxZIndexOnClick', minZIndex: 5000 },
-					{$: 'studio-dialogFeature.studioPopupLocation' },
+					{$: 'dialog-feature.dragTitle', id: '%$id%'}, 
+					{$: 'dialog-feature.uniqueDialog', id: '%$id%', remeberLastLocation: true },
+					{$: 'dialog-feature.maxZIndexOnClick', minZIndex: 5000 },
+					{$: 'studio-dialog-feature.studioPopupLocation' },
 			],
 			css: `{ position: fixed;
 						background: #F9F9F9; 
@@ -82,8 +82,8 @@ jb.component('dialog.studio-floating', {
 	}
 })
 
-jb.component('studio-dialogFeature.studioPopupLocation',{
-	type: 'dialogFeature',
+jb.component('studio-dialog-feature.studioPopupLocation',{
+	type: 'dialog-feature',
 	impl: function(context) {
 		return {
 			afterViewInit: function(cmp) {

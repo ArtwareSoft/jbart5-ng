@@ -1064,8 +1064,8 @@ jb.component('material-demo.buttons', {
     style :{$: 'layout.vertical', spacing: 3 }, 
     controls: [
       {$: 'button', 
-        title: 'Helloabcfdgfd', 
-        style :{$: 'button.md-flat' }
+        title: 'pick & edit', 
+        style :{$: 'button.md-raised' }
       }, 
       {$: 'custom-control', 
         title: 'buttons', 
@@ -1175,7 +1175,7 @@ jb.component('material-demo.buttons2', {
     title: 'buttons2', 
     style :{$: 'layout.horizontal', spacing: 3 }, 
     controls: [
-      {$: 'label', title: '132' }, 
+      {$: 'label', title: 'pick and edit' }, 
       {$: 'editable-text', 
         title: 'fhgfh', 
         databind: '%$sources/button%', 

@@ -101,7 +101,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                         { $: 'group',
                             cssClass: 'studio-widget-placeholder',
                             title: 'preview',
-                            controls: { $: 'studio.renderWidget' },
+                            controls: { $: 'studio.renderWidget' }
                         },
                         { $: 'group',
                             cssClass: 'studio-footer',
@@ -124,16 +124,13 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                         { $: 'itemlist.selection',
                                             databind: '%$globals/page%',
                                             onSelection: { $: 'onNextTimer',
-                                                action: { $: 'writeValue',
-                                                    to: '%$globals/profile_path%',
-                                                    value: '{%$globals/project%}.{%$globals/page%}'
-                                                }
-                                            },
-                                            onDoubleClick: { $: 'onNextTimer',
                                                 action: [
-                                                    { $: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' },
+                                                    { $: 'writeValue',
+                                                        to: '%$globals/profile_path%',
+                                                        value: '{%$globals/project%}.{%$globals/page%}'
+                                                    },
                                                     { $: 'studio.open-properties' },
-                                                    { $: 'studio.open-control-tree' },
+                                                    { $: 'studio.open-control-tree' }
                                                 ]
                                             },
                                             autoSelectFirst: true
@@ -153,7 +150,6 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                     action: {
                                         $runActions: [
                                             { $: 'studio.waitForPreviewIframe' },
-                                            //                {$: 'studio.fix-to-closest-path', path: '%$globals/profile_path%' },
                                             { $: 'studio.setPreviewSize', width: 1280, height: 520 }
                                         ]
                                     }

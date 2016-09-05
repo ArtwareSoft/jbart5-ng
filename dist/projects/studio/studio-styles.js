@@ -122,15 +122,15 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     template: "<div class=\"jb-dialog jb-popup\">\n\t\t\t\t\t\t\t<button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t</div>",
                     css: "{ background: #fff; position: absolute; min-width: 280px; min-height: 200px;\n\t\t\t\t\tbox-shadow: 2px 2px 3px #d5d5d5; padding: 3px; border: 1px solid rgb(213, 213, 213)\n\t\t\t\t  }\n\t\t\t\t.dialog-close {\n\t\t\t\t\t\tposition: absolute; \n\t\t\t\t\t\tcursor: pointer; \n\t\t\t\t\t\tright: -7px; top: -22px; \n\t\t\t\t\t\tfont: 21px sans-serif; \n\t\t\t\t\t\tborder: none; \n\t\t\t\t\t\tbackground: transparent; \n\t\t\t\t\t\tcolor: #000; \n\t\t\t\t\t\ttext-shadow: 0 1px 0 #fff; \n\t\t\t\t\t\tfont-weight: 700; \n\t\t\t\t\t\topacity: .2;\n\t\t\t\t}\n\t\t\t\t.dialog-close:hover { opacity: .5 }\n\t\t\t\t",
                     features: [
-                        { $: 'dialogFeature.maxZIndexOnClick' },
-                        { $: 'dialogFeature.closeWhenClickingOutside' },
-                        { $: 'dialogFeature.cssClassOnLaunchingControl' },
-                        { $: 'dialogFeature.studio-position-under-property' }
+                        { $: 'dialog-feature.maxZIndexOnClick' },
+                        { $: 'dialog-feature.closeWhenClickingOutside' },
+                        { $: 'dialog-feature.cssClassOnLaunchingControl' },
+                        { $: 'dialog-feature.studio-position-under-property' }
                     ]
                 }
             });
-            jb_core_1.jb.component('dialogFeature.studio-position-under-property', {
-                type: 'dialogFeature',
+            jb_core_1.jb.component('dialog-feature.studio-position-under-property', {
+                type: 'dialog-feature',
                 impl: function (context, offsetLeft, offsetTop) {
                     return {
                         afterViewInit: function (cmp) {

@@ -120,7 +120,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     modal: true,
                     title: 'Style Name',
                     style: { $: 'dialog.md-dialog-ok-cancel',
-                        features: { $: 'dialogFeature.autoFocusOnFirstInput' }
+                        features: { $: 'dialog-feature.autoFocusOnFirstInput' }
                     },
                     content: { $: 'editable-text',
                         databind: '%$dialogData/name%',

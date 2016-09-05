@@ -250,16 +250,16 @@ jb.component('dialog.studio-multiline-edit',{
 				.dialog-close:hover { opacity: .5 }
 				`,
 			features: [
-				{ $: 'dialogFeature.maxZIndexOnClick' },
-				{ $: 'dialogFeature.closeWhenClickingOutside' },
-				{ $: 'dialogFeature.cssClassOnLaunchingControl' },
-				{ $: 'dialogFeature.studio-position-under-property' }
+				{ $: 'dialog-feature.maxZIndexOnClick' },
+				{ $: 'dialog-feature.closeWhenClickingOutside' },
+				{ $: 'dialog-feature.cssClassOnLaunchingControl' },
+				{ $: 'dialog-feature.studio-position-under-property' }
 			]
 	}
 })
 
-jb.component('dialogFeature.studio-position-under-property', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.studio-position-under-property', {
+	type: 'dialog-feature',
 	impl: function(context,offsetLeft,offsetTop) {
 		return {
 			afterViewInit: function(cmp) {

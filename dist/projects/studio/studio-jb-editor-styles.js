@@ -14,10 +14,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     template: "<div class=\"jb-dialog jb-popup\">\n              <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n              <jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n            </div>",
                     css: "{ background: #fff; position: absolute }\n        .dialog-close {\n            position: absolute; \n            cursor: pointer; \n            right: -7px; top: -22px; \n            font: 21px sans-serif; \n            border: none; \n            background: transparent; \n            color: #000; \n            text-shadow: 0 1px 0 #fff; \n            font-weight: 700; \n            opacity: .2;\n        }\n        .dialog-close:hover { opacity: .5 }\n        ",
                     features: [
-                        { $: 'dialogFeature.maxZIndexOnClick' },
-                        { $: 'dialogFeature.closeWhenClickingOutside' },
-                        { $: 'dialogFeature.nearLauncherLocation' },
-                        { $: 'dialogFeature.uniqueDialog', id: 'studio-jb-editor-popup' },
+                        { $: 'dialog-feature.maxZIndexOnClick' },
+                        { $: 'dialog-feature.closeWhenClickingOutside' },
+                        { $: 'dialog-feature.nearLauncherLocation' },
+                        { $: 'dialog-feature.uniqueDialog', id: 'studio-jb-editor-popup' },
                         { $: 'css.box-shadow',
                             blurRadius: 5,
                             spreadRadius: 0,
@@ -35,12 +35,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     template: "<div class=\"jb-dialog jb-popup\">\n              <jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n            </div>",
                     css: "{ background: #fff; position: absolute; padding: 3px 5px }",
                     features: [
-                        { $: 'dialogFeature.maxZIndexOnClick' },
-                        { $: 'dialogFeature.closeWhenClickingOutside' },
-                        { $: 'dialogFeature.cssClassOnLaunchingControl' },
-                        { $: 'dialogFeature.nearLauncherLocation' },
+                        { $: 'dialog-feature.maxZIndexOnClick' },
+                        { $: 'dialog-feature.closeWhenClickingOutside' },
+                        { $: 'dialog-feature.cssClassOnLaunchingControl' },
+                        { $: 'dialog-feature.nearLauncherLocation' },
                         //        { $: 'studio.fix-suggestions-margin' } ,
-                        { $: 'dialogFeature.uniqueDialog', id: 'studio-suggestions-popup' },
+                        { $: 'dialog-feature.uniqueDialog', id: 'studio-suggestions-popup' },
                         { $: 'css.box-shadow',
                             blurRadius: 5,
                             spreadRadius: 0,
@@ -56,7 +56,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
     }
 });
 // jb.component('studio.fix-suggestions-margin', {
-//   type: 'dialogFeature',
+//   type: 'dialog-feature',
 //   impl: ctx => {
 //     var e = ctx.exp('%$jbEditEvent%');
 //     var temp = $('<span></span>').css('font',$(e.input).css('font')).css('width','100%')

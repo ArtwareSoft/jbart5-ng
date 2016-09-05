@@ -10,7 +10,7 @@ jb.component('openDialog', {
 		{ id: 'title', as: 'string', dynamic: true  },
 		{ id: 'onOK', type: 'action', dynamic: true },
 		{ id: 'modal', type: 'boolean', as: 'boolean' },
-		{ id: 'features', type: 'dialogFeature[]', dynamic: true }
+		{ id: 'features', type: 'dialog-feature[]', dynamic: true }
 	],
 	impl: function(context,id) {
 		var modal = context.params.modal;
@@ -68,17 +68,17 @@ jb.component('dialog.popup', {
   impl :{$: 'customStyle',
       template: '<div class="jb-dialog jb-popup"><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
       features: [
-        { $: 'dialogFeature.maxZIndexOnClick' },
-        { $: 'dialogFeature.closeWhenClickingOutside' },
-        { $: 'dialogFeature.cssClassOnLaunchingControl' },
-        { $: 'dialogFeature.nearLauncherLocation' }
+        { $: 'dialog-feature.maxZIndexOnClick' },
+        { $: 'dialog-feature.closeWhenClickingOutside' },
+        { $: 'dialog-feature.cssClassOnLaunchingControl' },
+        { $: 'dialog-feature.nearLauncherLocation' }
       ]
   }
 })
 
 
-jb.component('dialogFeature.uniqueDialog', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.uniqueDialog', {
+	type: 'dialog-feature',
 	params: [
 		{ id: 'id', as: 'string' },
 		{ id: 'remeberLastLocation', type: 'boolean', as: 'boolean' }
@@ -106,8 +106,8 @@ function fixDialogOverflow($control,$dialog,offsetLeft,offsetTop) {
 		return { top: top || $control.offset().top , left: left || $control.offset().left}
 }
 
-jb.component('dialogFeature.nearLauncherLocation', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.nearLauncherLocation', {
+	type: 'dialog-feature',
 	params: [
 		{ id: 'offsetLeft', as: 'number', defaultValue: 0 },
 		{ id: 'offsetTop', as: 'number' , defaultValue: 0 },
@@ -134,8 +134,8 @@ jb.component('dialogFeature.nearLauncherLocation', {
 	}
 })
 
-jb.component('dialogFeature.launcherLocationNearSelectedNode', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.launcherLocationNearSelectedNode', {
+	type: 'dialog-feature',
 	params: [
 		{ id: 'offsetLeft', as: 'number' },
 		{ id: 'offsetTop', as: 'number' },
@@ -153,8 +153,8 @@ jb.component('dialogFeature.launcherLocationNearSelectedNode', {
 	}
 })
 
-jb.component('dialogFeature.onClose', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.onClose', {
+	type: 'dialog-feature',
 	params: [
 		{ id: 'action', type: 'action', dynamic: true}
 	],
@@ -167,8 +167,8 @@ jb.component('dialogFeature.onClose', {
 	}
 })
 
-jb.component('dialogFeature.closeWhenClickingOutside', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.closeWhenClickingOutside', {
+	type: 'dialog-feature',
 	impl: function(context) { 
 		var dialog = context.vars.$dialog;
 		jb.delay(10).then(() =>  { // delay - close older before    		
@@ -203,8 +203,8 @@ jb.component('dialogFeature.closeWhenClickingOutside', {
 	}
 })
 
-jb.component('dialogFeature.autoFocusOnFirstInput', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.autoFocusOnFirstInput', {
+	type: 'dialog-feature',
 	impl: context => ({ 
 			afterViewInit: cmp =>
 				jb.delay(1).then(()=>
@@ -212,8 +212,8 @@ jb.component('dialogFeature.autoFocusOnFirstInput', {
 	})
 })
 
-jb.component('dialogFeature.cssClassOnLaunchingControl', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.cssClassOnLaunchingControl', {
+	type: 'dialog-feature',
 	impl: context => ({ 
 			afterViewInit: cmp => {
 				var dialog = context.vars.$dialog;
@@ -229,8 +229,8 @@ jb.component('dialogFeature.cssClassOnLaunchingControl', {
 	})
 })
 
-jb.component('dialogFeature.maxZIndexOnClick', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.maxZIndexOnClick', {
+	type: 'dialog-feature',
 	params: [
 		{ id: 'minZIndex', as: 'number'}
 	],
@@ -254,8 +254,8 @@ jb.component('dialogFeature.maxZIndexOnClick', {
 	}
 })
 
-jb.component('dialogFeature.dragTitle', {
-	type: 'dialogFeature',
+jb.component('dialog-feature.dragTitle', {
+	type: 'dialog-feature',
 	params: [
 		{ id: 'id', as: 'string' }
 	],

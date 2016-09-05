@@ -739,7 +739,7 @@ picklist :{$: 'ng2-ui-test',
 //       action :{$: 'openDialog', 
 //         title: 'Hello' , 
 //         content :{$: 'label', title: 'Hello Dialog' },      
-//         features :{$: 'dialogFeature.dragTitle', id: "dialog-test"}, 
+//         features :{$: 'dialog-feature.dragTitle', id: "dialog-test"}, 
 //       } 
 //   },
 //   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },

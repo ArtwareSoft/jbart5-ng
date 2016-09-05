@@ -38,7 +38,7 @@ jb.component('studio.all', {
                     margin-top: -100px;
                     }
                     `, 
-                  features :{$: 'label.bind-title'}
+                  features :{$: 'label.bind-title' }
                 }
               }, 
               {$: 'label', 
@@ -67,7 +67,7 @@ jb.component('studio.all', {
       {$: 'group', 
         cssClass: 'studio-widget-placeholder', 
         title: 'preview', 
-        controls :{$: 'studio.renderWidget' }, 
+        controls :{$: 'studio.renderWidget' }
       }, 
       {$: 'group', 
         cssClass: 'studio-footer', 
@@ -89,18 +89,15 @@ jb.component('studio.all', {
             features: [
               {$: 'itemlist.selection', 
                 databind: '%$globals/page%', 
-                onSelection :{$: 'onNextTimer',
-                  action :{$: 'writeValue', 
-                    to: '%$globals/profile_path%', 
-                    value: '{%$globals/project%}.{%$globals/page%}'
-                  }
-                }, 
-                onDoubleClick :{$: 'onNextTimer', 
-                  action : [
-                  	{$: 'writeValue', to: '%$globals/profile_path%', value: '{%$globals/project%}.{%$globals/page%}' },
-            		{$: 'studio.open-properties'},
-            		{$: 'studio.open-control-tree'},
-            	  ]
+                onSelection :{$: 'onNextTimer', 
+                  action: [
+                    {$: 'writeValue', 
+                      to: '%$globals/profile_path%', 
+                      value: '{%$globals/project%}.{%$globals/page%}'
+                    }, 
+                    {$: 'studio.open-properties' }, 
+                    {$: 'studio.open-control-tree' }
+                  ]
                 }, 
                 autoSelectFirst: true
               }, 
@@ -122,7 +119,6 @@ jb.component('studio.all', {
             action :{
               $runActions: [
                 {$: 'studio.waitForPreviewIframe' }, 
-//                {$: 'studio.fix-to-closest-path', path: '%$globals/profile_path%' },
                 {$: 'studio.setPreviewSize', width: 1280, height: 520 }
               ]
             }

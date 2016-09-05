@@ -23,10 +23,10 @@ jb.component('dialog.studio-jb-editor-popup', {
         .dialog-close:hover { opacity: .5 }
         `,
       features: [
-        { $: 'dialogFeature.maxZIndexOnClick' },
-        { $: 'dialogFeature.closeWhenClickingOutside' },
-        { $: 'dialogFeature.nearLauncherLocation' },
-        { $: 'dialogFeature.uniqueDialog', id: 'studio-jb-editor-popup' },
+        { $: 'dialog-feature.maxZIndexOnClick' },
+        { $: 'dialog-feature.closeWhenClickingOutside' },
+        { $: 'dialog-feature.nearLauncherLocation' },
+        { $: 'dialog-feature.uniqueDialog', id: 'studio-jb-editor-popup' },
         {$: 'css.box-shadow', 
           blurRadius: 5, 
           spreadRadius: 0, 
@@ -47,12 +47,12 @@ jb.component('dialog.studio-suggestions-popup',{
             </div>`, 
       css: `{ background: #fff; position: absolute; padding: 3px 5px }`,
       features: [
-        { $: 'dialogFeature.maxZIndexOnClick' },
-        { $: 'dialogFeature.closeWhenClickingOutside' },
-        { $: 'dialogFeature.cssClassOnLaunchingControl' },
-        { $: 'dialogFeature.nearLauncherLocation' },
+        { $: 'dialog-feature.maxZIndexOnClick' },
+        { $: 'dialog-feature.closeWhenClickingOutside' },
+        { $: 'dialog-feature.cssClassOnLaunchingControl' },
+        { $: 'dialog-feature.nearLauncherLocation' },
 //        { $: 'studio.fix-suggestions-margin' } ,
-        { $: 'dialogFeature.uniqueDialog', id: 'studio-suggestions-popup' },
+        { $: 'dialog-feature.uniqueDialog', id: 'studio-suggestions-popup' },
         { $: 'css.box-shadow', 
           blurRadius: 5, 
           spreadRadius: 0, 
@@ -66,7 +66,7 @@ jb.component('dialog.studio-suggestions-popup',{
 })
 
 // jb.component('studio.fix-suggestions-margin', {
-//   type: 'dialogFeature',
+//   type: 'dialog-feature',
 //   impl: ctx => {
 //     var e = ctx.exp('%$jbEditEvent%');
 //     var temp = $('<span></span>').css('font',$(e.input).css('font')).css('width','100%')

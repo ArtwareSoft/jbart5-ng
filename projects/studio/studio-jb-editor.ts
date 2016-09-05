@@ -150,8 +150,8 @@ jb.component('studio.open-jb-edit-property', {
     style :{$: 'dialog.studio-jb-editor-popup' }, 
     content :{$: 'studio.jb-floating-input', path: '%$path%' }, 
     features: [
-      {$: 'dialogFeature.autoFocusOnFirstInput' }, 
-      {$: 'dialogFeature.onClose', 
+      {$: 'dialog-feature.autoFocusOnFirstInput' }, 
+      {$: 'dialog-feature.onClose', 
         action :{$: 'toggleBooleanValue', of: '%$globals/jb_preview_result_counter%' }
       }
     ]

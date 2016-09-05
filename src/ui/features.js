@@ -149,7 +149,7 @@ jb.component('feature.onEnter', {
 jb.component('ngAtts', {
   type: 'feature',
   params: [
-    { id: 'atts', as: 'object' }
+    { id: 'atts', as: 'single' }
   ],
   impl: (ctx,atts) => 
     ({atts:atts})

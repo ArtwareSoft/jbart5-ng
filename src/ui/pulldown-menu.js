@@ -128,11 +128,11 @@ jb.component('pulldownPopup.mainMenuPopup',{
 						</div>`, 
 			css: '.pulldown-menu-remove-top-border { width: %$popupWidth%px }',
 			features: [
-					{ $: 'dialogFeature.uniqueDialog', id: 'pulldown main menu popup', remeberLastLocation: false },
-					{ $: 'dialogFeature.maxZIndexOnClick' },
-					{ $: 'dialogFeature.closeWhenClickingOutside' },
-					{ $: 'dialogFeature.cssClassOnLaunchingControl' },
-					{ $: 'dialogFeature.nearLauncherLocation' }
+					{ $: 'dialog-feature.uniqueDialog', id: 'pulldown main menu popup', remeberLastLocation: false },
+					{ $: 'dialog-feature.maxZIndexOnClick' },
+					{ $: 'dialog-feature.closeWhenClickingOutside' },
+					{ $: 'dialog-feature.cssClassOnLaunchingControl' },
+					{ $: 'dialog-feature.nearLauncherLocation' }
 			]
 	}
 })
@@ -142,11 +142,11 @@ jb.component('pulldownPopup.contextMenuPopup',{
 	impl :{$: 'customStyle',
 			template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
 			features: [
-				{ $: 'dialogFeature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },
-				{ $: 'dialogFeature.maxZIndexOnClick' },
-				{ $: 'dialogFeature.closeWhenClickingOutside' },
-				{ $: 'dialogFeature.cssClassOnLaunchingControl' },
-				{ $: 'dialogFeature.nearLauncherLocation' }
+				{ $: 'dialog-feature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },
+				{ $: 'dialog-feature.maxZIndexOnClick' },
+				{ $: 'dialog-feature.closeWhenClickingOutside' },
+				{ $: 'dialog-feature.cssClassOnLaunchingControl' },
+				{ $: 'dialog-feature.nearLauncherLocation' }
 			]
 	}
 })

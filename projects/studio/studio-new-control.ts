@@ -63,8 +63,8 @@ jb.component('studio.openNewCtrlDialog', {
     features: [
       {$: 'css.height', height: '420', overflow: 'hidden' }, 
       {$: 'css.width', width: '350', overflow: 'hidden' }, 
-      {$: 'dialogFeature.dragTitle', id: 'new control' }, 
-      {$: 'dialogFeature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }
+      {$: 'dialog-feature.dragTitle', id: 'new control' }, 
+      {$: 'dialog-feature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }
     ]
   }
 })
@@ -96,7 +96,7 @@ jb.component('studio.openNewPage', {
     modal: true, 
     title: 'New Page', 
     style :{$: 'dialog.md-dialog-ok-cancel', 
-      features :{$: 'dialogFeature.autoFocusOnFirstInput' }
+      features :{$: 'dialog-feature.autoFocusOnFirstInput' }
     }, 
     content :{$: 'group', 
       controls: [
