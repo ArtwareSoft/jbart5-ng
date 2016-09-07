@@ -207,7 +207,7 @@ jb.component('studio.renderWidget',{
 						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 						w.jbart.modifyOperationsEm = modifyOperationsEm;
 						w.jbart.studioActivityEm = studioActivityEm;
-						w.jbart.modifiedCtrlsEm = jbart.modifiedCtrlsEm;
+						w.jbart.studioModifiedCtrlsEm = jbart.modifiedCtrlsEm;
             w.jbart.profileFromPath = jbart.profileFromPath;
 						jbart.previewWindow = w;
 						jbart.previewjbart = w.jbart;

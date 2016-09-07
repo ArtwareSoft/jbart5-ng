@@ -150,13 +150,14 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     function parseHTML(text) {
         var res = document.createElement('div');
         res.innerHTML = text;
-        setNgPath(res, '');
+        setNgPath(res.firstChild.firstChild, '');
         return res.firstChild;
         function setNgPath(elem, curPath) {
+            if (!elem || elem.nodeType != 1)
+                return;
             addAttribute(elem, 'ng-path', curPath);
             Array.from(elem.children).forEach(function (e, index) {
-                if (e.nodeType == 1)
-                    setNgPath(e, curPath + '~' + index);
+                return setNgPath(e, curPath === '' ? index : (curPath + '~' + index));
             });
         }
     }
@@ -512,14 +513,20 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     var _this = this;
                     // redraw if script changed at studio
                     (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+                        .merge(jbart.studioModifiedCtrlsEm || jb_rx.Observable.of())
                         .flatMap(function (e) {
-                        if (_this.comp && e.path == _this.comp.callerPath) {
-                            jb_core_1.jb.delay(100).then(function () {
-                                return $(_this._nativeElement).addClass('jb-highlight-comp-changed');
+                        if (_this.comp && [_this.comp.callerPath, _this.comp.ctx.path].indexOf(e.path) != -1) {
+                            jb_core_1.jb.delay(100, _this.comp.ctx).then(function () {
+                                var elemToHighlight = _this._nativeElement;
+                                if (e.ngPath)
+                                    elemToHighlight = e.ngPath.split('~').reduce(function (elem, index) {
+                                        return elem && Array.from(elem.children)[index];
+                                    }, elemToHighlight.firstChild);
+                                $(elemToHighlight).addClass('jb-highlight-comp-changed');
                             });
                             if (jbart.profileFromPath) {
-                                var prof = jbart.profileFromPath(_this.comp.callerPath);
-                                var ctxToRun = _this.comp.ctx.ctx({ profile: prof, comp: _this.comp.callerPath, path: '' });
+                                var prof = jbart.profileFromPath(e.path);
+                                var ctxToRun = _this.comp.ctx.ctx({ profile: prof, comp: e.path, path: '' });
                                 var comp = ctxToRun.runItself();
                                 return [comp];
                             }

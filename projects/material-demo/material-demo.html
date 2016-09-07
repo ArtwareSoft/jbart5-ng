@@ -16,8 +16,7 @@
 
 <script>
 
-// .concat(jb_studio_modules)
-jbLoadModules(jb_modules.concat(['/projects/material-demo/material-demo.js','projects/material-demo/ng-material-demo-loader']))
+jbLoadModules(jb_modules.concat(jb_studio_modules).concat(['/projects/material-demo/material-demo.js','projects/material-demo/ng-material-demo-loader','/projects/material-demo/material-demo-pick.js']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

@@ -79,7 +79,7 @@ function profileRefFromPathWithNotification(path,ctx) {
 			var comp = path.split('~')[0];
 			var before = compAsStr(comp);
 			_ref.$jb_val(value);
-			notifyModification(path,before,ctx);
+			notifyModification(path,before,ctx,this.ngPath);
 		}
 	}
 }

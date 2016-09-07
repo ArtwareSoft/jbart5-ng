@@ -15,9 +15,10 @@ jb.component('css.width', {
     { id: 'width', essential: true, as: 'number' },
     { id: 'overflow', as: 'string', options: ',auto,hidden,scroll'},
     { id: 'minMax', as: 'string', options: ',min,max'},
-  ],
-  impl: (context,width,overflow,minMax) => 
-    ({css: `{ ${minMax ? minMax +'-':''}width: ${width}px ${overflow ? '; overflow-x:' + overflow + ';' : ''} }`})
+    { id: 'selector', as: 'string' },
+],
+  impl: (ctx,width,overflow,minMax) => 
+    ({css: `${ctx.params.selector} { ${minMax ? minMax +'-':''}width: ${width}px ${overflow ? '; overflow-x:' + overflow + ';' : ''} }`})
 })
 
 jb.component('css.height', {
@@ -26,9 +27,10 @@ jb.component('css.height', {
     { id: 'height', essential: true, as: 'number' },
     { id: 'overflow', as: 'string', options: ',auto,hidden,scroll'},
     { id: 'minMax', as: 'string', options: ',min,max'},
+    { id: 'selector', as: 'string' },
   ],
-  impl: (context,height,overflow,minMax) =>
-    ({css: `{ ${minMax ? minMax +'-':''}height: ${height}px ${overflow ? '; overflow-y:' + overflow : ''} }`})
+  impl: (ctx,height,overflow,minMax) =>
+    ({css: `${ctx.params.selector} { ${minMax ? minMax +'-':''}height: ${height}px ${overflow ? '; overflow-y:' + overflow : ''} }`})
 })
 
 jb.component('css.padding', {

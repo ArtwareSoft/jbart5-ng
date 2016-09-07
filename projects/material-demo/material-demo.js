@@ -1061,11 +1061,32 @@ jb.component('material-demo.buttons', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'buttons', 
-    style :{$: 'layout.vertical', spacing: 3 }, 
+    style :{$: 'layout.horizontal', spacing: 3 }, 
     controls: [
-      {$: 'button', 
-        title: 'pick & edit', 
-        style :{$: 'button.md-raised' }
+      {$: 'group', 
+        controls: [
+          {$: 'button', 
+            title: 'pick & edit', 
+            action :{$: 'material-demo.pick', 
+              onHover :{$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }
+            }, 
+            style :{$: 'button.md-raised' }
+          }, 
+          {$: 'editable-text', 
+            title: 'template', 
+            databind :{$: 'studio.ng-template-as-text', ngPath: '%$globals/ngPath%' }, 
+            style :{$: 'editable-text.codemirror', 
+              enableFullScreen: true, 
+              debounceTime: 300
+            }
+          }, 
+          {$: 'editable-text', 
+            databind: '%$globals/ngPath%', 
+            style :{$: 'editable-text.input' }, 
+            features :{$: 'css.width', width: '300', selector: 'input' }
+          }
+        ], 
+        features :{$: 'css.width', width: '540' }
       }, 
       {$: 'custom-control', 
         title: 'buttons', 

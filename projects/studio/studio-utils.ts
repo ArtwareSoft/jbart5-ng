@@ -18,12 +18,12 @@ jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
       .filter(p=>
       	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
       [0];
-     return firstCtrl ? [{ path: firstCtrl}] : [];
+     return firstCtrl ? [{ path: firstCtrl, ngPath: x.ngPath}] : [];
 })
 
-export function notifyModification(path,before,ctx) {
+export function notifyModification(path,before,ctx,ngPath) {
 	var comp = path.split('~')[0];
-	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
+	modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path), ngPath: ngPath });
 }
 
 export function message(message,error) {

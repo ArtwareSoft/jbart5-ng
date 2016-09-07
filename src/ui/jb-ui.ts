@@ -385,14 +385,22 @@ export class jbComp {
   ngOnInit() {
   	// redraw if script changed at studio
 		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+				.merge(jbart.studioModifiedCtrlsEm || jb_rx.Observable.of())
 				.flatMap(e=> {
-					if (this.comp && e.path == this.comp.callerPath) {
-						jb.delay(100).then(() => // height in delay
-				  			$(this._nativeElement).addClass('jb-highlight-comp-changed'));
+					if (this.comp && [this.comp.callerPath,this.comp.ctx.path].indexOf(e.path) != -1) {
+						jb.delay(100,this.comp.ctx).then(() => {// height in delay
+							var elemToHighlight = this._nativeElement;
+							if (e.ngPath)
+								elemToHighlight = e.ngPath.split('~').reduce((elem,index)=>
+									elem && Array.from(elem.children)[index]
+									, elemToHighlight.firstChild)
+
+				  			$(elemToHighlight).addClass('jb-highlight-comp-changed')
+				  		});
 
 						if (jbart.profileFromPath) {
-							var prof = jbart.profileFromPath(this.comp.callerPath);
-							var ctxToRun = this.comp.ctx.ctx({profile: prof, comp: this.comp.callerPath,path:''});
+							var prof = jbart.profileFromPath(e.path);
+							var ctxToRun = this.comp.ctx.ctx({profile: prof, comp: e.path,path:''});
 							var comp = ctxToRun.runItself();
 							return [comp];
 						}
@@ -537,15 +545,15 @@ export function insertComponent(comp, resolver, parentView) {
 export function parseHTML(text) {
 	var res = document.createElement('div');
 	res.innerHTML = text;
-	setNgPath(res,'');
+	setNgPath(res.firstChild.firstChild,'');
 	return res.firstChild;
 
 	function setNgPath(elem,curPath) {
+		if (!elem || elem.nodeType != 1) return;
 		addAttribute(elem, 'ng-path', curPath);
-		Array.from(elem.children).forEach((e,index)=>{
-			if (e.nodeType == 1)
-				setNgPath(e,curPath+'~'+index)
-		})
+		Array.from(elem.children).forEach((e,index)=>
+			setNgPath(e,curPath === '' ? index : (curPath+'~'+index))
+		)
 	}
 }
 export function addAttribute(element, attrName, attrValue) {

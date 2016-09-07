@@ -3,9 +3,9 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx, studio_tgp_model_1, studio_path_1;
     var modifyOperationsEm, studioActivityEm, pathChangesEm;
-    function notifyModification(path, before, ctx) {
+    function notifyModification(path, before, ctx, ngPath) {
         var comp = path.split('~')[0];
-        modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path) });
+        modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path), ngPath: ngPath });
     }
     exports_1("notifyModification", notifyModification);
     function message(message, error) {
@@ -77,7 +77,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
                     .filter(function (p) {
                     return studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(studio_path_1.profileFromPath(p)), 'control');
                 })[0];
-                return firstCtrl ? [{ path: firstCtrl }] : [];
+                return firstCtrl ? [{ path: firstCtrl, ngPath: x.ngPath }] : [];
             });
             // ********* Components ************
             jb_core_1.jb.component('studio.message', {

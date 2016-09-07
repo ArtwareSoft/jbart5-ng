@@ -7,27 +7,24 @@ import {modifyOperationsEm} from './studio-utils';
 jb.component('studio.openNewCtrlDialog', {
   type: 'action', 
   impl :{$: 'openDialog', 
-    style :{$: 'dialog.md-dialog-ok-cancel', okLabel: 'OK', cancelLabel: 'Cancel' }, 
+    style :{$: 'dialog.studio-floating' }, 
     content :{$: 'group', 
+      title: 'itemlist-with-find', 
+      style :{$: 'layout.vertical', spacing: 3 }, 
       controls: [
         {$: 'editable-text', 
+          title: 'search', 
           databind: '%$globals/ctrl_pattern%', 
-          style :{$: 'editable-text.md-input' }, 
-          title: 'search'
+          style :{$: 'editable-text.md-input' }
         }, 
         {$: 'itemlist-with-groups', 
           items: [
             {$: 'studio.PTs-of-type', type: 'control' }, 
             {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
           ], 
-          groupBy :{$: 'itemlist-heading.group-by' }, 
-          headingCtrl :{$: 'label', 
-            style :{$: 'label.h2' }, 
-            title: '%title%', 
-            features: [{$: 'css.margin', top: '10' }]
-          }, 
           controls: [
             {$: 'button', 
+              title: '%%', 
               action :{
                 $runActions: [
                   {$: 'studio.onNextModifiedPath', 
@@ -45,17 +42,20 @@ jb.component('studio.openNewCtrlDialog', {
               }, 
               style :{$: 'customStyle', 
                 template: '<div><button md-button (click)="clicked()">{{title}}</button></div>', 
-                directives: 'MdButton', 
-                css: 'button { width: 300px; text-align: left }'
-              }, 
-              title: '%%'
+                css: 'button { width: 300px; text-align: left }', 
+                directives: 'MdButton'
+              }
             }
           ], 
+          groupBy :{$: 'itemlist-heading.group-by' }, 
+          headingCtrl :{$: 'label', 
+            title: '%title%', 
+            style :{$: 'label.h2' }, 
+            features: [{$: 'css.margin', top: '10' }]
+          }, 
           features :{$: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
         }
       ], 
-      style :{$: 'layout.vertical', spacing: 3 }, 
-      title: 'itemlist-with-find', 
       features: [{$: 'css.margin', top: '10', left: '20' }]
     }, 
     title: 'New Control', 
