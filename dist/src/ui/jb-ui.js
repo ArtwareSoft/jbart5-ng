@@ -515,7 +515,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
                         .merge(jbart.studioModifiedCtrlsEm || jb_rx.Observable.of())
                         .flatMap(function (e) {
-                        if (_this.comp && [_this.comp.callerPath, _this.comp.ctx.path].indexOf(e.path) != -1) {
+                        if (_this.comp && [_this.comp.callerPath, _this.comp.ctx && _this.comp.ctx.path].indexOf(e.path) != -1) {
                             jb_core_1.jb.delay(100, _this.comp.ctx).then(function () {
                                 var elemToHighlight = _this._nativeElement;
                                 if (e.ngPath)

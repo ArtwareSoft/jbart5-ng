@@ -177,6 +177,16 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addArrayItem, path, {}, context);
                 }
             });
+            jb_core_1.jb.component('studio.add-array-item', {
+                type: 'action',
+                params: [
+                    { id: 'path', as: 'string' },
+                    { id: 'toAdd' }
+                ],
+                impl: function (context, path, toAdd) {
+                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addArrayItem, path, { toAdd: toAdd }, context);
+                }
+            });
             jb_core_1.jb.component('studio.delete', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],

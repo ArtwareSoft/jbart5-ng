@@ -1070,7 +1070,8 @@ jb.component('material-demo.buttons', {
             action :{$: 'material-demo.pick', 
               onHover :{$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }
             }, 
-            style :{$: 'button.md-raised' }
+            style :{$: 'button.md-icon', icon: 'call_made', size: '24' }, 
+            features: [{$: 'css.transform-rotate', angle: '-90', selector: 'i' }, {  }]
           }, 
           {$: 'editable-text', 
             title: 'template', 

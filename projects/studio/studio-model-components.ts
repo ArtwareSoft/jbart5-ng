@@ -172,6 +172,16 @@ jb.component('studio.newArrayItem',{
 		model.modify(model.addArrayItem, path, {},context)
 })
 
+jb.component('studio.add-array-item',{
+	type: 'action',
+	params: [ 
+		{id: 'path', as: 'string' },
+		{id: 'toAdd' }
+	],
+	impl: (context,path,toAdd) => 
+		model.modify(model.addArrayItem, path, { toAdd: toAdd },context)
+})
+
 
 jb.component('studio.delete',{
 	type: 'action',

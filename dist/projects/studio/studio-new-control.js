@@ -14,8 +14,31 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('studio.openNewCtrlDialog', {
+            jb_core_1.jb.component('studio.open-new-control-dialog', {
+                impl: { $: 'studio.open-new-tgp-dialog',
+                    type: 'control',
+                    title: 'new control',
+                    onOK: [
+                        { $: 'studio.onNextModifiedPath',
+                            action: [
+                                { $: 'studio.openModifiedPath' },
+                                { $: 'studio.refreshPreview' }
+                            ]
+                        },
+                        { $: 'studio.insertComp',
+                            path: { $: 'studio.currentProfilePath' },
+                            comp: '%%'
+                        }
+                    ]
+                }
+            });
+            jb_core_1.jb.component('studio.open-new-tgp-dialog', {
                 type: 'action',
+                params: [
+                    { id: 'type', as: 'string' },
+                    { id: 'title', as: 'string' },
+                    { id: 'onOK', type: 'action', dynamic: true },
+                ],
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-floating' },
                     content: { $: 'group',
@@ -29,27 +52,16 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             },
                             { $: 'itemlist-with-groups',
                                 items: [
-                                    { $: 'studio.PTs-of-type', type: 'control' },
+                                    { $: 'studio.PTs-of-type', type: '%$type%' },
                                     { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
                                 ],
                                 controls: [
                                     { $: 'button',
                                         title: '%%',
-                                        action: {
-                                            $runActions: [
-                                                { $: 'studio.onNextModifiedPath',
-                                                    action: [
-                                                        { $: 'closeContainingPopup' },
-                                                        { $: 'studio.openModifiedPath' },
-                                                        { $: 'studio.refreshPreview' }
-                                                    ]
-                                                },
-                                                { $: 'studio.insertComp',
-                                                    path: { $: 'studio.currentProfilePath' },
-                                                    comp: '%%'
-                                                }
-                                            ]
-                                        },
+                                        action: [
+                                            { $: 'closeContainingPopup' },
+                                            { $call: 'onOK' },
+                                        ],
                                         style: { $: 'customStyle',
                                             template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
                                             css: 'button { width: 300px; text-align: left }',
@@ -68,12 +80,12 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         ],
                         features: [{ $: 'css.margin', top: '10', left: '20' }]
                     },
-                    title: 'New Control',
+                    title: '%$title%',
                     modal: true,
                     features: [
                         { $: 'css.height', height: '420', overflow: 'hidden' },
                         { $: 'css.width', width: '350', overflow: 'hidden' },
-                        { $: 'dialog-feature.dragTitle', id: 'new control' },
+                        { $: 'dialog-feature.dragTitle', id: 'new %$type%' },
                         { $: 'dialog-feature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }
                     ]
                 }

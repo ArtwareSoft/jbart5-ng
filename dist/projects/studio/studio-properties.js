@@ -429,15 +429,15 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-array', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     $vars: {
                         arrayCtrl: { $: 'object', expanded: true }
                     },
+                    style: { $: 'layout.vertical', spacing: '7' },
                     controls: [
                         { $: 'group',
+                            title: 'items',
                             controls: [
                                 { $: 'itemlist',
                                     items: { $: 'studio.array-children', path: '%$path%' },
@@ -452,18 +452,23 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                         { $: 'itemlist.drag-and-drop' }
                                     ]
                                 }
-                            ],
-                            title: 'items'
+                            ]
                         },
                         { $: 'button',
                             title: 'new feature',
-                            action: { $: 'studio.newArrayItem', path: '%$path%' },
+                            action: { $: 'studio.open-new-tgp-dialog',
+                                type: 'feature',
+                                title: 'new feature',
+                                onOK: { $: 'studio.add-array-item',
+                                    path: '%$path%',
+                                    toAdd: { $object: { $: '%%' } }
+                                }
+                            },
                             style: { $: 'button.href' },
                             features: { $: 'css.margin', top: '20', left: '20' }
                         }
                     ],
-                    features: [],
-                    style: { $: 'layout.vertical', spacing: '7' }
+                    features: []
                 }
             });
             jb_core_1.jb.component('studio.tgp-path-options', {

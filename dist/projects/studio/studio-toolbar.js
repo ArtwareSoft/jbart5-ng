@@ -76,7 +76,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'insert control',
-                            action: { $: 'studio.openNewCtrlDialog' },
+                            action: { $: 'studio.open-new-control-dialog' },
                             style: { $: 'button.md-icon', icon: 'add' },
                         },
                         { $: 'button',

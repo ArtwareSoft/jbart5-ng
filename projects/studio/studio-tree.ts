@@ -27,7 +27,7 @@ jb.component('studio.open-tree-menu', {
       controls: [
         {$: 'pulldown.menu-item', 
           title: 'Insert', 
-          action :{$: 'studio.openNewCtrlDialog' }
+          action :{$: 'studio.open-new-control-dialog' }
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Wrap with group', 

@@ -443,15 +443,16 @@ jb_component('profile',{ impl: function(context) { return jb_handledObject(conte
 
 jb_component('object',{
 	impl: function(context) {
-		var result = jb_handledObject({});
+		var result = {};
 		var obj = context.profile.$object || context.profile;
 		if (Array.isArray(obj)) return obj;
-		for(var i in obj)
-			if (i.charAt(0) != '$') {
-				result[i] = jb_run(jb_ctx(context,{profile: obj[i], path: i }));
-				var native_type = obj[i]['$as'];
-				if (native_type)
-					result[i] = jb_tojstype(result[i],native_type);
+		for(var prop in obj) {
+			if (prop == '$' && obj[prop] == 'object')
+				continue;
+			result[prop] = jb_run(jb_ctx(context,{profile: obj[prop], path: prop }));
+			var native_type = obj[prop]['$as'];
+			if (native_type)
+				result[prop] = jb_tojstype(result[prop],native_type);
 		}
 		return result;
 	}

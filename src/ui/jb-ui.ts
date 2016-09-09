@@ -387,7 +387,7 @@ export class jbComp {
 		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
 				.merge(jbart.studioModifiedCtrlsEm || jb_rx.Observable.of())
 				.flatMap(e=> {
-					if (this.comp && [this.comp.callerPath,this.comp.ctx.path].indexOf(e.path) != -1) {
+					if (this.comp && [this.comp.callerPath, this.comp.ctx && this.comp.ctx.path].indexOf(e.path) != -1) {
 						jb.delay(100,this.comp.ctx).then(() => {// height in delay
 							var elemToHighlight = this._nativeElement;
 							if (e.ngPath)

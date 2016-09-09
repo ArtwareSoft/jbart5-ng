@@ -1,8 +1,11 @@
 import {jb} from 'jb-core';
 
 jb.component('hello-world.test2', {
-	type: 'control',
-	impl: { $: 'label', title: 'hello test2' }
+  type: 'control', 
+  impl :{$: 'label', 
+    title: 'hello test2', 
+    features: {  }
+  }
 })
 
 jb.component('hello-world.main', {

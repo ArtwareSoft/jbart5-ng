@@ -70,7 +70,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'insert control', 
-        action :{$: 'studio.openNewCtrlDialog' }, 
+        action :{$: 'studio.open-new-control-dialog' }, 
         style :{$: 'button.md-icon', icon: 'add' }, 
         
       }, 

@@ -69,6 +69,29 @@ jb.component('css.margin', {
   }
 })
 
+jb.component('css.transform-rotate', {
+  type: 'feature',
+  params: [
+    { id: 'angle', as: 'number', defaultValue: 0, from: 0, to: 360 },
+    { id: 'selector', as: 'string' },
+  ],
+  impl: (ctx) => {
+    return {css: `${ctx.params.selector} {transform:rotate(${ctx.params.angle}deg)}`};
+  }
+})
+
+jb.component('css.transform-scale', {
+  type: 'feature',
+  params: [
+    { id: 'x', as: 'number', defaultValue: 100 },
+    { id: 'y', as: 'number', defaultValue: 100 },
+    { id: 'selector', as: 'string' },
+  ],
+  impl: (ctx) => {
+    return {css: `${ctx.params.selector} {transform:scale(${ctx.params.x/100},${ctx.params.y/100})}`};
+  }
+})
+
 jb.component('css.box-shadow', {
   type: 'feature,dialog-feature',
   params: [

@@ -10,7 +10,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
         execute: function() {
             jb_core_1.jb.component('hello-world.test2', {
                 type: 'control',
-                impl: { $: 'label', title: 'hello test2' }
+                impl: { $: 'label',
+                    title: 'hello test2',
+                    features: {}
+                }
             });
             jb_core_1.jb.component('hello-world.main', {
                 type: 'control',
