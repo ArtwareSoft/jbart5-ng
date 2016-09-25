@@ -26,6 +26,8 @@ if (!window.jbPackaged) {
       'bower_components/codemirror/addon/fold/foldgutter.js',
       'bower_components/codemirror/addon/selection/active-line.js',
 
+      'bower_components/showdown/dist/showdown.min.js',
+
       'node_modules/es6-shim/es6-shim.min.js',
       'node_modules/zone.js/dist/zone.js',
       'node_modules/reflect-metadata/Reflect.js',
@@ -95,6 +97,7 @@ jb_modules =
 'ui/sidenav.js',
 'ui/divider.js',
 'ui/theme.js',
+'ui/markdown.js',
 
 'ui-ts/styles/group-styles',
 'ui-ts/styles/editable-boolean-styles',

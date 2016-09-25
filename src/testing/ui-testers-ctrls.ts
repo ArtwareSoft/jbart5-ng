@@ -61,7 +61,7 @@ jb.component('ui-tests.show-tests', {
  				style: {$: 'label.h1'},
  				features: {$: 'css', css: '{ color: red; font-weight: bold }'},
  			},
- 			{$: 'label', title: '$log:%$tst/counter% of %$total%' },
+ 			{$: 'label', title: '%$tst/counter% of %$total%' },
  			{$: 'itemlog',
  			counter: '%$tst/counter%',
 			items: [

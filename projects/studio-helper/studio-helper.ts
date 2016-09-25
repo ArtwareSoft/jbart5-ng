@@ -106,7 +106,7 @@ jb.component('studio-helper.property-array', {
       }, 
       {$: 'button', 
         title: 'new feature', 
-        action :{$: 'studio.newArrayItem', path: '%$path%' }, 
+        action :{$: 'studio.new-array-item', path: '%$path%' }, 
         style :{$: 'button.md-raised' }, 
         features :{$: 'css.margin', top: '20', left: '20' }
       }

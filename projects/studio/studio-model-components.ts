@@ -62,12 +62,12 @@ jb.component('studio.array-children',{
 		model.children(path,'array')
 })
 
-jb.component('studio.compName',{
+jb.component('studio.comp-name',{
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.compName(path) || ''
 })
 
-jb.component('studio.paramDef',{
+jb.component('studio.param-def',{
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.paramDef(path)
 })
@@ -91,7 +91,7 @@ jb.component('studio.more-params',{
 })
 
 
-jb.component('studio.compName-ref',{
+jb.component('studio.comp-name-ref',{
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => { return {
 			$jb_val: function(value) {
@@ -104,7 +104,7 @@ jb.component('studio.compName-ref',{
 	}
 })
 
-jb.component('studio.insertComp',{
+jb.component('studio.insert-comp',{
 	type: 'action',
 	params: [ 
 		{ id: 'path', as: 'string' },
@@ -124,21 +124,21 @@ jb.component('studio.wrap', {
 		model.modify(model.wrap, path, {compName: compName},context)
 })
 
-jb.component('studio.wrapWithGroup', {
+jb.component('studio.wrap-with-group', {
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.wrapWithGroup, path, {},context)
 })
 
-jb.component('studio.addProperty', {
+jb.component('studio.add-property', {
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.addProperty, path, {},context)
 })
 
-jb.component('studio.wrapWithPipeline', {
+jb.component('studio.wrap-with-pipeline', {
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
@@ -154,7 +154,7 @@ jb.component('studio.duplicate',{
 		model.modify(model.duplicate, path, {},context)
 })
 
-jb.component('studio.moveInArray',{
+jb.component('studio.move-in-array',{
 	type: 'action',
 	params: [ 
 		{ id: 'path', as: 'string' },
@@ -162,14 +162,14 @@ jb.component('studio.moveInArray',{
 	],
 	impl: (context,path,moveUp) => 
 		model.modify(model.moveInArray, 
-					path, { moveUp: moveUp },context)
+					path, { moveUp: moveUp },context,true)
 })
 
-jb.component('studio.newArrayItem',{
+jb.component('studio.new-array-item',{
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
-		model.modify(model.addArrayItem, path, {},context)
+		model.modify(model.addArrayItem, path, {},context,true)
 })
 
 jb.component('studio.add-array-item',{
@@ -179,20 +179,20 @@ jb.component('studio.add-array-item',{
 		{id: 'toAdd' }
 	],
 	impl: (context,path,toAdd) => 
-		model.modify(model.addArrayItem, path, { toAdd: toAdd },context)
+		model.modify(model.addArrayItem, path, { toAdd: toAdd },context,true)
 })
 
 
 jb.component('studio.delete',{
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
-	impl: (context,path) => model.modify(model._delete,path,{},context)
+	impl: (context,path) => model.modify(model._delete,path,{},context,true)
 })
 
 jb.component('studio.make-local',{
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
-	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context)
+	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context,true)
 })
 
 

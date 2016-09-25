@@ -22,7 +22,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             title: { $: 'studio.short-title',
                                 path: { $: 'studio.currentProfilePath' }
                             },
-                            comp: { $: 'studio.compName',
+                            comp: { $: 'studio.comp-name',
                                 path: { $: 'studio.currentProfilePath' }
                             }
                         },
@@ -41,7 +41,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     title: 'Source',
                     style: { $: 'dialog.md-dialog-ok-cancel' },
                     content: { $: 'text',
-                        text: { $: 'studio.compSource' },
+                        text: { $: 'studio.comp-source' },
                         style: { $: 'text.codemirror' }
                     },
                 }
@@ -239,7 +239,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'editable-number',
                     $vars: {
-                        paramDef: { $: 'studio.paramDef', path: '%$path%' }
+                        paramDef: { $: 'studio.param-def', path: '%$path%' }
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
@@ -284,7 +284,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                                     { $notEmpty: { $: 'studio.non-control-children', path: '%$path%' } },
                                                     { $notEmpty: { $: 'studio.val', path: '%$path%' } },
                                                     { $: 'notEquals',
-                                                        item1: { $: 'studio.compName', path: '%$path%' },
+                                                        item1: { $: 'studio.comp-name', path: '%$path%' },
                                                         item2: 'customStyle'
                                                     }
                                                 ]
@@ -293,7 +293,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     ]
                                 },
                                 { $: 'picklist',
-                                    databind: { $: 'studio.compName-ref', path: '%$path%' },
+                                    databind: { $: 'studio.comp-name-ref', path: '%$path%' },
                                     options: { $: 'studio.tgp-path-options', path: '%$path%' },
                                     style: { $: 'picklist.groups' },
                                     features: [
@@ -314,7 +314,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             controls: { $: 'studio.properties-in-tgp', path: '%$path%' },
                             features: [
                                 { $: 'group.watch',
-                                    data: { $: 'studio.compName', path: '%$path%' }
+                                    data: { $: 'studio.comp-name', path: '%$path%' }
                                 },
                                 { $: 'hidden',
                                     showCondition: {
@@ -323,7 +323,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                             { $notEmpty: { $: 'studio.non-control-children', path: '%$path%' } },
                                             { $notEmpty: { $: 'studio.val', path: '%$path%' } },
                                             { $: 'notEquals',
-                                                item1: { $: 'studio.compName', path: '%$path%' },
+                                                item1: { $: 'studio.comp-name', path: '%$path%' },
                                                 item2: 'customStyle'
                                             }
                                         ]
@@ -346,7 +346,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         { $: 'studio.property-toobar-feature', path: '%$path%' },
                     ],
                     controls: { $: 'picklist',
-                        databind: { $: 'studio.compName-ref', path: '%$path%' },
+                        databind: { $: 'studio.comp-name-ref', path: '%$path%' },
                         options: { $: 'studio.tgp-path-options', path: '%$path%' },
                         style: { $: 'picklist.groups' },
                         features: [
@@ -364,20 +364,11 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-tgp-in-array', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     $vars: {
                         tgpCtrl: { $: 'object', expanded: false }
                     },
-                    features: [
-                        { $: 'studio.bindto-modifyOperations',
-                            data: '%$tgpCtrl/expanded%',
-                            path: '%$path%'
-                        },
-                        { $: 'css', css: '{ position: relative; margin-left: -80px }' },
-                    ],
                     controls: [
                         { $: 'group',
                             style: { $: 'layout.horizontal' },
@@ -386,6 +377,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     databind: '%$tgpCtrl/expanded%',
                                     style: { $: 'editable-boolean.expand-collapse' },
                                     features: [
+                                        { $: 'studio.bindto-modifyOperations',
+                                            path: '%$path%',
+                                            data: '%$tgpCtrl/expanded%'
+                                        },
                                         { $: 'css',
                                             css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
                                         },
@@ -397,26 +392,24 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     ]
                                 },
                                 { $: 'picklist',
-                                    databind: { $: 'studio.compName-ref', path: '%$path%' },
+                                    databind: { $: 'studio.comp-name-ref', path: '%$path%' },
                                     options: { $: 'studio.tgp-path-options', path: '%$path%' },
                                     style: { $: 'picklist.groups' },
                                     features: [
                                         { $: 'css',
                                             css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
-                                        },
+                                        }
                                     ]
                                 },
                                 { $: 'studio.property-toobar', path: '%$path%' }
                             ],
-                            features: [
-                                { $: 'css', css: '{ position: relative; margin-left2: -80px }' },
-                            ]
+                            features: [{ $: 'css', css: '{ position: relative; margin-left2: -80px }' }]
                         },
                         { $: 'group',
                             controls: { $: 'studio.properties-in-tgp', path: '%$path%' },
                             features: [
                                 { $: 'group.watch',
-                                    data: { $: 'studio.compName', path: '%$path%' }
+                                    data: { $: 'studio.comp-name', path: '%$path%' }
                                 },
                                 { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
                                 { $: 'css',
@@ -424,6 +417,13 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 }
                             ]
                         }
+                    ],
+                    features: [
+                        { $: 'studio.bindto-modifyOperations',
+                            path: '%$path%',
+                            data: '%$tgpCtrl/expanded%'
+                        },
+                        { $: 'css', css: '{ position: relative; margin-left: -80px }' }
                     ]
                 }
             });

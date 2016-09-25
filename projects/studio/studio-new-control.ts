@@ -14,7 +14,7 @@ jb.component('studio.open-new-control-dialog', {
           {$: 'studio.refreshPreview' }
         ]
       }, 
-      {$: 'studio.insertComp', 
+      {$: 'studio.insert-comp', 
         path :{$: 'studio.currentProfilePath' }, 
         comp: '%%'
       }

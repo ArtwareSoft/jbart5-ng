@@ -31,7 +31,7 @@ jb.component('studio.open-tree-menu', {
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Wrap with group', 
-          action :{$: 'studio.wrapWithGroup', path: '%$path%' }
+          action :{$: 'studio.wrap-with-group', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
           title: 'Duplicate', 
@@ -48,7 +48,7 @@ jb.component('studio.open-tree-menu', {
         }, 
         {$: 'pulldown.menu-item', 
           $vars: {
-            compName :{$: 'studio.compName', path: '%$path%' }
+            compName :{$: 'studio.comp-name', path: '%$path%' }
           }, 
           title: 'Goto %$compName%', 
           features :{$: 'hidden', showCondition: '%$compName%' }, 

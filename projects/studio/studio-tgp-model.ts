@@ -195,20 +195,24 @@ export class TgpModel {
 		return this.controlParam(path) || this.innerControlPaths(path).length > 0;
 	}
 
-	modify(op,path,args,ctx) {
+	modify(op,path,args,ctx,delayed) {
 		var comp = path.split('~')[0];
 		var before = getComp(comp) && compAsStr(comp);
-		op.call(this,path,args);
-		modifyOperationsEm.next({ 
-			comp: comp, 
-			before: before, 
-			after: compAsStr(comp), 
-			path: path, 
-			args: args, 
-			ctx: ctx, 
-			jbart: findjBartToLook(path),
-			newComp: before ? false: true
-		});
+		var res = op.call(this,path,args);
+		if (res && res.newPath) // used for insert to array that creates new path
+			path = res.newPath;
+		jb.delay(delayed?1:0).then(()=>{
+			modifyOperationsEm.next({ 
+				comp: comp, 
+				before: before, 
+				after: compAsStr(comp), 
+				path: path, 
+				args: args, 
+				ctx: ctx, 
+				jbart: findjBartToLook(path),
+				newComp: before ? false: true
+			})
+		})
 	}
 
 	_delete(path) {
@@ -457,12 +461,16 @@ export class TgpModel {
 	addArrayItem(path,args) {
 		var val = profileFromPath(path);
 		var toAdd = args.toAdd || {$:''};
-		if (Array.isArray(val))
-			val.push(toAdd)
-		else if (!val)
+		if (Array.isArray(val)) {
+			val.push(toAdd);
+			return { newPath: path + '~' + (val.length-1) }
+		}
+		else if (!val) {
 			jb.writeValue(profileRefFromPath(path),toAdd);
-		else
+		} else {
 			jb.writeValue(profileRefFromPath(path),[val].concat(toAdd));
+			return { newPath: path + '~1' }
+		}
 	}
 
 	fixArray(path) { // turn arrays with single element into single object
@@ -566,12 +574,12 @@ jb.component('studio.array-children',{
 		model.children(path,'array')
 })
 
-jb.component('studio.compName',{
+jb.component('studio.comp-name',{
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.compName(path) || ''
 })
 
-jb.component('studio.paramDef',{
+jb.component('studio.param-def',{
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.paramDef(path)
 })
@@ -595,7 +603,7 @@ jb.component('studio.more-params',{
 })
 
 
-jb.component('studio.compName-ref',{
+jb.component('studio.comp-name-ref',{
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => { return {
 			$jb_val: function(value) {
@@ -608,7 +616,7 @@ jb.component('studio.compName-ref',{
 	}
 })
 
-jb.component('studio.insertComp',{
+jb.component('studio.insert-comp',{
 	type: 'action',
 	params: [ 
 		{ id: 'path', as: 'string' },
@@ -628,21 +636,21 @@ jb.component('studio.wrap', {
 		model.modify(model.wrap, path, {compName: compName},context)
 })
 
-jb.component('studio.wrapWithGroup', {
+jb.component('studio.wrap-with-group', {
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.wrapWithGroup, path, {},context)
 })
 
-jb.component('studio.addProperty', {
+jb.component('studio.add-property', {
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.modify(model.addProperty, path, {},context)
 })
 
-jb.component('studio.wrapWithPipeline', {
+jb.component('studio.wrap-with-pipeline', {
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
@@ -658,7 +666,7 @@ jb.component('studio.duplicate',{
 		model.modify(model.duplicate, path, {},context)
 })
 
-jb.component('studio.moveInArray',{
+jb.component('studio.move-in-array',{
 	type: 'action',
 	params: [ 
 		{ id: 'path', as: 'string' },
@@ -669,7 +677,7 @@ jb.component('studio.moveInArray',{
 					path, { moveUp: moveUp },context)
 })
 
-jb.component('studio.newArrayItem',{
+jb.component('studio.new-array-item',{
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
@@ -689,7 +697,7 @@ jb.component('studio.make-local',{
 	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context)
 })
 
-jb.component('studio.projectSource',{
+jb.component('studio.project-source',{
 	params: [ 
 		{ id: 'project', as: 'string', defaultValue: '%$globals/project%' } 
 	],
@@ -700,7 +708,7 @@ jb.component('studio.projectSource',{
 	}
 })
 
-jb.component('studio.compSource',{
+jb.component('studio.comp-source',{
 	params: [ 
 		{ id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
 	],

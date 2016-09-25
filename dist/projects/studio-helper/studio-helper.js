@@ -103,7 +103,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'new feature',
-                            action: { $: 'studio.newArrayItem', path: '%$path%' },
+                            action: { $: 'studio.new-array-item', path: '%$path%' },
                             style: { $: 'button.md-raised' },
                             features: { $: 'css.margin', top: '20', left: '20' }
                         }

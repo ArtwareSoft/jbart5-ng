@@ -111,7 +111,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
                         { $: 'studio.open-control-tree' }
                     ] }
             });
-            jb_core_1.jb.component('studio.projectSource', {
+            jb_core_1.jb.component('studio.project-source', {
                 params: [
                     { id: 'project', as: 'string', defaultValue: '%$globals/project%' }
                 ],
@@ -122,7 +122,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
                     return comps.map(function (comp) { return compAsStr(comp); }).join('\n\n');
                 }
             });
-            jb_core_1.jb.component('studio.compSource', {
+            jb_core_1.jb.component('studio.comp-source', {
                 params: [
                     { id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
                 ],

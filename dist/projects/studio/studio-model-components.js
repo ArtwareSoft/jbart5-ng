@@ -71,11 +71,11 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.children(path, 'array');
                 }
             });
-            jb_core_1.jb.component('studio.compName', {
+            jb_core_1.jb.component('studio.comp-name', {
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return studio_tgp_model_1.model.compName(path) || ''; }
             });
-            jb_core_1.jb.component('studio.paramDef', {
+            jb_core_1.jb.component('studio.param-def', {
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return studio_tgp_model_1.model.paramDef(path); }
             });
@@ -97,7 +97,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.jbEditorMoreParams(path);
                 }
             });
-            jb_core_1.jb.component('studio.compName-ref', {
+            jb_core_1.jb.component('studio.comp-name-ref', {
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return {
@@ -110,7 +110,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     };
                 }
             });
-            jb_core_1.jb.component('studio.insertComp', {
+            jb_core_1.jb.component('studio.insert-comp', {
                 type: 'action',
                 params: [
                     { id: 'path', as: 'string' },
@@ -130,21 +130,21 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.wrap, path, { compName: compName }, context);
                 }
             });
-            jb_core_1.jb.component('studio.wrapWithGroup', {
+            jb_core_1.jb.component('studio.wrap-with-group', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.wrapWithGroup, path, {}, context);
                 }
             });
-            jb_core_1.jb.component('studio.addProperty', {
+            jb_core_1.jb.component('studio.add-property', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addProperty, path, {}, context);
                 }
             });
-            jb_core_1.jb.component('studio.wrapWithPipeline', {
+            jb_core_1.jb.component('studio.wrap-with-pipeline', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
@@ -160,21 +160,21 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.duplicate, path, {}, context);
                 }
             });
-            jb_core_1.jb.component('studio.moveInArray', {
+            jb_core_1.jb.component('studio.move-in-array', {
                 type: 'action',
                 params: [
                     { id: 'path', as: 'string' },
                     { id: 'moveUp', type: 'boolean', as: 'boolean' }
                 ],
                 impl: function (context, path, moveUp) {
-                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.moveInArray, path, { moveUp: moveUp }, context);
+                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.moveInArray, path, { moveUp: moveUp }, context, true);
                 }
             });
-            jb_core_1.jb.component('studio.newArrayItem', {
+            jb_core_1.jb.component('studio.new-array-item', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
-                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addArrayItem, path, {}, context);
+                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addArrayItem, path, {}, context, true);
                 }
             });
             jb_core_1.jb.component('studio.add-array-item', {
@@ -184,18 +184,18 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     { id: 'toAdd' }
                 ],
                 impl: function (context, path, toAdd) {
-                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addArrayItem, path, { toAdd: toAdd }, context);
+                    return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addArrayItem, path, { toAdd: toAdd }, context, true);
                 }
             });
             jb_core_1.jb.component('studio.delete', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
-                impl: function (context, path) { return studio_tgp_model_1.model.modify(studio_tgp_model_1.model._delete, path, {}, context); }
+                impl: function (context, path) { return studio_tgp_model_1.model.modify(studio_tgp_model_1.model._delete, path, {}, context, true); }
             });
             jb_core_1.jb.component('studio.make-local', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
-                impl: function (context, path) { return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.makeLocal, path, { ctx: context }, context); }
+                impl: function (context, path) { return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.makeLocal, path, { ctx: context }, context, true); }
             });
         }
     }

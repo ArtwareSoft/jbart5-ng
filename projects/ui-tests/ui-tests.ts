@@ -748,3 +748,13 @@ jb.component('ui-test.inner-label', {
     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
 },
 })
+
+jb.component('ui-test.markdown', {
+  impl :{$: 'ng2-ui-test',  
+    control :{$: 'markdown', markdown: `| Day     | Meal    | Price |
+| --------|---------|-------|
+| Monday  | pasta   | $6    |
+| Tuesday | chicken | $8    |    ` },
+    expectedHtmlResult: { $: 'contains', text: 'table' }
+},
+})

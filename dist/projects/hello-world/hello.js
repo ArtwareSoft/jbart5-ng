@@ -25,13 +25,19 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     title: 'main',
                     style: { $: 'layout.vertical', spacing: 30 },
                     controls: [
-                        { $: 'group', title: '2.0', controls: [
+                        { $: 'group',
+                            title: '2.0',
+                            controls: [
                                 { $: 'label', title: '2.1' },
-                                { $: 'button', title: '2.2' },
+                                { $: 'button',
+                                    title: '2.2',
+                                    features: { $: 'group.wait' }
+                                }
                             ]
                         },
-                        { $: 'label', title: '$log:1.0' },
-                    ] }
+                        { $: 'label', title: '$log:1.0' }
+                    ]
+                }
             });
         }
     }

@@ -27,13 +27,13 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                             if (!forTests)
                                 jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
                             resolve();
-                            console.log('close test dialog');
+                            //            console.log('close test dialog');
                         });
                     },
                     css: '{display: none}'
                 })
             };
-            console.log('add test dialog');
+            //    console.log('add test dialog');
             _win.jbart.jb_dialogs.addDialog(dialog, ctx);
             _win.setTimeout(function () { }, 1); // refresh
         });

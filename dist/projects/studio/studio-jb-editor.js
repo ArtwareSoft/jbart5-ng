@@ -62,11 +62,11 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 { $: 'tree.drag-and-drop' },
                                 { $: 'tree.keyboard-shortcut',
                                     key: 'Ctrl+Up',
-                                    action: { $: 'studio.moveInArray', path: '%%', moveUp: true }
+                                    action: { $: 'studio.move-in-array', path: '%%', moveUp: true }
                                 },
                                 { $: 'tree.keyboard-shortcut',
                                     key: 'Ctrl+Down',
-                                    action: { $: 'studio.moveInArray', path: '%%', moveUp: false }
+                                    action: { $: 'studio.move-in-array', path: '%%', moveUp: false }
                                 },
                                 { $: 'tree.keyboard-shortcut',
                                     key: 'Ctrl+C',
@@ -251,7 +251,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                         nextPath: '%$path%~%$controlItem%',
                                     },
                                     actions: [
-                                        { $: 'studio.addProperty', path: '%$controlItem%' },
+                                        { $: 'studio.add-property', path: '%$controlItem%' },
                                         { $: 'closeContainingPopup' },
                                         { $: 'writeValue', value: '%$nextPath%', to: '%$globals/jb_editor_selection%' },
                                         { $: 'studio.open-jb-editor-menu', path: '%$nextPath%' }

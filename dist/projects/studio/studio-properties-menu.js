@@ -43,7 +43,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     $and: [
                                         { $: 'endsWith', endsWith: '~style', text: '%$path%' },
                                         { $: 'notEquals',
-                                            item1: { $: 'studio.compName', path: '%$path%' },
+                                            item1: { $: 'studio.comp-name', path: '%$path%' },
                                             item2: 'customStyle'
                                         }
                                     ]
@@ -56,7 +56,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             style: { $: 'button.md-icon-12', icon: 'build' },
                             features: { $: 'hidden',
                                 showCondition: { $: 'equals',
-                                    item1: { $: 'studio.compName', path: '%$path%' },
+                                    item1: { $: 'studio.comp-name', path: '%$path%' },
                                     item2: 'customStyle'
                                 }
                             }
@@ -66,7 +66,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             style: { $: 'button.md-icon-12', icon: 'build' },
                             features: { $: 'hidden',
                                 showCondition: { $: 'equals',
-                                    item1: [{ $: 'studio.paramDef', path: '%$path%' }, '%as%'],
+                                    item1: [{ $: 'studio.param-def', path: '%$path%' }, '%as%'],
                                     item2: 'string'
                                 }
                             },
@@ -87,7 +87,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 ],
                 impl: { $: 'openDialog',
                     $vars: {
-                        compName: { $: 'studio.compName', path: '%$path%' }
+                        compName: { $: 'studio.comp-name', path: '%$path%' }
                     },
                     style: { $: 'pulldownPopup.contextMenuPopup' },
                     content: { $: 'group',

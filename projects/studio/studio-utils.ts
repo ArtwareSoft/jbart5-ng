@@ -102,7 +102,7 @@ jb.component('studio.goto-path', {
 	]}
 })
 
-jb.component('studio.projectSource',{
+jb.component('studio.project-source',{
 	params: [ 
 		{ id: 'project', as: 'string', defaultValue: '%$globals/project%' } 
 	],
@@ -113,7 +113,7 @@ jb.component('studio.projectSource',{
 	}
 })
 
-jb.component('studio.compSource',{
+jb.component('studio.comp-source',{
 	params: [ 
 		{ id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
 	],

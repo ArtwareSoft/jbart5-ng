@@ -31,13 +31,20 @@ jb.component('button.md-icon', {
   params: [
     { id: 'icon', as: 'string', default: 'code' },
     { id: 'size', as: 'number', defaultValue: 20 },
+    { id: 'padding', as: 'number', defaultValue: 4 },
     { id: 'aria', as: 'string' },
   ],
-  impl :{$: 'customStyle', 
+  impl :{$: 'customStyle',
+      // $vars: {
+      //   fontSize: ctx => 
+      //     ctx.componentContext.params.size - ctx.componentContext.params.padding
+      // }, 
       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
-                <i class="material-icons" style="font-size:%$size%px;">%$icon%</i>
+                <i class="material-icons">%$icon%</i>
               </button></div>`,
-      css: 'button {min-width: 2px; margin-top: -3px; padding: 4px}',
+      css: `.md-button-ripple11 { width: %$size%px; height: %$size%px;  }
+      button { width: %$size%px; height: %$size%px; padding: %$padding%px }
+      i { font-size:%$size%px; }`,
       directives: 'MdButton'
   }
 })

@@ -9,6 +9,11 @@ edit/save resources
 
 animation in expand/collapse
 
+button
+=====
+add ripple aspect for button
+
+
 studio
 ======
 delete page
@@ -32,3 +37,20 @@ probe
 use full path
 tests
 issues with pipeline comp sugar
+
+
+Material Demo
+=================
+
+API Summary - parse and add
+example:
+### API Summary
+
+Properties:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `color` | `"primary"|"accent"|"warn"` | The color palette of the button
+| `disabled` | boolean | Whether or not the button is disabled
+| `disableRipple` | boolean | Whether the ripple effect when the button is clicked should be disabled
+

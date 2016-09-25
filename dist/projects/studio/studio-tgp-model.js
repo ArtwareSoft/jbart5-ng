@@ -188,19 +188,23 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return (this.children(path) || []).length > 0;
                     return this.controlParam(path) || this.innerControlPaths(path).length > 0;
                 };
-                TgpModel.prototype.modify = function (op, path, args, ctx) {
+                TgpModel.prototype.modify = function (op, path, args, ctx, delayed) {
                     var comp = path.split('~')[0];
                     var before = studio_utils_1.getComp(comp) && studio_utils_1.compAsStr(comp);
-                    op.call(this, path, args);
-                    studio_utils_1.modifyOperationsEm.next({
-                        comp: comp,
-                        before: before,
-                        after: studio_utils_1.compAsStr(comp),
-                        path: path,
-                        args: args,
-                        ctx: ctx,
-                        jbart: studio_utils_1.findjBartToLook(path),
-                        newComp: before ? false : true
+                    var res = op.call(this, path, args);
+                    if (res && res.newPath)
+                        path = res.newPath;
+                    jb_core_1.jb.delay(delayed ? 1 : 0).then(function () {
+                        studio_utils_1.modifyOperationsEm.next({
+                            comp: comp,
+                            before: before,
+                            after: studio_utils_1.compAsStr(comp),
+                            path: path,
+                            args: args,
+                            ctx: ctx,
+                            jbart: studio_utils_1.findjBartToLook(path),
+                            newComp: before ? false : true
+                        });
                     });
                 };
                 TgpModel.prototype._delete = function (path) {
@@ -435,12 +439,17 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 TgpModel.prototype.addArrayItem = function (path, args) {
                     var val = studio_path_1.profileFromPath(path);
                     var toAdd = args.toAdd || { $: '' };
-                    if (Array.isArray(val))
+                    if (Array.isArray(val)) {
                         val.push(toAdd);
-                    else if (!val)
+                        return { newPath: path + '~' + (val.length - 1) };
+                    }
+                    else if (!val) {
                         jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), toAdd);
-                    else
+                    }
+                    else {
                         jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), [val].concat(toAdd));
+                        return { newPath: path + '~1' };
+                    }
                 };
                 TgpModel.prototype.fixArray = function (path) {
                     // var val = profileFromPath(path);
@@ -528,11 +537,11 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return model.children(path, 'array');
                 }
             });
-            jb_core_1.jb.component('studio.compName', {
+            jb_core_1.jb.component('studio.comp-name', {
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.compName(path) || ''; }
             });
-            jb_core_1.jb.component('studio.paramDef', {
+            jb_core_1.jb.component('studio.param-def', {
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.paramDef(path); }
             });
@@ -554,7 +563,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return model.jbEditorMoreParams(path);
                 }
             });
-            jb_core_1.jb.component('studio.compName-ref', {
+            jb_core_1.jb.component('studio.comp-name-ref', {
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return {
@@ -567,7 +576,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     };
                 }
             });
-            jb_core_1.jb.component('studio.insertComp', {
+            jb_core_1.jb.component('studio.insert-comp', {
                 type: 'action',
                 params: [
                     { id: 'path', as: 'string' },
@@ -587,21 +596,21 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return model.modify(model.wrap, path, { compName: compName }, context);
                 }
             });
-            jb_core_1.jb.component('studio.wrapWithGroup', {
+            jb_core_1.jb.component('studio.wrap-with-group', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.modify(model.wrapWithGroup, path, {}, context);
                 }
             });
-            jb_core_1.jb.component('studio.addProperty', {
+            jb_core_1.jb.component('studio.add-property', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
                     return model.modify(model.addProperty, path, {}, context);
                 }
             });
-            jb_core_1.jb.component('studio.wrapWithPipeline', {
+            jb_core_1.jb.component('studio.wrap-with-pipeline', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
@@ -617,7 +626,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return model.modify(model.duplicate, path, {}, context);
                 }
             });
-            jb_core_1.jb.component('studio.moveInArray', {
+            jb_core_1.jb.component('studio.move-in-array', {
                 type: 'action',
                 params: [
                     { id: 'path', as: 'string' },
@@ -627,7 +636,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return model.modify(model.moveInArray, path, { moveUp: moveUp }, context);
                 }
             });
-            jb_core_1.jb.component('studio.newArrayItem', {
+            jb_core_1.jb.component('studio.new-array-item', {
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) {
@@ -644,7 +653,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return model.modify(model.makeLocal, path, { ctx: context }, context); }
             });
-            jb_core_1.jb.component('studio.projectSource', {
+            jb_core_1.jb.component('studio.project-source', {
                 params: [
                     { id: 'project', as: 'string', defaultValue: '%$globals/project%' }
                 ],
@@ -655,7 +664,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return comps.map(function (comp) { return studio_utils_1.compAsStr(comp); }).join('\n\n');
                 }
             });
-            jb_core_1.jb.component('studio.compSource', {
+            jb_core_1.jb.component('studio.comp-source', {
                 params: [
                     { id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } }
                 ],

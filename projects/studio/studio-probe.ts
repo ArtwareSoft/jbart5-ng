@@ -101,14 +101,14 @@ function testControl(ctx,emitter,forTests) {
             if (!forTests)
               jb.delay(1).then(()=>dialog.close()); // delay to avoid race conditin with itself
             resolve();
-            console.log('close test dialog');
+//            console.log('close test dialog');
           })
           ,
 
         css: '{display: none}'  
       })
     }
-    console.log('add test dialog');
+//    console.log('add test dialog');
 
     _win.jbart.jb_dialogs.addDialog(dialog,ctx);
     _win.setTimeout(()=>{},1); // refresh

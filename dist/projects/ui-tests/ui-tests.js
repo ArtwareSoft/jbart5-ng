@@ -691,6 +691,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
                 },
             });
+            jb_core_1.jb.component('ui-test.markdown', {
+                impl: { $: 'ng2-ui-test',
+                    control: { $: 'markdown', markdown: "| Day     | Meal    | Price |\n| --------|---------|-------|\n| Monday  | pasta   | $6    |\n| Tuesday | chicken | $8    |    " },
+                    expectedHtmlResult: { $: 'contains', text: 'table' }
+                },
+            });
         }
     }
 });

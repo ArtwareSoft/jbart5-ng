@@ -25,7 +25,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 { $: 'studio.refreshPreview' }
                             ]
                         },
-                        { $: 'studio.insertComp',
+                        { $: 'studio.insert-comp',
                             path: { $: 'studio.currentProfilePath' },
                             comp: '%%'
                         }
