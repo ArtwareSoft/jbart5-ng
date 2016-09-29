@@ -3,7 +3,7 @@ jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModule
 jb.component('markdown', {
     type: 'control',
     params: [
-        { id: 'markdown', essential: true, dynamic: true },
+        { id: 'markdown', as: 'string', essential: true, dynamic: true },
         { id: 'style', type: 'markdown.style', defaultValue: { $: 'markdown.showdown' }, dynamic: true },
         { id: 'title', as: 'string', defaultValue: 'markdown' },
         { id: 'features', type: 'feature[]', dynamic: true },

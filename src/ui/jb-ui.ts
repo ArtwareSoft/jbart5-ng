@@ -15,7 +15,7 @@ enableProdMode();
 jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
-	console.log('apply');
+//	console.log('apply');
 	return jb.delay(1).then(() =>
 			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
 }
@@ -159,8 +159,11 @@ class jbComponent {
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
 
+		cleanCtxDictionary();
 		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
 		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
+		jb.path(options, ['atts','jb-ctx'], context.id); // for pick & edit
+		jbart.ctxDictionary[context.id] = context;
 
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
@@ -669,4 +672,23 @@ export function registerDirectives(obj) {
 }
 export function registerProviders(obj) {
 	jb.extend(jbart.ng.providers,obj)
+}
+
+function cleanCtxDictionary() {
+	var now = new Date().getTime();
+	jbart.ctxDictionaryLastCleanUp = jbart.ctxDictionaryLastCleanUp || now;
+	var timeSinceLastCleanUp = now - jbart.ctxDictionaryLastCleanUp;
+	if (timeSinceLastCleanUp < 10000) 
+		return;
+	jbart.ctxDictionaryLastCleanUp = now;
+
+	var used = Array.from(document.querySelectorAll('[jb-ctx]')).map(e=>Number(e.getAttribute('jb-ctx'))).sort((x,y)=>x-y);
+	var dict = Object.getOwnPropertyNames(jbart.ctxDictionary).map(x=>Number(x)).sort((x,y)=>x-y);
+	var lastUsedIndex = 0;
+	for(var i=0;i<dict.length;i++) {
+		while (used[lastUsedIndex] < dict[i])
+			lastUsedIndex++;
+		if (used[lastUsedIndex] > dict[i])
+			delete jbart.ctxDictionary[''+dict[i]];
+	}
 }

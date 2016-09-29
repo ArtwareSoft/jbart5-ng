@@ -58,38 +58,52 @@ jb.component('jb-path-test', {
 
     var probProf = findProbeProfile(control.profile);
     if (!probProf)
-      return;
+      return failure('no prob prof');
      // ********** dynamic counter
     var static_path = testId + '~' + staticPath;
-    var probeObs = new Probe(static_path, jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true).observable();
-    var expectedDynamicCounterTst = probeObs.filter(res=>res.element)
-        .map(res=>{
+    var probeRes = new Probe(jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true)
+      .runCircuit(static_path);
+    return probeRes.then(res=>{
           try {
             var match = Array.from(res.element.querySelectorAll(`[jb-path="${static_path}"]`));
+            if (!match || match.length != expectedDynamicCounter)
+              return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + (match || []).length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
+              if (!res.finalResult[0] || !probeCheck(res.finalResult[0].in) )
+                return failure('probe');
           } catch(e) {
-            var match = [];
+            return failure('exception ');
           }
-          if (match.length ==  expectedDynamicCounter)
-            return success('dynamic counter');
-          else
-            return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
-      }).take(1);
+          return success();
+    })
 
-    // ********** prob check
-    var probeCheckTst = probeObs.filter(res=>res.finalResult)
-        .map(res=>{
-        if (res.finalResult[0] && probeCheck(res.finalResult[0].in) )
-          return success('probe');
-        else {
-          return failure('probe');
-        }
-      }).take(1)
+    // var expectedDynamicCounterTst = probeRes.filter(res=>res.element)
+    //     .map(res=>{
+    //       try {
+    //         var match = Array.from(res.element.querySelectorAll(`[jb-path="${static_path}"]`));
+    //       } catch(e) {
+    //         var match = [];
+    //       }
+    //       if (match.length ==  expectedDynamicCounter)
+    //         return success('dynamic counter');
+    //       else
+    //         return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
+    //   }).take(1);
 
-    return expectedDynamicCounterTst.merge(probeCheckTst);
+    // // ********** prob check
+    // var probeCheckTst = probeObs.filter(res=>res.finalResult)
+    //     .map(res=>{
+    //     if (res.finalResult[0] && probeCheck(res.finalResult[0].in) )
+    //       return success('probe');
+    //     else {
+    //       return failure('probe');
+    //     }
+    //   }).take(1)
+
+    // return expectedDynamicCounterTst.merge(probeCheckTst);
 
 
     function failure(part,reason) { return { id: testId, title: testId + '- ' + part, success:false, reason: reason } };
-    function success(part) { return { id: testId, title: testId + '- ' + part, success: true } };
+    function success() { return { id: testId, title: testId, success: true } };
 
     function findProbeProfile(parent) {
       if (parent.$mark)

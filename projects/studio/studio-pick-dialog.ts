@@ -11,12 +11,12 @@ jb.component('studio.pick', {
 	],
 	impl :{$: 'openDialog',
 		$vars: {
-			pickPath: { path: ''}
+			pickSelection: { path: '' }
 		},
 		style: {$: 'dialog.studio-pick-dialog', from: '%$from%'},
 		content: {$: 'label', title: ''}, // dummy
 		onOK: ctx =>
-			ctx.componentContext.params.onSelect(ctx.setData(ctx.vars.pickPath.path))
+			ctx.componentContext.params.onSelect(ctx.setData(ctx.vars.pickSelection.ctx))
 	 }
 })
 
@@ -98,7 +98,7 @@ jb.component('dialog-feature.studio-pick', {
 		  		eventToProfileElem(e,_window))
 		  	.filter(x=>x.length > 0)
 		  	.do(profElem=> {
-		  		ctx.vars.pickPath.path = profElem.attr('jb-path');
+		  		ctx.vars.pickSelection.ctx = _window.jbart.ctxDictionary[profElem.attr('jb-ctx')];
 		  		showBox(cmp,profElem,_window,previewOffset);
 		  		jb_ui.apply(ctx);
 		  	})
@@ -110,12 +110,17 @@ jb.component('dialog-feature.studio-pick', {
 	})			
 })
 
+function pathFromElem(_window,profElem) {
+	return _window.jbart.ctxDictionary[profElem.attr('jb-ctx')].path;
+	//profElem.attr('jb-path');
+}
+
 function eventToProfileElem(e,_window) {
 	var $el = $(_window.document.elementFromPoint(e.pageX - $(_window).scrollLeft(), e.pageY - $(_window).scrollTop()));
 	if (!$el[0]) return;
 	return $($el.get().concat($el.parents().get()))
 		.filter((i,e) => 
-			$(e).attr('jb-path') )
+			$(e).attr('jb-ctx') )
 		.first();
 }
 
@@ -131,7 +136,7 @@ function showBox(cmp,profElem,_window,previewOffset) {
 		cmp.width = profElem.outerWidth();
 	cmp.height = profElem.outerHeight();
 
-	cmp.title = model.shortTitle(profElem.attr('jb-path'));
+	cmp.title = model.shortTitle(pathFromElem(_window,profElem));
 
 	var $el = $(cmp.elementRef.nativeElement);
 	var $titleText = $el.find('.title .text');

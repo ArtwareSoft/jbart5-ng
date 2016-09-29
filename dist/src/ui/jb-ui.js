@@ -13,7 +13,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     var jb_core_1, core_1, forms_1, http_1, common_1, portal_directives_1, ripple_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget;
     function apply(ctx) {
-        console.log('apply');
+        //	console.log('apply');
         return jb_core_1.jb.delay(1).then(function () {
             return ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
         });
@@ -200,6 +200,23 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
         jb_core_1.jb.extend(jbart.ng.providers, obj);
     }
     exports_1("registerProviders", registerProviders);
+    function cleanCtxDictionary() {
+        var now = new Date().getTime();
+        jbart.ctxDictionaryLastCleanUp = jbart.ctxDictionaryLastCleanUp || now;
+        var timeSinceLastCleanUp = now - jbart.ctxDictionaryLastCleanUp;
+        if (timeSinceLastCleanUp < 10000)
+            return;
+        jbart.ctxDictionaryLastCleanUp = now;
+        var used = Array.from(document.querySelectorAll('[jb-ctx]')).map(function (e) { return Number(e.getAttribute('jb-ctx')); }).sort(function (x, y) { return x - y; });
+        var dict = Object.getOwnPropertyNames(jbart.ctxDictionary).map(function (x) { return Number(x); }).sort(function (x, y) { return x - y; });
+        var lastUsedIndex = 0;
+        for (var i = 0; i < dict.length; i++) {
+            while (used[lastUsedIndex] < dict[i])
+                lastUsedIndex++;
+            if (used[lastUsedIndex] > dict[i])
+                delete jbart.ctxDictionary['' + dict[i]];
+        }
+    }
     return {
         setters:[
             function (jb_core_1_1) {
@@ -358,8 +375,11 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 jbComponent.prototype.jbCtrl = function (context) {
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
+                    cleanCtxDictionary();
                     this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath : context.path;
                     jb_core_1.jb.path(options, ['atts', 'jb-path'], this.callerPath); // for pick & edit
+                    jb_core_1.jb.path(options, ['atts', 'jb-ctx'], context.id); // for pick & edit
+                    jbart.ctxDictionary[context.id] = context;
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)

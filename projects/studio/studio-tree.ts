@@ -43,6 +43,10 @@ jb.component('studio.open-tree-menu', {
           action :{$: 'studio.open-jb-editor', path: '%$path%' }
         }, 
         {$: 'pulldown.menu-item', 
+          title: 'context viewer', 
+          action :{$: 'studio.open-context-viewer', path: '%$path%' }
+        }, 
+        {$: 'pulldown.menu-item', 
           title: 'javascript editor', 
           action :{$: 'studio.editSource', path: '%$path%' }
         }, 

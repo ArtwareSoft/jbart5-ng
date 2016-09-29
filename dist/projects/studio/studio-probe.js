@@ -3,7 +3,28 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx, studio_tgp_model_1, studio_utils_1, studio_path_1;
     var Probe, bridge;
-    function testControl(ctx, emitter, forTests) {
+    // function initJbEditorProbe() {
+    //   var _jbart = jbart_base();
+    //   if (!_jbart.studioJbEditorProbe) {
+    //     var _win = jbart.previewWindow || window;
+    //     var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
+    //     var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: null} );
+    //     _jbart.studioJbEditorProbe = new Probe(context);
+    //   }
+    //   return _jbart.studioJbEditorProbe;
+    // }
+    // jb.component('studio.probe-set-path-to-trace', {
+    //   type:'action',
+    //   params: [ 
+    //     { id: 'pathToTrace', as: 'string', dynamic: true } 
+    //     { id: 'result', as: 'ref' } 
+    //   ],
+    //   impl: (ctx,pathToTrace) => {
+    //     var probe = initJbEditorProbe();
+    //     probe.pathToTrace = pathToTrace;
+    //   }
+    // })
+    function testControl(ctx, forTests) {
         // test the control as a dialog
         return new Promise(function (resolve, reject) {
             var _jbart = studio_utils_1.jbart_base();
@@ -23,10 +44,9 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                             resolve();
                         })
                             .subscribe(function (x) {
-                            emitter.next({ element: cmp.elementRef.nativeElement });
                             if (!forTests)
                                 jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
-                            resolve();
+                            resolve({ element: cmp.elementRef.nativeElement });
                             //            console.log('close test dialog');
                         });
                     },
@@ -57,8 +77,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
             }],
         execute: function() {
             Probe = (function () {
-                function Probe(pathToTrace, context, depth, forTests) {
-                    this.pathToTrace = pathToTrace;
+                function Probe(context, depth, forTests) {
                     this.context = context;
                     this.depth = depth;
                     this.forTests = forTests;
@@ -66,27 +85,25 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                     context.probe = this;
                     this.circuit = this.context.profile;
                 }
-                Probe.prototype.runCircuit = function () {
+                Probe.prototype.runCircuit = function (pathToTrace) {
+                    var _this = this;
+                    this.pathToTrace = pathToTrace;
+                    this.probe[this.pathToTrace] = [];
+                    this.probe[this.pathToTrace].visits = 0;
+                    return this.simpleRun().then(function (res) {
+                        return _this.handleGaps().then(function (res2) {
+                            return jb_core_1.jb.extend({ finalResult: _this.probe[_this.pathToTrace] }, res, res2);
+                        });
+                    });
+                };
+                Probe.prototype.simpleRun = function () {
                     var _win = jbart.previewWindow || window;
                     if (studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control')) {
-                        return testControl(this.context, this.em, this.forTests);
+                        return testControl(this.context, this.forTests);
                     }
                     else if (!studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action')) {
                         return Promise.resolve(_win.jb_run(this.context));
                     }
-                };
-                Probe.prototype.observable = function () {
-                    var _this = this;
-                    this.em = new jb_rx.Subject();
-                    this.probe[this.pathToTrace] = [];
-                    this.probe[this.pathToTrace].visits = 0;
-                    this.runCircuit().then(function () {
-                        return _this.handleGaps().then(function () {
-                            _this.em.next({ finalResult: _this.probe[_this.pathToTrace] });
-                            _this.em.complete();
-                        });
-                    });
-                    return this.em;
                 };
                 Probe.prototype.handleGaps = function () {
                     if (this.probe[this.pathToTrace].length == 0) {
@@ -102,16 +119,18 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                 Probe.prototype.record = function (context, parentParam) {
                     var path = context.path;
                     var input = context.ctx({});
-                    input.probe = null;
-                    var out = input.runItself(parentParam);
+                    var out = input.runItself(parentParam, { noprobe: true });
                     if (!this.probe[path]) {
                         this.probe[path] = [];
                         this.probe[path].visits = 0;
                     }
                     this.probe[path].visits++;
-                    var found = this.probe[path].map(function (x) { return x.in.data; }).indexOf(input.data);
-                    if (found != -1)
-                        this.probe[path][found].counter++;
+                    var found;
+                    this.probe[path].forEach(function (x) {
+                        found = jb_compareArrays(x.in.data, input.data) ? x : found;
+                    });
+                    if (found)
+                        found.counter++;
                     else
                         this.probe[path].push({ in: input, out: jb_val(out), counter: 0 });
                     return out;
@@ -123,11 +142,14 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                 type: 'data',
                 params: [{ id: 'path', as: 'string', dynamic: true }],
                 impl: function (ctx, path) {
-                    var _jbart = studio_utils_1.jbart_base();
-                    var _win = jbart.previewWindow || window;
-                    var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
-                    var context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: null });
-                    return new Probe(path(), context).observable().toPromise();
+                    var context = ctx.exp('%$globals/last_pick_selection%');
+                    if (!context) {
+                        var _jbart = studio_utils_1.jbart_base();
+                        var _win = jbart.previewWindow || window;
+                        var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
+                        context = _win.jb_ctx(_jbart.initialCtx, { profile: { $: circuit }, comp: circuit, path: '', data: null });
+                    }
+                    return new Probe(context).runCircuit(path());
                 }
             });
             bridge = {

@@ -16,7 +16,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'studio.pick',
                     from: '%$from%',
                     onSelect: [
-                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
+                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%path%' },
+                        { $: 'writeValue', to: '%$globals/last_pick_selection%', value: '%%' },
                         { $: 'studio.open-control-tree' },
                         { $: 'studio.open-properties' },
                     ],

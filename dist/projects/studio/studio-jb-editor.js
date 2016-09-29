@@ -264,14 +264,18 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             title: 'divider'
                         },
                         { $: 'pulldown.menu-item',
-                            title: 'Javascript editor',
-                            icon: 'code',
-                            action: { $: 'studio.editSource', path: '%$path%' }
+                            $vars: {
+                                compName: { $: 'studio.comp-name', path: '%$path%' }
+                            },
+                            title: 'Goto %$compName%',
+                            features: { $: 'hidden', showCondition: '%$compName%' },
+                            action: { $: 'studio.open-jb-editor', path: '%$compName%' }
                         },
                         { $: 'pulldown.menu-item',
                             title: 'Goto sublime',
                             action: { $: 'studio.goto-sublime', path: '%$path%' }
                         },
+                        { $: 'pulldown.menu-item-separator' },
                         { $: 'pulldown.menu-item',
                             title: 'Delete',
                             icon: 'delete',
@@ -280,6 +284,30 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 { $: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false },
                                 { $: 'studio.delete', path: '%$path%' }
                             ]
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Copy',
+                            icon: 'copy',
+                            shortcut: 'Ctrl+C',
+                            action: { $: 'studio.copy', path: '%$path%' }
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Paste',
+                            icon: 'paste',
+                            shortcut: 'Ctrl+V',
+                            action: { $: 'studio.paste', path: '%$path%' }
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Undo',
+                            icon: 'undo',
+                            shortcut: 'Ctrl+Z',
+                            action: { $: 'studio.undo' }
+                        },
+                        { $: 'pulldown.menu-item',
+                            title: 'Redo',
+                            icon: 'redo',
+                            shortcut: 'Ctrl+Y',
+                            action: { $: 'studio.redo' }
                         },
                         { $: 'divider',
                             style: { $: 'divider.br' },

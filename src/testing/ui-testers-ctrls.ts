@@ -53,7 +53,7 @@ jb.component('ui-tests.show-tests', {
 
 			total: ctx =>
 				ctx.exp('%$tests%')
-					.reduce((acc,test)=>acc+(test.val.impl.$ == 'jb-path-test' ? 2: 1),0)
+					.reduce((acc,test)=>acc+(test.val.impl.$ == 'jb-path-test1' ? 2: 1),0)
 
 		},
  		controls: [

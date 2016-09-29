@@ -1,7 +1,7 @@
 function jb_run(context,parentParam,settings) {
   try {
     var profile = context.profile;
-    if (context.probe) {
+    if (context.probe && (!settings || !settings.noprobe)) {
       if (context.probe.pathToTrace.indexOf(context.path) == 0)
         return context.probe.record(context,parentParam)
     }

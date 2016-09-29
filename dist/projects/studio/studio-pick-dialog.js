@@ -2,13 +2,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1;
+    function pathFromElem(_window, profElem) {
+        return _window.jbart.ctxDictionary[profElem.attr('jb-ctx')].path;
+        //profElem.attr('jb-path');
+    }
     function eventToProfileElem(e, _window) {
         var $el = $(_window.document.elementFromPoint(e.pageX - $(_window).scrollLeft(), e.pageY - $(_window).scrollTop()));
         if (!$el[0])
             return;
         return $($el.get().concat($el.parents().get()))
             .filter(function (i, e) {
-            return $(e).attr('jb-path');
+            return $(e).attr('jb-ctx');
         })
             .first();
     }
@@ -22,7 +26,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         else
             cmp.width = profElem.outerWidth();
         cmp.height = profElem.outerHeight();
-        cmp.title = studio_tgp_model_1.model.shortTitle(profElem.attr('jb-path'));
+        cmp.title = studio_tgp_model_1.model.shortTitle(pathFromElem(_window, profElem));
         var $el = $(cmp.elementRef.nativeElement);
         var $titleText = $el.find('.title .text');
         $el.find('.title .text').text(cmp.title);
@@ -54,12 +58,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                 ],
                 impl: { $: 'openDialog',
                     $vars: {
-                        pickPath: { path: '' }
+                        pickSelection: { path: '' }
                     },
                     style: { $: 'dialog.studio-pick-dialog', from: '%$from%' },
                     content: { $: 'label', title: '' },
                     onOK: function (ctx) {
-                        return ctx.componentContext.params.onSelect(ctx.setData(ctx.vars.pickPath.path));
+                        return ctx.componentContext.params.onSelect(ctx.setData(ctx.vars.pickSelection.ctx));
                     }
                 }
             });
@@ -107,7 +111,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                             })
                                 .filter(function (x) { return x.length > 0; })
                                 .do(function (profElem) {
-                                ctx.vars.pickPath.path = profElem.attr('jb-path');
+                                ctx.vars.pickSelection.ctx = _window.jbart.ctxDictionary[profElem.attr('jb-ctx')];
                                 showBox(cmp, profElem, _window, previewOffset);
                                 jb_ui.apply(ctx);
                             })

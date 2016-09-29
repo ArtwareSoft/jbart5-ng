@@ -47,7 +47,11 @@ function jb_tests(widgetName,tests) {
   })
 }
 
+jbart.ctxCounter = jbart.ctxCounter || 0;
+jbart.ctxDictionary = jbart.ctxDictionary || {};
+
 function jbCtx(context,ctx2) {
+  this.id = jbart.ctxCounter++;
   if (typeof context == 'undefined') {
     this.vars = {};
     this.params = {};
@@ -85,7 +89,7 @@ jbCtx.prototype = {
   bool: function(profile) { return this.run(profile, { as: 'boolean'}) },
   // keeps the context vm and not the caller vm - needed in studio probe
   ctx: function(ctx2) { return jb_ctx(this,ctx2) },
-  runItself: function(parentParam) { return jb_run(this,parentParam) },
+  runItself: function(parentParam,settings) { return jb_run(this,parentParam,settings) },
 }
 
 function jb_ctx(context,ctx2) {

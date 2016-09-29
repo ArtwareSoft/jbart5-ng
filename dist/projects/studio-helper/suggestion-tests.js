@@ -8,6 +8,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
+            jb_core_1.jb.resource('ui-tests', 'people-array', { "people": [
+                    { "name": "Homer Simpson", "age": 42, "male": true },
+                    { "name": "Marge Simpson", "age": 38, "male": false },
+                    { "name": "Bart Simpson", "age": 12, "male": true }
+                ]
+            });
             jb_core_1.jb.component('suggestions-test.simple-vars', {
                 type: 'test',
                 impl: { $: 'suggestions-test',

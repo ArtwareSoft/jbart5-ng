@@ -47,6 +47,19 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/button/button.js', '@an
                 params: [
                     { id: 'icon', as: 'string', default: 'code' },
                     { id: 'size', as: 'number', defaultValue: 20 },
+                    { id: 'aria', as: 'string' },
+                ],
+                impl: { $: 'customStyle',
+                    template: "<div><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons\" style=\"font-size:%$size%px;\">%$icon%</i>\n              </button></div>",
+                    css: 'button {min-width: 2px; margin-top: -3px; padding: 4px}',
+                    directives: 'MdButton'
+                }
+            });
+            jb_core_1.jb.component('button.md-icon2', {
+                type: 'button.style2',
+                params: [
+                    { id: 'icon', as: 'string', default: 'code' },
+                    { id: 'size', as: 'number', defaultValue: 20 },
                     { id: 'padding', as: 'number', defaultValue: 4 },
                     { id: 'aria', as: 'string' },
                 ],

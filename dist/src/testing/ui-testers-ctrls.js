@@ -60,7 +60,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         ],
                         total: function (ctx) {
                             return ctx.exp('%$tests%')
-                                .reduce(function (acc, test) { return acc + (test.val.impl.$ == 'jb-path-test' ? 2 : 1); }, 0);
+                                .reduce(function (acc, test) { return acc + (test.val.impl.$ == 'jb-path-test1' ? 2 : 1); }, 0);
                         }
                     },
                     controls: [

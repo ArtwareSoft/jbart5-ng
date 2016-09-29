@@ -53,7 +53,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
     else if (typeof val === 'string' && val.indexOf('\n') == -1) 
       result += "'" + val + "'";
     else if (typeof val === 'string' && val.indexOf('\n') != -1) {
-      result += "`" + val + "`"
+      result += "`" + val.replace(/`/g,'\\`') + "`"
       // depth++;
       // result += "`";
       // var lines = val.split('\n');

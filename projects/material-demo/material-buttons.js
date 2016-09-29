@@ -15,7 +15,7 @@ jb.component('material-demo.buttons', {
             action :{$: 'material-demo.pick', 
               onHover :{$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }
             }, 
-            style :{$: 'button.md-icon', icon: 'call_made', size: '34', padding: '5' }, 
+            style :{$: 'button.md-icon', padding: '5', icon: 'call_made', size: '34' }, 
             features: [{$: 'css.transform-rotate', angle: '-90', selector: 'i' }, {  }]
           }, 
           {$: 'editable-text', 
@@ -33,16 +33,34 @@ jb.component('material-demo.buttons', {
         style :{$: 'layout.flex', direction: 'row' }, 
         controls: [
           {$: 'material-demo.buttons-src' }, 
-          {$: 'editable-text', 
-            title: 'template', 
-            databind :{$: 'studio.ng-template-as-text', ngPath: '%$globals/ngPath%' }, 
-            style :{$: 'editable-text.codemirror', 
-              enableFullScreen: true, 
-              debounceTime: 300
-            }, 
-            features: [
-              {$: 'flex-layout-item.grow' }, 
-              {$: 'css.margin', top: '7' }
+          {$: 'group', 
+            controls: [
+              {$: 'editable-text', 
+                title: 'template', 
+                databind :{$: 'studio.ng-template-as-text', ngPath: '%$globals/ngPath%' }, 
+                style :{$: 'editable-text.codemirror', 
+                  enableFullScreen: true, 
+                  debounceTime: 300
+                }, 
+                features: [
+                  {$: 'flex-layout-item.grow' }, 
+                  {$: 'css.margin', top: '7' }
+                ]
+              }, 
+              {$: 'markdown', 
+                markdown :{$: 'pipeline', 
+                  items: [
+                    {$: 'studio.ng-template-as-text', 
+                      ngPath: '%$globals/ngPath%'
+                    }, 
+                    {$: 'extractPrefix', separator: ' ' }, 
+                    {$: 'extractSuffix', separator: '<' }, 
+                    '%$api/'
+                  ]
+                }, 
+                style :{$: 'markdown.showdown' }, 
+                title: 'help'
+              }
             ]
           }
         ]

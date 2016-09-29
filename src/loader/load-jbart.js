@@ -121,7 +121,7 @@ jb_modules =
 
 jb_studio_modules = ['tgp-model','model-components','path','utils','main','menu','toolbar','tests','popups'
 ,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control','testers'
-,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions']
+,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
   .map(x=>'studio/studio-' + x)
 
 jb_system_config = {

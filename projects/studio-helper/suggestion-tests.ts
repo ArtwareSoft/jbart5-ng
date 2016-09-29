@@ -1,5 +1,12 @@
 import {jb} from 'jb-core';
 
+jb.resource('ui-tests','people-array', { "people": [
+  { "name": "Homer Simpson" ,"age": 42 , "male": true},
+  { "name": "Marge Simpson" ,"age": 38 , "male": false},
+  { "name": "Bart Simpson"  ,"age": 12 , "male": true}
+  ]
+})
+
 jb.component('suggestions-test.simple-vars', {
 	type: 'test',
 	 impl :{$: 'suggestions-test', 

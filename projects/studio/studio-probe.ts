@@ -7,31 +7,30 @@ import {parentPath} from './studio-path';
 
 
 export class Probe {
-  constructor(public pathToTrace, public context, public depth, public forTests) {
+  constructor(public context, public depth, public forTests) {
     this.probe = {};
     context.probe = this;
     this.circuit = this.context.profile;
   }
 
-  runCircuit() {
-    var _win = jbart.previewWindow || window;
-    if (model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
-      return testControl(this.context, this.em, this.forTests);
-    } else if (! model.isCompNameOfType(jb.compName(this.circuit),'action')) {
-      return Promise.resolve(_win.jb_run(this.context));
-    }
-  }
-  observable() {
-    this.em = new jb_rx.Subject();
+  runCircuit(pathToTrace) {
+    this.pathToTrace = pathToTrace;
     this.probe[this.pathToTrace] = [];
     this.probe[this.pathToTrace].visits = 0;
-    this.runCircuit().then( ()=>
-          this.handleGaps().then(()=>{
-            this.em.next({finalResult: this.probe[this.pathToTrace]});
-            this.em.complete();
-      }))
 
-    return this.em;
+    return this.simpleRun().then( res =>
+          this.handleGaps().then( res2 =>
+            jb.extend({finalResult: this.probe[this.pathToTrace]},res,res2)
+    ))
+  }
+
+  simpleRun() {
+      var _win = jbart.previewWindow || window;
+      if (model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
+        return testControl(this.context, this.forTests);
+      } else if (! model.isCompNameOfType(jb.compName(this.circuit),'action')) {
+        return Promise.resolve(_win.jb_run(this.context));
+      }
   }
 
   handleGaps() {
@@ -49,17 +48,19 @@ export class Probe {
   record(context,parentParam) {
       var path = context.path;
       var input = context.ctx({});
-      input.probe = null;
-      var out = input.runItself(parentParam);
+      var out = input.runItself(parentParam,{noprobe: true});
 
       if (!this.probe[path]) {
         this.probe[path] = [];
         this.probe[path].visits = 0;
       }
       this.probe[path].visits++;
-      var found = this.probe[path].map(x=>x.in.data).indexOf(input.data);
-      if (found != -1)
-        this.probe[path][found].counter++;
+      var found;
+      this.probe[path].forEach(x=>{
+        found = jb_compareArrays(x.in.data,input.data) ? x : found;
+      })
+      if (found)
+        found.counter++;
       else 
         this.probe[path].push({in: input, out: jb_val(out), counter: 0});
       return out;
@@ -70,16 +71,43 @@ jb.component('studio.probe', {
   type:'data',
   params: [ { id: 'path', as: 'string', dynamic: true } ],
   impl: (ctx,path) => {
-      var _jbart = jbart_base();
-      var _win = jbart.previewWindow || window;
-      var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
-      var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: null} );
-      return new Probe(path(),context).observable().toPromise();
+      var context = ctx.exp('%$globals/last_pick_selection%');
+      if (!context) {
+        var _jbart = jbart_base();
+        var _win = jbart.previewWindow || window;
+        var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
+        context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: null} );
+      }
+      return new Probe(context).runCircuit(path());
     }
 })
 
+// function initJbEditorProbe() {
+//   var _jbart = jbart_base();
+//   if (!_jbart.studioJbEditorProbe) {
+//     var _win = jbart.previewWindow || window;
+//     var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
+//     var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: null} );
+//     _jbart.studioJbEditorProbe = new Probe(context);
+//   }
+//   return _jbart.studioJbEditorProbe;
+// }
 
-function testControl(ctx,emitter,forTests) {
+
+// jb.component('studio.probe-set-path-to-trace', {
+//   type:'action',
+//   params: [ 
+//     { id: 'pathToTrace', as: 'string', dynamic: true } 
+//     { id: 'result', as: 'ref' } 
+//   ],
+//   impl: (ctx,pathToTrace) => {
+//     var probe = initJbEditorProbe();
+//     probe.pathToTrace = pathToTrace;
+//   }
+
+// })
+
+function testControl(ctx,forTests) {
   // test the control as a dialog
   return new Promise((resolve,reject)=> {
     var _jbart = jbart_base();
@@ -97,10 +125,9 @@ function testControl(ctx,emitter,forTests) {
               dialog.close();resolve()
           })
           .subscribe(x=>{
-            emitter.next({ element : cmp.elementRef.nativeElement })
             if (!forTests)
               jb.delay(1).then(()=>dialog.close()); // delay to avoid race conditin with itself
-            resolve();
+            resolve({ element : cmp.elementRef.nativeElement });
 //            console.log('close test dialog');
           })
           ,
