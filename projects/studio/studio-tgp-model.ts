@@ -173,6 +173,9 @@ export class TgpModel {
 	}
 
 	isOfType(path,type) {
+		var paramDef = this.paramDef(path);
+		if (paramDef)
+			return (paramDef.type || 'data').split(',').indexOf(type) != -1;
 		return this.isCompNameOfType(this.compName(path),type);
 	}
 	isCompNameOfType(name,type) {

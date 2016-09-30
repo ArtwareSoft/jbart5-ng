@@ -171,6 +171,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return val && jb_core_1.jb.compName(val);
                 };
                 TgpModel.prototype.isOfType = function (path, type) {
+                    var paramDef = this.paramDef(path);
+                    if (paramDef)
+                        return (paramDef.type || 'data').split(',').indexOf(type) != -1;
                     return this.isCompNameOfType(this.compName(path), type);
                 };
                 TgpModel.prototype.isCompNameOfType = function (name, type) {

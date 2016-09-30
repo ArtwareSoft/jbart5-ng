@@ -376,8 +376,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
                     cleanCtxDictionary();
-                    this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath : context.path;
-                    jb_core_1.jb.path(options, ['atts', 'jb-path'], this.callerPath); // for pick & edit
+                    //		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
+                    //		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
                     jb_core_1.jb.path(options, ['atts', 'jb-ctx'], context.id); // for pick & edit
                     jbart.ctxDictionary[context.id] = context;
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });

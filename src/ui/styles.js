@@ -42,7 +42,7 @@ jb.component('custom-control', {
 			.map(x=>x[0])
 		};
 		return jb_ui.Comp(jb.extend({ 
-			jbTemplate: `<div jb-path="${ctx.path}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
+			jbTemplate: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
 			css: css, 
 			featuresOptions: features(),
 			directives: ctx.profile.directives,

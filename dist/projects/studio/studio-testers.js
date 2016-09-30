@@ -69,44 +69,26 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
                     if (!probProf)
                         return failure('no prob prof');
                     // ********** dynamic counter
-                    var static_path = testId + '~' + staticPath;
+                    var full_path = testId + '~' + staticPath;
                     var probeRes = new studio_probe_1.Probe(jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' }), true)
-                        .runCircuit(static_path);
+                        .runCircuit(full_path);
                     return probeRes.then(function (res) {
                         try {
-                            var match = Array.from(res.element.querySelectorAll("[jb-path=\"" + static_path + "\"]"));
-                            if (!match || match.length != expectedDynamicCounter)
+                            var match = Array.from(res.element.querySelectorAll('[jb-ctx]'))
+                                .filter(function (e) {
+                                var ctx2 = jbart.ctxDictionary[e.getAttribute('jb-ctx')];
+                                return ctx2.path == full_path || (ctx2.componentContext && ctx2.componentContext.callerPath == full_path);
+                            });
+                            if (match.length != expectedDynamicCounter)
                                 return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + (match || []).length + ' times. expecting ' + expectedDynamicCounter + ' occurrences');
                             if (!res.finalResult[0] || !probeCheck(res.finalResult[0].in))
                                 return failure('probe');
                         }
                         catch (e) {
-                            return failure('exception ');
+                            return failure('exception');
                         }
                         return success();
                     });
-                    // var expectedDynamicCounterTst = probeRes.filter(res=>res.element)
-                    //     .map(res=>{
-                    //       try {
-                    //         var match = Array.from(res.element.querySelectorAll(`[jb-path="${static_path}"]`));
-                    //       } catch(e) {
-                    //         var match = [];
-                    //       }
-                    //       if (match.length ==  expectedDynamicCounter)
-                    //         return success('dynamic counter');
-                    //       else
-                    //         return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + match.length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
-                    //   }).take(1);
-                    // // ********** prob check
-                    // var probeCheckTst = probeObs.filter(res=>res.finalResult)
-                    //     .map(res=>{
-                    //     if (res.finalResult[0] && probeCheck(res.finalResult[0].in) )
-                    //       return success('probe');
-                    //     else {
-                    //       return failure('probe');
-                    //     }
-                    //   }).take(1)
-                    // return expectedDynamicCounterTst.merge(probeCheckTst);
                     function failure(part, reason) { return { id: testId, title: testId + '- ' + part, success: false, reason: reason }; }
                     ;
                     function success() { return { id: testId, title: testId, success: true }; }

@@ -154,20 +154,24 @@ jb.component('studio.highlight-in-preview',{
 	impl: (ctx,path) => {
 		var _window = jbart.previewWindow || window;
 		if (!_window) return;
-		var elems = _window.document.querySelectorAll('[jb-path="'+ path +'"]');
-		if (elems.length == 0) {// studio
-			elems = window.document.querySelectorAll('[jb-path="'+ path +'"]');
-			if (elems.length)
-				_window = window;
-		}
+		var elems = Array.from(_window.document.querySelectorAll('[jb-ctx]'))
+			.filter(e=>
+				_window.jbart.ctxDictionary[e.getAttribute('jb-ctx')].path == path)
+
+		if (elems.length == 0) // try to look in studio
+			elems = Array.from(document.querySelectorAll('[jb-ctx]'))
+			.filter(e=>
+				jbart.ctxDictionary[e.getAttribute('jb-ctx')].path == path)
+
 		var boxes = [];
 		
-		$('.jbstudio_highlight_in_preview').remove();
+//		$('.jbstudio_highlight_in_preview').remove();
 		
-		$(elems).each(function() {
-			var $box = $('<div class="jbstudio_highlight_in_preview"/>').css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue' ,opacity: '1', zIndex: 5000 });
-			var offset = $(this).offset();
-			$box.css('left',offset.left).css('top',offset.top).width($(this).outerWidth()).height($(this).outerHeight());				
+		elems.forEach(function(elem) {
+			var $box = $('<div class="jbstudio_highlight_in_preview"/>');
+			$box.css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue', opacity: '1', zIndex: 5000 }); // cannot assume css class in preview window
+			var offset = $(elem).offset();
+			$box.css('left',offset.left).css('top',offset.top).width($(elem).outerWidth()).height($(elem).outerHeight());				
 			if ($box.width() == $(_window.document.body).width())
 				$box.width($box.width()-10);
 			boxes.push($box[0]);

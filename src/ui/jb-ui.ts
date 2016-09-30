@@ -160,8 +160,8 @@ class jbComponent {
 			optionsOfProfile(context.profile));
 
 		cleanCtxDictionary();
-		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
-		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
+//		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
+//		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
 		jb.path(options, ['atts','jb-ctx'], context.id); // for pick & edit
 		jbart.ctxDictionary[context.id] = context;
 

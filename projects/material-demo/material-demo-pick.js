@@ -129,11 +129,10 @@ jb.component('dialog-feature.material-demo-pick', {
 		  	.do(profElem=> {
 		  		ctx.vars.pickPath.path = profElem.attr('ng-path');
 		  		showBox(cmp,profElem);
-				var jb_path = $(profElem).parents().get()
-						.map(e => $(e).attr('jb-path') )
+				var ctx_id = $(profElem).parents().get()
+						.map(e => $(e).attr('jb-ctx') )
 						.filter(x=>x)[0];
-
-		  		ctx.params.onHover(ctx.setData(jb_path+ ':' + profElem.attr('ng-path')).setVars({ngElem: profElem}));
+		  		ctx.params.onHover(ctx.setData(jbart.ctxDictionary[ctx_id].path+ ':' + profElem.attr('ng-path')).setVars({ngElem: profElem}));
 //		  		jb_ui.apply(ctx);
 		  	})
 		  	.last()

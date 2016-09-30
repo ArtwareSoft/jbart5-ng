@@ -458,3 +458,4 @@ background-position: -49px -16px; content: ''; }
 
 
 .pick-template { width: 100%; margin-bottom: 4px; }
+.jbstudio_highlight_in_preview { position: absolute; background: rgb(193, 224, 228); border: 1px solid blue ;opacity: 1; zIndex: 5000 }
