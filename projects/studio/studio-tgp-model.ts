@@ -59,7 +59,7 @@ export class TgpModel {
 
 	jbEditorSubNodes(path) {
 		var val = profileFromPath(path);
-		if (!val) return [];
+		if (!val || typeof val != 'object') return [];
 		var compName = jb.compName(val);
 		var comp = getComp(compName);
 		if (Array.isArray(val))
@@ -125,7 +125,7 @@ export class TgpModel {
 	}
 
 	title(path, collapsed) {
-		collapsed = collapsed || this.isArray(path);
+		collapsed = collapsed || !this.isArray(path);
 		var val = profileFromPath(path);
 		if (path.indexOf('~') == -1)
 			return path;

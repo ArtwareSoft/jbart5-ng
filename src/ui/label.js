@@ -7,8 +7,9 @@ jb.component('label', {
         { id: 'style', type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
         { id: 'features', type: 'feature[]', dynamic: true },
     ],
-    impl: ctx => 
-        jb_ui.ctrl(ctx.setVars({title: ctx.params.title() }))
+    impl: ctx => {
+        return jb_ui.ctrl(ctx.setVars({title: ctx.params.title() }))
+    }
 })
 
 jb.type('label.style');

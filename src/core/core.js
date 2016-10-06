@@ -96,7 +96,7 @@ function jb_prepareParams(comp,profile,ctx) {
               (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i)))
         else
           var func = (ctx2,data2) => 
-                valOrDefault && (ctx2||ctx).setData(data2).runInner(valOrDefault,param,path);
+                valOrDefault != null ? (ctx2||ctx).setData(data2).runInner(valOrDefault,param,path) : valOrDefault;
 
         Object.defineProperty(func, "name", { value: p }); // for debug
         func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
@@ -138,7 +138,7 @@ function jb_prepare(context,parentParam) {
   if (profile_jstype === 'function') return { type: 'function' };
   if (profile_jstype === 'object' && !isArray && jb_entries(profile).filter(p=>p[0].indexOf('$') == 0).length == 0) return { type: 'asIs' };
   if (profile_jstype === 'object' && (profile instanceof RegExp)) return { type: 'asIs' };
-  if (!profile) return { type: 'asIs' };
+  if (profile == null) return { type: 'asIs' };
 
   if (isArray) {
     if (!profile.length) return { type: 'null' };

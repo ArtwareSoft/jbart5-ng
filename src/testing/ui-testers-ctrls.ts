@@ -45,10 +45,10 @@ jb.component('ui-tests.show-tests', {
 				{ $filter: {$or: [{$: 'equals', item1: '%$module%', item2: {$: 'prefix', text: '%id%', separator: '.' } }, {$isEmpty: '%$module%'} ]} },
 			],
 			parallel_tests: [ '%$tests%', 
-				{$filter: {$: 'notEquals', item1: 'path-test1', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+				{$filter: {$: 'notEquals', item1: 'path-test', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
 			],
 			serial_tests: [ '%$tests%', 
-				{$filter: {$: 'equals', item1: 'path-test1', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
+				{$filter: {$: 'equals', item1: 'path-test', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
 			],
 
 			total: ctx =>

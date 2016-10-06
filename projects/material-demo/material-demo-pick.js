@@ -132,7 +132,7 @@ jb.component('dialog-feature.material-demo-pick', {
 				var ctx_id = $(profElem).parents().get()
 						.map(e => $(e).attr('jb-ctx') )
 						.filter(x=>x)[0];
-		  		ctx.params.onHover(ctx.setData(jbart.ctxDictionary[ctx_id].path+ ':' + profElem.attr('ng-path')).setVars({ngElem: profElem}));
+		  		ctx.params.onHover(ctx.setData(jbart.ctxDictionary[ctx_id].path+ ':' + profElem.attr('ng-path')).setVars({ngElem: profElem[0]}));
 //		  		jb_ui.apply(ctx);
 		  	})
 		  	.last()

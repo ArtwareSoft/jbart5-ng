@@ -187,11 +187,19 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                     return page == 'tests' && profile_path && profile_path.slice(-6) != '.tests';
                 }
             });
+            jb_core_1.jb.component('studio.cmps-of-project', {
+                type: 'data',
+                params: [
+                    { id: 'project', as: 'string' }
+                ],
+                impl: function (ctx, prj) {
+                    return Object.getOwnPropertyNames(jbart.previewjbart.comps)
+                        .filter(function (id) { return id.split('.')[0] == prj; });
+                }
+            });
             jb_core_1.jb.component('studio.projectPages', {
                 type: 'data',
-                impl: ['%$window.jbart.previewjbart.comps%',
-                    { $: 'objectProperties' },
-                    { $filter: { $: 'equals', item1: '%$globals/project%', item2: { $: 'prefix', separator: '.' } } },
+                impl: [{ $: 'studio.cmps-of-project', project: '%$globals/project%' },
                     { $filter: { $: 'studio.is-of-type', type: 'control', path: '%%' } },
                     { $: 'suffix', separator: '.' }
                 ]

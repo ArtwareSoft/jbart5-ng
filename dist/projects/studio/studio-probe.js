@@ -77,9 +77,8 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
             }],
         execute: function() {
             Probe = (function () {
-                function Probe(context, depth, forTests) {
+                function Probe(context, forTests) {
                     this.context = context;
-                    this.depth = depth;
                     this.forTests = forTests;
                     this.probe = {};
                     context.probe = this;

@@ -86,7 +86,10 @@ class jbComponent {
 		}
 	}
 	hashkey() {
-		return JSON.stringify(this.annotations)
+		return JSON.stringify(jb.extend({},this.annotations,{
+			directives: '',
+			host: jb.extend({},this.annotations.host || {},{ 'jb-ctx': '' }),
+		}));
 	}
 	createComp() {
 	    this.jbExtend({directives: [NgClass, NgStyle, jbComp, PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES] });
@@ -194,7 +197,11 @@ class jbComponent {
 			this.invisible = true;
 
 	   	if (options.css)
-    		options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(x=>x.trim()).filter(x=>x).map(x=>x+'}'));
+    		options.styles = (options.styles || [])
+    				.concat(options.css.split(/}\s*/m)
+    				.map(x=>x.trim())
+    				.filter(x=>x)
+    				.map(x=>x+'}'));
 
 //		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
 		// fix ng limit - root style as style attribute at the template

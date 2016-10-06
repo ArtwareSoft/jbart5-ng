@@ -24,8 +24,8 @@ class ROjson {
 	}
 	val(path) {
 		if (path.indexOf('~') == -1)
-			return this.json;
-		return path.split('~').slice(1).reduce((o,p) =>o[p], this.json)
+			return jb.val(this.json);
+		return jb.val(path.split('~').slice(1).reduce((o,p) =>o[p], this.json))
 	}
 	isArray(path) {
 		var val = this.val(path);

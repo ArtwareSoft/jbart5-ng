@@ -69,7 +69,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 };
                 TgpModel.prototype.jbEditorSubNodes = function (path) {
                     var val = studio_path_1.profileFromPath(path);
-                    if (!val)
+                    if (!val || typeof val != 'object')
                         return [];
                     var compName = jb_core_1.jb.compName(val);
                     var comp = studio_utils_1.getComp(compName);
@@ -130,7 +130,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
                 };
                 TgpModel.prototype.title = function (path, collapsed) {
-                    collapsed = collapsed || this.isArray(path);
+                    collapsed = collapsed || !this.isArray(path);
                     var val = studio_path_1.profileFromPath(path);
                     if (path.indexOf('~') == -1)
                         return path;

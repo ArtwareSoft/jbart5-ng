@@ -93,7 +93,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         return jb_core_1.jb.extend(x, { text: x.text || x.toPaste + _this.valAsText(x.value) });
                     });
                     if (this.tail)
-                        this.options.sort(function (x, y) { return (x.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0) - (y.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0); });
+                        this.options.sort(function (x, y) { return (y.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0); });
                     return this;
                 };
                 suggestions.prototype.valAsText = function (val) {
@@ -148,27 +148,33 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 if (!$(input).hasClass('dialog-open'))
                                     closeFloatingInput(ctx);
                             });
-                            var suggestionEm = jb_rx.Observable.fromEvent(input, 'keydown')
-                                .debounceTime(30) // solves timing of closing the floating input
-                                .takeUntil(inputClosed)
+                            var suggestionEm = cmp.keyEm
                                 .filter(function (e) { return e.keyCode != 38 && e.keyCode != 40; })
-                                .filter(function (e) {
-                                var inpValue = e.srcElement.value + (e.key.length == 1 ? e.key : '');
+                                .delay(1) // we use keydown - let the input fill itself
+                                .debounceTime(20) // solves timing of closing the floating input
+                                .map(function (e) {
+                                return e.srcElement.value;
+                            })
+                                .do(function (x) { return console.log(0, x); })
+                                .distinctUntilChanged()
+                                .do(function (x) { return console.log(1, x); })
+                                .filter(function (inpValue) {
                                 return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;
                             })
                                 .flatMap(function (e) {
                                 return getProbe().then(function (probeResult) {
-                                    return ({ keyEv: e, ctx: probeResult && probeResult[0] && probeResult[0].in });
+                                    return probeResult && probeResult[0] && probeResult[0].in;
                                 });
                             })
-                                .delay(1) // we use keydown - let the input fill itself
-                                .map(function (e) {
-                                return new suggestions(e.keyEv.srcElement, '').extendWithOptions(e.ctx, ctx.params.path);
+                                .map(function (probeCtx) {
+                                return new suggestions(input).extendWithOptions(probeCtx, ctx.params.path);
                             })
                                 .filter(function (e) {
                                 return e.text;
                             })
-                                .distinctUntilChanged(null, function (e) { return e.options.join(','); });
+                                .distinctUntilChanged(function (e) {
+                                return e.options.map(function (o) { return o.toPaste; }).join(',');
+                            });
                             suggestionEm.subscribe(function (e) {
                                 if (!$(e.input).hasClass('dialog-open') && e.options.length > 0) {
                                     var suggestionContext = {
@@ -287,7 +293,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             // change selection if options are changed
                             ctx.vars.suggestionContext.suggestionEm
                                 .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
-                                .distinctUntilChanged(null, function (e) { return e.options.join(','); })
+                                .distinctUntilChanged(function (e) { return e.options.map(function (o) { return o.toPaste; }).join(','); })
                                 .subscribe(function (e) {
                                 cmp.selected = e.options[0];
                             });

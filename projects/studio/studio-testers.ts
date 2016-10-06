@@ -1,6 +1,4 @@
 import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-import * as jb_rx from 'jb-ui/jb-rx';
 import {Probe} from './studio-probe';
 import {suggestions} from './studio-suggestions';
 import {TgpModel} from './studio-tgp-model';
@@ -10,15 +8,23 @@ jb.component('suggestions-test', {
   params: [
     { id: 'expression', as: 'string' },
     { id: 'selectionStart', as: 'number', defaultValue: -1 },
-    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' }
+    { id: 'path', as: 'string', defaultValue: 'suggestions-test.default-probe~title' },
+    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' },
   ],
   impl :{$: 'data-test', 
     calculate: ctx => {
       var params = ctx.componentContext.params;
       var selectionStart = params.selectionStart == -1 ? params.expression.length : params.selectionStart;
-      var obj = new suggestions({ value: params.expression, selectionStart: selectionStart })
-        .extendWithOptions(ctx);
-      return JSON.stringify(JSON.stringify(obj.options.map(x=>x.text)));
+
+      var circuit = params.path.split('~')[0];
+      var probeRes = new Probe(jb.ctx(ctx,{ profile: { $: circuit }, comp: circuit, path: '', data: null }),true)
+        .runCircuit(params.path);
+      return probeRes.then(res=>{
+        var probeCtx = res.finalResult[0] && res.finalResult[0].in;
+        var obj = new suggestions({ value: params.expression, selectionStart: selectionStart })
+          .extendWithOptions(probeCtx,probeCtx.path);
+        return JSON.stringify(JSON.stringify(obj.options.map(x=>x.text)));
+      })
     },
     expectedResult :{$call: 'expectedResult' }
   },
@@ -54,12 +60,12 @@ jb.component('jb-path-test', {
     { id: 'probeCheck', type: 'boolean', dynamic: true, as: 'boolean' }
   ],
   impl: (ctx,control,staticPath,expectedDynamicCounter,probeCheck)=> {
-    var testId = ctx.vars.testID;
 
-    var probProf = findProbeProfile(control.profile);
-    if (!probProf)
-      return failure('no prob prof');
+    // var probProf = findProbeProfile(control.profile);
+    // if (!probProf)
+    //   return failure('no prob prof');
      // ********** dynamic counter
+    var testId = ctx.vars.testID;
     var full_path = testId + '~' + staticPath;
     var probeRes = new Probe(jb.ctx(ctx,{ profile: control.profile, comp: testId, path: '' } ),true)
       .runCircuit(full_path);
@@ -72,7 +78,7 @@ jb.component('jb-path-test', {
             })
             if (match.length != expectedDynamicCounter)
               return failure('dynamic counter', 'jb-path error: ' + staticPath + ' found ' + (match || []).length +' times. expecting ' + expectedDynamicCounter + ' occurrences');
-              if (!res.finalResult[0] || !probeCheck(res.finalResult[0].in) )
+            if (!res.finalResult[0] || !probeCheck(res.finalResult[0].in) )
                 return failure('probe');
           } catch(e) {
             return failure('exception');
@@ -83,23 +89,24 @@ jb.component('jb-path-test', {
     function failure(part,reason) { return { id: testId, title: testId + '- ' + part, success:false, reason: reason } };
     function success() { return { id: testId, title: testId, success: true } };
 
-    function findProbeProfile(parent) {
-      if (parent.$mark)
-        return parent;
-      if (typeof parent == 'object')
-        return jb.entries(parent)
-        .map(e=>({
-          prop: e[0],
-          res: findProbeProfile(e[1])
-        }))
-        .map(e=>
-          (e.res == 'markInString') ? ({$parent: parent, $prop: e.prop}) : e.res)
-        .filter(x=>x)[0];
-
-      if (typeof parent == 'string' && parent.indexOf('$mark:') == 0)
-        return 'markInString';
-    }
   }
 
 })
+
+// function findProbeProfile(parent) {
+//   if (parent.$mark)
+//     return parent;
+//   if (typeof parent == 'object')
+//     return jb.entries(parent)
+//     .map(e=>({
+//       prop: e[0],
+//       res: findProbeProfile(e[1])
+//     }))
+//     .map(e=>
+//       (e.res == 'markInString') ? ({$parent: parent, $prop: e.prop}) : e.res)
+//     .filter(x=>x)[0];
+
+//   if (typeof parent == 'string' && parent.indexOf('$mark:') == 0)
+//     return 'markInString';
+// }
 

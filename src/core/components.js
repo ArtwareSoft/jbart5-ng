@@ -708,6 +708,7 @@ jb_component('runActions', {
 		{ id: 'actions', type:'action[]', ignore: true, composite: true, essential: true }
 	],
 	impl: function(context) {
+		if (!context.profile) debugger;
 		var actions = jb_toarray(context.profile.actions || context.profile['$runActions']);
 		if (context.profile.actions && context.profile.actions.sugar)
 			var innerPath =  '' ;

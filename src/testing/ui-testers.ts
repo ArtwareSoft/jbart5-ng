@@ -49,11 +49,12 @@ jb.component('data-test', {
 	],
 	impl: function(context,calculate,runBefore,resultVariable,action,expectedResult) {
 		runBefore();
-		var value = calculate();
-		if (result(value))
-			return ({ id: context.vars.testID, success: true })
-		else
-			return ({ id: context.vars.testID, success: false })
+		return Promise.resolve(calculate()).then(value=>{
+			if (result(value))
+				return ({ id: context.vars.testID, success: true })
+			else
+				return ({ id: context.vars.testID, success: false })
+		})
 
 		function result(value) {
 			if (context.vars.$testContext) 

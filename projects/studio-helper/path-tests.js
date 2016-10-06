@@ -1,10 +1,10 @@
-import {jb} from 'jb-core';
+jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
 
 jb.component('path-test.single-control', {
 	impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
-			controls :{$: 'label', title: 'hello', $mark: true } 
+			controls :{$: 'label', title: 'hello' } 
 		},
 		staticPath : 'controls',
 		expectedDynamicCounter: 1,
@@ -165,3 +165,4 @@ jb.component('path-test.filter-no-sugar', {
 
 
 
+})

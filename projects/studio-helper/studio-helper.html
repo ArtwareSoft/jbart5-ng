@@ -18,9 +18,9 @@
 jbLoadModules(jb_modules.concat(jb_studio_modules)
   .concat([
       '/projects/studio-helper/studio-helper.js',
-      'projects/studio-helper/suggestion-tests',
-      'projects/studio-helper/path-tests',
-      'projects/studio-helper/studio-tree-tests']))
+      '/projects/studio-helper/suggestion-tests.js',
+      '/projects/studio-helper/path-tests.js',
+      '/projects/studio-helper/studio-tree-tests.js']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

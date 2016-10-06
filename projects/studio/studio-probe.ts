@@ -7,7 +7,7 @@ import {parentPath} from './studio-path';
 
 
 export class Probe {
-  constructor(public context, public depth, public forTests) {
+  constructor(public context, public forTests) {
     this.probe = {};
     context.probe = this;
     this.circuit = this.context.profile;

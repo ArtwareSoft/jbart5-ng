@@ -75,7 +75,7 @@ export class suggestions {
         .map(x=>
           jb.extend(x,{ text: x.text || x.toPaste + this.valAsText(x.value) }))
     if (this.tail)
-      this.options.sort((x,y)=> (x.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0) - (y.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0));
+      this.options.sort((x,y)=> (y.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0));
 
     return this;
   }
@@ -137,23 +137,26 @@ jb.component('editable-text.suggestions-input-feature', {
                 closeFloatingInput(ctx)
               })
 
-        var suggestionEm = jb_rx.Observable.fromEvent(input, 'keydown')
-          .debounceTime(30) // solves timing of closing the floating input
-          .takeUntil(inputClosed) 
+        var suggestionEm = cmp.keyEm
           .filter(e=> e.keyCode != 38 && e.keyCode != 40)
-          .filter(e=> {// has % or = sign - look for suggestion
-            var inpValue  = e.srcElement.value + (e.key.length == 1 ? e.key : '');
-            return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;
-          })
+          .delay(1) // we use keydown - let the input fill itself
+          .debounceTime(20) // solves timing of closing the floating input
+          .map(e=>
+            e.srcElement.value)
+          .do(x=>console.log(0,x))
+          .distinctUntilChanged()
+          .do(x=>console.log(1,x))
+          .filter(inpValue=>// has % or = sign - look for suggestion
+            inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0)
           .flatMap(e=>
             getProbe().then(probeResult=>
-              ({ keyEv: e, ctx: probeResult && probeResult[0] && probeResult[0].in})))
-          .delay(1) // we use keydown - let the input fill itself
-          .map(e=> 
-            new suggestions(e.keyEv.srcElement,'').extendWithOptions(e.ctx,ctx.params.path))
+              probeResult && probeResult[0] && probeResult[0].in))
+          .map(probeCtx=> 
+            new suggestions(input).extendWithOptions(probeCtx,ctx.params.path))
           .filter(e => 
             e.text)
-          .distinctUntilChanged(null,e=>e.options.join(','))
+          .distinctUntilChanged(e=>
+            e.options.map(o=>o.toPaste).join(','))
 
         suggestionEm.subscribe(e=> {
             if (!$(e.input).hasClass('dialog-open') && e.options.length > 0) { // opening the popup if not already opened
@@ -272,7 +275,7 @@ jb.component('itemlist.studio-suggestions-selection', {
         // change selection if options are changed
         ctx.vars.suggestionContext.suggestionEm
             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
-            .distinctUntilChanged(null,e=>e.options.join(','))
+            .distinctUntilChanged(e=>e.options.map(o=>o.toPaste).join(','))
             .subscribe(e => {
               cmp.selected = e.options[0]
           })

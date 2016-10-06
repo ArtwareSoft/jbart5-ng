@@ -22,15 +22,22 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
                 params: [
                     { id: 'expression', as: 'string' },
                     { id: 'selectionStart', as: 'number', defaultValue: -1 },
-                    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' }
+                    { id: 'path', as: 'string', defaultValue: 'suggestions-test.default-probe~title' },
+                    { id: 'expectedResult', type: 'boolean', dynamic: true, as: 'boolean' },
                 ],
                 impl: { $: 'data-test',
                     calculate: function (ctx) {
                         var params = ctx.componentContext.params;
                         var selectionStart = params.selectionStart == -1 ? params.expression.length : params.selectionStart;
-                        var obj = new studio_suggestions_1.suggestions({ value: params.expression, selectionStart: selectionStart })
-                            .extendWithOptions(ctx);
-                        return JSON.stringify(JSON.stringify(obj.options.map(function (x) { return x.text; })));
+                        var circuit = params.path.split('~')[0];
+                        var probeRes = new studio_probe_1.Probe(jb_core_1.jb.ctx(ctx, { profile: { $: circuit }, comp: circuit, path: '', data: null }), true)
+                            .runCircuit(params.path);
+                        return probeRes.then(function (res) {
+                            var probeCtx = res.finalResult[0] && res.finalResult[0].in;
+                            var obj = new studio_suggestions_1.suggestions({ value: params.expression, selectionStart: selectionStart })
+                                .extendWithOptions(probeCtx, probeCtx.path);
+                            return JSON.stringify(JSON.stringify(obj.options.map(function (x) { return x.text; })));
+                        });
                     },
                     expectedResult: { $call: 'expectedResult' }
                 },
@@ -64,11 +71,11 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
                     { id: 'probeCheck', type: 'boolean', dynamic: true, as: 'boolean' }
                 ],
                 impl: function (ctx, control, staticPath, expectedDynamicCounter, probeCheck) {
-                    var testId = ctx.vars.testID;
-                    var probProf = findProbeProfile(control.profile);
-                    if (!probProf)
-                        return failure('no prob prof');
+                    // var probProf = findProbeProfile(control.profile);
+                    // if (!probProf)
+                    //   return failure('no prob prof');
                     // ********** dynamic counter
+                    var testId = ctx.vars.testID;
                     var full_path = testId + '~' + staticPath;
                     var probeRes = new studio_probe_1.Probe(jb_core_1.jb.ctx(ctx, { profile: control.profile, comp: testId, path: '' }), true)
                         .runCircuit(full_path);
@@ -93,24 +100,23 @@ System.register(['jb-core', './studio-probe', './studio-suggestions', './studio-
                     ;
                     function success() { return { id: testId, title: testId, success: true }; }
                     ;
-                    function findProbeProfile(parent) {
-                        if (parent.$mark)
-                            return parent;
-                        if (typeof parent == 'object')
-                            return jb_core_1.jb.entries(parent)
-                                .map(function (e) { return ({
-                                prop: e[0],
-                                res: findProbeProfile(e[1])
-                            }); })
-                                .map(function (e) {
-                                return (e.res == 'markInString') ? ({ $parent: parent, $prop: e.prop }) : e.res;
-                            })
-                                .filter(function (x) { return x; })[0];
-                        if (typeof parent == 'string' && parent.indexOf('$mark:') == 0)
-                            return 'markInString';
-                    }
                 }
             });
         }
     }
 });
+// function findProbeProfile(parent) {
+//   if (parent.$mark)
+//     return parent;
+//   if (typeof parent == 'object')
+//     return jb.entries(parent)
+//     .map(e=>({
+//       prop: e[0],
+//       res: findProbeProfile(e[1])
+//     }))
+//     .map(e=>
+//       (e.res == 'markInString') ? ({$parent: parent, $prop: e.prop}) : e.res)
+//     .filter(x=>x)[0];
+//   if (typeof parent == 'string' && parent.indexOf('$mark:') == 0)
+//     return 'markInString';
+// }

@@ -298,7 +298,10 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     }
                 };
                 jbComponent.prototype.hashkey = function () {
-                    return JSON.stringify(this.annotations);
+                    return JSON.stringify(jb_core_1.jb.extend({}, this.annotations, {
+                        directives: '',
+                        host: jb_core_1.jb.extend({}, this.annotations.host || {}, { 'jb-ctx': '' }),
+                    }));
                 };
                 jbComponent.prototype.createComp = function () {
                     this.jbExtend({ directives: [common_1.NgClass, common_1.NgStyle, jbComp, portal_directives_1.PORTAL_DIRECTIVES, ripple_1.MD_RIPPLE_DIRECTIVES] });
@@ -418,7 +421,11 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     if (options.invisible)
                         this.invisible = true;
                     if (options.css)
-                        options.styles = (options.styles || []).concat(options.css.split(/}\s*/m).map(function (x) { return x.trim(); }).filter(function (x) { return x; }).map(function (x) { return x + '}'; }));
+                        options.styles = (options.styles || [])
+                            .concat(options.css.split(/}\s*/m)
+                            .map(function (x) { return x.trim(); })
+                            .filter(function (x) { return x; })
+                            .map(function (x) { return x + '}'; }));
                     //		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
                     // fix ng limit - root style as style attribute at the template
                     (options.styles || [])

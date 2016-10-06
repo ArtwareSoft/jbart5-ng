@@ -8,8 +8,8 @@ jb.component('markdown', {
         { id: 'title', as: 'string', defaultValue: 'markdown' },
         { id: 'features', type: 'feature[]', dynamic: true },
     ],
-    impl: (ctx,text) => 
-        jb_ui.ctrl(ctx.setVars({markdown: ctx.params.markdown()}))
+    impl: ctx =>
+        jb_ui.ctrl(ctx)
 })
 
 jb.type('markdown.style');
@@ -17,11 +17,17 @@ jb.type('markdown.style');
 jb.component('markdown.showdown', {
     type: 'markdown.style',
     impl: ctx => ({
-        template: '<div></div>',
+        template: '<div [innerHTML]="markdownHtml"></div>',
         init: function(cmp) {
-            cmp.elementRef.nativeElement.innerHTML = 
-                new showdown.Converter({tables:true})
-                    .makeHtml(ctx.vars.markdown);
+            cmp.markdownHtml = '';
+        },
+        doCheck: function(cmp) {
+          var new_markdown = ctx.vars.$model.markdown(cmp.ctx);
+          if (cmp.markdown != new_markdown) {
+              cmp.markdown = new_markdown;
+              cmp.markdownHtml = new showdown.Converter({tables:true})
+                    .makeHtml(new_markdown);
+          }
         }
     })
 })

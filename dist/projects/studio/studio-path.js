@@ -49,8 +49,8 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
         return comp && innerPath.split('~').reduce(function (obj, p) {
             if (!obj && !silent)
                 jb_core_1.jb.logError('profileFromPath: non existing path ' + path + ' property: ' + p);
-            if (obj && p == '0' && obj[p] == null)
-                return obj;
+            // if (obj && p == '0' && obj[p] == null) // flatten one-item array
+            // 	return obj;
             if (obj == null)
                 return null;
             else if (obj[p] == null)

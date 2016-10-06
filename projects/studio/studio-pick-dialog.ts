@@ -96,7 +96,7 @@ jb.component('dialog-feature.studio-pick', {
 		  	})
 		  	.map(e=>
 		  		eventToProfileElem(e,_window))
-		  	.filter(x=>x.length > 0)
+		  	.filter(x=> x && x.length > 0)
 		  	.do(profElem=> {
 		  		ctx.vars.pickSelection.ctx = _window.jbart.ctxDictionary[profElem.attr('jb-ctx')];
 		  		showBox(cmp,profElem,_window,previewOffset);

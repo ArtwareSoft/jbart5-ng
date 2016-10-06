@@ -41,6 +41,7 @@ jb.component('custom-control', {
 		var defaultOptions = {directives: jb.entries(jbart.ng.directives)
 			.map(x=>x[0])
 		};
+		jbart.ctxDictionary[ctx.id] = ctx;
 		return jb_ui.Comp(jb.extend({ 
 			jbTemplate: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
 			css: css, 

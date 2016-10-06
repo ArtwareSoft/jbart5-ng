@@ -310,7 +310,7 @@ jb.component('studio.jb-editor-menu', {
           icon: 'redo', 
           shortcut: 'Ctrl+Y', 
           action :{$: 'studio.redo' }
-        }
+        },
       {$: 'divider', 
         style :{$: 'divider.br' }, 
         title: 'divider'

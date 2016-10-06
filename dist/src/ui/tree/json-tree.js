@@ -35,8 +35,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 };
                 ROjson.prototype.val = function (path) {
                     if (path.indexOf('~') == -1)
-                        return this.json;
-                    return path.split('~').slice(1).reduce(function (o, p) { return o[p]; }, this.json);
+                        return jb_core_1.jb.val(this.json);
+                    return jb_core_1.jb.val(path.split('~').slice(1).reduce(function (o, p) { return o[p]; }, this.json));
                 };
                 ROjson.prototype.isArray = function (path) {
                     var val = this.val(path);

@@ -160,11 +160,19 @@ jb.component('studio.is-single-test',{
   	}
 })
 
+jb.component('studio.cmps-of-project',{
+  type: 'data',
+  params: [
+    { id: 'project', as: 'string'}
+  ],
+  impl: (ctx,prj) => 
+      Object.getOwnPropertyNames(jbart.previewjbart.comps)
+              .filter(id=>id.split('.')[0] == prj)
+})
+
 jb.component('studio.projectPages',{
 	type: 'data',
-  impl: ['%$window.jbart.previewjbart.comps%',
-        { $: 'objectProperties' },
-        { $filter: {$: 'equals', item1: '%$globals/project%', item2: {$: 'prefix', separator: '.' } }},
+  impl: [ {$: 'studio.cmps-of-project', project: '%$globals/project%' },
         { $filter: {$: 'studio.is-of-type', type: 'control', path: '%%'} },
         {$: 'suffix', separator: '.' }
       ]

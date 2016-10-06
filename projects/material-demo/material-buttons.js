@@ -13,7 +13,13 @@ jb.component('material-demo.buttons', {
           {$: 'button', 
             title: 'pick & edit', 
             action :{$: 'material-demo.pick', 
-              onHover :{$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }
+              onHover: [
+                {$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }, 
+                {$: 'writeValue', 
+                  to: '%$globals/ng-apis%', 
+                  value :{$: 'material-demo.api-of-elem' }
+                }
+              ]
             }, 
             style :{$: 'button.md-icon', padding: '5', icon: 'call_made', size: '34' }, 
             features: [{$: 'css.transform-rotate', angle: '-90', selector: 'i' }, {  }]
@@ -48,16 +54,7 @@ jb.component('material-demo.buttons', {
                 ]
               }, 
               {$: 'markdown', 
-                markdown :{$: 'pipeline', 
-                  items: [
-                    {$: 'studio.ng-template-as-text', 
-                      ngPath: '%$globals/ngPath%'
-                    }, 
-                    {$: 'extractPrefix', separator: ' ' }, 
-                    {$: 'extractSuffix', separator: '<' }, 
-                    '%$api/'
-                  ]
-                }, 
+                markdown: '%$globals/ng-apis%', 
                 style :{$: 'markdown.showdown' }, 
                 title: 'help'
               }

@@ -52,6 +52,7 @@ jbart.ctxDictionary = jbart.ctxDictionary || {};
 
 function jbCtx(context,ctx2) {
   this.id = jbart.ctxCounter++;
+  this._parent = context;
   if (typeof context == 'undefined') {
     this.vars = {};
     this.params = {};

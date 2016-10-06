@@ -109,7 +109,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                                 .map(function (e) {
                                 return eventToProfileElem(e, _window);
                             })
-                                .filter(function (x) { return x.length > 0; })
+                                .filter(function (x) { return x && x.length > 0; })
                                 .do(function (profElem) {
                                 ctx.vars.pickSelection.ctx = _window.jbart.ctxDictionary[profElem.attr('jb-ctx')];
                                 showBox(cmp, profElem, _window, previewOffset);

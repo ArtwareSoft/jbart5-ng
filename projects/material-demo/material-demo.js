@@ -14,6 +14,39 @@ jb.resource('material-demo','person',{
 jb.component('material-demo.main', {
   type: 'control', 
   impl :{$: 'group', 
+    style :{$: 'layout.flex', direction: 'row' }, 
+    controls: [
+      {$: 'itemlist', 
+        items: '%$demos/id%', 
+        controls: [
+          {$: 'button', 
+            title: '%%', 
+            action :{$: 'writeValue', to: '%$globals/demoId%', value: '%%' }, 
+            style :{$: 'button.md-flat' }, 
+            features :{$: 'css', css: 'button { text-align: left; width: 200px}' }
+          }
+        ], 
+        style :{$: 'itemlist.ul-li' }, 
+        watchItems: true, 
+        itemVariable: 'item'
+      }, 
+      {$: 'group', 
+        style :{$: 'group.section' }, 
+        controls: [{$: 'custom-control', html: '%$demos/{%$demoId%}/html%' }], 
+        features :{$: 'group.data', 
+          data: '%$globals/demoId%', 
+          itemVariable: 'demoId', 
+          watch: true
+        }
+      }
+    ]
+  }
+})
+
+
+jb.component('material-demo.main2', {
+  type: 'control', 
+  impl :{$: 'group', 
     controls: [
       {$: 'tabs', 
         tabs: [

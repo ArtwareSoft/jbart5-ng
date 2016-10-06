@@ -13,9 +13,10 @@
   ],
   "scripts": {
     "start": "npm run studio",
-    "dev": "concurrently \"npm run tsc:w\" \"npm run start\" ",
+    "dev": "concurrently \"npm run tsc:w\" \"npm run start\" \"npm run watchSass\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
+    "watchSass": "node-sass -w -r projects/material-demo/ -o projects/material-demo/",
     "studio": "npm run openStudio & node jbart-studio.js",
     "openStudio": "start http://localhost:8081/project/studio/material-demo"
   },

@@ -49,8 +49,8 @@ export function profileFromPath(path,silent) {
 	return comp && innerPath.split('~').reduce(function(obj, p) { 
 		if (!obj && !silent)
 			jb.logError('profileFromPath: non existing path '+ path+ ' property: ' + p);
-		if (obj && p == '0' && obj[p] == null) // flatten one-item array
-			return obj;
+		// if (obj && p == '0' && obj[p] == null) // flatten one-item array
+		// 	return obj;
 		if (obj == null)
 			return null;
 		else if (obj[p] == null)
