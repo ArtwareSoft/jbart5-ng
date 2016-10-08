@@ -76,10 +76,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                             }
                                         },
                                         { $: 'label',
-                                            title: [
-                                                '{%$globals/project%}',
-                                                { $: 'replace', find: '_', replace: ' ' }
-                                            ],
+                                            title: { $: 'replace', text: '{%$globals/project%}', find: '_', replace: ' ' },
                                             style: { $: 'label.span' },
                                             features: { $: 'css',
                                                 css: '{ font: 20px Arial; margin-left: 6px; margin-top: 20px}'
@@ -115,7 +112,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                     features: { $: 'css', css: 'button {margin-top: 2px}' }
                                 },
                                 { $: 'itemlist',
-                                    items: { $: 'studio.projectPages' },
+                                    items: { $: 'studio.project-pages' },
                                     controls: { $: 'label',
                                         cssClass: 'studio-page',
                                         title: { $: 'extractSuffix', separator: '.' }
@@ -197,23 +194,14 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                         .filter(function (id) { return id.split('.')[0] == prj; });
                 }
             });
-            jb_core_1.jb.component('studio.projectPages', {
+            jb_core_1.jb.component('studio.project-pages', {
                 type: 'data',
-                impl: [{ $: 'studio.cmps-of-project', project: '%$globals/project%' },
-                    { $filter: { $: 'studio.is-of-type', type: 'control', path: '%%' } },
-                    { $: 'suffix', separator: '.' }
-                ]
+                impl: { $pipeline: [
+                        { $: 'studio.cmps-of-project', project: '%$globals/project%' },
+                        { $filter: { $: 'studio.is-of-type', type: 'control', path: '%%' } },
+                        { $: 'suffix', separator: '.' }
+                    ] }
             });
-            // 	impl2: function(context) {
-            // 		var projectName = context.exp('{%$globals/project%}');
-            // 		if (!jbart.previewjbart) return [];
-            // 		var out = [];
-            // 		for(var i in jbart.previewjbart.comps)
-            // 			if (i.indexOf(projectName+'.') == 0 && jbart.previewjbart.comps[i].type == 'control')
-            // 				out.push(i.split(projectName+'.')[1]);
-            // 		return out;
-            // 	}
-            // })
             jb_core_1.jb.component('studio.renderWidget', {
                 type: 'control',
                 impl: function (ctx) {

@@ -31,8 +31,20 @@ jb.component('material-demo.main', {
         itemVariable: 'item'
       }, 
       {$: 'group', 
+        title: 'demo', 
         style :{$: 'group.section' }, 
-        controls: [{$: 'custom-control', html: '%$demos/{%$demoId%}/html%' }], 
+        controls: [
+          {$: 'custom-control', 
+            html :{
+              $pipeline: [
+                '%$demos%', 
+                {$: 'filter', filter: '%id% == %$globals/demoId%' }, 
+                '%html%'
+              ]
+            }, 
+            features :{$: 'css.width', width: '600' }
+          }
+        ], 
         features :{$: 'group.data', 
           data: '%$globals/demoId%', 
           itemVariable: 'demoId', 

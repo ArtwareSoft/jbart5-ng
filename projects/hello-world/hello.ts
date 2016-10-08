@@ -8,11 +8,11 @@ jb.component('hello-world.test2', {
   }
 })
 
-jb.component('hello-world.main', {
+jb.component('hello-world.main1', {
   type: 'control', 
   impl :{$: 'label', title: '$log:hello main' }
 })
-jb.component('hello-world.main1', {
+jb.component('hello-world.main', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'main', 

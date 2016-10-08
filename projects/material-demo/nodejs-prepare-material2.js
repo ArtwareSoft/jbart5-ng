@@ -23,4 +23,4 @@ fs.readdirSync(demoDir).forEach(dir=> {
 	} catch (e) {}
 })
 
-fs.writeFileSync('all-demos.js',`jb_resource('material-demo','demos',${JSON.stringify(result,2)})`);
+fs.writeFileSync('all-demos.js',`jb_resource('material-demo','demos',${JSON.stringify(result,null,2)})`);

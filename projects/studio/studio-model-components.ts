@@ -138,12 +138,12 @@ jb.component('studio.add-property', {
 		model.modify(model.addProperty, path, {},context)
 })
 
-jb.component('studio.wrap-with-pipeline', {
-	type: 'action',
-	params: [ {id: 'path', as: 'string' } ],
-	impl: (context,path) => 
-		model.modify(model.wrapWithPipeline, path, {},context)
-})
+// jb.component('studio.wrap-with-pipeline', {
+// 	type: 'action',
+// 	params: [ {id: 'path', as: 'string' } ],
+// 	impl: (context,path) => 
+// 		model.modify(model.wrapWithPipeline, path, {},context)
+// })
 
 jb.component('studio.duplicate',{
 	type: 'action',

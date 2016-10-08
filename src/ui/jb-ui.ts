@@ -61,17 +61,23 @@ class jbComponent {
 			this.factory = factory_hash[this.hashkey()] = compiler.compileComponentSync(this.comp || this.createComp());
 		} catch (e) {
 			jb.logError('ng compilation error',this, e);
-			throw e;
+			return compiler.compileComponentSync(this.nullComp());
+			//throw e;
 		}
 		return this.factory;
 	}
 	registerMethods(cmp_ref,parent) { // should be called by the instantiator
 		var cmp = cmp_ref.hostView._view._Cmp_0_4;
 		cmp.parentCmp = parent;
-		cmp.ctx = this.ctx;
+		var ctx = this.ctx;
+		cmp.ctx = ctx;
 		cmp.methodHandler = this.methodHandler;
+	  	var elem = cmp_ref._hostElement.nativeElement;
+	  	elem.setAttribute('jb-ctx',ctx.id);
+		cleanCtxDictionary();
+		jbart.ctxDictionary[ctx.id] = ctx;
+
 		if (this.cssFixes.length > 0) {
-		  	var elem = cmp_ref._hostElement.nativeElement;
 		  	var ngAtt = Array.from(elem.attributes).map(x=>x.name)
 		  		.filter(x=>x.match(/_ng/))[0];
 
@@ -88,8 +94,15 @@ class jbComponent {
 	hashkey() {
 		return JSON.stringify(jb.extend({},this.annotations,{
 			directives: '',
-			host: jb.extend({},this.annotations.host || {},{ 'jb-ctx': '' }),
+			host: jb.extend({},this.annotations.host || {}), // { 'jb-ctx': '' }
 		}));
+	}
+	nullComp() {
+	    var Cmp = function() {}
+		Cmp = Reflect.decorate([
+			Component({selector: 'div', template: '<div></div>'}),
+		], Cmp);
+		return Cmp;
 	}
 	createComp() {
 	    this.jbExtend({directives: [NgClass, NgStyle, jbComp, PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES] });
@@ -162,11 +175,9 @@ class jbComponent {
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
 
-		cleanCtxDictionary();
 //		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
 //		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
-		jb.path(options, ['atts','jb-ctx'], context.id); // for pick & edit
-		jbart.ctxDictionary[context.id] = context;
+//		jb.path(options, ['atts','jb-ctx'], context.id); // for pick & edit
 
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
@@ -418,8 +429,8 @@ export class jbComp {
 					return [];
 				})
 				.startWith(this.comp)
-				.filter(x=>
-					x)
+				.filter(comp=>
+					comp)
 				.subscribe(comp=> {
 					this.draw(comp);
 					if (comp != this.comp) // changed

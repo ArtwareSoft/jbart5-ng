@@ -79,7 +79,8 @@ jb.component('rxLog',{
 	params: [
 		{ id: 'pipe', as: 'observable' }
 	],
-	impl: (ctx,pipe) => pipe.subscribe(x=>console.log(x.data))
+	impl: (ctx,pipe) => 
+		pipe.subscribe(x=>console.log(x.data))
 })
 
 jb.component('rxPipe', {

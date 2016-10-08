@@ -274,17 +274,21 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         }
                         catch (e) {
                             jb_core_1.jb.logError('ng compilation error', this, e);
-                            throw e;
+                            return compiler.compileComponentSync(this.nullComp());
                         }
                     return this.factory;
                 };
                 jbComponent.prototype.registerMethods = function (cmp_ref, parent) {
                     var cmp = cmp_ref.hostView._view._Cmp_0_4;
                     cmp.parentCmp = parent;
-                    cmp.ctx = this.ctx;
+                    var ctx = this.ctx;
+                    cmp.ctx = ctx;
                     cmp.methodHandler = this.methodHandler;
+                    var elem = cmp_ref._hostElement.nativeElement;
+                    elem.setAttribute('jb-ctx', ctx.id);
+                    cleanCtxDictionary();
+                    jbart.ctxDictionary[ctx.id] = ctx;
                     if (this.cssFixes.length > 0) {
-                        var elem = cmp_ref._hostElement.nativeElement;
                         var ngAtt = Array.from(elem.attributes).map(function (x) { return x.name; })
                             .filter(function (x) { return x.match(/_ng/); })[0];
                         var css = this.cssFixes
@@ -300,8 +304,15 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 jbComponent.prototype.hashkey = function () {
                     return JSON.stringify(jb_core_1.jb.extend({}, this.annotations, {
                         directives: '',
-                        host: jb_core_1.jb.extend({}, this.annotations.host || {}, { 'jb-ctx': '' }),
+                        host: jb_core_1.jb.extend({}, this.annotations.host || {}),
                     }));
+                };
+                jbComponent.prototype.nullComp = function () {
+                    var Cmp = function () { };
+                    Cmp = Reflect.decorate([
+                        core_1.Component({ selector: 'div', template: '<div></div>' }),
+                    ], Cmp);
+                    return Cmp;
                 };
                 jbComponent.prototype.createComp = function () {
                     this.jbExtend({ directives: [common_1.NgClass, common_1.NgStyle, jbComp, portal_directives_1.PORTAL_DIRECTIVES, ripple_1.MD_RIPPLE_DIRECTIVES] });
@@ -378,11 +389,9 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 jbComponent.prototype.jbCtrl = function (context) {
                     var _this = this;
                     var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
-                    cleanCtxDictionary();
                     //		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
                     //		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
-                    jb_core_1.jb.path(options, ['atts', 'jb-ctx'], context.id); // for pick & edit
-                    jbart.ctxDictionary[context.id] = context;
+                    //		jb.path(options, ['atts','jb-ctx'], context.id); // for pick & edit
                     (context.params.features && context.params.features(context) || []).forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
@@ -561,8 +570,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         return [];
                     })
                         .startWith(this.comp)
-                        .filter(function (x) {
-                        return x;
+                        .filter(function (comp) {
+                        return comp;
                     })
                         .subscribe(function (comp) {
                         _this.draw(comp);

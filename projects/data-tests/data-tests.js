@@ -2,7 +2,7 @@ jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-co
 
 jb.component('data-test.join', {
 	 impl :{$: 'data-test', 
-		calculate: [ {$list: [1,2]}, {$: 'join'} ],
+		calculate: {$pipeline: [ {$list: [1,2]}, {$: 'join'} ]},
 		expectedResult :{$: 'contains', text: '1,2' }
 	},
 })

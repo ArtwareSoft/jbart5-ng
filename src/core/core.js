@@ -25,9 +25,8 @@ function jb_run(context,parentParam,settings) {
       case 'function': return jb_tojstype(profile(context),jstype, context);
       case 'null': return jb_tojstype(null,jstype, context);
       case 'ignore': return context.data;
-      case 'pipeline': return jb_tojstype(jbart.comps.pipeline.impl(jb_ctx(context,{profile: { items : profile },path:''})),jstype, context);
-      case 'rx-pipeline': return jb_tojstype(jbart.comps.rxPipe.impl(jb_ctx(context,{profile: { items : profile },path:''})),jstype,context);
-      case 'foreach': return profile.forEach(function(inner,i) { jb_run(jb_ctx(context,{profile: inner, path: i})) });
+      case 'list': { debugger; return profile.map(function(inner,i) { jb_run(jb_ctx(context,{profile: inner, path: i})) }) };
+      case 'runActions': return jbart.comps.runActions.impl(jb_ctx(context,{profile: { actions : profile },path:''}));
       case 'if': 
 		return jb_run(run.ifContext, run.IfParentParam) ? 
           jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam);      
@@ -109,18 +108,6 @@ function jb_prepareParams(comp,profile,ctx) {
       else 
         return { name: p, type: 'run', context: jb_ctx(ctx,{profile: valOrDefault, path: p}), param: param };
   })
-
-  // function jb_funcDynamicParam(ctx,profileToRun,param,path) {
-  //    if (param && param.type && param.type.indexOf('[') != -1 && Array.isArray(profileToRun)) // array
-  //     var res = jb_func(param.id,(ctx2,data2) => 
-  //       jb_flattenArray(profileToRun.map((prof,i)=>
-  //         (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i))))
-  //   else // single
-  //     var res = jb_func(param.id,(ctx2,data2) => 
-  //       profileToRun && (ctx2||ctx).setData(data2).runInner(profileToRun,param,path))
-  //   return res;
-  // }
-
 }
 
 function jb_prepare(context,parentParam) {
@@ -142,13 +129,11 @@ function jb_prepare(context,parentParam) {
 
   if (isArray) {
     if (!profile.length) return { type: 'null' };
-    if (!parentParam || !parentParam.type || parentParam.type === 'data' || parentParam.type === 'boolean' ) { // pipeline as default for array
-      profile.sugar = true;
-      return { type: (parentParam && parentParam.as === 'observable') ? 'rx-pipeline' : 'pipeline' };
-    }
+    if (!parentParam || !parentParam.type || parentParam.type === 'data' ) //  as default for array
+      return { type: 'list' };
     if (parentParam_type === 'action' || parentParam_type === 'action[]' && profile.isArray) {
       profile.sugar = true;
-      return { type: 'foreach' };
+      return { type: 'runActions' };
     }
   } else if (profile.$if) 
   return {
@@ -294,7 +279,8 @@ function jb_evalExpressionPart(expressionPart,context,jstype) {
       item = item[index];
     else
       item = null; // no match
-    if (!item) return item;	// 0 should return 0
+    if (!item) 
+      return item;	// 0 should return 0
   }
   return item;
 }
@@ -322,8 +308,10 @@ function jb_bool_expression(expression, context) {
   var op = parts[2].trim();
 
   if (op == '==' || op == '!=' || op == '$=' || op == '^=') {
-    var p1 = jb_expression(trim(parts[1]), context, {as: 'string'});
-    var p2 = jb_expression(trim(parts[3]), context, {as: 'string'});
+    var p1 = jb_tostring(jb_expression(trim(parts[1]), context, {as: 'string'}))
+    var p2 = jb_tostring(jb_expression(trim(parts[3]), context, {as: 'string'}))
+    // var p1 = jb_expression(trim(parts[1]), context, {as: 'string'});
+    // var p2 = jb_expression(trim(parts[3]), context, {as: 'string'});
     p2 = (p2.match(/^["'](.*)["']/) || [,p2])[1]; // remove quotes
     if (op == '==') return p1 == p2;
     if (op == '!=') return p1 != p2;

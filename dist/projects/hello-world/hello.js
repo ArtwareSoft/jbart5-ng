@@ -15,11 +15,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: {}
                 }
             });
-            jb_core_1.jb.component('hello-world.main', {
+            jb_core_1.jb.component('hello-world.main1', {
                 type: 'control',
                 impl: { $: 'label', title: '$log:hello main' }
             });
-            jb_core_1.jb.component('hello-world.main1', {
+            jb_core_1.jb.component('hello-world.main', {
                 type: 'control',
                 impl: { $: 'group',
                     title: 'main',

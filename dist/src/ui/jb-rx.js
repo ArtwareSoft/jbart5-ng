@@ -130,7 +130,9 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
                 params: [
                     { id: 'pipe', as: 'observable' }
                 ],
-                impl: function (ctx, pipe) { return pipe.subscribe(function (x) { return console.log(x.data); }); }
+                impl: function (ctx, pipe) {
+                    return pipe.subscribe(function (x) { return console.log(x.data); });
+                }
             });
             jb_1.jb.component('rxPipe', {
                 type: 'rx.elem',

@@ -32,10 +32,10 @@ jb.component('studio.choose-project', {
         style :{$: 'editable-text.md-input', width: '260' }
       }, 
       {$: 'itemlist', 
-        items: [
+        items: { $pipeline: [
           '%$projects%', 
           {$: 'search-filter', pattern: '%$globals/project_pattern%' }
-        ], 
+        ]}, 
         itemVariable: 'project', 
         style :{$: 'itemlist.ul-li' }, 
         controls :{$: 'button', 

@@ -7,9 +7,13 @@ import {parentPath} from './studio-path';
 
 
 export class Probe {
-  constructor(public context, public forTests) {
+  constructor(ctx, public forTests) {
+    if (ctx.probe)
+      debugger;
+
+    this.context = ctx.ctx({});
     this.probe = {};
-    context.probe = this;
+    this.context.probe = this;
     this.circuit = this.context.profile;
   }
 

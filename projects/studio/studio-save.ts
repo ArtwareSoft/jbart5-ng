@@ -15,7 +15,7 @@ jb.component('studio.saveComponents', {
 	params: [
 		{ id: 'force',as: 'boolean', type: 'boolean' }
 	],
-	impl :{$rxLog : [
+	impl :{$rxLog : {$rxPipe: [
 			ctx => jb.entries(modified).map(x=>
 				({key:x[0],val:x[1]})),
 			ctx => {
@@ -41,7 +41,7 @@ jb.component('studio.saveComponents', {
 					}
 				)
 			}
-		], 
+		]}, 
 		$vars: {
 			force: '%$force%'
 		}

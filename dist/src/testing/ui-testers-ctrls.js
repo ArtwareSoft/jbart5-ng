@@ -46,18 +46,18 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                             counter: 0,
                             failures: '',
                         },
-                        tests: ['%$window.jbart.comps%',
-                            { $: 'objectToArray' },
-                            { $filter: { $: 'studio.is-of-type', type: 'test', path: '%id%' } },
-                            { $filter: { $: 'contains', allText: '%id%', text: '.' } },
-                            { $filter: { $or: [{ $: 'equals', item1: '%$module%', item2: { $: 'prefix', text: '%id%', separator: '.' } }, { $isEmpty: '%$module%' }] } },
-                        ],
-                        parallel_tests: ['%$tests%',
-                            { $filter: { $: 'notEquals', item1: 'path-test', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
-                        ],
-                        serial_tests: ['%$tests%',
-                            { $filter: { $: 'equals', item1: 'path-test', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
-                        ],
+                        tests: { $pipeline: ['%$window.jbart.comps%',
+                                { $: 'objectToArray' },
+                                { $filter: { $: 'studio.is-of-type', type: 'test', path: '%id%' } },
+                                { $filter: { $: 'contains', allText: '%id%', text: '.' } },
+                                { $filter: { $or: [{ $: 'equals', item1: '%$module%', item2: { $: 'prefix', text: '%id%', separator: '.' } }, { $isEmpty: '%$module%' }] } },
+                            ] },
+                        parallel_tests: { $pipeline: ['%$tests%',
+                                { $filter: { $: 'notEquals', item1: 'path-test', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
+                            ] },
+                        serial_tests: { $pipeline: ['%$tests%',
+                                { $filter: { $: 'equals', item1: 'path-test', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
+                            ] },
                         total: function (ctx) {
                             return ctx.exp('%$tests%')
                                 .reduce(function (acc, test) { return acc + (test.val.impl.$ == 'jb-path-test1' ? 2 : 1); }, 0);
@@ -71,27 +71,27 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         { $: 'label', title: '%$tst/counter% of %$total%' },
                         { $: 'itemlog',
                             counter: '%$tst/counter%',
-                            items: [
-                                '%$parallel_tests%',
-                                // ctx => 
-                                // 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
-                                { $rxParallelKeepOrder: function (ctx) {
-                                        return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
-                                    } },
-                                { $: 'rx.concat',
-                                    items: [
-                                        '%$serial_tests%',
-                                        function (ctx) {
+                            items: { $: 'rxPipe', items: [
+                                    '%$parallel_tests%',
+                                    // ctx => 
+                                    // 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
+                                    { $rxParallelKeepOrder: function (ctx) {
                                             return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
-                                        },
-                                    ]
-                                },
-                                function (ctx) {
-                                    if (!ctx.data.success)
-                                        ctx.vars.tst.failures = (ctx.vars.tst.failures || 0) + 1;
-                                    return ctx.data;
-                                }
-                            ],
+                                        } },
+                                    { $: 'rx.concat',
+                                        items: [
+                                            '%$serial_tests%',
+                                            function (ctx) {
+                                                return ctx.setVars({ testID: ctx.data.id }).run(ctx.data.val.impl);
+                                            },
+                                        ]
+                                    },
+                                    function (ctx) {
+                                        if (!ctx.data.success)
+                                            ctx.vars.tst.failures = (ctx.vars.tst.failures || 0) + 1;
+                                        return ctx.data;
+                                    }
+                                ] },
                             controls: { $: 'ui-tests.show-one-test' }
                         }
                     ]

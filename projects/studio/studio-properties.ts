@@ -7,7 +7,7 @@ import {compAsStrFromPath,modifyOperationsEm,notifyModification,pathChangesEm} f
 jb.component('studio.open-properties', {
   type: 'action', 
   impl :{$: 'openDialog', 
-    title: [
+    title: { $pipeline: [
       {$: 'object', 
         title :{$: 'studio.short-title', 
           path :{$: 'studio.currentProfilePath' }
@@ -17,7 +17,7 @@ jb.component('studio.open-properties', {
         }
       }, 
       'Properties of %comp% %title%'
-    ], 
+    ]}, 
     style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '500' }, 
     content :{$: 'studio.properties', 
       path :{$: 'studio.currentProfilePath' }
@@ -47,10 +47,10 @@ jb.component('studio.properties', {
     style :{$: 'group.studio-properties-accordion' }, 
     controls: [
       {$: 'group', 
-        title: [
+        title: { $pipeline: [
           {$: 'studio.val', path: '%$path%' }, 
           {$: 'count', 
-            items: [
+            items: { $pipeline: [
               {$: 'objectProperties' }, 
               {$: 'filter', 
                 filter :{$: 'notEquals', item1: '%%', item2: 'features' }
@@ -61,30 +61,30 @@ jb.component('studio.properties', {
               {$: 'filter', 
                 filter :{$: 'notEquals', item1: '%%', item2: 'controls' }
               }
-            ]
+            ]}
           }, 
           'Properties (%%)'
-        ], 
+        ]}, 
         style :{$: 'property-sheet.studio-properties' }, 
         controls :{$: 'dynamic-controls', 
-          controlItems: [
+          controlItems: { $pipeline: [
             {$: 'studio.non-control-children', path: '%$path%' }, 
             {$: 'filter', 
               filter :{$: 'not', 
                 of :{$: 'endsWith', endsWith: '~features', text: '%%' }
               }
             }
-          ], 
+          ]}, 
           genericControl :{$: 'studio.property-field', path: '%$controlItem%' }
         }, 
         features :{$: 'group.studio-watch-path', path: '%$path%' }
       }, 
       {$: 'group', 
-        title: [
+        title: { $pipeline: [
           {$: 'studio.val', path: '%$path%' }, 
           {$: 'count', items: '%features%' }, 
           'Features (%%)'
-        ], 
+        ]}, 
         features :{$: 'group.studio-watch-path', path: '%$path%' }, 
         controls :{$: 'studio.property-array', path: '%$path%~features' }
       }

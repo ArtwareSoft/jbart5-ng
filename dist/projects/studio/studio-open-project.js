@@ -35,10 +35,10 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             style: { $: 'editable-text.md-input', width: '260' }
                         },
                         { $: 'itemlist',
-                            items: [
-                                '%$projects%',
-                                { $: 'search-filter', pattern: '%$globals/project_pattern%' }
-                            ],
+                            items: { $pipeline: [
+                                    '%$projects%',
+                                    { $: 'search-filter', pattern: '%$globals/project_pattern%' }
+                                ] },
                             itemVariable: 'project',
                             style: { $: 'itemlist.ul-li' },
                             controls: { $: 'button',

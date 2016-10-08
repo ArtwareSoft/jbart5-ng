@@ -1,6 +1,6 @@
 jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
 
-jb.resource('material-demo','demos',{
+jb.resource('material-demo','demos-enrichment',{
 	button: {
 		selectors: '[md-button],[md-raised-button],[md-mini-fab],[md-icon-button],[md-fab]',
 	},

@@ -60,7 +60,7 @@ jb.component('studio.property-toobar', {
           style :{$: 'button.md-icon-12', icon: 'build' },
           features :{$: 'hidden', 
             showCondition: {$: 'equals', 
-              item1: [ {$: 'studio.param-def', path: '%$path%' }, '%as%'],
+              item1: { $pipeline: [ {$: 'studio.param-def', path: '%$path%' }, '%as%']},
               item2: 'string'
             }
           },

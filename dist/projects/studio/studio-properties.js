@@ -17,17 +17,17 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             jb_core_1.jb.component('studio.open-properties', {
                 type: 'action',
                 impl: { $: 'openDialog',
-                    title: [
-                        { $: 'object',
-                            title: { $: 'studio.short-title',
-                                path: { $: 'studio.currentProfilePath' }
+                    title: { $pipeline: [
+                            { $: 'object',
+                                title: { $: 'studio.short-title',
+                                    path: { $: 'studio.currentProfilePath' }
+                                },
+                                comp: { $: 'studio.comp-name',
+                                    path: { $: 'studio.currentProfilePath' }
+                                }
                             },
-                            comp: { $: 'studio.comp-name',
-                                path: { $: 'studio.currentProfilePath' }
-                            }
-                        },
-                        'Properties of %comp% %title%'
-                    ],
+                            'Properties of %comp% %title%'
+                        ] },
                     style: { $: 'dialog.studio-floating', id: 'studio-properties', width: '500' },
                     content: { $: 'studio.properties',
                         path: { $: 'studio.currentProfilePath' }
@@ -55,44 +55,44 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     style: { $: 'group.studio-properties-accordion' },
                     controls: [
                         { $: 'group',
-                            title: [
-                                { $: 'studio.val', path: '%$path%' },
-                                { $: 'count',
-                                    items: [
-                                        { $: 'objectProperties' },
-                                        { $: 'filter',
-                                            filter: { $: 'notEquals', item1: '%%', item2: 'features' }
-                                        },
-                                        { $: 'filter',
-                                            filter: { $: 'notEquals', item1: '%%', item2: '$' }
-                                        },
-                                        { $: 'filter',
-                                            filter: { $: 'notEquals', item1: '%%', item2: 'controls' }
-                                        }
-                                    ]
-                                },
-                                'Properties (%%)'
-                            ],
+                            title: { $pipeline: [
+                                    { $: 'studio.val', path: '%$path%' },
+                                    { $: 'count',
+                                        items: { $pipeline: [
+                                                { $: 'objectProperties' },
+                                                { $: 'filter',
+                                                    filter: { $: 'notEquals', item1: '%%', item2: 'features' }
+                                                },
+                                                { $: 'filter',
+                                                    filter: { $: 'notEquals', item1: '%%', item2: '$' }
+                                                },
+                                                { $: 'filter',
+                                                    filter: { $: 'notEquals', item1: '%%', item2: 'controls' }
+                                                }
+                                            ] }
+                                    },
+                                    'Properties (%%)'
+                                ] },
                             style: { $: 'property-sheet.studio-properties' },
                             controls: { $: 'dynamic-controls',
-                                controlItems: [
-                                    { $: 'studio.non-control-children', path: '%$path%' },
-                                    { $: 'filter',
-                                        filter: { $: 'not',
-                                            of: { $: 'endsWith', endsWith: '~features', text: '%%' }
+                                controlItems: { $pipeline: [
+                                        { $: 'studio.non-control-children', path: '%$path%' },
+                                        { $: 'filter',
+                                            filter: { $: 'not',
+                                                of: { $: 'endsWith', endsWith: '~features', text: '%%' }
+                                            }
                                         }
-                                    }
-                                ],
+                                    ] },
                                 genericControl: { $: 'studio.property-field', path: '%$controlItem%' }
                             },
                             features: { $: 'group.studio-watch-path', path: '%$path%' }
                         },
                         { $: 'group',
-                            title: [
-                                { $: 'studio.val', path: '%$path%' },
-                                { $: 'count', items: '%features%' },
-                                'Features (%%)'
-                            ],
+                            title: { $pipeline: [
+                                    { $: 'studio.val', path: '%$path%' },
+                                    { $: 'count', items: '%features%' },
+                                    'Features (%%)'
+                                ] },
                             features: { $: 'group.studio-watch-path', path: '%$path%' },
                             controls: { $: 'studio.property-array', path: '%$path%~features' }
                         }

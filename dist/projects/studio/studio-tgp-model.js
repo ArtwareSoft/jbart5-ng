@@ -258,9 +258,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 TgpModel.prototype.newComp = function (path, args) {
                     jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
                 };
-                TgpModel.prototype.wrapWithPipeline = function (path) {
-                    jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), [studio_path_1.profileFromPath(path)]);
-                };
+                // wrapWithPipeline(path) {
+                // 	jb.writeValue(profileRefFromPath(path),[ profileFromPath(path) ]);
+                // }
                 TgpModel.prototype.wrapWithGroup = function (path) {
                     var result = { $: 'group', controls: [studio_path_1.profileFromPath(path)] };
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);

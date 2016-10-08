@@ -271,9 +271,9 @@ export class TgpModel {
         jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
 	}
 
-	wrapWithPipeline(path) {
-		jb.writeValue(profileRefFromPath(path),[ profileFromPath(path) ]);
-	}
+	// wrapWithPipeline(path) {
+	// 	jb.writeValue(profileRefFromPath(path),[ profileFromPath(path) ]);
+	// }
 
 	wrapWithGroup(path) {
 		var result = { $: 'group', controls: [ profileFromPath(path) ] };

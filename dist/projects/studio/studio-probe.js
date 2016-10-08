@@ -77,11 +77,13 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
             }],
         execute: function() {
             Probe = (function () {
-                function Probe(context, forTests) {
-                    this.context = context;
+                function Probe(ctx, forTests) {
                     this.forTests = forTests;
+                    if (ctx.probe)
+                        debugger;
+                    this.context = ctx.ctx({});
                     this.probe = {};
-                    context.probe = this;
+                    this.context.probe = this;
                     this.circuit = this.context.profile;
                 }
                 Probe.prototype.runCircuit = function (pathToTrace) {

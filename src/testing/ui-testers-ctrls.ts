@@ -38,18 +38,18 @@ jb.component('ui-tests.show-tests', {
 				counter: 0,
 				failures: '',
 			},
-			tests: ['%$window.jbart.comps%',
+			tests: {$pipeline: ['%$window.jbart.comps%',
 				{ $: 'objectToArray' },
 				{ $filter: {$: 'studio.is-of-type', type: 'test', path: '%id%'} },
 				{ $filter: {$: 'contains', allText: '%id%', text: '.' } },
 				{ $filter: {$or: [{$: 'equals', item1: '%$module%', item2: {$: 'prefix', text: '%id%', separator: '.' } }, {$isEmpty: '%$module%'} ]} },
-			],
-			parallel_tests: [ '%$tests%', 
+			]},
+			parallel_tests: {$pipeline: [ '%$tests%', 
 				{$filter: {$: 'notEquals', item1: 'path-test', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
-			],
-			serial_tests: [ '%$tests%', 
+			]},
+			serial_tests: {$pipeline:[ '%$tests%', 
 				{$filter: {$: 'equals', item1: 'path-test', item2: {$: 'prefix', text: '%id%', separator: '.' } }},
-			],
+			]},
 
 			total: ctx =>
 				ctx.exp('%$tests%')
@@ -64,7 +64,7 @@ jb.component('ui-tests.show-tests', {
  			{$: 'label', title: '%$tst/counter% of %$total%' },
  			{$: 'itemlog',
  			counter: '%$tst/counter%',
-			items: [
+			items: {$: 'rxPipe', items: [
 				'%$parallel_tests%',
 				// ctx => 
 				// 	ctx.setVars({testID:ctx.data.id}).run(ctx.data.val.impl),
@@ -82,7 +82,7 @@ jb.component('ui-tests.show-tests', {
 						ctx.vars.tst.failures = (ctx.vars.tst.failures || 0)+1;
 					return ctx.data;
 				}
-			],
+			]},
 			controls :{$: 'ui-tests.show-one-test' } 
 		}
 	]
