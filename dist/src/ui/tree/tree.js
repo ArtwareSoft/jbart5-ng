@@ -204,7 +204,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                         var keyDownNoAlts = cmp.keydown.filter(function (e) {
                             return !e.ctrlKey && !e.altKey;
                         });
-                        cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
+                        tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
                             cmp.elementRef.nativeElement.focus();
                             return false;
                         });

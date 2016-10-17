@@ -37,7 +37,7 @@ jb.component('studio.profile-as-text', {
 				} else {
 					var newVal = value.match(/^\s*({|\[)/) ? evalProfile(value) : value;
 					if (newVal != null)
-						model.modify(model.writeValue, path, { value: newVal },context);
+						model.modify(model.writeValue, path, { value: newVal },ctx);
 				}
 			}
 		})

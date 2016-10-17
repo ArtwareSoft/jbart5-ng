@@ -188,20 +188,7 @@ class CompOption {
     }
     writeValue(ctx) {
       ctx.run({$:'writeValue', to: {$: 'studio.comp-name-ref', path: '%$suggestionCtx.path%' }, value: this.toPaste });
-      this.expandAndSelectInjBEditorTree(ctx);
-    }
-    expandAndSelectInjBEditorTree(ctx) {
-      var tree = ctx.vars.$tree;
-      if (!tree) return;
-      tree.expanded[tree.selected] = true;
-      jb.delay(100).then(()=>{
-        var firstChild = tree.nodeModel.children(tree.selected)[0];
-        if (firstChild) {
-          ctx.run({$:'writeValue', to: '%$globals/jb_editor_selection%', value: firstChild });
-          jb_ui.apply(ctx);
-          jb.delay(100);
-        }
-      })
+      ctx.run({$:'studio.expand-and-select-first-child-in-jb-editor' });
     }
 }
 

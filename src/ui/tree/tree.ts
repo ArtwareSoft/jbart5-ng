@@ -197,7 +197,7 @@ jb.component('tree.keyboard-selection', {
 				var keyDownNoAlts = cmp.keydown.filter(e=> 
 					!e.ctrlKey && !e.altKey);
 
-				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {
+				tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {
 					cmp.elementRef.nativeElement.focus(); 
 					return false;
 				});

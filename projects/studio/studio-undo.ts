@@ -16,14 +16,14 @@ class Undo {
 		if (this.index > 0) {
 			this.index--;
 			var change = this.history[this.index];
-			setComp(change.before,change.jbart);
+			setComp(change.before,change.ctx.win().jbart);
 			jb_ui.apply(ctx);
 		}
 	}
 	redo(ctx) {
 		if (this.index < this.history.length) {
 			var change = this.history[this.index];
-			setComp(change.after,change.jbart);
+			setComp(change.after,change.ctx.win().jbart);
 			this.index++;
 			jb_ui.apply(ctx);
 		}

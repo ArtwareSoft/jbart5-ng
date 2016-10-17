@@ -42,14 +42,14 @@ System.register(['jb-core', 'jb-ui', './studio-utils'], function(exports_1, cont
                     if (this.index > 0) {
                         this.index--;
                         var change = this.history[this.index];
-                        setComp(change.before, change.jbart);
+                        setComp(change.before, change.ctx.win().jbart);
                         jb_ui.apply(ctx);
                     }
                 };
                 Undo.prototype.redo = function (ctx) {
                     if (this.index < this.history.length) {
                         var change = this.history[this.index];
-                        setComp(change.after, change.jbart);
+                        setComp(change.after, change.ctx.win().jbart);
                         this.index++;
                         jb_ui.apply(ctx);
                     }

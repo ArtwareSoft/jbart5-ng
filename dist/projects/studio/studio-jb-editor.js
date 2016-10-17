@@ -1,11 +1,14 @@
-System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1;
+    var jb_core_1, jb_ui, studio_tgp_model_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
+            },
+            function (jb_ui_1) {
+                jb_ui = jb_ui_1;
             },
             function (studio_tgp_model_1_1) {
                 studio_tgp_model_1 = studio_tgp_model_1_1;
@@ -38,7 +41,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     style: { $: 'layout.horizontal', spacing: 3 },
                     controls: [
                         { $: 'tree',
-                            cssClass: 'jb-control-tree studio-control-tree',
+                            cssClass: 'jb-editor jb-control-tree studio-control-tree',
                             nodeModel: { $: 'studio.jb-editor.nodes', path: '%$path%' },
                             features: [
                                 { $: 'tree.selection',
@@ -359,8 +362,34 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     },
                     genericControl: { $: 'pulldown.menu-item',
                         title: 'Wrap with %$controlItem%',
-                        action: { $: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' }
+                        action: [
+                            { $: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' },
+                            { $: 'studio.expand-and-select-first-child-in-jb-editor' }
+                        ]
                     },
+                }
+            });
+            jb_core_1.jb.component('studio.expand-and-select-first-child-in-jb-editor', {
+                type: 'action',
+                impl: function (ctx) {
+                    var ctxOfTree = ctx.vars.$tree ? ctx : jbart.ctxDictionary[$('.jb-editor').attr('jb-ctx')];
+                    var tree = ctxOfTree.vars.$tree;
+                    // if (!tree) {
+                    //   var ctxId = $('.jb-editor').attr('jb-ctx');
+                    //   var ctx = jbart.ctxDictionary[ctxId];
+                    //   tree = ctx && ctx.vars.$tree;
+                    // }
+                    if (!tree)
+                        return;
+                    tree.expanded[tree.selected] = true;
+                    jb_core_1.jb.delay(100).then(function () {
+                        var firstChild = tree.nodeModel.children(tree.selected)[0];
+                        if (firstChild) {
+                            tree.selectionEmitter.next(firstChild);
+                            tree.regainFocus && tree.regainFocus();
+                            jb_ui.apply(ctx);
+                        }
+                    });
                 }
             });
         }

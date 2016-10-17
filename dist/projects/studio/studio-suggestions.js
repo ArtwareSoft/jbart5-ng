@@ -212,21 +212,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 };
                 CompOption.prototype.writeValue = function (ctx) {
                     ctx.run({ $: 'writeValue', to: { $: 'studio.comp-name-ref', path: '%$suggestionCtx.path%' }, value: this.toPaste });
-                    this.expandAndSelectInjBEditorTree(ctx);
-                };
-                CompOption.prototype.expandAndSelectInjBEditorTree = function (ctx) {
-                    var tree = ctx.vars.$tree;
-                    if (!tree)
-                        return;
-                    tree.expanded[tree.selected] = true;
-                    jb_core_1.jb.delay(100).then(function () {
-                        var firstChild = tree.nodeModel.children(tree.selected)[0];
-                        if (firstChild) {
-                            ctx.run({ $: 'writeValue', to: '%$globals/jb_editor_selection%', value: firstChild });
-                            jb_ui.apply(ctx);
-                            jb_core_1.jb.delay(100);
-                        }
-                    });
+                    ctx.run({ $: 'studio.expand-and-select-first-child-in-jb-editor' });
                 };
                 return CompOption;
             }());

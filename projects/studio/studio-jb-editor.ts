@@ -33,7 +33,7 @@ jb.component('studio.jb-editor', {
     style :{$: 'layout.horizontal', spacing: 3 }, 
     controls: [
       {$: 'tree', 
-        cssClass: 'jb-control-tree studio-control-tree', 
+        cssClass: 'jb-editor jb-control-tree studio-control-tree', 
         nodeModel :{$: 'studio.jb-editor.nodes', path: '%$path%' }, 
         features: [
           {$: 'tree.selection', 
@@ -361,7 +361,34 @@ jb.component('pulldown.studio-wrap-with', {
             },
             genericControl :{$: 'pulldown.menu-item', 
               title: 'Wrap with %$controlItem%',
-              action :{$: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' }
+              action : [
+                {$: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' },
+                {$:'studio.expand-and-select-first-child-in-jb-editor' }
+              ]
         },
       }
+})
+
+jb.component('studio.expand-and-select-first-child-in-jb-editor', {
+  type: 'action',
+  impl: ctx => {
+    var ctxOfTree = ctx.vars.$tree ? ctx : jbart.ctxDictionary[$('.jb-editor').attr('jb-ctx')];
+    var tree = ctxOfTree.vars.$tree;
+    // if (!tree) {
+    //   var ctxId = $('.jb-editor').attr('jb-ctx');
+    //   var ctx = jbart.ctxDictionary[ctxId];
+    //   tree = ctx && ctx.vars.$tree;
+    // }
+    if (!tree) return;
+    tree.expanded[tree.selected] = true;
+    jb.delay(100).then(()=>{
+      var firstChild = tree.nodeModel.children(tree.selected)[0];
+      if (firstChild) {
+        tree.selectionEmitter.next(firstChild);
+        tree.regainFocus && tree.regainFocus();
+        jb_ui.apply(ctx);
+//        jb.delay(100);
+      }
+    })
+  }
 })

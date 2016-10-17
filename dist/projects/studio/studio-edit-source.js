@@ -50,7 +50,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         else {
                             var newVal = value.match(/^\s*({|\[)/) ? studio_utils_1.evalProfile(value) : value;
                             if (newVal != null)
-                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: newVal }, context);
+                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: newVal }, ctx);
                         }
                     }
                 }); }
