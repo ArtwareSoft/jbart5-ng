@@ -16,6 +16,7 @@ function jb_run(context,parentParam,settings) {
       return;
     var run = jb_prepare(context,parentParam);
     var jstype = parentParam && parentParam.as;
+    context.parentParam = parentParam;
     switch (run.type) {
       case 'booleanExp': return jb_bool_expression(profile, context);
       case 'expression': return jb_tojstype(jb_expression(profile, context,parentParam), jstype, context);
@@ -92,10 +93,10 @@ function jb_prepareParams(comp,profile,ctx) {
         if (arrayParam)
           var func = (ctx2,data2) => 
             jb_flattenArray(valOrDefaultArray.map((prof,i)=>
-              (ctx2||ctx).setData(data2).runInner(prof,param,path+'~'+i)))
+              ctx.extendVars(ctx2,data2).runInner(prof,param,path+'~'+i)))
         else
           var func = (ctx2,data2) => 
-                valOrDefault != null ? (ctx2||ctx).setData(data2).runInner(valOrDefault,param,path) : valOrDefault;
+                valOrDefault != null ? ctx.extendVars(ctx2,data2).runInner(valOrDefault,param,path) : valOrDefault;
 
         Object.defineProperty(func, "name", { value: p }); // for debug
         func.profile = (typeof(val) != "undefined") ? val : (typeof(param.defaultValue) != 'undefined') ? param.defaultValue : null;
@@ -377,11 +378,12 @@ function jb_initJstypes() {
       value = jb_val(value);
       return value;
     },
-    'ref': val=> { 
-      if (val == null) return val;
-      if (val && (val.$jb_parent || val.$jb_val))
-        return val;
-      return { $jb_val: () => val }
+    'ref': function(value) {
+      if (Array.isArray(value)) value = value[0];
+      if (value == null) return value;
+      if (value && (value.$jb_parent || value.$jb_val))
+        return value;
+      return { $jb_val: () => value }
     }
   }
 }

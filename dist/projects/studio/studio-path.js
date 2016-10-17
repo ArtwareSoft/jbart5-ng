@@ -22,12 +22,12 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
             $jb_val: function (value) {
                 if (typeof value == 'undefined')
                     return profileFromPath(this.path);
-                if (profileFromPath(parentPath(this.path)) == profileFromPath(this.path))
-                    var actual_path = parentPath(this.path);
-                else
-                    var actual_path = this.path;
-                var parent = profileFromPath(parentPath(actual_path));
-                parent[actual_path.split('~').pop()] = value;
+                // if (profileFromPath(parentPath(this.path)) == profileFromPath(this.path)) // flatten one-item array
+                // 	var actual_path = parentPath(this.path);
+                // else
+                // 	var actual_path = this.path;
+                var parent = profileFromPath(parentPath(this.path));
+                parent[this.path.split('~').pop()] = value;
             }
         };
         studio_utils_1.pathChangesEm.subscribe(function (fixer) { return ref.path = fixer.fix(ref.path); });
@@ -39,8 +39,7 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
         var comp = studio_utils_1.jbart_base().comps[id] || jbart.comps[id];
         comp = comp && comp.impl;
         if (!comp) {
-            debugger;
-            console.log('can not find path ', path);
+            jb_core_1.jb.logError('profileFromPath: can not find path ', path);
             return;
         }
         var innerPath = path.split('~').slice(1).join('~');

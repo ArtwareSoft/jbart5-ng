@@ -1,12 +1,11 @@
 import {jb} from 'jb-core';
-import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
+import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDeprecatedForms, provideForms } from '@angular/forms';
 import {HTTP_PROVIDERS} from '@angular/http';
 
 import {NgClass,NgStyle} from '@angular/common';
 import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
 import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
-
 
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as jb_dialog from 'jb-ui/dialog';
@@ -21,10 +20,11 @@ export function apply(ctx) {
 }
 
 export function delayOutsideAngular(ctx,func) {
-	return ctx.vars.ngZone.runOutsideAngular(() =>
-		jb.delay(1).then(()=>
-			Promise.resolve(func()))
-	)
+	jb.delay(1,ctx).then(func);
+	// return ctx.vars.ngZone.runOutsideAngular(() =>
+	// 	jb.delay(1).then(()=>
+	// 		Promise.resolve(func()))
+	// )
 }
 
 export function applyPreview(ctx) {
@@ -94,7 +94,7 @@ class jbComponent {
 	hashkey() {
 		return JSON.stringify(jb.extend({},this.annotations,{
 			directives: '',
-			host: jb.extend({},this.annotations.host || {}), // { 'jb-ctx': '' }
+			host: jb.extend({},this.annotations.host || {}),
 		}));
 	}
 	nullComp() {
@@ -108,10 +108,10 @@ class jbComponent {
 	    this.jbExtend({directives: [NgClass, NgStyle, jbComp, PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES] });
 	    if (!this.annotations.selector)	this.annotations.selector = 'div';
 
-	    var Cmp = function(dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef }
+	    var Cmp = function(dcl, elementRef, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.changeDt =  changeDetection }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [Compiler, ElementRef])
+			Reflect.metadata('design:paramtypes', [Compiler, ElementRef, ChangeDetectorRef])
 		], Cmp);
 		Cmp.prototype.ngOnInit = function() {
 			try {
@@ -518,7 +518,7 @@ export class jbComp {
   }
 }
 
-export function twoWayBind(ref) {
+export function twoWayBind(ref,updateOnBlur) {
 	if (!ref) return {
 		bindToCmp: () => {},
 		valueExp: '',
@@ -541,7 +541,9 @@ export function twoWayBind(ref) {
 		  		cmp[modelPath] = jb.val(ref);
 	}
 	// keyup for input change for select & checkbox
-	var modelExp = `[(ngModel)] = "${modelPath}" (change)="jbOnChange($event)" (keyup)="jbOnChange($event)"`;
+	var modelExp = `[(ngModel)]="${modelPath}" (change)="jbOnChange($event)"`;
+	if (!updateOnBlur) 
+		modelExp += ' (keyup)="jbOnChange($event)"';
 
 	return {
 		bindToCmp: bindToCmp,

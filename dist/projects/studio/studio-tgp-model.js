@@ -3,12 +3,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, studio_path_1, studio_utils_1;
     var TgpModel, model;
-    function groups_of_controls(ctrlComps) {
-    }
-    exports_1("groups_of_controls", groups_of_controls);
-    function groups_of_data(dataComps) {
-    }
-    exports_1("groups_of_data", groups_of_data);
     return {
         setters:[
             function (jb_core_1_1) {
@@ -78,7 +72,13 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                             .map(function (x) { return x == 'length' ? val.length : x; })
                             .map(function (k) { return path + '~' + k; });
                     else if (val['$' + compName]) {
-                        return [path + '~$' + compName];
+                        var arr = val['$' + compName];
+                        var res_path = path + '~$' + compName;
+                        if (Array.isArray(arr))
+                            return Object.getOwnPropertyNames(arr)
+                                .map(function (x) { return x == 'length' ? arr.length : x; })
+                                .map(function (k) { return res_path + '~' + k; });
+                        return [res_path];
                     }
                     else if (comp) {
                         var composite = (comp.params || [])
@@ -207,7 +207,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                             path: path,
                             args: args,
                             ctx: ctx,
-                            jbart: studio_utils_1.findjBartToLook(path),
+                            //				jbart: findjBartToLook(path),
                             newComp: before ? false : true
                         });
                     });
@@ -218,13 +218,14 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     if (Array.isArray(parent)) {
                         var index = Number(prop);
                         parent.splice(index, 1);
+                        studio_path_1.pathFixer.fixIndexPath(path, -1);
                     }
                     else {
-                        if (parent[prop] === undefined) {
-                            var pathToDelete = studio_path_1.parentPath(path);
-                            var parent = studio_path_1.profileFromPath(studio_path_1.parentPath(pathToDelete));
-                            var prop = pathToDelete.split('~').pop();
-                        }
+                        // if (parent[prop] === undefined) { // array type with one element
+                        // 	var pathToDelete = parentPath(path);
+                        // 	var parent = profileFromPath(parentPath(pathToDelete));
+                        // 	var prop = pathToDelete.split('~').pop();
+                        // }
                         delete parent[prop];
                     }
                 };
@@ -258,9 +259,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 TgpModel.prototype.newComp = function (path, args) {
                     jbart.previewjbart.comps[path] = jbart.previewjbart.comps[path] || args.profile;
                 };
-                // wrapWithPipeline(path) {
-                // 	jb.writeValue(profileRefFromPath(path),[ profileFromPath(path) ]);
-                // }
                 TgpModel.prototype.wrapWithGroup = function (path) {
                     var result = { $: 'group', controls: [studio_path_1.profileFromPath(path)] };
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
@@ -308,16 +306,16 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return;
                     var result = { $: compName };
                     var existing = studio_path_1.profileFromPath(path);
-                    // copy properties from existing & default values
-                    if (existing && typeof existing == 'object')
-                        (comp.params || []).forEach(function (p) {
-                            if (existing[p.id])
-                                result[p.id] = existing[p.id];
-                            if (typeof p.defaultValue != 'object')
-                                result[p.id] = p.defaultValue;
-                            if (typeof p.defaultValue == 'object' && p.forceDefaultCreation)
-                                result[p.id] = JSON.parse(JSON.stringify(p.defaultValue));
-                        });
+                    (comp.params || []).forEach(function (p) {
+                        if (p.composite)
+                            result[p.id] = [];
+                        if (existing && existing[p.id])
+                            result[p.id] = existing[p.id];
+                        if (p.defaultValue && typeof p.defaultValue != 'object')
+                            result[p.id] = p.defaultValue;
+                        if (p.defaultValue && typeof p.defaultValue == 'object' && (p.forceDefaultCreation || Array.isArray(p.defaultValue)))
+                            result[p.id] = JSON.parse(JSON.stringify(p.defaultValue));
+                    });
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
                 };
                 TgpModel.prototype.insertComp = function (path, args) {
@@ -456,15 +454,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return { newPath: path + '~1' };
                     }
                 };
-                TgpModel.prototype.fixArray = function (path) {
-                    // var val = profileFromPath(path);
-                    // var prop = controlParam(path);
-                    // if (!prop) return;
-                    // var arr = val[prop];
-                    // if (Array.isArray(arr) && arr.length == 1)
-                    // 	val[prop] = arr[0];
-                    //			fixArrayWrapperPath();
-                };
                 TgpModel.prototype.propName = function (path) {
                     if (!isNaN(Number(path.split('~').pop())))
                         return studio_path_1.parentPath(path).split('~').pop().replace(/s$/, '');
@@ -484,178 +473,3 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
         }
     }
 });
-// // ************** components
-// jb.component('studio.short-title',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => model.shortTitle(path)
-// })
-// jb.component('studio.val',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.val(path)
-// })
-// jb.component('studio.is-primitive-value', {
-//   params: [ {id: 'path', as: 'string' } ],
-//   impl: (context,path) => 
-//       typeof model.val(path) == 'string'
-// })
-// jb.component('studio.is-of-type', {
-//   params: [ 
-//   	{ id: 'path', as: 'string', essential: true },
-//   	{ id: 'type', as: 'string', essential: true },
-//   ],
-//   impl: (context,path,_type) => 
-//       model.isOfType(path,_type)
-// })
-// jb.component('studio.PTs-of-type', {
-//   params: [ 
-//   	{ id: 'type', as: 'string', essential: true },
-//   ],
-//   impl: (context,_type) => 
-//       model.PTsOfType(_type)
-// })
-// jb.component('studio.short-title', {
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.shortTitle(path)
-// })
-// jb.component('studio.has-param', {
-// 	params: [ 
-// 		{ id: 'path', as: 'string' }, 
-// 		{ id: 'param', as: 'string' }, 
-// 	],
-// 	impl: (context,path,param) => 
-// 		model.paramDef(path+'~'+param)
-// })
-// jb.component('studio.non-control-children',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.children(path,'non-controls')
-// })
-// jb.component('studio.array-children',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.children(path,'array')
-// })
-// jb.component('studio.comp-name',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => model.compName(path) || ''
-// })
-// jb.component('studio.param-def',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => model.paramDef(path)
-// })
-// jb.component('studio.enum-options',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		((model.paramDef(path) || {}).options ||'').split(',').map(x=>{return {code:x,text:x}})
-// })
-// jb.component('studio.prop-name',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.propName(path)
-// })
-// jb.component('studio.more-params',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-//         model.jbEditorMoreParams(path)
-// })
-// jb.component('studio.comp-name-ref',{
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => { return {
-// 			$jb_val: function(value) {
-// 				if (typeof value == 'undefined') 
-// 					return model.compName(path);
-// 				else
-// 					model.modify(model.setComp, path, { comp: value },context)
-// 			}
-// 		}	
-// 	}
-// })
-// jb.component('studio.insert-comp',{
-// 	type: 'action',
-// 	params: [ 
-// 		{ id: 'path', as: 'string' },
-// 		{ id: 'comp', as: 'string' },
-// 	],
-// 	impl: (context,path,comp) => 
-// 		model.modify(model.insertComp, path, { comp: comp },context)
-// })
-// jb.component('studio.wrap', {
-// 	type: 'action',
-// 	params: [ 
-// 		{ id: 'path', as: 'string' }, 
-// 		{ id: 'compName', as: 'string' } 
-// 	],
-// 	impl: (context,path,compName) => 
-// 		model.modify(model.wrap, path, {compName: compName},context)
-// })
-// jb.component('studio.wrap-with-group', {
-// 	type: 'action',
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.modify(model.wrapWithGroup, path, {},context)
-// })
-// jb.component('studio.add-property', {
-// 	type: 'action',
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.modify(model.addProperty, path, {},context)
-// })
-// jb.component('studio.wrap-with-pipeline', {
-// 	type: 'action',
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.modify(model.wrapWithPipeline, path, {},context)
-// })
-// jb.component('studio.duplicate',{
-// 	type: 'action',
-// 	params: [ 
-// 		{ id: 'path', as: 'string' },
-// 	],
-// 	impl: (context,path) => 
-// 		model.modify(model.duplicate, path, {},context)
-// })
-// jb.component('studio.move-in-array',{
-// 	type: 'action',
-// 	params: [ 
-// 		{ id: 'path', as: 'string' },
-// 		{ id: 'moveUp', type: 'boolean', as: 'boolean'} 
-// 	],
-// 	impl: (context,path,moveUp) => 
-// 		model.modify(model.moveInArray, 
-// 					path, { moveUp: moveUp },context)
-// })
-// jb.component('studio.new-array-item',{
-// 	type: 'action',
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => 
-// 		model.modify(model.addArrayItem, path, {},context)
-// })
-// jb.component('studio.delete',{
-// 	type: 'action',
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => model.modify(model._delete,path,{},context)
-// })
-// jb.component('studio.make-local',{
-// 	type: 'action',
-// 	params: [ {id: 'path', as: 'string' } ],
-// 	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context)
-// })
-// jb.component('studio.project-source',{
-// 	params: [ 
-// 		{ id: 'project', as: 'string', defaultValue: '%$globals/project%' } 
-// 	],
-// 	impl: (context,project) => {
-// 		if (!project) return;
-// 		var comps = jb.entries(jbart_base().comps).map(x=>x[0]).filter(x=>x.indexOf(project) == 0);
-// 		return comps.map(comp=>compAsStr(comp)).join('\n\n')
-// 	}
-// })
-// jb.component('studio.comp-source',{
-// 	params: [ 
-// 		{ id: 'comp', as: 'string', defaultValue: { $: 'studio.currentProfilePath' } } 
-// 	],
-// 	impl: (context,comp) => 
-// 		compAsStr(comp.split('~')[0])
-// })

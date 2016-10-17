@@ -27,22 +27,21 @@ jb.component('studio.open-jb-editor', {
 
 jb.component('studio.jb-editor', {
   type: 'control', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
+  params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
     title: 'main', 
+    style :{$: 'layout.horizontal', spacing: 3 }, 
     controls: [
       {$: 'tree', 
         cssClass: 'jb-control-tree studio-control-tree', 
         nodeModel :{$: 'studio.jb-editor.nodes', path: '%$path%' }, 
         features: [
           {$: 'tree.selection', 
-            autoSelectFirst: true, 
             databind: '%$globals/jb_editor_selection%', 
             onDoubleClick :{$: 'studio.open-jb-edit-property', 
               path: '%$globals/jb_editor_selection%'
-            }
+            }, 
+            autoSelectFirst: true
           }, 
           {$: 'tree.keyboard-selection', 
             onEnter :{$: 'studio.open-jb-edit-property', 
@@ -85,31 +84,61 @@ jb.component('studio.jb-editor', {
         ]
       }, 
       {$: 'group', 
-        title: 'input-output', 
-        controls :{$: 'group', 
-          features :{$: 'group.wait', 
-            for :{$: 'studio.probe', path: '%$globals/jb_editor_selection%' }, 
-            resource: 'probeResult'
-          }, 
-          title: 'wait for probe', 
-          controls :{$: 'itemlist', 
-            items: '%$probeResult/finalResult%', 
+        title: 'watch selection', 
+        controls: [
+          {$: 'group', 
+            title: 'hide if selection empty', 
             controls: [
               {$: 'group', 
-                controls: [
-                  {$: 'studio.data-browse', data: '%in/data%', title: 'in' }, 
-                  {$: 'studio.data-browse', data: '%out%', title: 'out' }
-                ], 
-                title: 'in/out'
+                title: 'watch selection content', 
+                controls :{$: 'group', 
+                  title: 'wait for probe', 
+                  controls :{$: 'itemlist', 
+                    items: '%$probeResult/finalResult%', 
+                    controls: [
+                      {$: 'group', 
+                        title: 'in/out', 
+                        controls: [
+                          {$: 'studio.data-browse', 
+                            data: '%in/data%', 
+                            title: 'in'
+                          }, 
+                          {$: 'studio.data-browse', 
+                            data: '%out%', 
+                            title: 'out'
+                          }
+                        ]
+                      }
+                    ]
+                  }, 
+                  features :{$: 'group.wait', 
+                    for :{$: 'studio.probe', path: '%$globals/jb_editor_selection%' }, 
+                    loadingControl :{$: 'label', title: 'calculating...' }, 
+                    resource: 'probeResult'
+                  }
+                }, 
+                features :{$: 'group.watch', 
+                  data :{$: 'pipeline', 
+                    items: [
+                      {$: 'stringify', 
+                        value :{$: 'studio.val', 
+                          path: '%$globals/jb_editor_selection%'
+                        }
+                      }, 
+                      '%$globals/jb_editor_selection%:%%'
+                    ]
+                  }
+                }
               }
             ], 
-            
+            features :{$: 'group-item.if', 
+              showCondition: '%$globals/jb_editor_selection%'
+            }
           }
-        }, 
+        ], 
         features :{$: 'group.watch', data: '%$globals/jb_editor_selection%' }
       }
-    ], 
-    style :{$: 'layout.horizontal', spacing: 3 }
+    ]
   }
 })
 
@@ -158,29 +187,6 @@ jb.component('studio.open-jb-edit-property', {
   }
 })
 
-jb.component('studio.jb-floating-input', {
-  type: 'control',
-  params: [ {id: 'path', as: 'string' } ],
-  impl :{$: 'editable-text', 
-      databind :{$: 'studio.profile-value-as-text', path: '%$path%' }, 
-      features: [
-        {$: 'studio.undo-support', path: '%$path%' }, 
-        {$: 'css.padding', left: '4', right: '4' }, 
-        {$: 'editable-text.suggestions-input-feature', 
-          mdInput: true,
-          floatingInput: true,
-          path: '%$path%',
-          action :{$: 'studio.jb-open-suggestions', path: '%$path%' },
-          onEnter: [
-            {$: 'closeContainingPopup', OK: true }, 
-            {$: 'tree.regain-focus' }
-          ]  
-        }
-      ], 
-      style :{$: 'editable-text.md-input', width: '400' } 
-    }
-})
-
 jb.component('studio.profile-value-as-text', {
   type: 'data',
   params: [
@@ -196,26 +202,9 @@ jb.component('studio.profile-value-as-text', {
             return val;
           if (model.compName(path))
             return '=' + model.compName(path);
-          return typeof val;
         }
-       
-        var _path = path;
-        // if (path.slice(-2)== '~+') {
-        //   var arrPath = path.slice(0,-2);
-        //   model.modify(model.addArrayItem, arrPath, {}, context);
-        //   var ar = model.val(arrPath);
-        //   _path = arrPath+'~'+ (ar.length-1);
-        // }
-
-        if (value.indexOf('=') == 0) {
-          var comp = value.substr(1);
-          if (comp == 'pipeline')
-            model.modify(model.writeValue, _path, { value: [] },context);  
-          else if (findjBartToLook(_path).comps[comp])
-            model.modify(model.setComp, _path, { comp: value.substr(1) },context);
-        } else {
-          model.modify(model.writeValue, _path, { value: value },context);
-        }
+        else if (value.indexOf('=') != 0)
+          model.modify(model.writeValue, path, { value: value },context);
       }
     })
 })
@@ -234,125 +223,126 @@ jb.component('studio.open-jb-editor-menu', {
 
 jb.component('studio.jb-editor-menu', {
   type: 'control', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
+  params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
-    features :{$: 'group.menu-keyboard-selection', autoFocus: true }, 
     controls: [
       {$: 'dynamic-controls', 
         controlItems :{$: 'studio.more-params', path: '%$path%' }, 
         genericControl :{$: 'pulldown.menu-item', 
-          title: [
-            '%$controlItem%', 
-            {$: 'suffix', separator: '~' }
-          ], 
-          action :{$: 'runActions', 
-            $vars: {
-              nextPath: '%$path%~%$controlItem%',
-            },
-            actions: [
-              {$: 'studio.add-property', path: '%$controlItem%' }, 
-              {$: 'closeContainingPopup' },
-              {$: 'writeValue', value:'%$nextPath%', to: '%$globals/jb_editor_selection%'},
-              {$: 'studio.open-jb-editor-menu', path: '%$nextPath%' }
+          title :{
+            $pipeline: [
+              '%$controlItem%', 
+              {$: 'suffix', separator: '~' }
             ]
           }, 
-          
+          action :{$: 'runActions', 
+            $vars: { nextPath: '%$path%~%$controlItem%' }, 
+            actions: [
+              {$: 'studio.add-property', path: '%$controlItem%' }, 
+              {$: 'closeContainingPopup' }, 
+              {$: 'writeValue', 
+                to: '%$globals/jb_editor_selection%', 
+                value: '%$nextPath%'
+              }, 
+              {$: 'studio.open-jb-editor-menu', path: '%$nextPath%' }
+            ]
+          }
         }
       }, 
       {$: 'divider', 
         style :{$: 'divider.br' }, 
         title: 'divider'
       }, 
-        {$: 'pulldown.menu-item', 
-          $vars: {
-            compName :{$: 'studio.comp-name', path: '%$path%' }
-          }, 
-          title: 'Goto %$compName%', 
-          features :{$: 'hidden', showCondition: '%$compName%' }, 
-          action :{$: 'studio.open-jb-editor', path: '%$compName%' }
+      {$: 'pulldown.menu-item', 
+        $vars: {
+          compName :{$: 'studio.comp-name', path: '%$path%' }
         }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Goto sublime', 
-          action :{$: 'studio.goto-sublime', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item-separator' }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Delete', 
-          icon: 'delete', 
-          shortcut: 'Delete', 
-          action: [
-            {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
-            {$: 'studio.delete', path: '%$path%' }
-          ]
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Copy', 
-          icon: 'copy', 
-          shortcut: 'Ctrl+C', 
-          action :{$: 'studio.copy', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Paste', 
-          icon: 'paste', 
-          shortcut: 'Ctrl+V', 
-          action :{$: 'studio.paste', path: '%$path%' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Undo', 
-          icon: 'undo', 
-          shortcut: 'Ctrl+Z', 
-          action :{$: 'studio.undo' }
-        }, 
-        {$: 'pulldown.menu-item', 
-          title: 'Redo', 
-          icon: 'redo', 
-          shortcut: 'Ctrl+Y', 
-          action :{$: 'studio.redo' }
-        },
+        title: 'Goto %$compName%', 
+        action :{$: 'studio.open-jb-editor', path: '%$compName%' }, 
+        features :{$: 'hidden', showCondition: '%$compName%' }
+      }, 
+      {$: 'studio.goto-sublime', path: '%$path%' }, 
+      {$: 'pulldown.menu-item-separator' }, 
+      {$: 'pulldown.menu-item', 
+        title: 'Delete', 
+        icon: 'delete', 
+        shortcut: 'Delete', 
+        action: [
+          {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
+          {$: 'studio.delete', path: '%$path%' }
+        ]
+      }, 
+      {$: 'pulldown.menu-item', 
+        title: 'Copy', 
+        icon: 'copy', 
+        shortcut: 'Ctrl+C', 
+        action :{$: 'studio.copy', path: '%$path%' }
+      }, 
+      {$: 'pulldown.menu-item', 
+        title: 'Paste', 
+        icon: 'paste', 
+        shortcut: 'Ctrl+V', 
+        action :{$: 'studio.paste', path: '%$path%' }
+      }, 
+      {$: 'pulldown.menu-item', 
+        title: 'Undo', 
+        icon: 'undo', 
+        shortcut: 'Ctrl+Z', 
+        action :{$: 'studio.undo' }
+      }, 
+      {$: 'pulldown.menu-item', 
+        title: 'Redo', 
+        icon: 'redo', 
+        shortcut: 'Ctrl+Y', 
+        action :{$: 'studio.redo' }
+      }, 
       {$: 'divider', 
         style :{$: 'divider.br' }, 
         title: 'divider'
       }, 
       {$: 'pulldown.studio-wrap-with', 
-        type: 'data', 
         path: '%$path%', 
+        type: 'data', 
         components :{$: 'list', items: ['pipeline', 'list', 'firstSucceeding'] }
       }, 
       {$: 'pulldown.studio-wrap-with', 
-        type: 'boolean', 
         path: '%$path%', 
+        type: 'boolean', 
         components :{$: 'list', items: ['and', 'or', 'not'] }
       }, 
       {$: 'pulldown.studio-wrap-with', 
-        type: 'action', 
         path: '%$path%', 
+        type: 'action', 
         components :{$: 'list', items: ['runActions', 'runActionOnItems'] }
       }, 
       {$: 'pulldown.menu-item', 
         title: 'Add property', 
         action :{$: 'openDialog', 
           id: 'add property', 
-          modal: true, 
-          title: 'Add Property', 
+          style :{$: 'dialog.md-dialog-ok-cancel', 
+            okLabel: 'OK', 
+            cancelLabel: 'Cancel'
+          }, 
           content :{$: 'group', 
             controls: [
               {$: 'editable-text', 
-                style :{$: 'editable-text.md-input' }, 
                 title: 'name', 
-                databind: ''
+                databind: '%$dialogData/name%', 
+                style :{$: 'editable-text.md-input' }
               }
             ], 
             features :{$: 'css.padding', top: '9', left: '19' }
           }, 
-          style :{$: 'dialog.md-dialog-ok-cancel', 
-            okLabel: 'OK', 
-            cancelLabel: 'Cancel'
-          }
+          title: 'Add Property', 
+          onOK :{$: 'writeValue', 
+            to :{$: 'studio.ref', path: '%$path%~%$dialogData/name%' }, 
+            value: ''
+          }, 
+          modal: 'true'
         }
       }
-    ]
+    ], 
+    features :{$: 'group.menu-keyboard-selection', autoFocus: true }
   }
 })
 

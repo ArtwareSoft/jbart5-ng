@@ -61,7 +61,15 @@ jb.component('studio-helper.jb-editor', {
         style :{$: 'button.md-icon-fab', icon: 'menu', size: '24' }, 
         features :{$: 'css.height', height: '30' }
       }, 
-      {$: 'studio.jb-editor', path: '%$path%' }
+      {$: 'studio.jb-editor', path: '%$path%' }, 
+      {$: 'editable-text', 
+        databind :{$: 'studio.profile-as-text', path: '%$globals/jb_editor_selection%' }, 
+        style :{$: 'editable-text.codemirror', 
+          enableFullScreen: true, 
+          mode: 'javascript', 
+          debounceTime: 300
+        }
+      }
     ], 
     features :{$: 'css', css: '{ height: 200px; padding: 50px }' }
   }
@@ -140,10 +148,10 @@ jb.component('studio-helper.expandable', {
 jb.component('studio-helper-dummy.label', {
   type: 'control', 
   impl :{$: 'label', 
-        title: [ '%$people-array/people%', 
+        title: {$pipeline: [ '%$people-array/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'
-        ],
+        ]},
         features: [
           {$: 'css', 
             css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'

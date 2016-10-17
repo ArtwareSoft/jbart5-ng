@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1, studio_utils_1;
-    var suggestions;
+    var suggestions, ValueOption, CompOption;
     function rev(str) {
         return str.split('').reverse().join('');
     }
@@ -24,9 +24,81 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
+            jb_core_1.jb.component('studio.property-primitive2', {
+                type: 'control',
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
+                impl: { $: 'group',
+                    title: { $: 'studio.prop-name', path: '%$path%' },
+                    features: { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
+                    controls: [
+                        { $: 'editable-text',
+                            style: { $: 'editable-text.studio-primitive-text' },
+                            //        title :{$: 'studio.prop-name', path: '%$path%' }, 
+                            databind: { $: 'studio.ref', path: '%$path%' },
+                            features: [
+                                { $: 'studio.undo-support', path: '%$path%' },
+                                { $: 'studio.property-toobar-feature', path: '%$path%' },
+                            ]
+                        },
+                        { $: 'itemlist-with-groups',
+                            items: '%$suggestionCtx/options%',
+                            watchItems: true,
+                            controls: { $: 'label', title: '%text%' },
+                            features: [
+                                { $: 'itemlist.studio-suggestions-options' },
+                                { $: 'itemlist.selection', autoSelectFirst: true, onDoubleClick: function (ctx) {
+                                        return ctx.data.paste(ctx);
+                                    } },
+                                { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
+                                { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
+                                { $: 'css.width', width: '250', overflow: 'auto' }
+                            ]
+                        }]
+                }
+            });
+            jb_core_1.jb.component('studio.jb-floating-input', {
+                type: 'control',
+                params: [
+                    { id: 'path', as: 'string' }
+                ],
+                impl: { $: 'group',
+                    features: { $: 'group.studio-suggestions', path: '%$path%',
+                        closeFloatingInput: [
+                            { $: 'closeContainingPopup', OK: true },
+                            { $: 'tree.regain-focus' }
+                        ]
+                    },
+                    controls: [
+                        { $: 'editable-text',
+                            updateOnBlur: true,
+                            style: { $: 'editable-text.md-input', width: '400' },
+                            databind: { $: 'studio.profile-value-as-text', path: '%$path%' },
+                            features: [
+                                { $: 'studio.undo-support', path: '%$path%' },
+                                { $: 'css.padding', left: '4', right: '4' },
+                            ]
+                        },
+                        { $: 'itemlist-with-groups',
+                            items: '%$suggestionCtx/options%',
+                            watchItems: true,
+                            controls: { $: 'label', title: '%text%' },
+                            features: [
+                                { $: 'itemlist.studio-suggestions-options' },
+                                { $: 'itemlist.selection', autoSelectFirst: true, onDoubleClick: function (ctx) {
+                                        return ctx.data.paste(ctx);
+                                    } },
+                                { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
+                                { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
+                            ]
+                        }]
+                }
+            });
             suggestions = (function () {
-                function suggestions(input) {
+                function suggestions(input, expressionOnly) {
                     this.input = input;
+                    this.expressionOnly = expressionOnly;
                     this.pos = input.selectionStart;
                     this.text = input.value.substr(0, this.pos).trim();
                     this.text_with_open_close = this.text.replace(/%([^%;{}\s><"']*)%/g, function (match, contents) {
@@ -42,299 +114,297 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                     this.inputVal = input.value;
                     this.inputPos = input.selectionStart;
                 }
+                suggestions.prototype.suggestionsRelevant = function () {
+                    return (this.inputVal.indexOf('=') == 0 && !this.expressionOnly)
+                        || ['%', '%$', '/', '.'].indexOf(this.tailSymbol) != -1;
+                };
                 suggestions.prototype.adjustPopupPlace = function (cmp, options) {
-                    var temp = $('<span></span>').css('font', $(this.input).css('font')).css('width', '100%')
-                        .css('z-index', '-1000').text($(this.input).val().substr(0, this.pos)).appendTo('body');
-                    var offset = temp.width();
-                    temp.remove();
-                    var dialogEl = $(cmp.elementRef.nativeElement).parents('.jb-dialog');
-                    dialogEl.css('margin-left', offset + "px")
-                        .css('display', options.length ? 'block' : 'none');
+                    // var temp = $('<span></span>').css('font',$(this.input).css('font')).css('width','100%')
+                    //   .css('z-index','-1000').text($(this.input).val().substr(0,this.pos)).appendTo('body');
+                    // var offset = temp.width();
+                    // temp.remove();
+                    // var dialogEl = $(cmp.elementRef.nativeElement).parents('.jb-dialog');
+                    // dialogEl.css('margin-left', `${offset}px`)
+                    //   .css('display', options.length ? 'block' : 'none');
                 };
                 suggestions.prototype.extendWithOptions = function (probeCtx, path) {
                     var _this = this;
                     this.options = [];
                     probeCtx = probeCtx || (jbart.previewjbart || jbart).initialCtx;
                     var vars = jb_core_1.jb.entries(jb_core_1.jb.extend({}, (probeCtx.componentContext || {}).params, probeCtx.vars, probeCtx.resources))
-                        .map(function (x) { return ({ toPaste: '$' + x[0], value: x[1] }); });
-                    if (this.inputVal.indexOf('=') == 0)
+                        .map(function (x) { return new ValueOption('$' + x[0], x[1], _this.pos, _this.tail); })
+                        .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
+                        .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; });
+                    if (this.inputVal.indexOf('=') == 0 && !this.expressionOnly)
                         this.options = studio_tgp_model_1.model.PTsOfPath(path).map(function (compName) {
                             var name = compName.substring(compName.indexOf('.') + 1);
                             var ns = compName.substring(0, compName.indexOf('.'));
-                            return {
-                                text: ns ? name + " (" + ns + ")" : name,
-                                value: compName,
-                                description: studio_utils_1.getComp(compName).description || '',
-                                toPaste: compName,
-                            };
+                            return new CompOption(compName, compName, ns ? name + " (" + ns + ")" : name, studio_utils_1.getComp(compName).description || '');
                         });
                     else if (this.tailSymbol == '%')
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp('%%'))
                             .map(function (x) {
-                            return jb_core_1.jb.entries(x).map(function (x) {
-                                return ({ toPaste: x[0], value: x[1] });
-                            });
+                            return jb_core_1.jb.entries(x).map(function (x) { return new ValueOption(x[0], x[1], _this.pos, _this.tail); });
                         }))
                             .concat(vars);
                     else if (this.tailSymbol == '%$')
                         this.options = vars;
                     else if (this.tailSymbol == '/' || this.tailSymbol == '.')
                         this.options = [].concat.apply([], jb_core_1.jb.toarray(probeCtx.exp(this.base))
-                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return ({ toPaste: x[0], value: x[1] }); }); }));
+                            .map(function (x) { return jb_core_1.jb.entries(x).map(function (x) { return new ValueOption(x[0], x[1], _this.pos, _this.tail); }); }));
                     this.options = this.options
                         .filter(jb_unique(function (x) { return x.toPaste; }))
                         .filter(function (x) { return x.toPaste != _this.tail; })
-                        .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
-                        .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; })
                         .filter(function (x) {
                         return _this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(_this.tail) != -1;
-                    })
-                        .map(function (x) {
-                        return jb_core_1.jb.extend(x, { text: x.text || x.toPaste + _this.valAsText(x.value) });
                     });
                     if (this.tail)
                         this.options.sort(function (x, y) { return (y.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0); });
+                    this.key = this.options.map(function (o) { return o.toPaste; }).join(',');
                     return this;
                 };
-                suggestions.prototype.valAsText = function (val) {
+                return suggestions;
+            }());
+            exports_1("suggestions", suggestions);
+            ValueOption = (function () {
+                function ValueOption(toPaste, value, pos, tail) {
+                    this.toPaste = toPaste;
+                    this.value = value;
+                    this.pos = pos;
+                    this.tail = tail;
+                    this.text = this.toPaste + this.valAsText();
+                }
+                ValueOption.prototype.valAsText = function () {
+                    var val = this.value;
                     if (typeof val == 'string' && val.length > 20)
                         return " (" + val.substring(0, 20) + "...)";
                     else if (typeof val == 'string' || typeof val == 'number' || typeof val == 'boolean')
                         return " (" + val + ")";
                     return "";
                 };
-                suggestions.prototype.paste = function (selection) {
-                    var toPaste = selection.toPaste + (typeof selection.value == 'object' ? '/' : '%');
-                    var input = this.input;
+                ValueOption.prototype.paste = function (ctx) {
+                    var toPaste = this.toPaste + (typeof this.value == 'object' ? '/' : '%');
+                    var input = ctx.vars.suggestionCtx.input;
                     var pos = this.pos + 1;
                     input.value = input.value.substr(0, this.pos - this.tail.length) + toPaste + input.value.substr(pos);
-                    jb_core_1.jb.delay(100).then(function () {
+                    jb_core_1.jb.delay(1, ctx).then(function () {
                         input.selectionStart = pos + toPaste.length;
                         input.selectionEnd = input.selectionStart;
                     });
                 };
-                return suggestions;
+                ValueOption.prototype.writeValue = function (ctx) {
+                    var input = ctx.vars.suggestionCtx.input;
+                    var script_ref = ctx.run({ $: 'studio.ref', path: '%$suggestionCtx.path%' });
+                    jb_core_1.jb.writeValue(script_ref, input.value);
+                };
+                return ValueOption;
             }());
-            exports_1("suggestions", suggestions);
-            jb_core_1.jb.component('editable-text.suggestions-input-feature', {
+            CompOption = (function () {
+                function CompOption(toPaste, value, text, description) {
+                    this.toPaste = toPaste;
+                    this.value = value;
+                    this.text = text;
+                    this.description = description;
+                }
+                CompOption.prototype.paste = function (ctx) {
+                    ctx.vars.suggestionCtx.input.value = '=' + this.toPaste;
+                    ctx.vars.suggestionCtx.closeAndWriteValue();
+                };
+                CompOption.prototype.writeValue = function (ctx) {
+                    ctx.run({ $: 'writeValue', to: { $: 'studio.comp-name-ref', path: '%$suggestionCtx.path%' }, value: this.toPaste });
+                    this.expandAndSelectInjBEditorTree(ctx);
+                };
+                CompOption.prototype.expandAndSelectInjBEditorTree = function (ctx) {
+                    var tree = ctx.vars.$tree;
+                    if (!tree)
+                        return;
+                    tree.expanded[tree.selected] = true;
+                    jb_core_1.jb.delay(100).then(function () {
+                        var firstChild = tree.nodeModel.children(tree.selected)[0];
+                        if (firstChild) {
+                            ctx.run({ $: 'writeValue', to: '%$globals/jb_editor_selection%', value: firstChild });
+                            jb_ui.apply(ctx);
+                            jb_core_1.jb.delay(100);
+                        }
+                    });
+                };
+                return CompOption;
+            }());
+            jb_core_1.jb.component('group.studio-suggestions', {
                 type: 'feature',
                 params: [
                     { id: 'path', as: 'string' },
-                    { id: 'action', type: 'action', dynamic: true },
-                    { id: 'onEnter', type: 'action', dynamic: true },
-                    { id: 'floatingInput', type: 'boolean', as: 'boolean', description: 'used to close the floating input popup' }
+                    { id: 'closeFloatingInput', type: 'action', dynamic: true },
+                    { id: 'expressionOnly', type: 'boolean', as: 'boolean' }
                 ],
                 impl: function (ctx) {
-                    return ({
+                    var suggestionCtx = { path: ctx.params.path, options: [], show: true };
+                    return {
                         observable: function () { },
-                        init: function (cmp) {
+                        extendCtx: function (ctx2) {
+                            return ctx2.setVars({ suggestionCtx: suggestionCtx });
+                        },
+                        afterViewInit: function (cmp) {
                             var input = $(cmp.elementRef.nativeElement).findIncludeSelf('input')[0];
                             if (!input)
                                 return;
+                            suggestionCtx.input = input;
                             var inputClosed = cmp.jbEmitter.filter(function (x) { return x == 'destroy'; });
                             cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
                                 .takeUntil(inputClosed);
-                            cmp.keyEm.filter(function (e) { return e.keyCode == 38 || e.keyCode == 40; })
-                                .subscribe(function (e) {
-                                return e.preventDefault();
-                            });
+                            suggestionCtx.keyEm = cmp.keyEm;
+                            suggestionCtx.closeAndWriteValue = function () {
+                                ctx.params.closeFloatingInput();
+                                var option = input.value.indexOf('=') == 0 ? new CompOption(input.value.substr(1)) : new ValueOption();
+                                option.writeValue(cmp.ctx);
+                            };
                             cmp.keyEm.filter(function (e) { return e.keyCode == 13; })
                                 .subscribe(function (e) {
-                                if (!$(input).hasClass('dialog-open'))
-                                    ctx.params.onEnter();
+                                if (!suggestionCtx.show)
+                                    suggestionCtx.closeAndWriteValue();
                             });
                             cmp.keyEm.filter(function (e) { return e.keyCode == 27; })
                                 .subscribe(function (e) {
-                                if (!$(input).hasClass('dialog-open'))
-                                    closeFloatingInput(ctx);
+                                ctx.params.closeFloatingInput();
                             });
-                            var suggestionEm = cmp.keyEm
+                            suggestionCtx.suggestionEm = cmp.keyEm
                                 .filter(function (e) { return e.keyCode != 38 && e.keyCode != 40; })
                                 .delay(1) // we use keydown - let the input fill itself
                                 .debounceTime(20) // solves timing of closing the floating input
+                                .filter(function (e) {
+                                return suggestionCtx.show = new suggestions(input, ctx.params.expressionOnly).suggestionsRelevant();
+                            })
                                 .map(function (e) {
-                                return e.srcElement.value;
+                                return input.value;
                             })
-                                .do(function (x) { return console.log(0, x); })
                                 .distinctUntilChanged()
-                                .do(function (x) { return console.log(1, x); })
-                                .filter(function (inpValue) {
-                                return inpValue.indexOf('%') != -1 || inpValue.indexOf('=') == 0;
-                            })
                                 .flatMap(function (e) {
-                                return getProbe().then(function (probeResult) {
-                                    return probeResult && probeResult[0] && probeResult[0].in;
+                                return getProbe().then(function (res) {
+                                    return res && res.finalResult && res.finalResult[0] && res.finalResult[0].in;
                                 });
                             })
                                 .map(function (probeCtx) {
-                                return new suggestions(input).extendWithOptions(probeCtx, ctx.params.path);
+                                return new suggestions(input, ctx.params.expressionOnly).extendWithOptions(probeCtx, ctx.params.path);
                             })
-                                .filter(function (e) {
-                                return e.text;
-                            })
-                                .distinctUntilChanged(function (e) {
-                                return e.options.map(function (o) { return o.toPaste; }).join(',');
-                            });
-                            suggestionEm.subscribe(function (e) {
-                                if (!$(e.input).hasClass('dialog-open') && e.options.length > 0) {
-                                    var suggestionContext = {
-                                        suggestionEm: suggestionEm
-                                            .startWith(e)
-                                            .do(function (e) {
-                                            return suggestionContext.suggestionObj = e;
-                                        }),
-                                        suggestionObj: e,
-                                        keyEm: cmp.keyEm,
-                                        cmp: cmp,
-                                        closeFloatingInput: function () {
-                                            return closeFloatingInput(ctx);
-                                        }
-                                    };
-                                    jb_ui.wrapWithLauchingElement(ctx.params.action, ctx.setVars({ suggestionContext: suggestionContext }), e.input)();
-                                }
+                                .distinctUntilChanged(function (e1, e2) {
+                                return e1.key == e2.key;
                             });
                             function getProbe() {
-                                cmp.probeResult = cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
-                                return cmp.probeResult;
-                            }
-                            function closeFloatingInput(ctx) {
-                                if (ctx.params.floatingInput)
-                                    ctx.run({ $: 'closeContainingPopup' });
-                                ctx.vars.regainFocus && ctx.vars.regainFocus();
+                                return cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
                             }
                         }
-                    });
+                    };
                 }
             });
-            jb_core_1.jb.component('studio.jb-open-suggestions', {
-                type: 'action',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
-                impl: { $: 'openDialog',
-                    style: { $: 'dialog.studio-suggestions-popup' },
-                    content: { $: 'group',
-                        controls: { $: 'itemlist-with-groups',
-                            items: '%$suggestionContext/suggestionObj/options%',
-                            watchItems: true,
-                            controls: { $: 'label', title: '%text%' },
-                            features: [
-                                { $: 'itemlist.studio-suggestions-selection',
-                                    onEnter: [
-                                        { $: 'studio.jb-paste-suggestion', path: '%$path%' },
-                                        { $: 'closeContainingPopup' }
-                                    ]
-                                },
-                                { $: 'itemlist.selection',
-                                    onDoubleClick: [
-                                        { $: 'studio.jb-paste-suggestion', path: '%$path%' },
-                                        { $: 'closeContainingPopup' }
-                                    ]
-                                },
-                                { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
-                                { $: 'css.width', width: '250', overflow: 'auto' }
-                            ]
-                        },
-                        features: { $: 'studio.suggestions-emitter' }
-                    }
-                }
-            });
-            jb_core_1.jb.component('studio.suggestions-emitter', {
+            jb_core_1.jb.component('itemlist.studio-suggestions-options', {
                 type: 'feature',
+                params: [],
                 impl: function (ctx) {
                     return ({
-                        init: function (cmp) {
-                            // gain focus back to input after clicking the popup
-                            jb_core_1.jb.delay(1).then(function () {
-                                return ctx.vars.$dialog.$el.find('.jb-itemlist').attr('tabIndex', '0').focus(function () {
-                                    return $(ctx.vars.suggestionContext.suggestionObj.input).focus();
+                        afterViewInit: function (cmp) {
+                            var suggestionCtx = ctx.vars.suggestionCtx;
+                            //        cmp.changeDt.detach();
+                            jb_core_1.jb.delay(1, ctx).then(function () {
+                                var keyEm = suggestionCtx.keyEm;
+                                keyEm.filter(function (e) {
+                                    return e.keyCode == 13;
+                                }) // ENTER
+                                    .subscribe(function () {
+                                    suggestionCtx.show = false;
+                                    if (cmp.selected && cmp.selected.paste) {
+                                        cmp.selected.paste(ctx);
+                                        jb_ui.apply(ctx);
+                                    }
+                                });
+                                keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC
+                                    .subscribe(function (x) {
+                                    return suggestionCtx.show = false;
+                                });
+                                keyEm.filter(function (e) {
+                                    return e.keyCode == 38 || e.keyCode == 40;
+                                })
+                                    .subscribe(function (e) {
+                                    var diff = e.keyCode == 40 ? 1 : -1;
+                                    var items = cmp.items; //.filter(item=>!item.heading);
+                                    cmp.selected = items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
+                                    // cmp.changeDt.markForCheck();
+                                    // cmp.changeDt.detectChanges();
+                                    e.preventDefault();
+                                });
+                                suggestionCtx.suggestionEm.subscribe(function (e) {
+                                    suggestionCtx.show = true;
+                                    suggestionCtx.options = e.options;
+                                    cmp.selected = e.options[0];
+                                    cmp.changeDt.markForCheck();
+                                    cmp.changeDt.detectChanges();
                                 });
                             });
-                            // adjust popup position
-                            ctx.vars.suggestionContext.suggestionEm
-                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
-                                .subscribe(function (e) {
-                                return e.adjustPopupPlace(cmp, e.options);
-                            });
-                        }
-                    });
-                }
-            });
-            jb_core_1.jb.component('itemlist.studio-suggestions-selection', {
-                type: 'feature',
-                params: [
-                    { id: 'onEnter', type: 'action', dynamic: true },
-                ],
-                impl: function (ctx) {
-                    return ({
-                        init: function (cmp) {
-                            var keyEm = ctx.vars.suggestionContext.keyEm
-                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }));
-                            keyEm.filter(function (e) { return e.keyCode == 13; }) // ENTER
-                                .subscribe(function (x) {
-                                if (cmp.selected)
-                                    ctx.params.onEnter(ctx.setData(cmp.selected));
-                            });
-                            keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC
-                                .subscribe(function (x) {
-                                return ctx.run({ $: 'closeContainingPopup' });
-                            });
-                            keyEm.filter(function (e) {
-                                return e.keyCode == 38 || e.keyCode == 40;
-                            })
-                                .map(function (event) {
-                                var diff = event.keyCode == 40 ? 1 : -1;
-                                var items = cmp.items; //.filter(item=>!item.heading);
-                                return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
-                            })
-                                .subscribe(function (x) {
-                                return cmp.selected = x;
-                            });
-                            // change selection if options are changed
-                            ctx.vars.suggestionContext.suggestionEm
-                                .takeUntil(ctx.vars.$dialog.em.filter(function (e) { return e.type == 'close'; }))
-                                .distinctUntilChanged(function (e) { return e.options.map(function (o) { return o.toPaste; }).join(','); })
-                                .subscribe(function (e) {
-                                cmp.selected = e.options[0];
-                            });
-                        },
-                        afterViewInit: function (cmp) {
-                            var items = cmp.items; //.filter(item=>!item.heading);
-                            if (items[0])
-                                cmp.selected = items[0];
                         },
                     });
-                }
-            });
-            jb_core_1.jb.component('studio.jb-paste-suggestion', {
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
-                type: 'action',
-                impl: function (ctx, path) {
-                    var suggestionsCtx = ctx.vars.suggestionContext;
-                    suggestionsCtx.suggestionObj.paste(ctx.data);
-                    //suggestionsCtx.cmp.probeResult = null; // recalc
-                    if (suggestionsCtx.suggestionObj.inputVal.indexOf('=') == 0) {
-                        ctx.vars.field.writeValue('=' + ctx.data.toPaste); // need to write from here as we close the popup
-                        suggestionsCtx.closeFloatingInput();
-                        var tree = ctx.vars.$tree;
-                        tree.expanded[tree.selected] = true;
-                        jb_core_1.jb.delay(100).then(function () {
-                            var firstChild = tree.nodeModel.children(tree.selected)[0];
-                            if (firstChild) {
-                                ctx.run({ $: 'writeValue', to: '%$globals/jb_editor_selection%', value: firstChild });
-                                jb_ui.apply(ctx);
-                                jb_core_1.jb.delay(100);
-                            }
-                            // if (firstChild) {
-                            //   tree.selected = firstChild;
-                            //   jb_ui.apply(ctx);
-                            // }
-                        });
-                    }
                 }
             });
         }
     }
 });
+// jb.component('studio.jb-paste-suggestion', {
+//   params: [
+//     { id: 'path',as: 'string'}
+//   ],
+//   type: 'action',
+//   impl: (ctx,path) => {
+//     var suggestionsCtx = ctx.vars.suggestionCtx;
+//     suggestionsCtx.suggestionObj.paste(ctx.data,ctx);
+//     //suggestionsCtx.cmp.probeResult = null; // recalc
+//   }
+// })
+// jb.component('studio.jb-open-suggestions', {
+//   type: 'action', 
+//   params: [
+//     { id: 'path', as: 'string' }
+//   ], 
+//   impl :{$: 'openDialog', 
+//     style :{$: 'dialog.studio-suggestions-popup' }, 
+//     content :{$: 'group', 
+//       controls :{$: 'itemlist-with-groups', 
+//         items: '%$suggestionCtx/suggestionObj/options%', 
+//         watchItems: true, 
+//         controls :{$: 'label', title: '%text%' }, 
+//         features: [
+//           {$: 'itemlist.studio-suggestions-selection', 
+//             onEnter: [
+//               {$: 'studio.jb-paste-suggestion', path: '%$path%' }, 
+//               {$: 'closeContainingPopup' }
+//             ]
+//           }, 
+//           {$: 'itemlist.selection', 
+//             onDoubleClick: [
+//               {$: 'studio.jb-paste-suggestion', path: '%$path%' }, 
+//               {$: 'closeContainingPopup' }
+//             ]
+//           }, 
+//           {$: 'css.height', height: '500', overflow: 'auto', minMax: 'max' }, 
+//           {$: 'css.width', width: '250', overflow: 'auto' }
+//         ]
+//       }, 
+//       features :{$: 'studio.suggestions-emitter' }
+//     }
+//   }
+// })
+// jb.component('studio.suggestions-emitter', {
+//   type: 'feature',
+//   impl: ctx => 
+//     ({
+//       init: function(cmp) {
+//         // gain focus back to input after clicking the popup
+//         jb.delay(1).then(()=>
+//           ctx.vars.$dialog.$el.find('.jb-itemlist').attr('tabIndex','0').focus(() => 
+//             $(ctx.vars.suggestionCtx.suggestionObj.input).focus())
+//         )
+//         // adjust popup position
+//         ctx.vars.suggestionCtx.suggestionEm
+//             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
+//             .subscribe(e =>
+//               e.adjustPopupPlace(cmp,e.options))
+//       }
+//     })
+// })

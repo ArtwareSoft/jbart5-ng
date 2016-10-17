@@ -98,9 +98,9 @@ jb.component('dialog-feature.uniqueDialog', {
 
 function fixDialogOverflow($control,$dialog,offsetLeft,offsetTop) {
 	var padding = 2,top,left;
-	if ($control.offset().top + $dialog.height() + padding + (offsetTop||0) > window.innerHeight + window.pageYOffset)
+	if ($control.offset().top > $dialog.height() && $control.offset().top + $dialog.height() + padding + (offsetTop||0) > window.innerHeight + window.pageYOffset)
 		top = $control.offset().top - $dialog.height();
-	if ($control.offset().left + $dialog.width() + padding + (offsetLeft||0) > window.innerWidth + window.pageXOffset)
+	if ($control.offset().left > $dialog.width() && $control.offset().left + $dialog.width() + padding + (offsetLeft||0) > window.innerWidth + window.pageXOffset)
 		left = $control.offset().left - $dialog.width();
 	if (top || left)
 		return { top: top || $control.offset().top , left: left || $control.offset().left}

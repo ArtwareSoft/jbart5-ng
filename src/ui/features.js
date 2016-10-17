@@ -82,6 +82,7 @@ jb.component('group.watch', {
   })
 })
 
+// static if - to watch condition, parent component need to be refreshed
 jb.component('group-item.if', {
   type: 'feature',
   params: [
@@ -111,8 +112,10 @@ jb.component('feature.ng-attach-object', {
   ],
   impl: (ctx,data) => ({init: cmp => {
       var obj = data(cmp.ctx);
-      jb.extend(cmp,obj);
-      jb.extend(cmp.constructor.prototype,obj.constructor.prototype || {});
+      if (cmp.constructor && cmp.constructor.prototype && obj) {
+        jb.extend(cmp,obj);
+        jb.extend(cmp.constructor.prototype,obj.constructor.prototype || {});
+      }
   }})
 })
 

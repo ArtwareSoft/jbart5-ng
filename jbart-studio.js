@@ -226,7 +226,8 @@ extend(op_post_handlers, {
 
 extend(base_get_handlers, {   
   'project': function(req,res,path) {
-      var project = req.url.split('/')[2];
+      var project_with_params = req.url.split('/')[2];
+      var project = project_with_params.split('?')[0];
       if (external_projects[project])
         return file_type_handlers.html(req,res, external_projects[project] + `/${project}/${project}.html`);
       return file_type_handlers.html(req,res,`projects/${project}/${project}.html`);

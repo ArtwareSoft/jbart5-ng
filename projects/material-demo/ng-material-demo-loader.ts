@@ -10,15 +10,16 @@ import {MD_CHECKBOX_DIRECTIVES} from '@angular2-material/checkbox/checkbox';
 import {MD_RADIO_DIRECTIVES} from '@angular2-material/radio/radio';
 import {MdIcon} from '@angular2-material/icon/icon';
 import {MdToolbar} from '@angular2-material/toolbar/toolbar';
+//import {MdTooltip,TooltipComponent} from '@angular2-material/tooltip/tooltip';
 
 import {MD_BUTTON_TOGGLE_DIRECTIVES} from '@angular2-material/button-toggle/button-toggle';
 import {MD_GRID_LIST_DIRECTIVES} from '@angular2-material/grid-list/grid-list';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list/list';
-import {MD_MENU_DIRECTIVES} from '@angular2-material/menu/menu';
-import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
-import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
-import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar/progress-bar'; // bug fix for @angular2-material
-import {MD_SLIDER_DIRECTIVES} from '@angular2-material/slider/slider'; // bug fix for @angular2-material
+import {MdRipple, MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; 
+
+import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar/progress-bar'; 
+import {MD_PROGRESS_CIRCLE_DIRECTIVES} from '@angular2-material/progress-circle/progress-circle'; 
+import {MD_SLIDER_DIRECTIVES} from '@angular2-material/slider/slider';
 
 import {MdLiveAnnouncer} from '@angular2-material/core/a11y/live-announcer';
 import { Overlay, OverlayState,OverlayOrigin, OVERLAY_PROVIDERS, ComponentPortal, Portal,TemplatePortalDirective} from '@angular2-material/core/core';
@@ -39,12 +40,46 @@ jb_ui.registerDirectives({
   MD_BUTTON_TOGGLE_DIRECTIVES:MD_BUTTON_TOGGLE_DIRECTIVES,
   MD_GRID_LIST_DIRECTIVES: MD_GRID_LIST_DIRECTIVES,
   MD_LIST_DIRECTIVES: MD_LIST_DIRECTIVES,
-  MD_MENU_DIRECTIVES: MD_MENU_DIRECTIVES,
-  PORTAL_DIRECTIVES: PORTAL_DIRECTIVES,
   MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES,
   MD_PROGRESS_BAR_DIRECTIVES: MD_PROGRESS_BAR_DIRECTIVES,
-  MD_SLIDER_DIRECTIVES: MD_SLIDER_DIRECTIVES
+  MD_PROGRESS_CIRCLE_DIRECTIVES: MD_PROGRESS_CIRCLE_DIRECTIVES,
+  MD_SLIDER_DIRECTIVES: MD_SLIDER_DIRECTIVES,
+//  MdTooltip: MdTooltip,
 });
+
+export class TooltipDemo {
+  position: TooltipPosition = 'below';
+}
+
+export class ProgressCircleDemo {
+  progressValue: number = 40;
+
+  step(val: number) {
+    this.progressValue += val;
+  }
+}
+
+export class RippleDemo {
+  @ViewChild(MdRipple) manualRipple: MdRipple;
+
+  centered = false;
+  disabled = false;
+  unbounded = false;
+  rounded = false;
+  maxRadius: number = null;
+  rippleSpeed = 1;
+  rippleColor = '';
+  rippleBackgroundColor = '';
+
+  disableButtonRipples = false;
+
+  doManualRipple() {
+    if (this.manualRipple) {
+      window.setTimeout(() => this.manualRipple.start(), 10);
+      window.setTimeout(() => this.manualRipple.end(0, 0), 500);
+    }
+  }
+}
 
 export class GesturesDemo {
   dragCount: number = 0;
@@ -55,7 +90,7 @@ export class GesturesDemo {
   slideCount: number = 0;
 }
 
-export class GridListDemo {
+export class GridlistDemo {
   tiles: any[] = [
     {text: 'One', cols: 3, rows: 1, color: 'lightblue'},
     {text: 'Two', cols: 1, rows: 2, color: 'lightgreen'},
@@ -82,6 +117,26 @@ export class GridListDemo {
 }
 
 var max = 0;
+
+export class CheckboxDemo {
+  isIndeterminate: boolean = false;
+  isChecked: boolean = false;
+  isDisabled: boolean = false;
+  alignment: string = 'start';
+
+  printResult() {
+    if (this.isIndeterminate) {
+      return 'Maybe!';
+    }
+    return this.isChecked ? 'Yes!' : 'No!';
+  }
+}
+
+export class ButtonDemo {
+  isDisabled: boolean = false;
+  clickCounter: number = 0;
+}
+
 export class InputDemo {
   dividerColor: boolean;
   requiredField: boolean;

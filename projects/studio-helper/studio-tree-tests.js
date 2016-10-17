@@ -24,6 +24,11 @@ jb.component('studio-tree-test.cmp4', {
   impl :{$: 'list', items: 'hello' }, 
 })
 
+jb.component('studio-tree-test.cmp5', {
+  impl :{$: 'label', title: {$pipeline: ['a','b'] }}, 
+})
+
+
 jb.component('studio-tree-test.actions-sugar-example1', {
   impl: {$: 'button', title : 'hello', action: [ {$: 'goto-url', url: 'google' }] } 
 })
@@ -58,11 +63,19 @@ jb.component('studio-tree-test.empty-pipeline-bug', {
 	}
 })
 
-jb.component('studio-tree-test.single-string-bug', {
+// jb.component('studio-tree-test.single-string-bug', {
+// 	impl :{$: 'studio-tree-children-test',
+// 		path: 'studio-tree-test.cmp4~items', 
+// 		childrenType: 'jb-editor',
+// 		expectedResult :{ $: 'contains', text: 'hello' }
+// 	}
+// })
+
+jb.component('studio-tree-test.$pipline', {
 	impl :{$: 'studio-tree-children-test',
-		path: 'studio-tree-test.cmp4~items', 
+		path: 'studio-tree-test.cmp5~title', 
 		childrenType: 'jb-editor',
-		expectedResult :{ $: 'contains', text: 'hello' }
+		expectedResult :{ $and: [{$: 'contains', text: ['$pipeline[0]','$pipeline[1]'] }, { $not: { $contains: 'pipeline (2)'}}]}
 	}
 })
 

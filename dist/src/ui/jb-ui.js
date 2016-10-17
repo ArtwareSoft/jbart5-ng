@@ -20,11 +20,11 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
     }
     exports_1("apply", apply);
     function delayOutsideAngular(ctx, func) {
-        return ctx.vars.ngZone.runOutsideAngular(function () {
-            return jb_core_1.jb.delay(1).then(function () {
-                return Promise.resolve(func());
-            });
-        });
+        jb_core_1.jb.delay(1, ctx).then(func);
+        // return ctx.vars.ngZone.runOutsideAngular(() =>
+        // 	jb.delay(1).then(()=>
+        // 		Promise.resolve(func()))
+        // )
     }
     exports_1("delayOutsideAngular", delayOutsideAngular);
     function applyPreview(ctx) {
@@ -100,7 +100,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
             host: host
         });
     }
-    function twoWayBind(ref) {
+    function twoWayBind(ref, updateOnBlur) {
         if (!ref)
             return {
                 bindToCmp: function () { },
@@ -124,7 +124,9 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
             };
         };
         // keyup for input change for select & checkbox
-        var modelExp = "[(ngModel)] = \"" + modelPath + "\" (change)=\"jbOnChange($event)\" (keyup)=\"jbOnChange($event)\"";
+        var modelExp = "[(ngModel)]=\"" + modelPath + "\" (change)=\"jbOnChange($event)\"";
+        if (!updateOnBlur)
+            modelExp += ' (keyup)="jbOnChange($event)"';
         return {
             bindToCmp: bindToCmp,
             valueExp: modelPath,
@@ -318,10 +320,10 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                     this.jbExtend({ directives: [common_1.NgClass, common_1.NgStyle, jbComp, portal_directives_1.PORTAL_DIRECTIVES, ripple_1.MD_RIPPLE_DIRECTIVES] });
                     if (!this.annotations.selector)
                         this.annotations.selector = 'div';
-                    var Cmp = function (dcl, elementRef, ctx) { this.dcl = dcl; this.elementRef = elementRef; };
+                    var Cmp = function (dcl, elementRef, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.changeDt = changeDetection; };
                     Cmp = Reflect.decorate([
                         core_1.Component(this.annotations),
-                        Reflect.metadata('design:paramtypes', [core_1.Compiler, core_1.ElementRef])
+                        Reflect.metadata('design:paramtypes', [core_1.Compiler, core_1.ElementRef, core_1.ChangeDetectorRef])
                     ], Cmp);
                     Cmp.prototype.ngOnInit = function () {
                         var _this = this;

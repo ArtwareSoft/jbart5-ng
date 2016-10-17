@@ -54,8 +54,15 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         controls: [
                             { $: 'group',
                                 controls: [
-                                    { $: 'editable-text', title: 'name', databind: '%$person/name%', style: { $: 'editable-text.md-input' } },
-                                    { $: 'editable-text', title: 'name', databind: '%$person/name%', style: { $: 'editable-text.md-input' } },
+                                    { $: 'editable-text',
+                                        title: 'name (update on blur)',
+                                        updateOnBlur: true,
+                                        databind: '%$person/name%',
+                                        style: { $: 'editable-text.md-input' }
+                                    },
+                                    { $: 'editable-text', title: 'name', databind: '%$person/name%',
+                                        style: { $: 'editable-text.md-input' }
+                                    },
                                 ]
                             },
                             { $: 'label', title: '%$person/name%' }

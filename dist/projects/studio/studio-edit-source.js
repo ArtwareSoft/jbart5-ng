@@ -34,10 +34,13 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             jb_core_1.jb.component('studio.profile-as-text', {
                 type: 'data',
                 params: [
-                    { id: 'path', as: 'string' },
+                    { id: 'path', as: 'string', dynamic: true },
                 ],
-                impl: function (context, path, stringOnly) { return ({
+                impl: function (ctx) { return ({
                     $jb_val: function (value) {
+                        var path = ctx.params.path();
+                        if (!path)
+                            return;
                         if (typeof value == 'undefined') {
                             var val = studio_tgp_model_1.model.val(path);
                             if (typeof val == 'string')
@@ -69,14 +72,42 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 }); }
             });
             jb_core_1.jb.component('studio.goto-sublime', {
+                type: 'control',
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
+                impl: { $: 'dynamic-controls',
+                    controlItems: { $: 'studio.goto-targets', path: '%$path%' },
+                    genericControl: { $: 'pulldown.menu-item',
+                        title: { $pipeline: [
+                                '%$controlItem%',
+                                { $: 'split', separator: '~', part: 'first' },
+                                'goto sublime: %%'
+                            ] },
+                        action: { $: 'studio.open-sublime-editor', path: '%$controlItem%' }
+                    }
+                },
+            });
+            jb_core_1.jb.component('studio.goto-targets', {
+                params: [
+                    { id: 'path', as: 'string' },
+                ],
+                impl: function (ctx, path) {
+                    return [studio_tgp_model_1.model.compName(path), path]
+                        .filter(function (x) { return x; })
+                        .map(function (x) {
+                        return x.split('~')[0];
+                    })
+                        .filter(jb_unique(function (x) { return x; }));
+                }
+            });
+            jb_core_1.jb.component('studio.open-sublime-editor', {
                 type: 'action',
                 params: [
                     { id: 'path', as: 'string' },
                 ],
                 impl: function (ctx, path) {
-                    //		var compName = path.indexOf('~') != -1 ? path.split('~')[0] : model.compName(path);
-                    var compName = path.split('~')[0];
-                    compName && $.ajax("/?op=gotoSource&comp=" + compName);
+                    path && $.ajax("/?op=gotoSource&comp=" + path.split('~')[0]);
                 }
             });
         }

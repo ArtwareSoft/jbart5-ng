@@ -7,7 +7,7 @@ jb_ui.registerDirectives({MdInput: MdInput});
 jb.component('editable-text.md-input',{
   type: 'editable-text.style',
   params: [
-    { id: 'width', as: 'number' }
+    { id: 'width', as: 'number' },
   ],
   impl :{$: 'customStyle', 
    features :{$: 'editable-text.bindField' },

@@ -12,6 +12,31 @@ jb.component('hello-world.main1', {
   type: 'control', 
   impl :{$: 'label', title: '$log:hello main' }
 })
+
+jb.component('hello-world.form', {
+  type: 'control', 
+  impl :{$: 'group', 
+    style :{$: 'group.div' }, 
+    controls: [
+      {$: 'editable-text', 
+        title: 'name (update on blur)', 
+        databind: '%$globals/name%', 
+        style :{$: 'editable-text.md-input' }
+      }, 
+      {$: 'editable-text', 
+        title: 'name', 
+        databind: '%$globals/name%', 
+        style :{$: 'editable-text.md-input' }
+      }, 
+      {$: 'editable-text', 
+        title: 'name', 
+        databind: '%$globals/name%', 
+        style :{$: 'editable-text.md-input' }
+      }
+    ]
+  }
+})
+
 jb.component('hello-world.main', {
   type: 'control', 
   impl :{$: 'group', 

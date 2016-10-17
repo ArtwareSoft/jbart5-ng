@@ -2,33 +2,11 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx, studio_tgp_model_1, studio_utils_1, studio_path_1;
-    var Probe, bridge;
-    // function initJbEditorProbe() {
-    //   var _jbart = jbart_base();
-    //   if (!_jbart.studioJbEditorProbe) {
-    //     var _win = jbart.previewWindow || window;
-    //     var circuit = ctx.exp('%$circuit%') || ctx.exp('%$globals/project%.%$globals/page%');
-    //     var context = _win.jb_ctx(_jbart.initialCtx,{ profile: {$: circuit}, comp: circuit, path: '', data: null} );
-    //     _jbart.studioJbEditorProbe = new Probe(context);
-    //   }
-    //   return _jbart.studioJbEditorProbe;
-    // }
-    // jb.component('studio.probe-set-path-to-trace', {
-    //   type:'action',
-    //   params: [ 
-    //     { id: 'pathToTrace', as: 'string', dynamic: true } 
-    //     { id: 'result', as: 'ref' } 
-    //   ],
-    //   impl: (ctx,pathToTrace) => {
-    //     var probe = initJbEditorProbe();
-    //     probe.pathToTrace = pathToTrace;
-    //   }
-    // })
+    var Probe;
     function testControl(ctx, forTests) {
         // test the control as a dialog
         return new Promise(function (resolve, reject) {
-            var _jbart = studio_utils_1.jbart_base();
-            var _win = jbart.previewWindow || window;
+            var _win = ctx.win();
             var dialog = {
                 id: 'test-control',
                 em: new jb_rx.Subject(),
@@ -45,9 +23,9 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                         })
                             .subscribe(function (x) {
                             if (!forTests)
-                                jb_core_1.jb.delay(1).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
+                                jb_core_1.jb.delay(1, ctx).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
+                            console.log('close test dialog');
                             resolve({ element: cmp.elementRef.nativeElement });
-                            //            console.log('close test dialog');
                         });
                     },
                     css: '{display: none}'
@@ -153,94 +131,12 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                     return new Probe(context).runCircuit(path());
                 }
             });
-            bridge = {
-                openDialog: {
-                    content: function (path, inCtx) {
-                        return jb_core_1.jb.ctx(inCtx, {
-                            profile: inCtx.profile.content,
-                            path: 'content',
-                            vars: { dialogData: {} }
-                        });
-                    }
-                },
-                writeValue: {
-                    to: 'default',
-                    value: 'default',
-                }
-            };
+            // watch & fix path changes
+            studio_utils_1.pathChangesEm.subscribe(function (fixer) {
+                var ctx = jbart.initialCtx && jbart.initialCtx.exp('%$globals/last_pick_selection%');
+                if (ctx && ctx.path)
+                    ctx.path = fixer.fix(ctx.path);
+            });
         }
     }
 });
-// bridge(path,inCtx) {
-//   var compName = model.compName(studio.parentPath(path));
-//   var prop = path.split('~').pop();
-//   if (!bridge[compName] || !bridge[compName][prop])
-//     return;
-//   if (bridge[compName][prop] == 'default')
-//     return jb.ctx(ctx,{ profile: profile[prop], path: prop })
-//   return bridge[compName][prop](path,inCtx);
-// }
-// return this.runCircuit().then(()=>{
-//   if (this.probe[this.pathToTrace].length > 0) {
-//     _jbart.probe = null;
-//     return this.probe[this.pathToTrace];
-//   } else {
-//     return this.rerunCircuit();
-//   }
-// })
-// rerunCircuit() {
-//   var path_parts = this.pathToTrace.split('~');
-//   var sub_paths = path_parts.map((e,i)=>
-//     path_parts.slice(0,i+1).join('~')).reverse();
-//   var gapToRun = sub_paths
-//     .filter(p=>
-//       this.probe[p] && this.probe[p].length)
-//     .map(p=>
-//       this.bridge(p,this.probe[p][0].in))
-//     .filter(x=>x)
-//     [0];
-//   if (gapToRun)
-//     return new Probe(this.pathToTrace,gapToRun,(this.depth||0)+1).run();
-// }
-// traceGaps(context,parentParam) {
-//   if (context.path.indexOf('data-tests') == 0)
-//     console.log('running at',context.path, 'looking for ' + this.pathToTrace);
-//   if (typeof context.profile == 'object' && jb.compName(context.profile))
-//     jb.entries(context.profile)
-//       .filter(p=>
-//         p[0].indexOf('on') == 0 || p[0].indexOf('action') == 0)
-//       .forEach(p => 
-//         this.doTraceGaps(p[0],context))
-// }
-// doTraceGaps(prop,context) { // for action paths
-//     var _win = jbart.previewWindow || window;
-//     var path = context.path + '~' + prop;
-//     var compName = model.compName(path);
-//     var ctx = _win.jb_ctx(context, { profile: context.profile[prop], path: prop});
-//     var propCtx = _win.jb_prepare(ctx).ctx;
-//     this.probe[path] = [{in: propCtx }];
-//     jb.entries(bridge[compName])
-//       .map(p=>path+'~'+p[0])
-//       .forEach(inner_path=> {
-//           this.probe[inner_path] = [{in: propCtx }]
-//         })
-// }
-// setTrace() {
-//   this.clearTrace();
-//   var profile = studio.profileFromPath(this.pathToTrace);
-//   if (jb.compName(profile))
-//     profile.$jbProbe = true;
-//   else if (typeof profile == 'string') {
-//     var profileRef = studio.profileRefFromPath(this.pathToTrace);
-//     jb.writeValue(profileRef,`$jbProbe:${profile}`)
-//   }
-// }
-// clearTrace() {
-//   var profile = studio.profileFromPath(this.pathToTrace);
-//   if (jb.compName(profile))
-//     delete profile.$jbProbe;
-//   else if (typeof profile == 'string' && profile.indexOf('$jbProbe:') == 0) {
-//     var profileRef = studio.profileRefFromPath(this.pathToTrace);
-//     jb.writeValue(profileRef,profile.substr(7))
-//   }
-// } 

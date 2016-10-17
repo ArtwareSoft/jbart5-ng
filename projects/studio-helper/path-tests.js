@@ -66,19 +66,7 @@ jb.component('path-test.inner-in-template', {
 	}
 })
 
-jb.component('path-test.pipeline-sugar1', {
-	 impl :{$: 'jb-path-test', 
-	 	$vars: { tst: 10 },
-		controlWithMark: {$: 'group', 
-			controls :{$: 'label', title: ['$mark:hello'] } 
-		},
-		staticPath : 'controls~title~0',
-		expectedDynamicCounter: 0,
-		probeCheck : '%$tst% == 10'
-	}
-})
-
-jb.component('path-test.pipeline-sugar2', {
+jb.component('path-test.pipeline-sugar', {
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
@@ -114,18 +102,6 @@ jb.component('path-test.pipeline-one-elem', {
 	}
 })
 
-jb.component('path-test.filter-sugar', {
-	 impl :{$: 'jb-path-test', 
-	 	$vars: { tst: 10 },
-		controlWithMark: {$: 'group', 
-			controls :{$: 'label', title : ['hello', {$filter: '$mark:%% == "hello"'}] } 
-		},
-		staticPath : 'controls~title~1~$filter',
-		expectedDynamicCounter: 0,
-		probeCheck : '%$tst% == 10'
-	}
-})
-
 jb.component('path-test.actions-sugar', {
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
@@ -142,9 +118,9 @@ jb.component('path-test.filter-no-sugar', {
 	 impl :{$: 'jb-path-test', 
 	 	$vars: { tst: 10 },
 		controlWithMark: {$: 'group', 
-			controls :{$: 'label', title : ['hello', {$: 'filter', filter :'$mark:%% == "hello"'}] } 
+			controls :{$: 'label', title : {$:'pipeline', items: ['hello', {$: 'filter', filter :'$mark:%% == "hello"'}] }} 
 		},
-		staticPath : 'controls~title~1~filter',
+		staticPath : 'controls~title~items~1~filter',
 		expectedDynamicCounter: 0,
 		probeCheck : '%$tst% == 10'
 	}

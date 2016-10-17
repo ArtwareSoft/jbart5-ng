@@ -213,7 +213,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                         previewIframe.prototype.ngOnInit = function () {
                             var cmp = this;
                             cmp.project = ctx.exp('%$globals/project%');
-                            cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/' + cmp.project);
+                            cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/' + cmp.project + '?cacheKiller=' + ('' + Math.random()).slice(10));
                             if (!cmp.project)
                                 debugger;
                             var iframe = cmp.elementRef.nativeElement.firstElementChild;

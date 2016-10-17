@@ -139,6 +139,8 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                 })
                                     .subscribe(function (x) {
                                     field.writeValue(x);
+                                    if (cmp.onChange)
+                                        cmp.onChange(x);
                                     jb_ui.apply(context);
                                 });
                                 editor.on('change', function () {
@@ -156,7 +158,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                     { id: 'enableFullScreen', type: 'boolean', as: 'boolean', defaultValue: true },
                     { id: 'resizer', type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
                     { id: 'height', as: 'number' },
-                    { id: 'mode', as: 'string' },
+                    { id: 'mode', as: 'string', options: 'htmlmixed,javascript,css' },
                     { id: 'lineWrapping', as: 'boolean' },
                 ],
                 impl: function (context, cm_settings, _enableFullScreen, resizer, height, mode, lineWrapping) {

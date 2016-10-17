@@ -31,6 +31,19 @@ jb.component('field.subscribe', {
   })
 })
 
+jb.component('field.onChange', {
+  type: 'feature',
+  params: [
+    { id: 'action', type: 'action[]', essential: true, dynamic: true }
+  ],
+  impl: ctx => ({ 
+    init: cmp =>
+      cmp.onChange = () => 
+        ctx.params.action(cmp.ctx)
+  })
+})
+
+
 jb.component('field.toolbar', {
   type: 'feature',
   params: [

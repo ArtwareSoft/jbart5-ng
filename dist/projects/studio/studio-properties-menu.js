@@ -114,10 +114,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 icon: 'code',
                                 action: { $: 'studio.editSource', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item',
-                                title: 'Goto sublime',
-                                action: { $: 'studio.goto-sublime', path: '%$path%' }
-                            },
+                            { $: 'studio.goto-sublime', path: '%$path%' },
                             { $: 'pulldown.menu-item',
                                 title: 'Delete',
                                 icon: 'delete',

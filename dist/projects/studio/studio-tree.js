@@ -68,10 +68,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 features: { $: 'hidden', showCondition: '%$compName%' },
                                 action: { $: 'studio.goto-path', path: '%$compName%' }
                             },
-                            { $: 'pulldown.menu-item',
-                                title: 'Goto sublime',
-                                action: { $: 'studio.goto-sublime', path: '%$path%' }
-                            },
+                            { $: 'studio.goto-sublime', path: '%$path%' },
                             { $: 'pulldown.menu-item-separator' },
                             { $: 'pulldown.menu-item',
                                 title: 'Delete',

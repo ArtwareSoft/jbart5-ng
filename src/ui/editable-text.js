@@ -7,18 +7,19 @@ jb.component('editable-text',{
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'databind', as: 'ref'},
+    { id: 'updateOnBlur', as: 'boolean', type: 'boolean' },
     { id: 'style', type: 'editable-text.style', defaultValue: { $: 'editable-text.input' }, dynamic: true },
     { id: 'features', type: 'feature[]', dynamic: true },
   ],
   impl: ctx => 
-  	jb_ui.ctrl(ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) }))
+  	jb_ui.ctrl(ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind,ctx.params.updateOnBlur) }))
 });
 
 jb.component('editable-text.bindField', {
   type: 'feature',
   impl: ctx => ({
-  	init: cmp => 
-  		ctx.vars.field.bindToCmp(cmp, ctx)
+   	init: cmp => 
+  		cmp.ctx.vars.field.bindToCmp(cmp, cmp.ctx)
   })
 })
 
@@ -35,7 +36,7 @@ jb.component('editable-text.textarea', {
 	type: 'editable-text.style',
 	impl :{$: 'customStyle', 
       features :{$: 'editable-text.bindField' },
-      template: '<textarea %$field/modelExp%></textarea>',
+      template: '<div><textarea %$field/modelExp%></textarea></div>',
 	}
 })
 

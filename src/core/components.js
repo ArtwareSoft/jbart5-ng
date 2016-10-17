@@ -42,11 +42,12 @@ jb_component('pipeline',{
 			var innerPath = context.profile['$pipeline'] ? '$pipeline~' : 'items~';
 
 		profiles.forEach(function(profile,i) {
+			var parentParam = (i == profiles.length - 1 && context.parentParam) ? context.parentParam : { as: 'array'};
 			if (jb_profileType(profile) == 'aggregator')
-				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile, path: innerPath+i }), { as: 'array'});
+				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile, path: innerPath+i }), parentParam);
 			else 
 				curr = [].concat.apply([],curr.map(function(item) {
-					return jb_run(jb_ctx(context,{data: item, profile: profile, path: innerPath+i}), { as: 'array'});
+					return jb_run(jb_ctx(context,{data: item, profile: profile, path: innerPath+i}), parentParam);
 				})).filter(notNull);
 		});
 		return curr;
@@ -374,13 +375,27 @@ jb_component('count',{
 });
 
 jb_component('toUpperCase', {
-	impl: ctx =>
-		jb_tostring(ctx.data).toUpperCase()
+	params: [
+		{ id: 'text', as: 'string', defaultValue: '%%'}
+	],
+	impl: (ctx,text) =>
+		text.toUpperCase()
 });
 
 jb_component('toLowerCase', {
-	impl: ctx =>
-		jb_tostring(ctx.data).toLowerCase()
+	params: [
+		{ id: 'text', as: 'string', defaultValue: '%%'}
+	],
+	impl: (ctx,text) =>
+		text.toLowerCase()
+});
+
+jb_component('capitalize', {
+	params: [
+		{ id: 'text', as: 'string', defaultValue: '%%'}
+	],
+	impl: (ctx,text) =>
+		text.charAt(0).toUpperCase() + text.slice(1)
 });
 
 
@@ -463,10 +478,8 @@ jb_component('stringify',{
 		{ id: 'value', defaultValue: '%%', as:'single'},
 		{ id: 'space', as: 'string', description: 'use space or tab to make pretty output' }
 	],
-	impl: function(context,value,space) {		
-		if (typeof value == 'object')
-			return JSON.stringify(value,null,space);
-	}
+	impl: (context,value,space) =>		
+			JSON.stringify(value,null,space)
 });
 
 jb_component('jbart', {
@@ -483,7 +496,7 @@ jb_component('split',{
 	params: [
 		{ id: 'separator', as: 'string', defaultValue: ',' },
 		{ id: 'text', as: 'string', defaultValue: '%%'},
-		{ id: 'part', type:'enum', values: 'first,second,last,but first,but last' }
+		{ id: 'part', options: ',first,second,last,but first,but last' }
 	],
 	impl: function(context,separator,text,part) {
 		var out = text.split(separator);

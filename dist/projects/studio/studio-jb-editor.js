@@ -1,7 +1,7 @@
-System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1, studio_utils_1;
+    var jb_core_1, studio_tgp_model_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,9 +9,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             },
             function (studio_tgp_model_1_1) {
                 studio_tgp_model_1 = studio_tgp_model_1_1;
-            },
-            function (studio_utils_1_1) {
-                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-jb-editor', {
@@ -35,22 +32,21 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.jb-editor', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     title: 'main',
+                    style: { $: 'layout.horizontal', spacing: 3 },
                     controls: [
                         { $: 'tree',
                             cssClass: 'jb-control-tree studio-control-tree',
                             nodeModel: { $: 'studio.jb-editor.nodes', path: '%$path%' },
                             features: [
                                 { $: 'tree.selection',
-                                    autoSelectFirst: true,
                                     databind: '%$globals/jb_editor_selection%',
                                     onDoubleClick: { $: 'studio.open-jb-edit-property',
                                         path: '%$globals/jb_editor_selection%'
-                                    }
+                                    },
+                                    autoSelectFirst: true
                                 },
                                 { $: 'tree.keyboard-selection',
                                     onEnter: { $: 'studio.open-jb-edit-property',
@@ -93,30 +89,61 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             ]
                         },
                         { $: 'group',
-                            title: 'input-output',
-                            controls: { $: 'group',
-                                features: { $: 'group.wait',
-                                    for: { $: 'studio.probe', path: '%$globals/jb_editor_selection%' },
-                                    resource: 'probeResult'
-                                },
-                                title: 'wait for probe',
-                                controls: { $: 'itemlist',
-                                    items: '%$probeResult/finalResult%',
+                            title: 'watch selection',
+                            controls: [
+                                { $: 'group',
+                                    title: 'hide if selection empty',
                                     controls: [
                                         { $: 'group',
-                                            controls: [
-                                                { $: 'studio.data-browse', data: '%in/data%', title: 'in' },
-                                                { $: 'studio.data-browse', data: '%out%', title: 'out' }
-                                            ],
-                                            title: 'in/out'
+                                            title: 'watch selection content',
+                                            controls: { $: 'group',
+                                                title: 'wait for probe',
+                                                controls: { $: 'itemlist',
+                                                    items: '%$probeResult/finalResult%',
+                                                    controls: [
+                                                        { $: 'group',
+                                                            title: 'in/out',
+                                                            controls: [
+                                                                { $: 'studio.data-browse',
+                                                                    data: '%in/data%',
+                                                                    title: 'in'
+                                                                },
+                                                                { $: 'studio.data-browse',
+                                                                    data: '%out%',
+                                                                    title: 'out'
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                features: { $: 'group.wait',
+                                                    for: { $: 'studio.probe', path: '%$globals/jb_editor_selection%' },
+                                                    loadingControl: { $: 'label', title: 'calculating...' },
+                                                    resource: 'probeResult'
+                                                }
+                                            },
+                                            features: { $: 'group.watch',
+                                                data: { $: 'pipeline',
+                                                    items: [
+                                                        { $: 'stringify',
+                                                            value: { $: 'studio.val',
+                                                                path: '%$globals/jb_editor_selection%'
+                                                            }
+                                                        },
+                                                        '%$globals/jb_editor_selection%:%%'
+                                                    ]
+                                                }
+                                            }
                                         }
                                     ],
+                                    features: { $: 'group-item.if',
+                                        showCondition: '%$globals/jb_editor_selection%'
+                                    }
                                 }
-                            },
+                            ],
                             features: { $: 'group.watch', data: '%$globals/jb_editor_selection%' }
                         }
-                    ],
-                    style: { $: 'layout.horizontal', spacing: 3 }
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.data-browse', {
@@ -161,28 +188,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.jb-floating-input', {
-                type: 'control',
-                params: [{ id: 'path', as: 'string' }],
-                impl: { $: 'editable-text',
-                    databind: { $: 'studio.profile-value-as-text', path: '%$path%' },
-                    features: [
-                        { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'css.padding', left: '4', right: '4' },
-                        { $: 'editable-text.suggestions-input-feature',
-                            mdInput: true,
-                            floatingInput: true,
-                            path: '%$path%',
-                            action: { $: 'studio.jb-open-suggestions', path: '%$path%' },
-                            onEnter: [
-                                { $: 'closeContainingPopup', OK: true },
-                                { $: 'tree.regain-focus' }
-                            ]
-                        }
-                    ],
-                    style: { $: 'editable-text.md-input', width: '400' }
-                }
-            });
             jb_core_1.jb.component('studio.profile-value-as-text', {
                 type: 'data',
                 params: [
@@ -198,25 +203,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 return val;
                             if (studio_tgp_model_1.model.compName(path))
                                 return '=' + studio_tgp_model_1.model.compName(path);
-                            return typeof val;
                         }
-                        var _path = path;
-                        // if (path.slice(-2)== '~+') {
-                        //   var arrPath = path.slice(0,-2);
-                        //   model.modify(model.addArrayItem, arrPath, {}, context);
-                        //   var ar = model.val(arrPath);
-                        //   _path = arrPath+'~'+ (ar.length-1);
-                        // }
-                        if (value.indexOf('=') == 0) {
-                            var comp = value.substr(1);
-                            if (comp == 'pipeline')
-                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, _path, { value: [] }, context);
-                            else if (studio_utils_1.findjBartToLook(_path).comps[comp])
-                                studio_tgp_model_1.model.modify(studio_tgp_model_1.model.setComp, _path, { comp: value.substr(1) }, context);
-                        }
-                        else {
-                            studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, _path, { value: value }, context);
-                        }
+                        else if (value.indexOf('=') != 0)
+                            studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: value }, context);
                     }
                 }); }
             });
@@ -233,30 +222,30 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.jb-editor-menu', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
-                    features: { $: 'group.menu-keyboard-selection', autoFocus: true },
                     controls: [
                         { $: 'dynamic-controls',
                             controlItems: { $: 'studio.more-params', path: '%$path%' },
                             genericControl: { $: 'pulldown.menu-item',
-                                title: [
-                                    '%$controlItem%',
-                                    { $: 'suffix', separator: '~' }
-                                ],
+                                title: {
+                                    $pipeline: [
+                                        '%$controlItem%',
+                                        { $: 'suffix', separator: '~' }
+                                    ]
+                                },
                                 action: { $: 'runActions',
-                                    $vars: {
-                                        nextPath: '%$path%~%$controlItem%',
-                                    },
+                                    $vars: { nextPath: '%$path%~%$controlItem%' },
                                     actions: [
                                         { $: 'studio.add-property', path: '%$controlItem%' },
                                         { $: 'closeContainingPopup' },
-                                        { $: 'writeValue', value: '%$nextPath%', to: '%$globals/jb_editor_selection%' },
+                                        { $: 'writeValue',
+                                            to: '%$globals/jb_editor_selection%',
+                                            value: '%$nextPath%'
+                                        },
                                         { $: 'studio.open-jb-editor-menu', path: '%$nextPath%' }
                                     ]
-                                },
+                                }
                             }
                         },
                         { $: 'divider',
@@ -268,13 +257,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 compName: { $: 'studio.comp-name', path: '%$path%' }
                             },
                             title: 'Goto %$compName%',
-                            features: { $: 'hidden', showCondition: '%$compName%' },
-                            action: { $: 'studio.open-jb-editor', path: '%$compName%' }
+                            action: { $: 'studio.open-jb-editor', path: '%$compName%' },
+                            features: { $: 'hidden', showCondition: '%$compName%' }
                         },
-                        { $: 'pulldown.menu-item',
-                            title: 'Goto sublime',
-                            action: { $: 'studio.goto-sublime', path: '%$path%' }
-                        },
+                        { $: 'studio.goto-sublime', path: '%$path%' },
                         { $: 'pulldown.menu-item-separator' },
                         { $: 'pulldown.menu-item',
                             title: 'Delete',
@@ -314,43 +300,48 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             title: 'divider'
                         },
                         { $: 'pulldown.studio-wrap-with',
-                            type: 'data',
                             path: '%$path%',
+                            type: 'data',
                             components: { $: 'list', items: ['pipeline', 'list', 'firstSucceeding'] }
                         },
                         { $: 'pulldown.studio-wrap-with',
-                            type: 'boolean',
                             path: '%$path%',
+                            type: 'boolean',
                             components: { $: 'list', items: ['and', 'or', 'not'] }
                         },
                         { $: 'pulldown.studio-wrap-with',
-                            type: 'action',
                             path: '%$path%',
+                            type: 'action',
                             components: { $: 'list', items: ['runActions', 'runActionOnItems'] }
                         },
                         { $: 'pulldown.menu-item',
                             title: 'Add property',
                             action: { $: 'openDialog',
                                 id: 'add property',
-                                modal: true,
-                                title: 'Add Property',
+                                style: { $: 'dialog.md-dialog-ok-cancel',
+                                    okLabel: 'OK',
+                                    cancelLabel: 'Cancel'
+                                },
                                 content: { $: 'group',
                                     controls: [
                                         { $: 'editable-text',
-                                            style: { $: 'editable-text.md-input' },
                                             title: 'name',
-                                            databind: ''
+                                            databind: '%$dialogData/name%',
+                                            style: { $: 'editable-text.md-input' }
                                         }
                                     ],
                                     features: { $: 'css.padding', top: '9', left: '19' }
                                 },
-                                style: { $: 'dialog.md-dialog-ok-cancel',
-                                    okLabel: 'OK',
-                                    cancelLabel: 'Cancel'
-                                }
+                                title: 'Add Property',
+                                onOK: { $: 'writeValue',
+                                    to: { $: 'studio.ref', path: '%$path%~%$dialogData/name%' },
+                                    value: ''
+                                },
+                                modal: 'true'
                             }
                         }
-                    ]
+                    ],
+                    features: { $: 'group.menu-keyboard-selection', autoFocus: true }
                 }
             });
             jb_core_1.jb.component('pulldown.studio-wrap-with', {

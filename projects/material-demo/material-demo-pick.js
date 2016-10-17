@@ -29,11 +29,12 @@ jb.component('studio.ng-template-as-text', {
 			if (path.indexOf(':') == -1) return '';
 			var jbPath = path.split(':')[0]+'~html';
 			var ngPathAr = path.split(':')[1].split('~');
-			var profile = ctx.run({$:'studio.ref', path: jbPath});
-			if (!jb_tostring(profile))
+			var html_profile = ctx.run({$:'studio.val', path: jbPath});
+			if (!html_profile)
 				return '';
+			var html_ref = ctx.run(html_profile,{as: 'ref'});
 			var html = document.createElement('div');
-			html.innerHTML = jb_tostring(profile);
+			html.innerHTML = jb_val(html_ref);
 			var ngElem = ngPathAr.reduce((elem,index)=>
 				elem && Array.from(elem.children)[index]
 				, html.firstChild)
@@ -43,8 +44,8 @@ jb.component('studio.ng-template-as-text', {
 			} else {
 				if (ngElem) {
 					ngElem.outerHTML = value;
-					profile.ngPath = path.split(':')[1];
-					jb_writeValue(profile,html.innerHTML);
+					//profile.ngPath = path.split(':')[1];
+					jb_writeValue(html_ref,html.innerHTML);
 				}
 			}
 		}

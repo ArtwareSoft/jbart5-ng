@@ -133,7 +133,7 @@ jb_system_config = {
         'testing': '/dist/src/testing',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
-        'hammerjs' : '/node_modules/hammerjs',
+//        'hammerjs' : '/node_modules/hammerjs',
         '@angular2-material': '/node_modules/@angular2-material',
         '@angular':  '/node_modules/@angular'
       },

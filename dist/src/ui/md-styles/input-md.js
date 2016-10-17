@@ -18,7 +18,7 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
             jb_core_1.jb.component('editable-text.md-input', {
                 type: 'editable-text.style',
                 params: [
-                    { id: 'width', as: 'number' }
+                    { id: 'width', as: 'number' },
                 ],
                 impl: { $: 'customStyle',
                     features: { $: 'editable-text.bindField' },

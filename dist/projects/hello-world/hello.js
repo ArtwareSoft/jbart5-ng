@@ -19,6 +19,29 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 type: 'control',
                 impl: { $: 'label', title: '$log:hello main' }
             });
+            jb_core_1.jb.component('hello-world.form', {
+                type: 'control',
+                impl: { $: 'group',
+                    style: { $: 'group.div' },
+                    controls: [
+                        { $: 'editable-text',
+                            title: 'name (update on blur)',
+                            databind: '%$globals/name%',
+                            style: { $: 'editable-text.md-input' }
+                        },
+                        { $: 'editable-text',
+                            title: 'name',
+                            databind: '%$globals/name%',
+                            style: { $: 'editable-text.md-input' }
+                        },
+                        { $: 'editable-text',
+                            title: 'name',
+                            databind: '%$globals/name%',
+                            style: { $: 'editable-text.md-input' }
+                        }
+                    ]
+                }
+            });
             jb_core_1.jb.component('hello-world.main', {
                 type: 'control',
                 impl: { $: 'group',

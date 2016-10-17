@@ -90,8 +90,10 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
             jb_core_1.jb.component('studio.refreshPreview', {
                 type: 'action',
                 impl: function () {
-                    if (jbart.previewjbart)
-                        jbart.previewjbart.previewRefreshCounter = (jbart.previewjbart.previewRefreshCounter || 0) + 1;
+                    var previewjBart = jbart.previewjbart ? jbart.previewjbart : jbart;
+                    previewjBart.previewRefreshCounter = (previewjBart.previewRefreshCounter || 0) + 1;
+                    if (jbart.studioActivityEm)
+                        jbart.studioActivityEm.next();
                 }
             });
             jb_core_1.jb.component('studio.redrawStudio', {

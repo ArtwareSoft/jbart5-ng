@@ -41,10 +41,10 @@ jb.component('studio.open-new-tgp-dialog', {
           style :{$: 'editable-text.md-input' }
         }, 
         {$: 'itemlist-with-groups', 
-          items: [
+          items: { $pipeline: [
             {$: 'studio.PTs-of-type', type: '%$type%' }, 
             {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-          ], 
+          ]}, 
           controls: [
             {$: 'button', 
               title: '%%', 

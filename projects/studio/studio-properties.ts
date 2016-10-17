@@ -173,10 +173,10 @@ jb.component('studio.property-primitive', {
     features: [
       {$: 'studio.undo-support', path: '%$path%' }, 
       {$: 'studio.property-toobar-feature', path: '%$path%'},
-      {$: 'editable-text.suggestions-input-feature', 
-        path: '%$path%', 
-        action :{$: 'studio.jb-open-suggestions', path: '%$path%' }
-      }
+      // {$: 'editable-text.suggestions-input-feature', 
+      //   path: '%$path%', 
+      //   action :{$: 'studio.jb-open-suggestions', path: '%$path%' }
+      // }
     ]
   }
 })

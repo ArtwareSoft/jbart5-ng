@@ -51,10 +51,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 style: { $: 'editable-text.md-input' }
                             },
                             { $: 'itemlist-with-groups',
-                                items: [
-                                    { $: 'studio.PTs-of-type', type: '%$type%' },
-                                    { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-                                ],
+                                items: { $pipeline: [
+                                        { $: 'studio.PTs-of-type', type: '%$type%' },
+                                        { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+                                    ] },
                                 controls: [
                                     { $: 'button',
                                         title: '%%',

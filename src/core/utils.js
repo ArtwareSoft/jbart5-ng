@@ -89,7 +89,13 @@ jbCtx.prototype = {
 //  str: function(profile) { return this.run(profile, { as: 'string'}) },
   bool: function(profile) { return this.run(profile, { as: 'boolean'}) },
   // keeps the context vm and not the caller vm - needed in studio probe
-  ctx: function(ctx2) { return jb_ctx(this,ctx2) },
+  ctx: function(ctx2) { return new jbCtx(this,ctx2) },
+  win: function() { return window }, // used for multi windows apps. e.g., studio
+  extendVars: function(ctx2,data2) { 
+    if (ctx2 == null && data2 == null)
+      return this;
+    return new jbCtx(this,{ vars: ctx2.vars, data: (data2 == null) ? ctx2.data : data2 })
+  },
   runItself: function(parentParam,settings) { return jb_run(this,parentParam,settings) },
 }
 

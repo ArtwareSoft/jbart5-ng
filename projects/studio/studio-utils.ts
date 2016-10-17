@@ -79,8 +79,10 @@ jb.component('studio.message', {
 jb.component('studio.refreshPreview', {
 	type: 'action',
 	impl: () => {
-		if (jbart.previewjbart)
-			jbart.previewjbart.previewRefreshCounter = (jbart.previewjbart.previewRefreshCounter || 0) + 1;
+		var previewjBart = jbart.previewjbart ? jbart.previewjbart : jbart;
+		previewjBart.previewRefreshCounter = (previewjBart.previewRefreshCounter || 0) + 1;
+		if (jbart.studioActivityEm)
+			jbart.studioActivityEm.next()
 	}
 })
 

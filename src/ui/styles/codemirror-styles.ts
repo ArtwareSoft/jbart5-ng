@@ -63,7 +63,9 @@ jb.component('editable-text.codemirror', {
 						.filter(x => 
 							x != field.getValue())
 						.subscribe(x=>{ 
-							field.writeValue(x); 
+							field.writeValue(x);
+							if (cmp.onChange)
+								cmp.onChange(x);
 							jb_ui.apply(context)
 						})
 
@@ -156,7 +158,7 @@ jb.component('text.codemirror', {
 		{ id: 'enableFullScreen', type: 'boolean', as: 'boolean', defaultValue: true},
         { id: 'resizer', type: 'boolean', as: 'boolean', description: 'resizer id or true (id is used to keep size in session storage)' },
 		{ id: 'height', as: 'number' },
-        { id: 'mode', as: 'string' },
+        { id: 'mode', as: 'string', options: 'htmlmixed,javascript,css' },
         { id: 'lineWrapping', as: 'boolean' },
     ],
     impl: function(context, cm_settings, _enableFullScreen, resizer,height, mode, lineWrapping) {

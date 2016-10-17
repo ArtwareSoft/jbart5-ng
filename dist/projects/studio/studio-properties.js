@@ -171,10 +171,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
                         { $: 'studio.property-toobar-feature', path: '%$path%' },
-                        { $: 'editable-text.suggestions-input-feature',
-                            path: '%$path%',
-                            action: { $: 'studio.jb-open-suggestions', path: '%$path%' }
-                        }
                     ]
                 }
             });

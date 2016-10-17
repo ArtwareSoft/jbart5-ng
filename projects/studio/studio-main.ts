@@ -191,7 +191,7 @@ jb.component('studio.renderWidget',{
 		  		ngOnInit() {
 		  			var cmp = this;
 					cmp.project = ctx.exp('%$globals/project%');
-					cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/'+cmp.project);
+					cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/'+cmp.project+ '?cacheKiller='+(''+Math.random()).slice(10));
 					if (!cmp.project) debugger;
 					var iframe = cmp.elementRef.nativeElement.firstElementChild;
 					window.jb_studio_window = true; // let studio widgets run in a special mode
