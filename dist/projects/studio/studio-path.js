@@ -1,7 +1,7 @@
-System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_utils_1;
+    var jb_core_1, jb_rx, studio_utils_1;
     var pathFixer, FixReplacingPathsObj;
     function parentPath(path) {
         return path.split('~').slice(0, -1).join('~');
@@ -106,6 +106,13 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
             }
         });
     }
+    function fixSetCompPath(comp) {
+        studio_utils_1.pathChangesEm.next({
+            fix: function (pathToFix) {
+                return pathToFix.indexOf(comp) == 0 ? closest(pathToFix) : pathToFix;
+            }
+        });
+    }
     function fixIndexPaths(path, diff) {
         studio_utils_1.pathChangesEm.next(function (pathToFix) {
             return fixIndexOfPath(pathToFix, path, diff);
@@ -152,6 +159,9 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
+            function (jb_rx_1) {
+                jb_rx = jb_rx_1;
+            },
             function (studio_utils_1_1) {
                 studio_utils_1 = studio_utils_1_1;
             }],
@@ -161,7 +171,8 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
                 fixIndexPaths: fixIndexPaths,
                 fixReplacingPaths: fixReplacingPaths,
                 fixMovePaths: fixMovePaths,
-                fixArrayWrapperPath: fixArrayWrapperPath
+                fixArrayWrapperPath: fixArrayWrapperPath,
+                fixSetCompPath: fixSetCompPath
             });
             FixReplacingPathsObj = (function () {
                 function FixReplacingPathsObj(path1, path2) {
@@ -192,6 +203,47 @@ System.register(['jb-core', './studio-utils'], function(exports_1, context_1) {
                     if (path && path != closest_path) {
                         jb_core_1.jb.writeValue(pathRef, closest_path);
                     }
+                }
+            });
+            jb_core_1.jb.component('group.studio-watch-path', {
+                type: 'feature',
+                params: [
+                    { id: 'path', essential: true, as: 'ref' },
+                ],
+                impl: function (context, path_ref) { return ({
+                    beforeInit: function (cmp) {
+                        cmp.jbWatchGroupChildrenEm = (cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+                            .merge(cmp.jbEmitter
+                            .filter(function (x) { return x == 'check'; })
+                            .merge(studio_utils_1.pathChangesEm.map(function (fixer) {
+                            return jb_core_1.jb.writeValue(path_ref, fixer.fix(jb_core_1.jb.val(path_ref)));
+                        }))
+                            .map(function () { return jb_core_1.jb.val(path_ref); })
+                            .distinctUntilChanged()
+                            .map(function (val) {
+                            var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+                            return context.vars.$model.controls(ctx2);
+                        }));
+                    },
+                    observable: function () { } // to create jbEmitter
+                }); }
+            });
+            jb_core_1.jb.component('feature.studio-auto-fix-path', {
+                type: 'feature',
+                params: [
+                    { id: 'path', essential: true, as: 'ref' },
+                ],
+                impl: function (context, path_ref) {
+                    return ({
+                        beforeInit: function (cmp) {
+                            studio_utils_1.pathChangesEm
+                                .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                                .subscribe(function (fixer) {
+                                return jb_core_1.jb.writeValue(path_ref, fixer.fix(jb_core_1.jb.val(path_ref)));
+                            });
+                        },
+                        observable: function () { } // to create jbEmitter
+                    });
                 }
             });
         }

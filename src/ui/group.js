@@ -12,7 +12,7 @@ jb.component('group',{
   ],
   impl: function(context) { 
     return jb_ui.ctrl(context).jbExtend({
-      beforeInit(cmp) {
+      beforeInit: cmp => {
         cmp.ctrls = [];
         cmp.jbToExtend = cmp.jbToExtend || {};
         cmp.extendChild = function(index,options) {
@@ -24,6 +24,7 @@ jb.component('group',{
           cmp.title = context.params.title(context);
           (cmp.jbGroupChildrenEm || jb_rx.Observable.of(context.params.controls(cmp.ctx)))
               .merge(cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+              .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
               .subscribe(comps=> {
                   cmp.ctrls = [];
                   cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
@@ -39,7 +40,8 @@ jb.component('group',{
                   })
                 })
             }
-      }
+      },
+      observable: () => {} // to create jbEmitter
     })
   }
 })

@@ -1,10 +1,11 @@
-System.register(['jb-core', 'jb-ui', './studio-utils'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', './studio-utils', './studio-path'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, studio_utils_1;
+    var jb_core_1, jb_ui, studio_utils_1, studio_path_1;
     var Undo, undo;
     function doSetComp(jbart_base, id, comp) {
         jbart_base.comps[id] = comp;
+        studio_path_1.pathFixer.fixSetCompPath(id);
     }
     function setComp(code, jbart_base) {
         var fixed = code.replace(/^jb.component\(/, 'doSetComp(jbart_base,');
@@ -25,6 +26,9 @@ System.register(['jb-core', 'jb-ui', './studio-utils'], function(exports_1, cont
             },
             function (studio_utils_1_1) {
                 studio_utils_1 = studio_utils_1_1;
+            },
+            function (studio_path_1_1) {
+                studio_path_1 = studio_path_1_1;
             }],
         execute: function() {
             Undo = (function () {

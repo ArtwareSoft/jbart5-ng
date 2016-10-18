@@ -542,43 +542,18 @@ jb.component('studio.bindto-modifyOperations', {
     { id: 'path', essential: true, as: 'string' },
     { id: 'data', as: 'ref' }
   ],
-  impl: function(context, path,_data) {
+  impl: (context, path,data_ref) => ({
+      init: cmp =>  
         modifyOperationsEm
+          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
           .filter(e=>
             e.path == path)
           .subscribe(e=>
-              jb.writeValue(_data,true)
-          )
-    }
-})
-
-jb.component('group.studio-watch-path', {
-  type: 'feature',
-  params: [
-    { id: 'path', essential: true, as: 'string' },
-  ],
-  impl: function(context, initialPath) {
-  	var path = initialPath;
-  	pathChangesEm.subscribe(fixer => { path = fixer.fix(path) });
-    return {
-      ctrlsEmFunc: function(originalCtrlsEmFunc,ctx,cmp) {
-        return cmp.jbEmitter
-          .map(()=> profileChildren(path)) 
-          .distinctUntilChanged()
-          .filter(x=>x && x!='undefined')
-          .map(x=>{console.log('group.studio-watch-path changed',x);return x})
-          .flatMap(function(val) {
-              return originalCtrlsEmFunc(ctx)
-            }
-          );
-      },
+              jb.writeValue(data_ref,true)
+          ),
       observable: () => {} // to create jbEmitter
-	}
-
-	function profileChildren() {
-	  	return model.nonControlParams(path).join(' ');
-	}
-  }
+    })
 })
+
 
 

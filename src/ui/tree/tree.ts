@@ -107,6 +107,10 @@ class TreeNode {
 	ngDoCheck() {
 		if (this.tree.nodeModel.isArray(this.path))
 			$(this.elementRef.nativeElement).addClass('jb-array-node');
+		else {
+			$(this.elementRef.nativeElement).removeClass('jb-array-node');
+			this.tree.expanded[this.path] = false;
+		}
 		$(this.elementRef.nativeElement).attr('path', this.path);
 	}
 }

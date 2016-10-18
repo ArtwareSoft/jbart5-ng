@@ -263,11 +263,11 @@ jb.component('dialog-feature.dragTitle', {
 		var dialog = context.vars.$dialog;
 		return {
 		      innerhost: { '.dialog-title' : {
-		      	'(mousedown)': 'mousedown.next($event)', 
+		      	'(mousedown)': 'mousedownEm.next($event)', 
 		       }},
 		       css: '.dialog-title { cursor: pointer }',
 		       init: function(cmp) {
-		       	  cmp.mousedown = cmp.mousedown || new jb_rx.Subject();
+		       	  cmp.mousedownEm = cmp.mousedownEm || new jb_rx.Subject();
 		       	  
 				  if (id && sessionStorage.getItem(id)) {
 						var pos = JSON.parse(sessionStorage.getItem(id));
@@ -275,14 +275,19 @@ jb.component('dialog-feature.dragTitle', {
 					    dialog.$el[0].style.left = pos.left + 'px';
 				  }
 
-				  var mouseMoveEm = jb_rx.Observable.fromEvent(document, 'mousemove')
-				      			.merge(jb_rx.Observable.fromEvent(
-				      				(jbart.previewWindow || {}).document, 'mousemove'));
 				  var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
 				      			.merge(jb_rx.Observable.fromEvent(
-				      				(jbart.previewWindow || {}).document, 'mouseup'));
+				      				(jbart.previewWindow || {}).document, 'mouseup'))
+				      			.take(1);
+				  var mouseMoveEm = jb_rx.Observable.fromEvent(document, 'mousemove')
+				      			.merge(jb_rx.Observable.fromEvent(
+				      				(jbart.previewWindow || {}).document, 'mousemove'))
+				      			.takeUntil(mouseUpEm);
 
-				  var mousedrag = cmp.mousedown.map(event => {
+
+				  var mousedrag = cmp.mousedownEm
+				  		.takeUntil(mouseUpEm)
+				  		.map(event => {
 				        event.preventDefault();
 				        return {
 				          left: event.clientX - dialog.$el[0].getBoundingClientRect().left,
@@ -290,8 +295,7 @@ jb.component('dialog-feature.dragTitle', {
 				        };
 				      })
 				      .flatMap(imageOffset => 
-				      			 mouseMoveEm.takeUntil(mouseUpEm)
-				      			 	.map(pos => ({
+				      			 mouseMoveEm.map(pos => ({
 							        top:  pos.clientY - imageOffset.top,
 							        left: pos.clientX - imageOffset.left
 							     }))

@@ -525,41 +525,19 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     { id: 'path', essential: true, as: 'string' },
                     { id: 'data', as: 'ref' }
                 ],
-                impl: function (context, path, _data) {
-                    studio_utils_1.modifyOperationsEm
-                        .filter(function (e) {
-                        return e.path == path;
-                    })
-                        .subscribe(function (e) {
-                        return jb_core_1.jb.writeValue(_data, true);
-                    });
-                }
-            });
-            jb_core_1.jb.component('group.studio-watch-path', {
-                type: 'feature',
-                params: [
-                    { id: 'path', essential: true, as: 'string' },
-                ],
-                impl: function (context, initialPath) {
-                    var path = initialPath;
-                    studio_utils_1.pathChangesEm.subscribe(function (fixer) { path = fixer.fix(path); });
-                    return {
-                        ctrlsEmFunc: function (originalCtrlsEmFunc, ctx, cmp) {
-                            return cmp.jbEmitter
-                                .map(function () { return profileChildren(path); })
-                                .distinctUntilChanged()
-                                .filter(function (x) { return x && x != 'undefined'; })
-                                .map(function (x) { console.log('group.studio-watch-path changed', x); return x; })
-                                .flatMap(function (val) {
-                                return originalCtrlsEmFunc(ctx);
-                            });
-                        },
-                        observable: function () { } // to create jbEmitter
-                    };
-                    function profileChildren() {
-                        return studio_tgp_model_1.model.nonControlParams(path).join(' ');
-                    }
-                }
+                impl: function (context, path, data_ref) { return ({
+                    init: function (cmp) {
+                        return studio_utils_1.modifyOperationsEm
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .filter(function (e) {
+                            return e.path == path;
+                        })
+                            .subscribe(function (e) {
+                            return jb_core_1.jb.writeValue(data_ref, true);
+                        });
+                    },
+                    observable: function () { } // to create jbEmitter
+                }); }
             });
         }
     }

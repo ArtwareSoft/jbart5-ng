@@ -246,7 +246,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             };
                             cmp.keyEm.filter(function (e) { return e.keyCode == 13; })
                                 .subscribe(function (e) {
-                                if (!suggestionCtx.show)
+                                if (!suggestionCtx.show || suggestionCtx.options.length == 0)
                                     suggestionCtx.closeAndWriteValue();
                             });
                             cmp.keyEm.filter(function (e) { return e.keyCode == 27; })
@@ -297,10 +297,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 }) // ENTER
                                     .subscribe(function () {
                                     suggestionCtx.show = false;
-                                    if (cmp.selected && cmp.selected.paste) {
+                                    if (cmp.selected && cmp.selected.paste)
                                         cmp.selected.paste(ctx);
-                                        jb_ui.apply(ctx);
-                                    }
+                                    jb_ui.apply(ctx);
                                 });
                                 keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC
                                     .subscribe(function (x) {

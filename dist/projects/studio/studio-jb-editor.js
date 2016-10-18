@@ -88,7 +88,8 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                                     action: { $: 'studio.delete', path: '%%' }
                                 },
                                 { $: 'studio.control-tree.refreshPathChanges' },
-                                { $: 'css.width', width: '500' }
+                                { $: 'css.width', width: '500' },
+                                { $: 'feature.studio-auto-fix-path', path: '%$globals/jb_editor_selection%' }
                             ]
                         },
                         { $: 'group',
@@ -146,7 +147,7 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                             ],
                             features: { $: 'group.watch', data: '%$globals/jb_editor_selection%' }
                         }
-                    ]
+                    ],
                 }
             });
             jb_core_1.jb.component('studio.data-browse', {

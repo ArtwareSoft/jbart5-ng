@@ -15,8 +15,8 @@ jb.component('ng2-ui-test', {
 			ctx.run({$:'openDialog', content: ctx.profile.control, 
 			features: ctx2 => ({
 					observable: (observable,cmp) =>
-						observable.filter(x=>
-							x == 'ready')
+						observable.filter(e=>
+							e == 'ready' || e == 'destroy')
 						.catch(e=>{ 
 							resolve({ id: ctx.vars.testID, success:false }) })
 						.subscribe(x=>{

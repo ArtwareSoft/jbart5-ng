@@ -23,8 +23,8 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                         ctx.run({ $: 'openDialog', content: ctx.profile.control,
                             features: function (ctx2) { return ({
                                 observable: function (observable, cmp) {
-                                    return observable.filter(function (x) {
-                                        return x == 'ready';
+                                    return observable.filter(function (e) {
+                                        return e == 'ready' || e == 'destroy';
                                     })
                                         .catch(function (e) {
                                         resolve({ id: ctx.vars.testID, success: false });

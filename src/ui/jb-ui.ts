@@ -38,7 +38,7 @@ var factory_hash = {}, cssFixes_hash = {};
 class jbComponent {
 	constructor(private ctx) {
 		this.annotations = {};
-		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
+		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [],jbDestroyFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
 		this.cssFixes = [];
 
 		this.jb_profile = ctx.profile;
@@ -149,6 +149,8 @@ class jbComponent {
 			this.jbEmitter && this.jbEmitter.next('check');
 		}
 		Cmp.prototype.ngOnDestroy = function() {
+			this.methodHandler.jbDestroyFuncs.forEach(f=> 
+				f(this));
 			this.jbEmitter && this.jbEmitter.next('destroy');
 			this.jbEmitter && this.jbEmitter.complete();
 		}
@@ -199,6 +201,7 @@ class jbComponent {
 		if (options.init) this.methodHandler.jbInitFuncs.push(options.init);
 		if (options.afterViewInit) this.methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
 		if (options.doCheck) this.methodHandler.jbCheckFuncs.push(options.doCheck);
+		if (options.destroy) this.methodHandler.jbDestroyFuncs.push(options.destroy);
 		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
 		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
 		if (options.extendCtx) this.methodHandler.extendCtxFuncs.push(options.extendCtx);

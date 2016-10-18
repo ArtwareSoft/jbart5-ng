@@ -1,4 +1,5 @@
 import {jb} from 'jb-core';
+import * as jb_rx from 'jb-ui/jb-rx';
 import {jbart_base,compAsStr,findjBartToLook,pathChangesEm,notifyModification} from './studio-utils';
 
 export function parentPath(path) {
@@ -65,7 +66,8 @@ export var pathFixer = {
 	fixIndexPaths: fixIndexPaths,
 	fixReplacingPaths: fixReplacingPaths,
 	fixMovePaths: fixMovePaths,
-	fixArrayWrapperPath: fixArrayWrapperPath
+	fixArrayWrapperPath: fixArrayWrapperPath,
+	fixSetCompPath: fixSetCompPath
 }
 
 function profileRefFromPathWithNotification(path,ctx) {
@@ -115,6 +117,13 @@ function fixMovePaths(from,to) {
 				return fixIndexOfPath(fixed1,to,1);
 			}
 		}
+	})
+}
+
+function fixSetCompPath(comp) {
+	pathChangesEm.next({
+		fix: pathToFix =>
+			pathToFix.indexOf(comp) == 0 ? closest(pathToFix) : pathToFix
 	})
 }
 
@@ -194,4 +203,48 @@ jb.component('studio.fix-to-closest-path', {
 //			jb_ui.apply(ctx);
 		}
 	}
+})
+
+jb.component('group.studio-watch-path', {
+  type: 'feature',
+  params: [
+    { id: 'path', essential: true, as: 'ref' },
+  ],
+  impl: (context, path_ref) =>({
+      beforeInit: cmp => {
+          cmp.jbWatchGroupChildrenEm = (cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
+              .merge(cmp.jbEmitter
+                .filter(x => x == 'check')
+                .merge(
+                  pathChangesEm.map(fixer=>
+                    jb.writeValue(path_ref,fixer.fix(jb.val(path_ref))))
+                )
+                .map(()=> jb.val(path_ref))
+                .distinctUntilChanged()
+                .map(val=> {
+                    var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+                    return context.vars.$model.controls(ctx2)
+                })
+            )
+      },
+      observable: () => {} // to create jbEmitter
+    })
+})
+
+jb.component('feature.studio-auto-fix-path', {
+  type: 'feature',
+  params: [
+    { id: 'path', essential: true, as: 'ref' },
+  ],
+  impl: (context, path_ref) =>
+  	({
+      beforeInit: cmp => {
+        pathChangesEm
+            .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+            .subscribe(fixer=>
+                jb.writeValue(path_ref,fixer.fix(jb.val(path_ref)))
+            )
+      },
+      observable: () => {} // to create jbEmitter
+    })
 })

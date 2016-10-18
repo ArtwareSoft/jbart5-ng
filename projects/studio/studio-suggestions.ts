@@ -225,7 +225,7 @@ jb.component('group.studio-suggestions', {
 
         cmp.keyEm.filter(e=> e.keyCode == 13)
             .subscribe(e=>{
-              if (!suggestionCtx.show)
+              if (!suggestionCtx.show || suggestionCtx.options.length == 0)
                 suggestionCtx.closeAndWriteValue()
             })
 
@@ -277,10 +277,9 @@ jb.component('itemlist.studio-suggestions-options', {
               e.keyCode == 13) // ENTER
             .subscribe(()=>{
                 suggestionCtx.show = false;
-                if (cmp.selected && cmp.selected.paste) {
+                if (cmp.selected && cmp.selected.paste) 
                   cmp.selected.paste(ctx);
-                  jb_ui.apply(ctx);
-                }
+                jb_ui.apply(ctx);
             })
           keyEm.filter(e=>e.keyCode == 27) // ESC
             .subscribe(x=>

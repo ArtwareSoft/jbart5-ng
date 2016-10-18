@@ -15,7 +15,7 @@ jb.component('itemlog',{
 	],
 	impl: function(context) {
     return jb_ui.ctrl(context).jbExtend({
-        beforeInit(cmp) {
+        beforeInit: cmp => {
           cmp.items = [];
           cmp.itemToComp = item => 
             context.params.controls(item.setVars(jb.obj(context.params.itemVariable,item.data))) [0];

@@ -101,10 +101,11 @@ function testControl(ctx,forTests) {
     var dialog = { 
       id: 'test-control', 
       em: new jb_rx.Subject(),
-      comp: _win.jb_run(ctx).jbExtend({
+      comp: ctx.runItself().jbExtend({
         observable: (cmp_obs,cmp) =>
-          cmp_obs.filter(e=>
-            e == 'ready')
+          cmp_obs
+          .filter(e=>
+            e == 'ready' || e == 'destroy')
           .take(1)
           .catch(e=> {
               debugger;
@@ -113,7 +114,7 @@ function testControl(ctx,forTests) {
           .subscribe(x=>{
             if (!forTests)
               jb.delay(1,ctx).then(()=>dialog.close()); // delay to avoid race conditin with itself
-            console.log('close test dialog');
+            console.log('close test dialog',ctx.id);
             resolve({ element : cmp.elementRef.nativeElement });
           })
           ,
@@ -124,6 +125,7 @@ function testControl(ctx,forTests) {
 //    console.log('add test dialog');
 
     _win.jbart.jb_dialogs.addDialog(dialog,ctx);
+    console.log('create test dialog',ctx.id);
     _win.setTimeout(()=>{},1); // refresh
   })
 }

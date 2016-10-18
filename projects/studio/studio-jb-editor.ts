@@ -2,8 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {model,TgpModel} from './studio-tgp-model';
-import {findjBartToLook} from './studio-utils';
-
+import {findjBartToLook,pathChangesEm} from './studio-utils';
 
 jb.component('studio.open-jb-editor', {
   type: 'action', 
@@ -80,7 +79,8 @@ jb.component('studio.jb-editor', {
             action :{$: 'studio.delete', path: '%%' }
           }, 
           {$: 'studio.control-tree.refreshPathChanges' }, 
-          {$: 'css.width', width: '500' }
+          {$: 'css.width', width: '500' },
+          {$: 'feature.studio-auto-fix-path', path: '%$globals/jb_editor_selection%' }
         ]
       }, 
       {$: 'group', 
@@ -138,7 +138,7 @@ jb.component('studio.jb-editor', {
         ], 
         features :{$: 'group.watch', data: '%$globals/jb_editor_selection%' }
       }
-    ]
+    ],
   }
 })
 

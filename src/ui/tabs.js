@@ -9,7 +9,7 @@ jb.component('tabs', {
 	],
   impl: function(context) { 
     return jb_ui.ctrl(context).jbExtend({
-      beforeInit(cmp) {
+      beforeInit: cmp => {
       	cmp.empty = jb_ui.Comp({ template: '<div></div>'},context);
       	cmp.selectedTab = 0;
 

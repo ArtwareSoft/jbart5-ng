@@ -1,6 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import {modifyOperationsEm} from './studio-utils';
+import {pathFixer} from './studio-path';
 
 class Undo {
 	history = [];
@@ -64,6 +65,7 @@ jb.component('studio.paste', {
 
 function doSetComp(jbart_base,id,comp) {
 	jbart_base.comps[id] = comp;
+	pathFixer.fixSetCompPath(id);
 }
 
 function setComp(code,jbart_base) {

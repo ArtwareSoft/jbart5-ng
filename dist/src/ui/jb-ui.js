@@ -253,7 +253,7 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                 function jbComponent(ctx) {
                     this.ctx = ctx;
                     this.annotations = {};
-                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
+                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbDestroyFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
                     this.cssFixes = [];
                     this.jb_profile = ctx.profile;
                     var title = jb_tosingle(jb_core_1.jb.val(this.ctx.params.title)) || (function () { return ''; });
@@ -367,6 +367,10 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         this.jbEmitter && this.jbEmitter.next('check');
                     };
                     Cmp.prototype.ngOnDestroy = function () {
+                        var _this = this;
+                        this.methodHandler.jbDestroyFuncs.forEach(function (f) {
+                            return f(_this);
+                        });
                         this.jbEmitter && this.jbEmitter.next('destroy');
                         this.jbEmitter && this.jbEmitter.complete();
                     };
@@ -421,6 +425,8 @@ System.register(['jb-core', '@angular/core', '@angular/forms', '@angular/http', 
                         this.methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
                     if (options.doCheck)
                         this.methodHandler.jbCheckFuncs.push(options.doCheck);
+                    if (options.destroy)
+                        this.methodHandler.jbDestroyFuncs.push(options.destroy);
                     if (options.observable)
                         this.methodHandler.jbObservableFuncs.push(options.observable);
                     if (options.ctrlsEmFunc)
