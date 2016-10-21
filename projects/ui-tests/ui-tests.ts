@@ -296,7 +296,7 @@ control :{$: 'group',
         ],
       },
       { $: 'group', 
-        features :{$: 'group.data', data: '%$globals/selectedPerson%'} , 
+        features :{$: 'group.data', data: '%$globals/selectedPerson%', watch1: true} , 
          controls: [
             {$: 'label' , title: '%name% selected' },
           ]

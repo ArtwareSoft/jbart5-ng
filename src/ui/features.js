@@ -1,5 +1,4 @@
 jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.component('group.wait', {
   type: 'feature',
   params: [ 
@@ -38,21 +37,28 @@ jb.component('group.data', {
     { id: 'itemVariable', as: 'string' },
     { id: 'watch', type: 'boolean', as: 'boolean', defaultValue: true }
   ],
-  impl: function(context, data, itemVariable,watch) {
+  impl: function(context, data_ref, itemVariable,watch) {
     return {
       beforeInit: function(cmp) {
           var dataEm = cmp.jbEmitter
               .filter(x => x == 'check')
               .map(()=> 
-                jb.val(data())) 
+                jb.val(data_ref())) 
               .distinctUntilChanged(jb_compareArrays)
               .map(val=> {
-                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(val);
-                  var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,val)) : ctx2;
-                  return context.vars.$model.controls(ctx3)
+                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+//                  var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,val)) : ctx2;
+                  return context.vars.$model.controls(ctx2)
               })
 
           cmp.jbGroupChildrenEm = watch ? dataEm : dataEm.take(1);
+      },
+      extendCtx: ctx => {
+          var val = data_ref();
+          var res = ctx.setData(val);
+          if (itemVariable)
+            res = res.setVars(jb.obj(itemVariable,val));
+          return res;
       },
       observable: () => {} // to create jbEmitter
   }}
@@ -110,13 +116,14 @@ jb.component('feature.ng-attach-object', {
   params: [
     { id: 'data', as: 'single', dynamic: true }
   ],
-  impl: (ctx,data) => ({init: cmp => {
-      var obj = data(cmp.ctx);
-      if (cmp.constructor && cmp.constructor.prototype && obj) {
-        jb.extend(cmp,obj);
-        jb.extend(cmp.constructor.prototype,obj.constructor.prototype || {});
-      }
-  }})
+  impl: (ctx,data) => 
+    ({init: cmp => {
+        var obj = data(cmp.ctx);
+        if (cmp.constructor && cmp.constructor.prototype && obj) {
+          jb.extend(cmp,obj);
+          jb.extend(cmp.constructor.prototype,obj.constructor.prototype || {});
+        }
+    }})
 })
 
 jb.component('feature.disableChangeDetection', {

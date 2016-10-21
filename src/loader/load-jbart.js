@@ -1,11 +1,4 @@
-if (!window.jbPackaged) {
-  if (window.parent.jbart1) {
-    ['jQuery','$','jbart','System','SystemJS','CodeMirror','Reflect','dragula','history'].forEach(x=>
-        window[x] = window.parent[x])
-  } else {
-    window.jbart = {comps: {}, classes: {}};
-    window.jbart_widgets = {};
-    [
+var js_files_to_load = [
       'bower_components/jquery/dist/jquery.js',
       'src/core/core.js',
       'src/core/data-binding.js',
@@ -36,7 +29,24 @@ if (!window.jbPackaged) {
 
       'bower_components/dragula.js/dist/dragula.js',
       'node_modules/history/umd/history.js'
-    ].forEach(file =>
+];
+var css_files_to_load = [
+    'bower_components/codemirror/mode/css/css.js',
+    'bower_components/codemirror/lib/codemirror.css',
+    'bower_components/codemirror/theme/solarized.css',
+    'bower_components/dragula.js/dist/dragula.css',
+    'css/font.css', // material fonts
+    'css/ng2-styles.css'
+];
+
+if (!window.jbPackaged) {
+  if (window.parent.jbart1) {
+    ['jQuery','$','jbart','System','SystemJS','CodeMirror','Reflect','dragula','history'].forEach(x=>
+        window[x] = window.parent[x])
+  } else {
+    window.jbart = {comps: {}, classes: {}};
+    window.jbart_widgets = {};
+    js_files_to_load.forEach(file =>
       {
         document.write('<script>jbart.currentFileName = "' + file +
          '";</script>');
@@ -46,14 +56,7 @@ if (!window.jbPackaged) {
     );
   }
 
-  [
-      'bower_components/codemirror/mode/css/css.js',
-      'bower_components/codemirror/lib/codemirror.css',
-      'bower_components/codemirror/theme/solarized.css',
-      'bower_components/dragula.js/dist/dragula.css',
-      'css/font.css', // material fonts
-      'css/ng2-styles.css'
-  ].forEach( file =>
+  css_files_to_load.forEach( file =>
         document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/') + file + '" />')); 
 }
 
@@ -198,14 +201,15 @@ function jbBootstrap(loadedModules) {
 
   bootstrap(loadedModules['jb-ui'].jBartWidget, jb_entries(jbart.ng.providers).map(e=>e[1]))
     .catch(err => console.error(err))
-    .then(()=>
-      jbart.afterBootsrtap = true);
+    // .then(()=>
+    //   jbart.afterBootsrtap = true);
 }
 
 // for tests
 
 jbart.testProjects = ['ui-tests','studio-helper','data-tests'];
 
+// guess the modules used by a project by parsing the html file
 function jbProjectModules(project) {
   return $.get('/projects/'+project+'/'+project+'.html').then(function(html){
     return (html.split('jbLoadModules(')[1] || '')

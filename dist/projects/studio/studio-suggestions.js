@@ -24,75 +24,87 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('studio.property-primitive2', {
+            jb_core_1.jb.component('studio.property-primitive', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    features: { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
                     controls: [
                         { $: 'editable-text',
-                            style: { $: 'editable-text.studio-primitive-text' },
-                            //        title :{$: 'studio.prop-name', path: '%$path%' }, 
+                            title: '%',
                             databind: { $: 'studio.ref', path: '%$path%' },
+                            style: { $: 'editable-text.studio-primitive-text' },
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
-                                { $: 'studio.property-toobar-feature', path: '%$path%' },
+                                { $: 'studio.property-toobar-feature', path: '%$path%' }
                             ]
                         },
                         { $: 'itemlist-with-groups',
                             items: '%$suggestionCtx/options%',
+                            controls: { $: 'label',
+                                title: '%text%',
+                                features: { $: 'css.padding', top: '', left: '3', bottom: '' }
+                            },
                             watchItems: true,
-                            controls: { $: 'label', title: '%text%' },
                             features: [
                                 { $: 'itemlist.studio-suggestions-options' },
-                                { $: 'itemlist.selection', autoSelectFirst: true, onDoubleClick: function (ctx) {
-                                        return ctx.data.paste(ctx);
-                                    } },
+                                { $: 'itemlist.selection', autoSelectFirst: true },
                                 { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
                                 { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
-                                { $: 'css.width', width: '250', overflow: 'auto' }
+                                { $: 'css.width', width: '300', overflow: 'auto' },
+                                { $: 'css',
+                                    css: '{ position: absolute; z-index:1000; background: white }'
+                                },
+                                { $: 'css.border', width: '1', color: '#cdcdcd' },
+                                { $: 'css.padding', top: '2', left: '3', selector: 'li' }
                             ]
-                        }]
+                        }
+                    ],
+                    features: [
+                        { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
+                        { $: 'studio.property-toobar-feature', path: '%$path%' }
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.jb-floating-input', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
-                    features: { $: 'group.studio-suggestions', path: '%$path%',
-                        closeFloatingInput: [
-                            { $: 'closeContainingPopup', OK: true },
-                            { $: 'tree.regain-focus' }
-                        ]
-                    },
                     controls: [
                         { $: 'editable-text',
+                            databind: { $: 'studio.profile-value-as-text', path: '%$path%' },
                             updateOnBlur: true,
                             style: { $: 'editable-text.md-input', width: '400' },
-                            databind: { $: 'studio.profile-value-as-text', path: '%$path%' },
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
-                                { $: 'css.padding', left: '4', right: '4' },
+                                { $: 'css.padding', left: '4', right: '4' }
                             ]
                         },
                         { $: 'itemlist-with-groups',
                             items: '%$suggestionCtx/options%',
-                            watchItems: true,
                             controls: { $: 'label', title: '%text%' },
+                            watchItems: true,
                             features: [
                                 { $: 'itemlist.studio-suggestions-options' },
-                                { $: 'itemlist.selection', autoSelectFirst: true, onDoubleClick: function (ctx) {
+                                { $: 'itemlist.selection',
+                                    onDoubleClick: function (ctx) {
                                         return ctx.data.paste(ctx);
-                                    } },
+                                    },
+                                    autoSelectFirst: true
+                                },
                                 { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
                                 { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
+                                { $: 'css.padding', top: '3', left: '3', selector: 'li' }
                             ]
-                        }]
+                        }
+                    ],
+                    features: { $: 'group.studio-suggestions',
+                        path: '%$path%',
+                        closeFloatingInput: [
+                            { $: 'closeContainingPopup', OK: true },
+                            { $: 'tree.regain-focus' }
+                        ]
+                    }
                 }
             });
             suggestions = (function () {
@@ -224,7 +236,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                     { id: 'expressionOnly', type: 'boolean', as: 'boolean' }
                 ],
                 impl: function (ctx) {
-                    var suggestionCtx = { path: ctx.params.path, options: [], show: true };
+                    var suggestionCtx = { path: ctx.params.path, options: [], show: false };
                     return {
                         observable: function () { },
                         extendCtx: function (ctx2) {
@@ -317,7 +329,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                     e.preventDefault();
                                 });
                                 suggestionCtx.suggestionEm.subscribe(function (e) {
-                                    suggestionCtx.show = true;
+                                    suggestionCtx.show = e.options.length > 0;
                                     suggestionCtx.options = e.options;
                                     cmp.selected = e.options[0];
                                     cmp.changeDt.markForCheck();
@@ -331,65 +343,3 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
         }
     }
 });
-// jb.component('studio.jb-paste-suggestion', {
-//   params: [
-//     { id: 'path',as: 'string'}
-//   ],
-//   type: 'action',
-//   impl: (ctx,path) => {
-//     var suggestionsCtx = ctx.vars.suggestionCtx;
-//     suggestionsCtx.suggestionObj.paste(ctx.data,ctx);
-//     //suggestionsCtx.cmp.probeResult = null; // recalc
-//   }
-// })
-// jb.component('studio.jb-open-suggestions', {
-//   type: 'action', 
-//   params: [
-//     { id: 'path', as: 'string' }
-//   ], 
-//   impl :{$: 'openDialog', 
-//     style :{$: 'dialog.studio-suggestions-popup' }, 
-//     content :{$: 'group', 
-//       controls :{$: 'itemlist-with-groups', 
-//         items: '%$suggestionCtx/suggestionObj/options%', 
-//         watchItems: true, 
-//         controls :{$: 'label', title: '%text%' }, 
-//         features: [
-//           {$: 'itemlist.studio-suggestions-selection', 
-//             onEnter: [
-//               {$: 'studio.jb-paste-suggestion', path: '%$path%' }, 
-//               {$: 'closeContainingPopup' }
-//             ]
-//           }, 
-//           {$: 'itemlist.selection', 
-//             onDoubleClick: [
-//               {$: 'studio.jb-paste-suggestion', path: '%$path%' }, 
-//               {$: 'closeContainingPopup' }
-//             ]
-//           }, 
-//           {$: 'css.height', height: '500', overflow: 'auto', minMax: 'max' }, 
-//           {$: 'css.width', width: '250', overflow: 'auto' }
-//         ]
-//       }, 
-//       features :{$: 'studio.suggestions-emitter' }
-//     }
-//   }
-// })
-// jb.component('studio.suggestions-emitter', {
-//   type: 'feature',
-//   impl: ctx => 
-//     ({
-//       init: function(cmp) {
-//         // gain focus back to input after clicking the popup
-//         jb.delay(1).then(()=>
-//           ctx.vars.$dialog.$el.find('.jb-itemlist').attr('tabIndex','0').focus(() => 
-//             $(ctx.vars.suggestionCtx.suggestionObj.input).focus())
-//         )
-//         // adjust popup position
-//         ctx.vars.suggestionCtx.suggestionEm
-//             .takeUntil(ctx.vars.$dialog.em.filter(e => e.type == 'close'))
-//             .subscribe(e =>
-//               e.adjustPopupPlace(cmp,e.options))
-//       }
-//     })
-// })

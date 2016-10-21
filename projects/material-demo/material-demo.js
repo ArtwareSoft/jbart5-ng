@@ -11,6 +11,24 @@ jb.resource('material-demo','person',{
   "postalCode": "94043",
 })
 
+jb.component('material-demo.single-demo', {
+  impl :{$: 'custom-control', 
+        html : '%$demo/html%',
+        css: '%$demo/css%',
+        features: [
+          {$: 'feature.ng-attach-object', 
+            data :{$: 'new-instance', 
+              module: 'projects/material-demo/ng-material-demo-loader', 
+              class :{$: 'pipeline', 
+                items: [{$: 'capitalize', text: '%$demo/id%' }, '%%Demo']
+              }
+            }
+          }, 
+          {$: 'css', css: '{ min-width: 700px; max-width: 700px; }' }
+        ]
+      }
+})
+
 jb.component('material-demo.main', {
   type: 'control', 
   impl :{$: 'group', 
@@ -23,13 +41,7 @@ jb.component('material-demo.main', {
           {$: 'button', 
             title: 'pick & edit', 
             action :{$: 'material-demo.pick', 
-              onHover: [
-                {$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }, 
-                {$: 'writeValue', 
-                  to: '%$globals/ng-apis%', 
-                  value :{$: 'material-demo.api-of-elem' }
-                }
-              ]
+              onHover :{$: 'writeValue', to: '%$globals/ngPath%', value: '%%' }
             }, 
             style :{$: 'button.md-icon', padding: '5', icon: 'call_made', size: '34' }, 
             features: [{$: 'css.transform-rotate', angle: '-90', selector: 'i' }, {  }]
@@ -53,7 +65,15 @@ jb.component('material-demo.main', {
             controls: [
               {$: 'button', 
                 title: '%%', 
-                action :{$: 'writeValue', to: '%$globals/demoId%', value: '%%' }, 
+                action :{$: 'runActions', 
+                  actions: [
+                    {$: 'writeValue', to: '%$globals/demoId%', value: '%%' }, 
+                    {$: 'writeValue', 
+                      to: '%$globals/ngPath%', 
+                      value: 'material-demo.single-demo:'
+                    }
+                  ]
+                }, 
                 style :{$: 'button.md-flat' }, 
                 features :{$: 'css', css: 'button { text-align: left; width: 200px}' }
               }
@@ -66,32 +86,7 @@ jb.component('material-demo.main', {
             title: 'demo', 
             style :{$: 'layout.flex' }, 
             controls: [
-              {$: 'custom-control', 
-                html :{
-                  $pipeline: [
-                    '%$demos%', 
-                    {$: 'filter', filter: '%id% == %$globals/demoId%' }, 
-                    '%html%'
-                  ]
-                }, 
-                css :{
-                  $pipeline: [
-                    '%$demos%', 
-                    {$: 'filter', filter: '%id% == %$globals/demoId%' }, 
-                    '%css%'
-                  ]
-                }, 
-                features: [
-                  {$: 'feature.ng-attach-object', 
-                    data :{$: 'new-instance', 
-                      module: 'projects/material-demo/ng-material-demo-loader', 
-                      class :{$: 'pipeline', 
-                        items: [{$: 'capitalize', text: '%%' }, '%%Demo']
-                      }
-                    }
-                  }
-                ]
-              }, 
+              {$: 'material-demo.single-demo'},
               {$: 'group', 
                 title: 'editor', 
                 controls: [
@@ -121,7 +116,8 @@ jb.component('material-demo.main', {
                     style :{$: 'markdown.showdown' }, 
                     title: 'readme'
                   }
-                ]
+                ], 
+                features :{$: 'flex-layout-item.grow', factor: '1' }
               }
             ], 
             features: [
@@ -129,16 +125,12 @@ jb.component('material-demo.main', {
                 data: '%$globals/demoId%', 
                 itemVariable: 'demoId', 
                 watch: true
-              }, 
-              {$: 'group.watch', 
-                data :{
-                  $pipeline: [
-                    '%$demos%', 
-                    {$: 'filter', filter: '%id% == %$globals/demoId%' }, 
-                    '%html%'
-                  ]
-                }
-              }
+              },
+              {$: 'var', name: 'demo', value: { $pipeline: [
+                '%$demos%', 
+                {$: 'filter', filter: '%id% == %$globals/demoId%' }, 
+              ]}},
+              {$: 'group.watch', data: '%$demo/html' }
             ]
           }
         ]

@@ -22,7 +22,7 @@ jb.component('field.subscribe', {
     init: cmp => {
       var field = context.vars.field;
       var includeFirstEm = includeFirst ? jb_rx.Observable.of(field.getValue()) : jb_rx.Observable.of();
-      field && field.observable(context)
+      field && field.observable(cmp)
             .merge(includeFirstEm)
             .filter(x=>x)
             .subscribe(x=>

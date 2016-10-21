@@ -161,7 +161,7 @@ jb.component('studio.property-label',{
 	}
 });
 
-jb.component('studio.property-primitive', {
+jb.component('studio.property-primitive2', {
   type: 'control', 
   params: [
     { id: 'path', as: 'string' }

@@ -128,8 +128,8 @@ function fixSetCompPath(comp) {
 }
 
 function fixIndexPaths(path,diff) {
-	pathChangesEm.next(function(pathToFix) {
-		return fixIndexOfPath(pathToFix,path,diff)
+	pathChangesEm.next({ fix: pathToFix =>
+		fixIndexOfPath(pathToFix,path,diff)
 	})
 } 
 

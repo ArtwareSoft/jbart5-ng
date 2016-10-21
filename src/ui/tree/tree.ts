@@ -128,7 +128,6 @@ jb.component('tree.selection', {
   impl: function(context) {
   	return {
   		init: function(cmp) {
-  			cmp.alert = x=>alert(x);
   		  var tree = cmp.tree;
 	      cmp.click = new jb_rx.Subject();
       	  cmp.click.buffer(cmp.click.debounceTime(250)) // double click
@@ -137,7 +136,7 @@ jb.component('tree.selection', {
 					jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)()
   				})
 
-  		  var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind,context)
+  		  var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind,cmp)
         	.distinctUntilChanged()) || jb_rx.Observable.of();
 
 		  tree.selectionEmitter
@@ -171,7 +170,8 @@ jb.component('tree.selection', {
   		},
       	host: {
         	'(click)': 'click.next($event)',
-      	}
+      	},
+	    observable: () => {} 
   	}
   }
 })

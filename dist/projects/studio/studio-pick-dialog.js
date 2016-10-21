@@ -29,7 +29,21 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         cmp.title = studio_tgp_model_1.model.shortTitle(pathFromElem(_window, profElem));
         var $el = $(cmp.elementRef.nativeElement);
         var $titleText = $el.find('.title .text');
-        $el.find('.title .text').text(cmp.title);
+        console.log('selected', profElem.outerWidth(), profElem.outerHeight());
+        Array.from(profElem.parents())
+            .forEach(function (el) { return console.log('parent', $(el).outerWidth(), $(el).outerHeight()); });
+        var same_size_parents = Array.from(profElem.parents())
+            .filter(function (el) {
+            return profElem.outerWidth() >= $(el).outerWidth() && profElem.outerHeight() >= $(el).outerHeight();
+        })
+            .filter(function (el) {
+            return $(el).attr('jb-ctx');
+        })
+            .map(function (el) {
+            return studio_tgp_model_1.model.shortTitle(pathFromElem(_window, $(el)));
+        })
+            .join(', ');
+        $el.find('.title .text').text(cmp.title + same_size_parents);
         cmp.titleBelow = top - $titleText.outerHeight() - 6 < $(_window).scrollTop();
         cmp.titleTop = cmp.titleBelow ? cmp.top + cmp.height : cmp.top - $titleText.outerHeight() - 6;
         cmp.titleLeft = cmp.left + (cmp.width - $titleText.outerWidth()) / 2;

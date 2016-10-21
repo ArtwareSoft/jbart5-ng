@@ -114,8 +114,9 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
         });
     }
     function fixIndexPaths(path, diff) {
-        studio_utils_1.pathChangesEm.next(function (pathToFix) {
-            return fixIndexOfPath(pathToFix, path, diff);
+        studio_utils_1.pathChangesEm.next({ fix: function (pathToFix) {
+                return fixIndexOfPath(pathToFix, path, diff);
+            }
         });
     }
     function fixReplacingPaths(path1, path2) {

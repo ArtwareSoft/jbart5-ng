@@ -271,7 +271,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 ],
                             },
                             { $: 'group',
-                                features: { $: 'group.data', data: '%$globals/selectedPerson%' },
+                                features: { $: 'group.data', data: '%$globals/selectedPerson%', watch1: true },
                                 controls: [
                                     { $: 'label', title: '%name% selected' },
                                 ]

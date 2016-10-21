@@ -140,7 +140,21 @@ function showBox(cmp,profElem,_window,previewOffset) {
 
 	var $el = $(cmp.elementRef.nativeElement);
 	var $titleText = $el.find('.title .text');
-	$el.find('.title .text').text(cmp.title);
+	console.log('selected',profElem.outerWidth(),profElem.outerHeight());
+	Array.from(profElem.parents())
+		.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
+
+	var same_size_parents = Array.from(profElem.parents())
+		.filter(el=>
+			profElem.outerWidth() >= $(el).outerWidth() && profElem.outerHeight() >= $(el).outerHeight())
+		.filter(el => 
+			$(el).attr('jb-ctx') )
+		.map(el=>
+			model.shortTitle(pathFromElem(_window,$(el)))		
+		)
+		.join(', ')
+	$el.find('.title .text').text(cmp.title+same_size_parents);
+
 	cmp.titleBelow = top - $titleText.outerHeight() -6 < $(_window).scrollTop();
 	cmp.titleTop = cmp.titleBelow ? cmp.top + cmp.height : cmp.top - $titleText.outerHeight() -6;
 	cmp.titleLeft = cmp.left + (cmp.width - $titleText.outerWidth())/2;

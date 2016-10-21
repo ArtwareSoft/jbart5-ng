@@ -159,7 +159,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     title: { $: 'studio.prop-name', path: '%$path%' },
                 }
             });
-            jb_core_1.jb.component('studio.property-primitive', {
+            jb_core_1.jb.component('studio.property-primitive2', {
                 type: 'control',
                 params: [
                     { id: 'path', as: 'string' }

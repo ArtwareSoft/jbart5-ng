@@ -114,7 +114,7 @@ function testControl(ctx,forTests) {
           .subscribe(x=>{
             if (!forTests)
               jb.delay(1,ctx).then(()=>dialog.close()); // delay to avoid race conditin with itself
-            console.log('close test dialog',ctx.id);
+//            console.log('close test dialog',ctx.id);
             resolve({ element : cmp.elementRef.nativeElement });
           })
           ,
@@ -125,7 +125,7 @@ function testControl(ctx,forTests) {
 //    console.log('add test dialog');
 
     _win.jbart.jb_dialogs.addDialog(dialog,ctx);
-    console.log('create test dialog',ctx.id);
+//    console.log('create test dialog',ctx.id);
     _win.setTimeout(()=>{},1); // refresh
   })
 }

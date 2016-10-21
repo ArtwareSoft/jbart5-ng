@@ -21,10 +21,6 @@ export function apply(ctx) {
 
 export function delayOutsideAngular(ctx,func) {
 	jb.delay(1,ctx).then(func);
-	// return ctx.vars.ngZone.runOutsideAngular(() =>
-	// 	jb.delay(1).then(()=>
-	// 		Promise.resolve(func()))
-	// )
 }
 
 export function applyPreview(ctx) {
@@ -177,10 +173,6 @@ class jbComponent {
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
 
-//		this.callerPath = (context.path.indexOf('~') == -1 && context.componentContext) ? context.componentContext.callerPath:  context.path;
-//		jb.path(options, ['atts','jb-path'], this.callerPath); // for pick & edit
-//		jb.path(options, ['atts','jb-ctx'], context.id); // for pick & edit
-
 		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
 			jb.toarray(context.params.style.profile.features)
@@ -203,7 +195,7 @@ class jbComponent {
 		if (options.doCheck) this.methodHandler.jbCheckFuncs.push(options.doCheck);
 		if (options.destroy) this.methodHandler.jbDestroyFuncs.push(options.destroy);
 		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
-		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
+//		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
 		if (options.extendCtx) this.methodHandler.extendCtxFuncs.push(options.extendCtx);
 		if (options.extendComp) jb.extend(this,options.extendComp);
 
@@ -315,7 +307,7 @@ export function ctrl(context) {
 
 
 export function Comp(options,ctx) {
-	return new jbComponent(ctx).jbExtend(options); //.createComp();
+	return new jbComponent(ctx).jbExtend(options);
 }
 
 function optionsOfProfile(profile) {
@@ -366,35 +358,6 @@ function jbTemplate(options) {
 		host: host
 	})
 }
-
-// export function profilePath(profile) { // export for tests
-// 	// caching last component
-// 	var lastFound = window.jb_lastFoundAt;
-// 	if (lastFound && getPath(jb.comps[lastFound].impl, profile,0))
-// 		return lastFound + '~' + getPath(jb.comps[lastFound].impl, profile,0).replace(/~*$/g,'')
-
-// 	for(var comp in jb.comps) {
-// 		var impl = jb.comps[comp].impl;
-// 		if (typeof impl == 'function') continue;
-// 		var res = getPath(impl, profile,0,impl);
-// 		if (res) {
-// 			window.jb_lastFoundAt = comp; // a kind of cache
-// 			return (comp +'~'+res).replace(/~*$/g,'');
-// 		}
-// 	}
-// 	function getPath(parent, dest, depth,comp) {
-// 		if (depth > 50) debugger;
-// 		if (!parent) return '';
-// 		if (parent === dest) return '~'; // will be removed
-// 		return Object.getOwnPropertyNames(parent)
-// 			.filter(p => typeof parent[p] === 'object' && p.indexOf('$jb') != 0)
-// 			.map(function(p) {
-// 				var path = getPath(parent[p], dest, (depth || 0) + 1,comp);
-// 				return path ? (p + '~' + path) : '';
-// 			}).join(''); // only one will succeed
-// 	}
-// }
-
 
 @Component({
     selector: 'jb_comp',
@@ -553,8 +516,8 @@ export function twoWayBind(ref,updateOnBlur) {
 		valueExp: modelPath,
 		modelExp: modelExp,
 
-		observable: ctx => 
-			jb_rx.refObservable(ref,ctx), 
+		observable: cmp => 
+			jb_rx.refObservable(ref,cmp), 
 		getValue: () => 
 			jb.val(ref),
 		writeValue: val => 
@@ -571,7 +534,7 @@ export function insertComponent(comp, resolver, parentView) {
 export function parseHTML(text) {
 	var res = document.createElement('div');
 	res.innerHTML = text;
-	setNgPath(res.firstChild.firstChild,'');
+	setNgPath(res.firstChild,'');
 	return res.firstChild;
 
 	function setNgPath(elem,curPath) {

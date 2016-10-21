@@ -124,7 +124,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                 }
                                 cmp.codeMirror = editor;
                                 $(editor.getWrapperElement()).css('box-shadow', 'none');
-                                field.observable(context)
+                                field.observable(cmp)
                                     .filter(function (x) {
                                     return x != editor.getValue();
                                 })
@@ -132,7 +132,8 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                     return editor.setValue(x || '');
                                 });
                                 var editorTextChange = new jb_rx.Subject();
-                                editorTextChange.distinctUntilChanged()
+                                editorTextChange.takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                                    .distinctUntilChanged()
                                     .debounceTime(debounceTime)
                                     .filter(function (x) {
                                     return x != field.getValue();
@@ -147,7 +148,8 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                     return editorTextChange.next(editor.getValue());
                                 });
                             });
-                        }
+                        },
+                        observable: function () { }
                     };
                 }
             });

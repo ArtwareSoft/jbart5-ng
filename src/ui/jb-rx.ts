@@ -42,14 +42,16 @@ export function concat(obs_array) {
 		.map(x=> (x instanceof jb.Ctx) ? x.data : x)
 }
 
-export function refObservable(ref,ctx) {
-	if (!ctx.vars.ngZone) {
-		console.log('no ngZone in context');
+export function refObservable(ref,cmp) {
+	if (!cmp.jbEmitter) {
+		console.log('no emitter in cmp');
 		return Observable.of();
 	}
-    return ctx.vars.ngZone.onUnstable
-    	.map(()=>jb.val(ref))
-    	.distinctUntilChanged()
+	return cmp.jbEmitter
+              .filter(x => x == 'check')
+              .map(()=> 
+                jb.val(ref)) 
+              .distinctUntilChanged(jb_compareArrays)
 }
 
 export function observableFromCtx(ctx) : Observable {

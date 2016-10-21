@@ -25,7 +25,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                             .subscribe(function (x) {
                             if (!forTests)
                                 jb_core_1.jb.delay(1, ctx).then(function () { return dialog.close(); }); // delay to avoid race conditin with itself
-                            console.log('close test dialog', ctx.id);
+                            //            console.log('close test dialog',ctx.id);
                             resolve({ element: cmp.elementRef.nativeElement });
                         });
                     },
@@ -34,7 +34,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
             };
             //    console.log('add test dialog');
             _win.jbart.jb_dialogs.addDialog(dialog, ctx);
-            console.log('create test dialog', ctx.id);
+            //    console.log('create test dialog',ctx.id);
             _win.setTimeout(function () { }, 1); // refresh
         });
     }

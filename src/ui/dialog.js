@@ -266,6 +266,7 @@ jb.component('dialog-feature.dragTitle', {
 		      	'(mousedown)': 'mousedownEm.next($event)', 
 		       }},
 		       css: '.dialog-title { cursor: pointer }',
+	           observable: () => {}, // create jbEmitter
 		       init: function(cmp) {
 		       	  cmp.mousedownEm = cmp.mousedownEm || new jb_rx.Subject();
 		       	  
@@ -278,30 +279,28 @@ jb.component('dialog-feature.dragTitle', {
 				  var mouseUpEm = jb_rx.Observable.fromEvent(document, 'mouseup')
 				      			.merge(jb_rx.Observable.fromEvent(
 				      				(jbart.previewWindow || {}).document, 'mouseup'))
-				      			.take(1);
+          						.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+
 				  var mouseMoveEm = jb_rx.Observable.fromEvent(document, 'mousemove')
 				      			.merge(jb_rx.Observable.fromEvent(
 				      				(jbart.previewWindow || {}).document, 'mousemove'))
-				      			.takeUntil(mouseUpEm);
-
+          						.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
 
 				  var mousedrag = cmp.mousedownEm
-				  		.takeUntil(mouseUpEm)
-				  		.map(event => {
-				        event.preventDefault();
-				        return {
-				          left: event.clientX - dialog.$el[0].getBoundingClientRect().left,
-				          top:  event.clientY - dialog.$el[0].getBoundingClientRect().top
-				        };
-				      })
-				      .flatMap(imageOffset => 
-				      			 mouseMoveEm.map(pos => ({
-							        top:  pos.clientY - imageOffset.top,
-							        left: pos.clientX - imageOffset.left
-							     }))
+				  		.do(e => e.preventDefault())
+				  		.map(e =>  ({
+				          left: e.clientX - dialog.$el[0].getBoundingClientRect().left,
+				          top:  e.clientY - dialog.$el[0].getBoundingClientRect().top
+				        }))
+				      	.flatMap(imageOffset => 
+			      			 mouseMoveEm.takeUntil(mouseUpEm)
+			      			 .map(pos => ({
+						        top:  pos.clientY - imageOffset.top,
+						        left: pos.clientX - imageOffset.left
+						     }))
 				      	);
 
-				  mousedrag.debounceTime(3).distinctUntilChanged().subscribe(pos => {
+				  mousedrag.distinctUntilChanged().subscribe(pos => {
 			        dialog.$el[0].style.top  = pos.top  + 'px';
 			        dialog.$el[0].style.left = pos.left + 'px';
 			        if (id) sessionStorage.setItem(id, JSON.stringify(pos))

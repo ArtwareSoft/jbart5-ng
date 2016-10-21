@@ -51,14 +51,15 @@ jb.component('editable-text.codemirror', {
 					}
 					cmp.codeMirror = editor;
 					$(editor.getWrapperElement()).css('box-shadow', 'none');
-					field.observable(context)
+					field.observable(cmp)
 						.filter(x => 
 							x != editor.getValue())
 						.subscribe(x=>
 							editor.setValue(x||''));
 
 					var editorTextChange = new jb_rx.Subject();
-					editorTextChange.distinctUntilChanged()
+					editorTextChange.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+						.distinctUntilChanged()
 						.debounceTime(debounceTime)
 						.filter(x => 
 							x != field.getValue())
@@ -73,7 +74,8 @@ jb.component('editable-text.codemirror', {
 						editorTextChange.next(editor.getValue())
 					);
 				})
-			}
+			},
+		    observable: () => {} 
 		}
 	}
 })

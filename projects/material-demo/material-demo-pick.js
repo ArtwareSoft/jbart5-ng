@@ -28,7 +28,7 @@ jb.component('studio.ng-template-as-text', {
 			var path = fullPath();
 			if (path.indexOf(':') == -1) return '';
 			var jbPath = path.split(':')[0]+'~html';
-			var ngPathAr = path.split(':')[1].split('~');
+			var ngPathAr = path.split(':')[1].split('~').filter(x=>x);
 			var html_profile = ctx.run({$:'studio.val', path: jbPath});
 			if (!html_profile)
 				return '';
@@ -37,7 +37,7 @@ jb.component('studio.ng-template-as-text', {
 			html.innerHTML = jb_val(html_ref);
 			var ngElem = ngPathAr.reduce((elem,index)=>
 				elem && Array.from(elem.children)[index]
-				, html.firstChild)
+				, html)
 
 			if (typeof value == 'undefined') {
 				return ngElem && ngElem.outerHTML;

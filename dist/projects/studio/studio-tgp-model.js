@@ -212,13 +212,14 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         });
                     });
                 };
-                TgpModel.prototype._delete = function (path) {
+                TgpModel.prototype._delete = function (path, args) {
                     var prop = path.split('~').pop();
                     var parent = studio_path_1.profileFromPath(studio_path_1.parentPath(path));
                     if (Array.isArray(parent)) {
                         var index = Number(prop);
                         parent.splice(index, 1);
-                        studio_path_1.pathFixer.fixIndexPath(path, -1);
+                        if (!args || !args.noFixer)
+                            studio_path_1.pathFixer.fixIndexPaths(path, -1);
                     }
                     else {
                         // if (parent[prop] === undefined) { // array type with one element
@@ -235,11 +236,10 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var arr = this.getOrCreateArray(path);
                     if (arr) {
                         var ctrlParam = this.controlParam(path);
-                        this._delete(args.dragged);
+                        this._delete(args.dragged, { noFixer: true });
                         var index = (args.index == -1) ? arr.length : args.index;
                         arr.splice(index, 0, dragged);
                         studio_path_1.pathFixer.fixMovePaths(args.dragged, path + '~' + ctrlParam + '~' + index);
-                        this.fixArray(path);
                     }
                 };
                 TgpModel.prototype.moveInArray = function (path, args) {
@@ -337,7 +337,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     if (arr) {
                         arr.push(result);
                         args.modifiedPath = [group_path, this.controlParam(group_path), arr.length - 1].join('~');
-                        this.fixArray(group_path);
                     }
                 };
                 TgpModel.prototype.makeLocal = function (path) {

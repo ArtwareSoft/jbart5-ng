@@ -20,7 +20,6 @@ function jb_run(context,parentParam,settings) {
     switch (run.type) {
       case 'booleanExp': return jb_bool_expression(profile, context);
       case 'expression': return jb_tojstype(jb_expression(profile, context,parentParam), jstype, context);
-      case 'expressionRef': return jb_expression(profile, context,parentParam);
       case 'asIs': return profile;
       case 'object': return jb_entriesToObject(jb_entries(profile).map(e=>[e[0],context.runInner(e[1],null,e[0])]));
       case 'function': return jb_tojstype(profile(context),jstype, context);
@@ -120,7 +119,6 @@ function jb_prepare(context,parentParam) {
 
   if (profile_jstype === 'string' && parentParam_type === 'boolean') return { type: 'booleanExp' };
   if (profile_jstype === 'boolean' || profile_jstype === 'number' || parentParam_type == 'asIs') return { type: 'asIs' };// native primitives
-  if (profile_jstype === 'string' && jstype === 'ref') return { type: 'expressionRef' };
   if (profile_jstype === 'object' && jstype === 'object') return { type: 'object' };
   if (profile_jstype === 'string') return { type: 'expression' };
   if (profile_jstype === 'function') return { type: 'function' };

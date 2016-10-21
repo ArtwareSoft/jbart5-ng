@@ -132,7 +132,7 @@ jb.component('ui-tests.show-one-test', {
 				},
 				{	$: 'button', title: 'sublime',
 					style :{$: 'button.href' },
-					action :{$: 'studio.goto-sublime', path: '%$testResult/id%' },
+					action :{$: 'studio.open-sublime-editor', path: '%$testResult/id%' },
 					features: [
 						{$: 'hidden', showCondition: { $or: ['"%$testResult/success%" != "true"', '%$window.jbart.singleTestID%'] }},
 						{$: 'css.padding', left: '15' },

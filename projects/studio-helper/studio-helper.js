@@ -50,7 +50,7 @@ jb.component('studio-helper.jb-editor', {
   params: [{ id: 'path', defaultValue: 'studio-helper-dummy.label' }], 
   impl :{$: 'group', 
     $vars: { circuit: 'studio-helper-dummy.label' }, 
-    title: 'main', 
+    title: 'main %', 
     style :{$: 'layout.flex', align: 'flex-start' }, 
     controls: [
       {$: 'button', 
@@ -72,6 +72,23 @@ jb.component('studio-helper.jb-editor', {
       }
     ], 
     features :{$: 'css', css: '{ height: 200px; padding: 50px }' }
+  }
+})
+
+
+jb.component('studio-helper.studio-properties', {
+  type: 'control', 
+  impl :{$: 'group', 
+    $vars: { circuit: 'studio-helper-dummy.simple-label' }, 
+    controls :{$: 'studio.properties' , path: 'studio-helper-dummy.simple-label' }, 
+  }
+})
+
+jb.component('studio-helper-dummy.simple-label', {
+  type: 'control', 
+  impl :{$: 'label', 
+    $vars : { check: 2},
+    title: 'hello' 
   }
 })
 

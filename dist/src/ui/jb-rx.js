@@ -9,14 +9,17 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             .map(function (x) { return (x instanceof jb_1.jb.Ctx) ? x.data : x; });
     }
     exports_1("concat", concat);
-    function refObservable(ref, ctx) {
-        if (!ctx.vars.ngZone) {
-            console.log('no ngZone in context');
+    function refObservable(ref, cmp) {
+        if (!cmp.jbEmitter) {
+            console.log('no emitter in cmp');
             return Observable_1.Observable.of();
         }
-        return ctx.vars.ngZone.onUnstable
-            .map(function () { return jb_1.jb.val(ref); })
-            .distinctUntilChanged();
+        return cmp.jbEmitter
+            .filter(function (x) { return x == 'check'; })
+            .map(function () {
+            return jb_1.jb.val(ref);
+        })
+            .distinctUntilChanged(jb_compareArrays);
     }
     exports_1("refObservable", refObservable);
     function observableFromCtx(ctx) {

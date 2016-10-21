@@ -226,13 +226,14 @@ export class TgpModel {
 		})
 	}
 
-	_delete(path) {
+	_delete(path,args) {
 		var prop = path.split('~').pop();
 		var parent = profileFromPath(parentPath(path))
 		if (Array.isArray(parent)) {
 			var index = Number(prop);
 			parent.splice(index, 1);
-			pathFixer.fixIndexPath(path,-1);
+			if (!args || !args.noFixer)
+				pathFixer.fixIndexPaths(path,-1);
 		} else { 
 			// if (parent[prop] === undefined) { // array type with one element
 			// 	var pathToDelete = parentPath(path);
@@ -249,11 +250,10 @@ export class TgpModel {
 		var arr = this.getOrCreateArray(path);
 		if (arr) {
 			var ctrlParam = this.controlParam(path);
-			this._delete(args.dragged);
+			this._delete(args.dragged,{noFixer: true});
 			var index = (args.index == -1) ? arr.length : args.index;
 			arr.splice(index,0,dragged);
 			pathFixer.fixMovePaths(args.dragged,path+'~'+ctrlParam+ '~' + index);
-			this.fixArray(path);
 		}
 	}
 
@@ -358,7 +358,6 @@ export class TgpModel {
 		if (arr) {
 			arr.push(result);
 			args.modifiedPath = [group_path,this.controlParam(group_path),arr.length-1].join('~');
-			this.fixArray(group_path);
 		}
 	}
 
