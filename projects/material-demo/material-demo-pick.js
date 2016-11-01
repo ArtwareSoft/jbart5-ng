@@ -38,12 +38,17 @@ jb.component('studio.ng-template-as-text', {
 			var ngElem = ngPathAr.reduce((elem,index)=>
 				elem && Array.from(elem.children)[index]
 				, html)
+			if (ngPathAr.length == 0)
+				ngElem = html.firstChild;
 
 			if (typeof value == 'undefined') {
 				return ngElem && ngElem.outerHTML;
 			} else {
 				if (ngElem) {
-					ngElem.outerHTML = value;
+					if (ngElem.parentNode)
+						ngElem.outerHTML = value;
+					else
+						html.innerHTML = value;
 					//profile.ngPath = path.split(':')[1];
 					jb_writeValue(html_ref,html.innerHTML);
 				}

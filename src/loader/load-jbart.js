@@ -39,7 +39,7 @@ var css_files_to_load = [
     'css/ng2-styles.css'
 ];
 
-if (!window.jbPackaged) {
+if (typeof window != 'undefined' && !window.jbPackaged) {
   if (window.parent.jbart1) {
     ['jQuery','$','jbart','System','SystemJS','CodeMirror','Reflect','dragula','history'].forEach(x=>
         window[x] = window.parent[x])
@@ -48,16 +48,14 @@ if (!window.jbPackaged) {
     window.jbart_widgets = {};
     js_files_to_load.forEach(file =>
       {
-        document.write('<script>jbart.currentFileName = "' + file +
-         '";</script>');
-        document.write('<script src="' + (window.jbDevBase || '/') + file + 
-          '"></script>');
+        document.write('<script>jbart.currentFileName = "' + file + '";<' + '/script>');
+        document.write('<script src="' + (window.jbLoaderRelativePath ? '' : '/') + file + '"></script>');
       }
     );
   }
 
   css_files_to_load.forEach( file =>
-        document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbDevBase || '/') + file + '" />')); 
+        document.write('<link rel="stylesheet" type="text/css" href="' + (window.jbLoaderRelativePath ? '' : '/') + file + '" />')); 
 }
 
 function jb_loadEditableFile(file) {
@@ -141,6 +139,9 @@ jb_system_config = {
         '@angular':  '/node_modules/@angular'
       },
       packages: {  
+        'dist' : {
+          defaultExtension: 'js',
+        },     
         '/dist' : {
           defaultExtension: 'js',
         },     
@@ -207,7 +208,8 @@ function jbBootstrap(loadedModules) {
 
 // for tests
 
-jbart.testProjects = ['ui-tests','studio-helper','data-tests'];
+if (typeof jbart != 'undefined')
+  jbart.testProjects = ['ui-tests','studio-helper','data-tests'];
 
 // guess the modules used by a project by parsing the html file
 function jbProjectModules(project) {

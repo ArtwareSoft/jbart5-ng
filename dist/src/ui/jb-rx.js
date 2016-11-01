@@ -291,7 +291,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
                                 .join('/');
                         return url.replace(/\/*$/, '');
                     }
-                    var databindEm = context.vars.ngZone.onUnstable
+                    var databindEm = context.vars.ngZone.onStable // .onUnstable
                         .map(function () { return databind; })
                         .filter(function (obj) {
                         return obj.project;

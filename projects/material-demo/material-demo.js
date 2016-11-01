@@ -2,37 +2,108 @@ jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-co
 
 jb.resource('material-demo','person',{
   "company": "google",
-  "firstName": '',
-  "lastName": '',
+  "firstName": 'Dave',
+  "lastName": 'Smith',
   "address": "1600 Amphitheatre Pkway",
   "address2": '',
-  "city": '',
-  "state": '',
+  "city": 'mountain view',
+  "state": 'CA',
   "postalCode": "94043",
+})
+
+jb.component('material-demo.form', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'input', 
+    style :{$: 'layout.vertical', spacing: '33' }, 
+    controls: [
+      {$: 'editable-text', 
+        title: 'Company (disabled)', 
+        databind: '%$person/company%'
+      }, 
+      {$: 'group', 
+        title: 'Name', 
+        style :{$: 'layout.vertical', spacing: '33' }, 
+        controls: [
+          {$: 'editable-text', 
+            title: 'Long Last Name That Will Be Truncated', 
+            databind: '%$person/lastName%'
+          }, 
+          {$: 'editable-text', 
+            title: 'First Name', 
+            databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
+            style :{$: 'editable-text.md-input' }
+          }
+        ]
+      }, 
+      {$: 'group', 
+        title: 'address', 
+        style :{$: 'layout.vertical' }, 
+        controls: [
+          {$: 'editable-text', title: 'Address', databind: '%$person/address%' }, 
+          {$: 'editable-text', title: 'Address2', databind: '%address2%' }
+        ]
+      }, 
+      {$: 'group', 
+        title: 'City State', 
+        style :{$: 'layout.horizontal' }, 
+        controls: [
+          {$: 'editable-text', 
+            title: 'City', 
+            databind: '%$person/city%', 
+            style :{$: 'editable-text.md-input', width: '122' }
+          }, 
+          {$: 'editable-text', title: 'State', databind: '%$person/state%' }, 
+          {$: 'editable-text', 
+            title: 'Postal Code', 
+            databind: '%$person/postalCode%'
+          }
+        ]
+      }
+    ], 
+    features: [
+      {$: 'group.theme', 
+        theme :{$: 'theme.material-design' }
+      }, 
+      {$: 'css.box-shadow', 
+        blurRadius: '10', 
+        spreadRadius: '', 
+        shadowColor: '#cdcdcd', 
+        opacity: '1', 
+        horizontal: '', 
+        vertical: ''
+      }, 
+      {$: 'css.padding', top: '10', left: '10' }, 
+      {$: 'css.width', width: '700' }, 
+      {$: 'css.margin', top: '10', left: '10' }
+    ]
+  }
 })
 
 jb.component('material-demo.single-demo', {
   impl :{$: 'custom-control', 
-        html : '%$demo/html%',
-        css: '%$demo/css%',
-        features: [
-          {$: 'feature.ng-attach-object', 
-            data :{$: 'new-instance', 
-              module: 'projects/material-demo/ng-material-demo-loader', 
-              class :{$: 'pipeline', 
-                items: [{$: 'capitalize', text: '%$demo/id%' }, '%%Demo']
-              }
-            }
-          }, 
-          {$: 'css', css: '{ min-width: 700px; max-width: 700px; }' }
-        ]
-      }
+    html: '%$demo/html%', 
+    css: '%$demo/css%', 
+    features: [
+      {$: 'feature.ng-attach-object', 
+        data :{$: 'new-instance', 
+          module: 'projects/material-demo/ng-material-demo-loader', 
+          class :{$: 'pipeline', 
+            items: [{$: 'capitalize', text: '%$demo/id%' }, '%%Demo']
+          }
+        }
+      }, 
+      {$: 'css', css: '{ min-width: 600px; max-width: 600px; }' }
+    ]
+  }
 })
+
+
 
 jb.component('material-demo.main', {
   type: 'control', 
   impl :{$: 'group', 
-    style :{$: 'layout.flex', direction: 'column' }, 
+    style :{$: 'layout.vertical', spacing: 3 }, 
     controls: [
       {$: 'group', 
         title: 'toolbar', 
@@ -51,7 +122,8 @@ jb.component('material-demo.main', {
             style :{$: 'editable-text.md-input', width: '800' }, 
             features: [
               {$: 'css.margin', top: '', left: '20' }, 
-              {$: 'css.padding', left: '7', selector: '!.md-input-element' }
+              {$: 'css.padding', left: '7', selector: '!.md-input-element' }, 
+              {$: 'hidden' }
             ]
           }
         ]
@@ -84,9 +156,13 @@ jb.component('material-demo.main', {
           }, 
           {$: 'group', 
             title: 'demo', 
-            style :{$: 'layout.flex' }, 
+            style :{$: 'layout.horizontal', spacing: 3 }, 
             controls: [
-              {$: 'material-demo.single-demo'},
+              {$: 'group', 
+                title: 'single demo', 
+                controls: [{$: 'material-demo.single-demo' }], 
+                features :{$: 'group.watch', data: '%$demo/html%' }
+              }, 
               {$: 'group', 
                 title: 'editor', 
                 controls: [
@@ -100,10 +176,7 @@ jb.component('material-demo.main', {
                       mode: 'htmlmixed', 
                       debounceTime: 300
                     }, 
-                    features: [
-                      {$: 'flex-layout-item.grow' }, 
-                      {$: 'css.margin', top: '7' }
-                    ]
+                    features: [{$: 'css.width', width: '450' }]
                   }, 
                   {$: 'markdown', 
                     markdown :{$: 'pipeline', 
@@ -114,10 +187,11 @@ jb.component('material-demo.main', {
                       ]
                     }, 
                     style :{$: 'markdown.showdown' }, 
-                    title: 'readme'
+                    title: 'readme', 
+                    features :{$: 'css.width', width: '450', overflow: 'hidden' }
                   }
                 ], 
-                features :{$: 'flex-layout-item.grow', factor: '1' }
+                features :{$: 'css.width', width: '400' }
               }
             ], 
             features: [
@@ -125,11 +199,16 @@ jb.component('material-demo.main', {
                 data: '%$globals/demoId%', 
                 itemVariable: 'demoId', 
                 watch: true
-              },
-              {$: 'var', name: 'demo', value: { $pipeline: [
-                '%$demos%', 
-                {$: 'filter', filter: '%id% == %$globals/demoId%' }, 
-              ]}},
+              }, 
+              {$: 'var', 
+                name: 'demo', 
+                value :{
+                  $pipeline: [
+                    '%$demos%', 
+                    {$: 'filter', filter: '%id% == %$globals/demoId%' }
+                  ]
+                }
+              }, 
               {$: 'group.watch', data: '%$demo/html' }
             ]
           }

@@ -8,7 +8,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 jb_core_1 = jb_core_1_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('hello-world.test2', {
+            jb_core_1.jb.component('hello-world.main', {
                 type: 'control',
                 impl: { $: 'label',
                     title: 'hello test2',
@@ -25,12 +25,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     style: { $: 'group.div' },
                     controls: [
                         { $: 'editable-text',
-                            title: 'name (update on blur)',
+                            title: 'first name',
                             databind: '%$globals/name%',
                             style: { $: 'editable-text.md-input' }
                         },
                         { $: 'editable-text',
-                            title: 'name',
+                            title: 'last name',
                             databind: '%$globals/name%',
                             style: { $: 'editable-text.md-input' }
                         },
@@ -42,7 +42,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     ]
                 }
             });
-            jb_core_1.jb.component('hello-world.main', {
+            jb_core_1.jb.component('hello-world.group', {
                 type: 'control',
                 impl: { $: 'group',
                     title: 'main',

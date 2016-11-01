@@ -49,7 +49,8 @@ jb.component('editable-number.slider', {
 				cmp.slider.adjustScale();
 				cmp.slider.setThumbPosition();
 			}
-		}
+		},
+      observable: () => {} // to create jbEmitter
 	}
 })
 

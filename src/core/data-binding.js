@@ -15,7 +15,8 @@ function jb_writeToResource(resource,val,ctx) {
     ctx.resources[resource] = val;
 }
 
-function jb_objectProperty(object,property,jstype,lastInExpression) {
+function jb_objectProperty(_object,property,jstype,lastInExpression) {
+  var object = jb_val(_object);
   if (!object) return null;
   if (typeof object[property] == 'undefined') 
     object[property] = lastInExpression ? null : {};

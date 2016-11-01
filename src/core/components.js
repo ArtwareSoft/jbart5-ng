@@ -543,6 +543,17 @@ jb_component('foreach', {
 	}
 });
 
+jb_component('touch', {
+	type: 'action',
+	params: [
+		{ id: 'data', as: 'ref'},
+	],
+	impl: function(context,data_ref) {
+		var val = Number(jb_val(data_ref));
+		jb_writeValue(data_ref,val ? val + 1 : 1);
+	}
+});
+
 jb_component('isNull',{
 	type: 'boolean',
 	params: [

@@ -1,6 +1,6 @@
 import {jb} from 'jb-core';
 
-jb.component('hello-world.test2', {
+jb.component('hello-world.main', {
   type: 'control', 
   impl :{$: 'label', 
     title: 'hello test2', 
@@ -19,12 +19,12 @@ jb.component('hello-world.form', {
     style :{$: 'group.div' }, 
     controls: [
       {$: 'editable-text', 
-        title: 'name (update on blur)', 
+        title: 'first name', 
         databind: '%$globals/name%', 
         style :{$: 'editable-text.md-input' }
       }, 
       {$: 'editable-text', 
-        title: 'name', 
+        title: 'last name', 
         databind: '%$globals/name%', 
         style :{$: 'editable-text.md-input' }
       }, 
@@ -37,7 +37,7 @@ jb.component('hello-world.form', {
   }
 })
 
-jb.component('hello-world.main', {
+jb.component('hello-world.group', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'main', 

@@ -36,7 +36,8 @@ System.register(['jb-core/jb', 'jb-ui', 'jb-ui/jb-ui-utils', 'jb-ui/jb-rx'], fun
                             cmp.slider.adjustScale();
                             cmp.slider.setThumbPosition();
                         }; }
-                    }
+                    },
+                    observable: function () { } // to create jbEmitter
                 }
             });
             Slider = (function () {

@@ -291,7 +291,7 @@ jb.component('rx.urlPath',{
 	    	return url.replace(/\/*$/,'');
 		}
 
-		var databindEm = context.vars.ngZone.onUnstable
+		var databindEm = context.vars.ngZone.onStable // .onUnstable
 			.map(()=>databind)
 	    	.filter(obj=>
 	    		obj.project)
