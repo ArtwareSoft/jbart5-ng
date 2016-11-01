@@ -3,8 +3,8 @@ import {jb} from 'jb-core';
 jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
-      features :{$: 'editable-text.bindField' },
-      template: `<div><input %$field.modelExp%></div>`,
+      features :{$: 'field.databind' },
+      template: `<div><input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></div>`,
 	  css: `
 input { display: block; width: 146px; height: 19px; padding-left: 2px;
 	font-size: 12px; color: #555555; background-color: #fff; 
@@ -49,7 +49,8 @@ jb.component('button.studio-script',{
 jb.component('editable-boolean.studio-slide-toggle', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 
-      template: `<div><md-slide-toggle color="primary" class="studio-slide-toggle" %$field.modelExp% >{{text()}}</md-slide-toggle></div>`,
+      features :{$: 'field.databind' },
+      template: `<div><md-slide-toggle color="primary" class="studio-slide-toggle" [ngModel]="jbModel()" (change)="jbModel($event.target.value)" >{{text()}}</md-slide-toggle></div>`,
       css: `
       .studio-slide-toggle { margin: 0 !important; width: 153px; }
   .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {
@@ -67,7 +68,8 @@ jb.component('editable-boolean.studio-slide-toggle', {
 jb.component('picklist.studio-enum', {
   type: 'picklist.style',
   impl :{$: 'customStyle', 
-    template: `<div><select %$field.modelExp%>
+    features :{$: 'field.databind' },
+    template: `<div><select [ngModel]="jbModel()" (change)="jbModel($event.target.value)">
                     <option *ngFor="let option of options" [value]="option.code">{{option.text}}</option>
                  </select></div>`,
     css: `

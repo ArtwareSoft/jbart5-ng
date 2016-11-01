@@ -92,7 +92,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                         cssClass: 'jb-codemirror',
                         init: function (cmp) {
                             mode = mode || 'javascript';
-                            var field = context.vars.field;
+                            var data_ref = cmp.ctx.vars.$model.databind;
                             cm_settings = jb_core_1.jb.extend(cm_settings || {}, {
                                 mode: mode,
                                 lineWrapping: lineWrapping,
@@ -105,7 +105,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                             });
                             var $el = $(cmp.elementRef.nativeElement);
                             var $textarea = $el.findIncludeSelf('textarea');
-                            $textarea.val(field.getValue());
+                            $textarea.val(jb_core_1.jb.val(data_ref));
                             //if (resizer) jb_codemirrorResizer(editor, $el);
                             context.vars.ngZone.runOutsideAngular(function () {
                                 try {
@@ -124,7 +124,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                 }
                                 cmp.codeMirror = editor;
                                 $(editor.getWrapperElement()).css('box-shadow', 'none');
-                                field.observable(cmp)
+                                jb_rx.refObservable(data_ref, cmp)
                                     .filter(function (x) {
                                     return x != editor.getValue();
                                 })
@@ -136,10 +136,10 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                     .distinctUntilChanged()
                                     .debounceTime(debounceTime)
                                     .filter(function (x) {
-                                    return x != field.getValue();
+                                    return x != jb_core_1.jb.val(data_ref);
                                 })
                                     .subscribe(function (x) {
-                                    field.writeValue(x);
+                                    jb_core_1.jb.writeValue(data_ref, x);
                                     if (cmp.onChange)
                                         cmp.onChange(x);
                                     jb_ui.apply(context);
@@ -170,7 +170,6 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                         observable: function () { },
                         init: function (cmp) {
                             mode = mode || 'javascript';
-                            var field = context.vars.field;
                             cm_settings = {
                                 readOnly: true,
                                 mode: mode,
@@ -179,7 +178,6 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                             };
                             var $el = $(cmp.elementRef.nativeElement);
                             var $textarea = $el.findIncludeSelf('textarea');
-                            //$textarea.val(field.getValue());
                             //if (resizer) jb_codemirrorResizer(editor, $el);
                             context.vars.ngZone.runOutsideAngular(function () {
                                 try {

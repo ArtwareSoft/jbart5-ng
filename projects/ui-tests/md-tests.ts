@@ -28,7 +28,7 @@ jb.component('md-test.md-input', {
       databind: '%$person/name%', 
       style :{$: 'editable-text.md-input'} 
     },
-    expectedHtmlResult: { $: 'contains', text: ['name', 'Homer'] }
+    expectedHtmlResult: {$and: [{ $: 'contains', text: 'name' },{ $: 'contains', text: 'Homer' }] }
   },
 })
 

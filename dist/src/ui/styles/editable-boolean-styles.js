@@ -11,19 +11,22 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('editable-boolean.checkbox', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<div><input type=\"checkbox\" %$field.modelExp%></div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><input type=\"checkbox\" [ngModel]=\"jbModel()\" (change)=\"jbModel($event.checked)\" (keyup)=\"jbModel($event.target.checked,'keyup')\"></div>",
                 }
             });
             jb_core_1.jb.component('editable-boolean.checkbox-with-title', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<div><input type=\"checkbox\" %$field.modelExp%>{{text()}}</div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><input type=\"checkbox\" [ngModel]=\"jbModel()\" (change)=\"jbModel($event.checked)\" (keyup)=\"jbModel($event.target.checked,'keyup')\">{{text()}}</div>",
                 }
             });
             jb_core_1.jb.component('editable-boolean.expand-collapse', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<div><input type=\"checkbox\" %$field.modelExp%>\n      \t<i class=\"material-icons noselect\" (click)=\"toggle()\">{{jbModel ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      </div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><input type=\"checkbox\" [ngModel]=\"jbModel()\" (change)=\"jbModel($event.checked)\" (keyup)=\"jbModel($event.target.checked,'keyup')\">\n      \t<i class=\"material-icons noselect\" (click)=\"toggle()\">{{jbModel() ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>\n      </div>",
                     css: "i { font-size:16px; cursor: pointer; }\n      \t\tinput { display: none }"
                 }
             });

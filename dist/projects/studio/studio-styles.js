@@ -11,8 +11,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('editable-text.studio-primitive-text', {
                 type: 'editable-text.style',
                 impl: { $: 'customStyle',
-                    features: { $: 'editable-text.bindField' },
-                    template: "<div><input %$field.modelExp%></div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><input [ngModel]=\"jbModel()\" (change)=\"jbModel($event.target.value)\" (keyup)=\"jbModel($event.target.value,'keyup')\"></div>",
                     css: "\ninput { display: block; width: 146px; height: 19px; padding-left: 2px;\n\tfont-size: 12px; color: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\ninput:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\ninput::placeholder { color: #999; opacity: 1; }\ninput[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }\n\t  \tinput.focused {width: 300px; transition: width: 1s}"
                 }
             });
@@ -26,7 +26,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('editable-boolean.studio-slide-toggle', {
                 type: 'editable-boolean.style',
                 impl: { $: 'customStyle',
-                    template: "<div><md-slide-toggle color=\"primary\" class=\"studio-slide-toggle\" %$field.modelExp% >{{text()}}</md-slide-toggle></div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><md-slide-toggle color=\"primary\" class=\"studio-slide-toggle\" [ngModel]=\"jbModel()\" (change)=\"jbModel($event.target.value)\" >{{text()}}</md-slide-toggle></div>",
                     css: "\n      .studio-slide-toggle { margin: 0 !important; width: 153px; }\n  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {\n    background-color: #1f1f1f !important}\n  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {\n    background-color: #858585 !important; opacity: 0.5 }\n  .studio-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {\n    opacity: 1; background-color: #858585 !important; \n    background-color-old: rgba(0, 150, 136, 0.26); }\n      ",
                     directives: 'MdSlideToggle'
                 }
@@ -34,7 +35,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('picklist.studio-enum', {
                 type: 'picklist.style',
                 impl: { $: 'customStyle',
-                    template: "<div><select %$field.modelExp%>\n                    <option *ngFor=\"let option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><select [ngModel]=\"jbModel()\" (change)=\"jbModel($event.target.value)\">\n                    <option *ngFor=\"let option of options\" [value]=\"option.code\">{{option.text}}</option>\n                 </select></div>",
                     css: "\nselect { display: block; padding: 0; width: 150px; font-size: 12px; height: 23px;\n\tcolor: #555555; background-color: #fff; \n\tborder: 1px solid #ccc; border-radius: 4px;\n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); \n\ttransition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; \n}\nselect:focus { border-color: #66afe9; outline: 0; \n\tbox-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\nselect::placeholder { color: #999; opacity: 1; }\nselect[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }\n    "
                 }
             });

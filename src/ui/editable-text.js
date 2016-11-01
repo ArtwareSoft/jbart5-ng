@@ -12,31 +12,23 @@ jb.component('editable-text',{
     { id: 'features', type: 'feature[]', dynamic: true },
   ],
   impl: ctx => 
-  	jb_ui.ctrl(ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind,ctx.params.updateOnBlur) }))
+    jb_ui.ctrl(ctx)
 });
-
-jb.component('editable-text.bindField', {
-  type: 'feature',
-  impl: ctx => ({
-   	init: cmp => 
-  		cmp.ctx.vars.field.bindToCmp(cmp, cmp.ctx)
-  })
-})
 
 jb.component('editable-text.input', {
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
-      features :{$: 'editable-text.bindField' },
-      template: `<div><input %$field.modelExp%></div>`,
-	  css: 'input {height: 16px}'
-	}
+      features :{$: 'field.databind' },
+      template: `<div><input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></div>`,
+    css: 'input {height: 16px}'
+  }
 })
 
 jb.component('editable-text.textarea', {
 	type: 'editable-text.style',
 	impl :{$: 'customStyle', 
-      features :{$: 'editable-text.bindField' },
-      template: '<div><textarea %$field/modelExp%></textarea></div>',
+      features :{$: 'field.databind' },
+      template: `<div><textarea [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></textarea></div>`,
 	}
 })
 

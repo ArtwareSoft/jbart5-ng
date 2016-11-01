@@ -40,14 +40,14 @@ jb.component('group.data', {
   impl: function(context, data_ref, itemVariable,watch) {
     return {
       beforeInit: function(cmp) {
+          context.vars.$model.databind = data_ref;
           var dataEm = cmp.jbEmitter
               .filter(x => x == 'check')
               .map(()=> 
                 jb.val(data_ref())) 
               .distinctUntilChanged(jb_compareArrays)
-              .map(val=> {
-                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
-//                  var ctx3 = itemVariable ? ctx2.setVars(jb.obj(itemVariable,val)) : ctx2;
+              .map(()=> {
+                  var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx;
                   return context.vars.$model.controls(ctx2)
               })
 

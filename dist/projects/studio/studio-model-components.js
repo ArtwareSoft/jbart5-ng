@@ -144,12 +144,6 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.addProperty, path, {}, context);
                 }
             });
-            // jb.component('studio.wrap-with-pipeline', {
-            // 	type: 'action',
-            // 	params: [ {id: 'path', as: 'string' } ],
-            // 	impl: (context,path) => 
-            // 		model.modify(model.wrapWithPipeline, path, {},context)
-            // })
             jb_core_1.jb.component('studio.duplicate', {
                 type: 'action',
                 params: [

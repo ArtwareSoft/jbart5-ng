@@ -14,18 +14,15 @@ jb.component('editable-boolean',{
     { id: 'features', type: 'feature[]', dynamic: true },
   ],
   impl: (ctx) => {
-    var ctx2 = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
-  	return jb_ui.ctrl(ctx2).jbExtend({
-  		beforeInit: function(cmp) {
-        ctx2.vars.field.bindToCmp(cmp, ctx2);
+  	return jb_ui.ctrl(ctx).jbExtend({
+  		init: function(cmp) {
+        cmp.toggle = () =>
+          cmp.jbModel(!cmp.jbModel());
 
-        cmp.toggle = () =>  {
-          cmp.jbModel = !cmp.jbModel; 
-          ctx2.vars.field.writeValue(cmp.jbModel);
+  			cmp.text = () => {
+          if (!cmp.jbModel) return '';
+          return cmp.jbModel() ? ctx.params.textForTrue : ctx.params.textForFalse;
         }
-
-  			cmp.text = () => 
-          cmp.jbModel ? ctx.params.textForTrue : ctx.params.textForFalse;
   		}
   	});
   }

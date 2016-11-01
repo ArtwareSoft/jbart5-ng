@@ -3,7 +3,8 @@ import {jb} from 'jb-core';
 jb.component('picklist.native', {
   type: 'picklist.style',
   impl :{$: 'customStyle', 
-    template: `<div><select %$field.modelExp%>
+    features :{$: 'field.databind' },
+    template: `<div><select [ngModel]="jbModel()" (change)="jbModel($event.target.value)">
                     <option *ngFor="let option of options" [value]="option.code">{{option.text}}</option>
                  </select></div>`,
     css: `
@@ -21,7 +22,8 @@ select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
 jb.component('picklist.groups', {
   type: 'picklist.style',
   impl :{$: 'customStyle', 
-    template: `<div><select %$field.modelExp%>
+    features :{$: 'field.databind' },
+    template: `<div><select [ngModel]="jbModel()" (change)="jbModel($event.target.value)">
     <optgroup *ngFor="let group of groups" label="{{group.text}}">
 	    <option *ngFor="let option of group.options" [value]="option.code">{{option.text}}</option>
     </optgroup>

@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Renderer, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDeprecatedForms, provideForms } from '@angular/forms';
 import {HTTP_PROVIDERS} from '@angular/http';
 
@@ -18,6 +18,8 @@ export function apply(ctx) {
 	return jb.delay(1).then(() =>
 			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
 }
+
+// zone.stable (cmp.detectChanges
 
 export function delayOutsideAngular(ctx,func) {
 	jb.delay(1,ctx).then(func);
@@ -69,8 +71,9 @@ class jbComponent {
 		cmp.ctx = ctx;
 		cmp.methodHandler = this.methodHandler;
 	  	var elem = cmp_ref._hostElement.nativeElement;
-	  	elem.setAttribute('jb-ctx',ctx.id);
-		cleanCtxDictionary();
+//	  	elem.setAttribute('jb-ctx',ctx.id);
+		cmp.renderer.setElementAttribute(elem,'jb-ctx',ctx.id);
+		garbageCollectCtxDictionary();
 		jbart.ctxDictionary[ctx.id] = ctx;
 
 		if (this.cssFixes.length > 0) {
@@ -104,10 +107,10 @@ class jbComponent {
 	    this.jbExtend({directives: [NgClass, NgStyle, jbComp, PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES] });
 	    if (!this.annotations.selector)	this.annotations.selector = 'div';
 
-	    var Cmp = function(dcl, elementRef, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.changeDt =  changeDetection }
+	    var Cmp = function(dcl, elementRef, renderer, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.renderer = renderer; this.changeDt =  changeDetection }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [Compiler, ElementRef, ChangeDetectorRef])
+			Reflect.metadata('design:paramtypes', [Compiler, ElementRef, Renderer, ChangeDetectorRef])
 		], Cmp);
 		Cmp.prototype.ngOnInit = function() {
 			try {
@@ -484,46 +487,6 @@ export class jbComp {
   }
 }
 
-export function twoWayBind(ref,updateOnBlur) {
-	if (!ref) return {
-		bindToCmp: () => {},
-		valueExp: '',
-		modelExp: '',
-		observable: ctx => new jb_rx.Subject(), 
-		getValue: () => null,
-		writeValue: val => {}
-	}
-
-	var modelPath = 'jbModel';
-	var bindToCmp = cmp => {
-	  	  cmp.jbOnChange = ev => {
-	  	  	if (ev.checked !== undefined)
-	  	  		var val = ev.checked;
-	  	  	else if (ev.target)
-	  	  		var val = ev.target.type != 'checkbox' ? ev.target.value : ev.target.checked;
-	  	   	jb.writeValue(ref,val);
-	  	  }
-		  cmp.refreshModel = () =>
-		  		cmp[modelPath] = jb.val(ref);
-	}
-	// keyup for input change for select & checkbox
-	var modelExp = `[(ngModel)]="${modelPath}" (change)="jbOnChange($event)"`;
-	if (!updateOnBlur) 
-		modelExp += ' (keyup)="jbOnChange($event)"';
-
-	return {
-		bindToCmp: bindToCmp,
-		valueExp: modelPath,
-		modelExp: modelExp,
-
-		observable: cmp => 
-			jb_rx.refObservable(ref,cmp), 
-		getValue: () => 
-			jb.val(ref),
-		writeValue: val => 
-			jb.writeValue(ref,val)
-	}
-}
 
 export function insertComponent(comp, resolver, parentView) {
   	return comp.compile(resolver).then(componentFactory => 
@@ -660,7 +623,7 @@ export function registerProviders(obj) {
 	jb.extend(jbart.ng.providers,obj)
 }
 
-function cleanCtxDictionary() {
+function garbageCollectCtxDictionary() {
 	var now = new Date().getTime();
 	jbart.ctxDictionaryLastCleanUp = jbart.ctxDictionaryLastCleanUp || now;
 	var timeSinceLastCleanUp = now - jbart.ctxDictionaryLastCleanUp;

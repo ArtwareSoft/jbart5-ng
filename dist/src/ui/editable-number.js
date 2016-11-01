@@ -31,21 +31,16 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
                 ],
                 impl: function (context, databind, title, style, symbol, min, max, displayString, dataString, step, initialPixelsPerUnit) {
                     var ctx = context.setVars({
-                        editableNumber: new editableNumber(symbol, min, max, displayString, dataString, step || 1, initialPixelsPerUnit),
-                        field: jb_ui.twoWayBind(databind)
+                        editableNumber: new editableNumber(symbol, min, max, displayString, dataString, step || 1, initialPixelsPerUnit)
                     });
                     return jb_ui.ctrl(ctx);
                 }
             });
-            jb_1.jb.component('editable-number.bindField', {
-                type: 'feature',
-                impl: function (ctx) { return jb_1.jb.obj('init', function (cmp) { return ctx.vars.field.bindToCmp(cmp, ctx); }); }
-            });
             jb_1.jb.component('editable-number.input', {
                 type: 'editable-number.style',
                 impl: { $: 'customStyle',
-                    features: { $: 'editable-number.bindField' },
-                    template: "<div><input %$field.modelExp%></div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><input [ngModel]=\"jbModel()\" (change)=\"jbModel($event.target.value)\" (keyup)=\"jbModel($event.target.value,'keyup')\"></div>",
                     css: 'input {height: 16px}'
                 }
             });

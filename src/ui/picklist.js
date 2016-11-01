@@ -13,11 +13,8 @@ jb.component('picklist', {
     { id: 'features', type: 'feature[]', dynamic: true },
   ],
   impl: ctx => {
-    ctx = ctx.setVars({ field: jb_ui.twoWayBind(ctx.params.databind) });
     return jb_ui.ctrl(ctx).jbExtend({
       beforeInit: function(cmp) {
-        ctx.vars.field.bindToCmp(cmp, ctx);
-
         cmp.recalcOptions = function() {
           cmp.options = ctx.params.options(ctx);
           var groupsHash = {};
@@ -53,7 +50,7 @@ jb.component('picklist.dynamic-options', {
   impl: (ctx,recalcEm) => ({
     init: cmp => 
       recalcEm
-        .takeUntil( cmp.jbEmitter )
+        .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
         .subscribe(e=>
             cmp.recalcOptions()) 
   })

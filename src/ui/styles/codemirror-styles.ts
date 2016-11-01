@@ -19,7 +19,7 @@ jb.component('editable-text.codemirror', {
 			cssClass: 'jb-codemirror',
 			init: function(cmp) {
 				mode = mode || 'javascript';
-				var field = context.vars.field;
+				var data_ref = cmp.ctx.vars.$model.databind;
 				cm_settings = jb.extend(cm_settings||{}, { 
 					mode: mode, 
 					lineWrapping: lineWrapping,
@@ -32,7 +32,7 @@ jb.component('editable-text.codemirror', {
 				});
 				var $el = $(cmp.elementRef.nativeElement);
 				var $textarea = $el.findIncludeSelf('textarea');
-				$textarea.val(field.getValue());
+				$textarea.val(jb.val(data_ref));
 				//if (resizer) jb_codemirrorResizer(editor, $el);
 
 				context.vars.ngZone.runOutsideAngular(() => {
@@ -51,7 +51,7 @@ jb.component('editable-text.codemirror', {
 					}
 					cmp.codeMirror = editor;
 					$(editor.getWrapperElement()).css('box-shadow', 'none');
-					field.observable(cmp)
+					jb_rx.refObservable(data_ref,cmp)
 						.filter(x => 
 							x != editor.getValue())
 						.subscribe(x=>
@@ -62,9 +62,9 @@ jb.component('editable-text.codemirror', {
 						.distinctUntilChanged()
 						.debounceTime(debounceTime)
 						.filter(x => 
-							x != field.getValue())
+							x != jb.val(data_ref))
 						.subscribe(x=>{ 
-							field.writeValue(x);
+							jb.writeValue(data_ref,x);
 							if (cmp.onChange)
 								cmp.onChange(x);
 							jb_ui.apply(context)
@@ -170,7 +170,6 @@ jb.component('text.codemirror', {
             observable: () => {},
             init: function(cmp) {
                 mode = mode || 'javascript';
-                var field = context.vars.field;
                 cm_settings = { 
                     readOnly: true,
                     mode: mode,
@@ -179,7 +178,6 @@ jb.component('text.codemirror', {
                 };
                 var $el = $(cmp.elementRef.nativeElement);
                 var $textarea = $el.findIncludeSelf('textarea');
-                //$textarea.val(field.getValue());
                 //if (resizer) jb_codemirrorResizer(editor, $el);
 
                 context.vars.ngZone.runOutsideAngular(() => {

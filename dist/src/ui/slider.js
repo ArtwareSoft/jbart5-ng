@@ -46,7 +46,7 @@ System.register(['jb-core/jb', 'jb-ui', 'jb-ui/jb-ui-utils', 'jb-ui/jb-rx'], fun
                     this.ctx = ctx;
                     this.cmp = cmp;
                     this.$el = $el;
-                    this.field = ctx.vars.field;
+                    var data_ref = ctx.vars.$model.databind;
                     this.editableNumber = ctx.vars.editableNumber;
                     this.scaleElement = $el.find('.slider_scale')[0];
                     this.thumbElement = $el.find('.slider_thumb')[0];
@@ -59,17 +59,17 @@ System.register(['jb-core/jb', 'jb-ui', 'jb-ui/jb-ui-utils', 'jb-ui/jb-rx'], fun
                     $(this.inputElement).bind('blur', function (e) { return _this.setInputValue(); });
                     $(this.inputElement).hide();
                     $(this.textElement).bind('mousedown', function (e) { return _this.mouseDown(e); });
-                    this.numericValue = this.editableNumber.numericPart(this.field.getValue());
+                    this.numericValue = this.editableNumber.numericPart(jb_1.jb.val(data_ref));
                     this.$el.addClass('noselect');
                     this.valueChangeEm = new jb_rx.Subject();
                     this.valueChangeEm.distinctUntilChanged()
                         .debounceTime(100)
                         .filter(function (x) {
-                        return x != _this.field.getValue();
+                        return x != jb_1.jb.val(data_ref);
                     })
                         .subscribe(function (x) {
-                        _this.field.writeValue(x);
-                        jb_ui.apply(_this.ctx);
+                        jb_1.jb.writeValue(data_ref, x);
+                        jb_ui.apply(_this.ctx); // to fix with ChangeDetectionStrategy
                     });
                 }
                 Slider.prototype.setValue = function (val) {

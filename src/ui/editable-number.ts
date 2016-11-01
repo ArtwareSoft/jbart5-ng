@@ -21,23 +21,17 @@ jb.component('editable-number',{
   ],
   impl: (context,databind,title,style,symbol,min,max,displayString,dataString,step,initialPixelsPerUnit) => {
     var ctx = context.setVars({ 
-      editableNumber: new editableNumber(symbol,min,max,displayString,dataString,step||1,initialPixelsPerUnit),
-      field: jb_ui.twoWayBind(databind)
+      editableNumber: new editableNumber(symbol,min,max,displayString,dataString,step||1,initialPixelsPerUnit)
     });
   	return jb_ui.ctrl(ctx) 
   }
 })
 
-jb.component('editable-number.bindField', {
-  type: 'feature',
-  impl: ctx => jb.obj('init', cmp => ctx.vars.field.bindToCmp(cmp, ctx))
-})
-
 jb.component('editable-number.input',{
   type: 'editable-number.style',
   impl :{$: 'customStyle', 
-      features :{$: 'editable-number.bindField' },
-      template: `<div><input %$field.modelExp%></div>`,
+      features :{$: 'field.databind' },
+      template: `<div><input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></div>`,
     css: 'input {height: 16px}'
   }
 })

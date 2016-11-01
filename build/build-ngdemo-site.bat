@@ -1,0 +1,1 @@
+grunt --base .. --gruntfile ng2materialDemo.js --verbose

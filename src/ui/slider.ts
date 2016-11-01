@@ -57,7 +57,7 @@ jb.component('editable-number.slider', {
 
 class Slider {	
 	 constructor(public ctx, public cmp, public $el) {
-	 	this.field = ctx.vars.field;
+	 	var data_ref = ctx.vars.$model.databind;
 		this.editableNumber = ctx.vars.editableNumber;
 		this.scaleElement = $el.find('.slider_scale')[0];
 		this.thumbElement = $el.find('.slider_thumb')[0];
@@ -72,17 +72,18 @@ class Slider {
 		$(this.inputElement).hide();
 		$(this.textElement).bind('mousedown', e => this.mouseDown(e) );
 
-		this.numericValue = this.editableNumber.numericPart(this.field.getValue());
+		this.numericValue = this.editableNumber.numericPart(jb.val(data_ref));
 		this.$el.addClass('noselect');
 
 		this.valueChangeEm = new jb_rx.Subject();
 		this.valueChangeEm.distinctUntilChanged()
 			.debounceTime(100)
 			.filter(x => 
-				x != this.field.getValue())
-			.subscribe(x=>{ 
-				this.field.writeValue(x); jb_ui.apply(this.ctx)}
-			)
+				x != jb.val(data_ref))
+			.subscribe(x=>{
+				jb.writeValue(data_ref,x); 
+				jb_ui.apply(this.ctx); // to fix with ChangeDetectionStrategy
+			})
 	}
 	setValue(val) {
 		var fix1 = this.applyRangeAndResolution(val);

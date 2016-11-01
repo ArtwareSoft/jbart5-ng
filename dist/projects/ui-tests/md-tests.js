@@ -34,7 +34,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         databind: '%$person/name%',
                         style: { $: 'editable-text.md-input' }
                     },
-                    expectedHtmlResult: { $: 'contains', text: ['name', 'Homer'] }
+                    expectedHtmlResult: { $and: [{ $: 'contains', text: 'name' }, { $: 'contains', text: 'Homer' }] }
                 },
             });
             jb_core_1.jb.component('md-test.button-md-icon', {

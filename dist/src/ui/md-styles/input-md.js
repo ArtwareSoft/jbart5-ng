@@ -21,8 +21,8 @@ System.register(['jb-core', 'jb-ui', '@angular2-material/input/input.js'], funct
                     { id: 'width', as: 'number' },
                 ],
                 impl: { $: 'customStyle',
-                    features: { $: 'editable-text.bindField' },
-                    template: "<div><md-input %$field.modelExp% placeholder=\"{{title}}\"></md-input></div>",
+                    features: { $: 'field.databind' },
+                    template: "<div><md-input [ngModel]=\"jbModel()\" (change)=\"jbModel($event.target.value)\" (keyup)=\"jbModel($event.target.value,'keyup')\" placeholder=\"{{title}}\"></md-input></div>",
                     methods: {
                         init: function (ctx) { return function (cmp) {
                             return cmp.title = ctx.vars.$model.title();
