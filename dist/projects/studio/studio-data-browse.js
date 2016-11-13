@@ -17,11 +17,12 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'openDialog',
                     title: '%$id%',
                     style: { $: 'dialog.studio-floating', id: 'resource %$id%', width: 500 },
-                    content: { $: 'tree', cssClass: 'jb-control-tree',
+                    content: { $: 'tree',
                         nodeModel: { $: 'tree.json-read-only',
                             object: '%$resource%', rootPath: '%$id%'
                         },
                         features: [
+                            { $: 'css.class', class: 'jb-control-tree' },
                             { $: 'tree.selection' },
                             { $: 'tree.keyboard-selection' }
                         ]

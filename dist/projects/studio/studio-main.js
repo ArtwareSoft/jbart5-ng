@@ -65,29 +65,30 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 { $: 'group',
                                     url: '/projects/studio/css/logo470x200.png',
                                     title: 'title and menu',
-                                    style: { $: 'layout.vertical', spacing: '14' },
+                                    style: { $: 'layout.vertical', spacing: '16' },
                                     controls: [
                                         { $: 'label',
                                             title: 'message',
-                                            style: { $: 'customStyle',
-                                                template: '<span class="studio-message">{{title}}</span> ',
-                                                css: "{ position: absolute;\n                    color: white;  padding: 20px;  background: #327DC8;\n                    width: 1000px;\n                    margin-top: -100px;\n                    }\n                    ",
-                                                features: { $: 'label.bind-title' }
-                                            }
+                                            style: { $: 'label.studio-message' }
                                         },
                                         { $: 'label',
-                                            title: { $: 'replace', text: '{%$globals/project%}', find: '_', replace: ' ' },
+                                            title: { $: 'replace',
+                                                find: '_',
+                                                replace: ' ',
+                                                text: '{%$globals/project%}'
+                                            },
                                             style: { $: 'label.span' },
                                             features: { $: 'css',
                                                 css: '{ font: 20px Arial; margin-left: 6px; margin-top: 20px}'
                                             }
                                         },
                                         { $: 'group',
-                                            style: { $: 'layout.horizontal', spacing: 3 },
+                                            style: { $: 'layout.flex', align: 'space-between' },
                                             controls: [
                                                 { $: 'studio.main-menu' },
                                                 { $: 'studio.toolbar' }
-                                            ]
+                                            ],
+                                            features: { $: 'css.width', width: '1040' }
                                         }
                                     ],
                                     features: { $: 'css', css: '{ padding-left: 18px; width: 100% }' }
@@ -96,12 +97,11 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                             features: { $: 'css', css: '{ height: 90px; border-bottom: 1px #d9d9d9 solid}' }
                         },
                         { $: 'group',
-                            cssClass: 'studio-widget-placeholder',
                             title: 'preview',
-                            controls: { $: 'studio.renderWidget' }
+                            controls: { $: 'studio.renderWidget' },
+                            features: { $: 'css.class', class: 'studio-widget-placeholder' }
                         },
                         { $: 'group',
-                            cssClass: 'studio-footer',
                             title: 'pages',
                             style: { $: 'layout.horizontal' },
                             controls: [
@@ -114,8 +114,8 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 { $: 'itemlist',
                                     items: { $: 'studio.project-pages' },
                                     controls: { $: 'label',
-                                        cssClass: 'studio-page',
-                                        title: { $: 'extractSuffix', separator: '.' }
+                                        title: { $: 'extractSuffix', separator: '.' },
+                                        features: { $: 'css.class', class: 'studio-page' }
                                     },
                                     features: [
                                         { $: 'itemlist.selection',
@@ -139,6 +139,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 }
                             ],
                             features: [
+                                { $: 'css.class', class: 'studio-footer' },
                                 { $: 'group.wait',
                                     for: { $: 'studio.waitForPreviewIframe' },
                                     loadingControl: { $label: '...' }
@@ -250,7 +251,7 @@ System.register(['jb-core', 'jb-ui', '@angular/platform-browser', '@angular/core
                                 selector: 'previewIframe',
                                 template: "<iframe sandbox=\"allow-same-origin allow-forms allow-scripts\" style=\"box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px\"\n\t\t\t\t\tseamless=\"\" id=\"jb-preview\" frameborder=\"0\" [src]=\"project_url\"></iframe>",
                             }), 
-                            __metadata('design:paramtypes', [platform_browser_1.DomSanitizationService, core_1.ElementRef])
+                            __metadata('design:paramtypes', [platform_browser_1.DomSanitizer, core_1.ElementRef])
                         ], previewIframe);
                         return previewIframe;
                     }());

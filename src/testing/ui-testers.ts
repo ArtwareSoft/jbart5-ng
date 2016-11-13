@@ -12,6 +12,7 @@ jb.component('ng2-ui-test', {
 	],
 	impl: ctx=>
 		new Promise((resolve,reject)=> {
+			console.log('starting test ' + ctx.vars.testID, ctx);
 			ctx.run({$:'openDialog', content: ctx.profile.control, 
 			features: ctx2 => ({
 					observable: (observable,cmp) =>
@@ -21,7 +22,7 @@ jb.component('ng2-ui-test', {
 							resolve({ id: ctx.vars.testID, success:false }) })
 						.subscribe(x=>{
 							Array.from(cmp.elementRef.nativeElement.querySelectorAll('input')).forEach(inp=>
-								cmp.renderer.setElementAttribute(inp,'title2',inp.value || '')
+								inp.setAttribute('title2',inp.value || '')
 							)
 							var html = cmp.elementRef.nativeElement.outerHTML;
 							resolve({ 
@@ -30,6 +31,7 @@ jb.component('ng2-ui-test', {
 							});
 							if (!jbart.singleTestID)
 								ctx2.run({$:'closeContainingPopup'})
+							console.log('finished test ' + ctx.vars.testID, ctx);
 						}),
 					css: jbart.singleTestID ? '' : '{display: none}'
 			})

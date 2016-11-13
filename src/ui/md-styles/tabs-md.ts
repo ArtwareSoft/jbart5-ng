@@ -1,11 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import {MD_TABS_DIRECTIVES,TABS_INTERNAL_DIRECTIVES} from '@angular2-material/tabs/tabs.js';
-import {MdToolbar} from '@angular2-material/toolbar/toolbar';
-
-
-jb_ui.registerDirectives({MD_TABS_DIRECTIVES: MD_TABS_DIRECTIVES, MdToolbar:MdToolbar,TABS_INTERNAL_DIRECTIVES: TABS_INTERNAL_DIRECTIVES});
+import { MdTabsModule } from '@angular/material';
 
 jb.component('tabs.md-tabs', {
   params: [
@@ -23,7 +19,7 @@ jb.component('tabs.md-tabs', {
 </md-tab-group></div>`,
        css: '{?!.md-tab-label { min-width: %$tabWidth%px} ?}',
       features :{$: 'tabs.initTabs'},
-      directives: ['MD_TABS_DIRECTIVES']
+      imports: MdTabsModule
     }
 })
 

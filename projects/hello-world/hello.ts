@@ -2,9 +2,15 @@ import {jb} from 'jb-core';
 
 jb.component('hello-world.main', {
   type: 'control', 
-  impl :{$: 'label', 
-    title: 'hello test2', 
-    features: {  }
+  impl :{$: 'group', 
+    style :{$: 'group.md-card' }, 
+    controls: [
+      {$: 'label', 
+        title: 'hello test', 
+        style :{$: 'label.md-card-title' }, 
+        features :{$: 'css.width', width: '200', overflow: 'scroll' }
+      }
+    ]
   }
 })
 
@@ -16,12 +22,16 @@ jb.component('hello-world.main1', {
 jb.component('hello-world.form', {
   type: 'control', 
   impl :{$: 'group', 
-    style :{$: 'group.div' }, 
+    style :{$: 'group.section' }, 
     controls: [
+      {$: 'label', 
+        title: 'hello', 
+        style :{$: 'label.span' }
+      }, 
       {$: 'editable-text', 
         title: 'first name', 
         databind: '%$globals/name%', 
-        style :{$: 'editable-text.md-input' }
+        style :{$: 'editable-text.input' }
       }, 
       {$: 'editable-text', 
         title: 'last name', 

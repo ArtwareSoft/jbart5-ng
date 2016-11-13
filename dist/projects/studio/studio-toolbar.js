@@ -36,7 +36,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             title: 'Select',
                             action: { $: 'studio.pickAndOpen' },
                             style: { $: 'button.md-icon',
-                                css: '{transform: scaleX(-1)}',
+                                features: { $: 'css', css: '{transform: scaleX(-1)}' },
                                 icon: 'call_made'
                             }
                         },
@@ -109,8 +109,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 ],
                 impl: function (context, spritePosition) {
                     return {
-                        jbTemplate: '<button (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',
-                        cssClass: "studio-btn-toolbar",
+                        jbTemplate: '<button class="studio-btn-toolbar" (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',
                         init: function (cmp) {
                             cmp.pos = spritePosition.split(',').map(function (item) { return (-parseInt(item) * 16) + 'px'; }).join(' ');
                         }

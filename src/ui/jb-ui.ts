@@ -1,11 +1,17 @@
 import {jb} from 'jb-core';
-import { enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Renderer, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
-import { NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor, disableDeprecatedForms, provideForms } from '@angular/forms';
-import {HTTP_PROVIDERS} from '@angular/http';
+import { enableProdMode, Compiler, NgModule, Component, View, ViewContainerRef, ViewChild, ViewChildElementRef, ElementRef, Injector, Input, NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
 
-import {NgClass,NgStyle} from '@angular/common';
-import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
-import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
+// import { NgModule, enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Renderer, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+// import { FormsModule, NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor,  provideForms } from '@angular/forms';
+// import { HttpModule, HTTP_PROVIDERS} from '@angular/http';
+
+// import { CommonModule, NgClass,NgStyle} from '@angular/common';
+// import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
+// import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
 
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as jb_dialog from 'jb-ui/dialog';
@@ -52,27 +58,49 @@ class jbComponent {
 	compile(compiler) {
 		if (this.factory)
 			return this.factory;
-		if (factory_hash[this.hashkey()])
-			this.factory = factory_hash[this.hashkey()];
-		else
-			try { 
-			this.factory = factory_hash[this.hashkey()] = compiler.compileComponentSync(this.comp || this.createComp());
-		} catch (e) {
-			jb.logError('ng compilation error',this, e);
-			return compiler.compileComponentSync(this.nullComp());
-			//throw e;
-		}
+		var key = this.hashkey();
+		if (factory_hash[key])
+			return factory_hash[key];
+		this.doCompile(compiler,this.createComp());
+		factory_hash[key] = this.factory;
 		return this.factory;
 	}
+	doCompile(compiler,comp,inError) {
+		this.comp = comp;
+		var dynamicModule = this.wrapCompWithModule(comp);
+		try { 
+			var ret = compiler.compileModuleAndAllComponentsSync(dynamicModule);
+			this.factory = ret.componentFactories.find(x => x.componentType === comp);
+		} catch (e) {
+			if (!inError)
+				this.doCompile(compiler,this.nullComp(),true)
+			jb.logError('ng compilation error',this, e);
+		}
+	}
+	wrapCompWithModule(comp) {
+	    var DynamicModule = function() { }
+	    //Reflect.getMetadata('annotations', jbCompModule)[0].declarations = [jbComp].concat(jb.entries(jbart.ng.directives).map(x=>x[1]));
+		var DynamicModule = Reflect.decorate([
+			NgModule({
+				imports: [jbCompModule, CommonModule, BrowserModule, FormsModule] 
+						.concat(this.annotations.imports || []).filter(x=>x),
+				providers : this.annotations.providers,
+  				declarations: [comp],
+  				exports: [comp]
+  			}),
+		], DynamicModule);
+
+		return DynamicModule;
+	}
 	registerMethods(cmp_ref,parent) { // should be called by the instantiator
-		var cmp = cmp_ref.hostView._view._Cmp_0_4;
+		var cmp = cmp_ref._hostElement.component; // hostView._view._Cmp_0_4;
 		cmp.parentCmp = parent;
 		var ctx = this.ctx;
 		cmp.ctx = ctx;
 		cmp.methodHandler = this.methodHandler;
 	  	var elem = cmp_ref._hostElement.nativeElement;
-//	  	elem.setAttribute('jb-ctx',ctx.id);
-		cmp.renderer.setElementAttribute(elem,'jb-ctx',ctx.id);
+	  	elem.setAttribute('jb-ctx',ctx.id);
+//		cmp.renderer.setElementAttribute(elem,'jb-ctx',ctx.id);
 		garbageCollectCtxDictionary();
 		jbart.ctxDictionary[ctx.id] = ctx;
 
@@ -92,25 +120,24 @@ class jbComponent {
 	}
 	hashkey() {
 		return JSON.stringify(jb.extend({},this.annotations,{
-			directives: '',
+			imports: '', providers: '',
 			host: jb.extend({},this.annotations.host || {}),
 		}));
 	}
 	nullComp() {
 	    var Cmp = function() {}
 		Cmp = Reflect.decorate([
-			Component({selector: 'div', template: '<div></div>'}),
+			Component({selector: 'jb-comp', template: '<div></div>'}),
 		], Cmp);
 		return Cmp;
 	}
 	createComp() {
-	    this.jbExtend({directives: [NgClass, NgStyle, jbComp, PORTAL_DIRECTIVES, MD_RIPPLE_DIRECTIVES] });
-	    if (!this.annotations.selector)	this.annotations.selector = 'div';
+	    if (!this.annotations.selector)	this.annotations.selector = 'jb-comp';
 
-	    var Cmp = function(dcl, elementRef, renderer, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.renderer = renderer; this.changeDt =  changeDetection }
+	    var Cmp = function(dcl, elementRef, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.changeDt =  changeDetection }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [Compiler, ElementRef, Renderer, ChangeDetectorRef])
+			Reflect.metadata('design:paramtypes', [Compiler, ElementRef, ChangeDetectorRef])
 		], Cmp);
 		Cmp.prototype.ngOnInit = function() {
 			try {
@@ -171,18 +198,23 @@ class jbComponent {
 		}
 		return Cmp;
 	}
+
+
 	jbCtrl(context) {
 		var options = mergeOptions(
 			optionsOfProfile(context.params.style && context.params.style.profile),
 			optionsOfProfile(context.profile));
+		if (Object.getOwnPropertyNames(options).length > 0)
+			debugger;
 
-		(context.params.features && context.params.features(context) || []).forEach(f => this.jbExtend(f,context))
+		(context.params.features && context.params.features(context) || [])
+			.forEach(f => this.jbExtend(f,context));
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
 			jb.toarray(context.params.style.profile.features)
 				.forEach((f,i)=>
 					this.jbExtend(context.runInner(f,{type:'feature'},context.path+'~features~'+i),context))
 		}
-		return this.jbExtend(options,context);
+		return this;
 	}
 	jbExtend(options,context) {
     	context = context || this.ctx;
@@ -249,11 +281,15 @@ class jbComponent {
 		if (options.disableChangeDetection)
 			annotations.changeDetection = ChangeDetectionStrategy.OnPush;
 
-		if (options.directives !== undefined)
-				annotations.directives = (annotations.directives || []).concat(
-					jb.toarray(options.directives).map(x=>
-						typeof x == 'string' ? jbart.ng.directives[x] : x)
-					)
+		if (options.imports)
+				annotations.imports = (annotations.imports||[]).concat(jb.toarray(options.imports));
+		if (options.providers)
+				annotations.providers = (annotations.providers||[]).concat(jb.toarray(options.providers));
+		// if (options.directives !== undefined)
+		// 		annotations.directives = (annotations.directives || []).concat(
+		// 			jb.toarray(options.directives).map(x=>
+		// 				typeof x == 'string' ? jbart.ng.directives[x] : x)
+		// 			)
 
 		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
 		if (options.cssClass) jb.path(options, ['atts', 'class'], options.cssClass);
@@ -323,7 +359,8 @@ function optionsOfProfile(profile) {
 
 function mergeOptions(op1,op2) {
 	var res = {};
-	res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
+	if (op1.cssClass || op2.cssClass)
+		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
 	if (op1.styles || op2.styles)
 		res.styles = (op1.styles || []).concat(op2.styles || [])
 	return jb_extend({},op1,op2,res);
@@ -370,12 +407,23 @@ export class jbComp {
   @Input() comp;
   @Input() flatten;
   @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
-  constructor(private compiler :Compiler,private ngZone: NgZone) {}
-
+  constructor(private compiler :Compiler,private ngZone: NgZone) {
+  	this.lifeCycleEm = new jb_rx.Subject();
+  }
   ngOnInit() {
   	// redraw if script changed at studio
-		(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
-				.merge(jbart.studioModifiedCtrlsEm || jb_rx.Observable.of())
+
+  	// create adapter observer on the preview window
+	var studioModifiedCtrlsEm = jbart.studioModifiedCtrlsEm ? jb_rx.Observable.create(function (observer) {
+  			jbart.studioModifiedCtrlsEm.subscribe( x=> 
+  					observer.next(x),	
+  				x=>	observer.error(x), ()=> observer.complete() ) 
+  			: jb_rx.Observable.of();
+
+
+	(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
+				.merge(studioModifiedCtrlsEm)
+				.takeUntil(this.lifeCycleEm.filter(x=> x== 'destroy'))
 				.flatMap(e=> {
 					if (this.comp && [this.comp.callerPath, this.comp.ctx && this.comp.ctx.path].indexOf(e.path) != -1) {
 						jb.delay(100,this.comp.ctx).then(() => {// height in delay
@@ -408,6 +456,12 @@ export class jbComp {
 				})
   }
 
+  ngOnDestroy() {
+  	this.modifiedObs && this.modifiedObs.unsubscribe();
+  	this.lifeCycleEm.next('destroy');
+  	this.lifeCycleEm.complete();
+  }
+
   draw(comp) {
   	if (!comp) return;
 
@@ -418,8 +472,11 @@ export class jbComp {
   	this.ngZone.runOutsideAngular(() => {
 	  	if (comp && comp.compile)
 	  		var componentFactory = comp.compile(this.compiler)
-	  	else
-	  		var componentFactory = this.compiler.compileComponentSync(comp);
+	  	else {
+	  		var dynamicModule = this.wrapCompWithModule(comp);
+	  		var componentFactory = this.compiler.compileModuleAndAllComponentsSync(dynamicModule)
+					.componentFactories[0]
+	  	}
 
 	   	var cmp_ref = this.childView.createComponent(componentFactory);
 	   	comp.registerMethods && comp.registerMethods(cmp_ref,this);
@@ -427,27 +484,42 @@ export class jbComp {
 	})
   }
 
- jbWait() {
-	this.readyCounter = (this.readyCounter || 0)+1;
-	if (this.parentCmp && this.parentCmp.jbWait)
-		this.parentWaiting = this.parentCmp.jbWait();
-	return {
-		ready: () => {
-			this.readyCounter--;
-			if (!this.readyCounter) {
-				this.jbEmitter && this.jbEmitter.next('ready');
-				if (this.parentWaiting)
-					this.parentWaiting.ready();
-			}
-		}
+  wrapCompWithModule(comp) {
+	    var DynamicModule = function() { }
+		var DynamicModule = Reflect.decorate([
+			NgModule({
+				imports: [BrowserModule],
+  				declarations: [comp],
+  				exports: [comp]
+  			}),
+		], DynamicModule);
+
+		return DynamicModule;
 	}
- }
+
+
+ // jbWait() {
+	// this.readyCounter = (this.readyCounter || 0)+1;
+	// if (this.parentCmp && this.parentCmp.jbWait)
+	// 	this.parentWaiting = this.parentCmp.jbWait();
+	// return {
+	// 	ready: () => {
+	// 		this.readyCounter--;
+	// 		if (!this.readyCounter) {
+	// 			this.jbEmitter && this.jbEmitter.next('ready');
+	// 			if (this.parentWaiting)
+	// 				this.parentWaiting.ready();
+	// 		}
+	// 	}
+	// }
+ // }
 
 // very ugly: flatten the structure and pushing the dispose function to the group parent.
   flattenjBComp(cmp_ref) {
   	var cmp = this;
   	cmp.jbDispose = () => 
   		cmp_ref.destroy();
+  	return;
 
   	this._nativeElement = cmp_ref._hostElement.nativeElement;
   	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
@@ -609,15 +681,20 @@ export function getZone(zoneId) {
 
 jbart.ng = {
 	providers: {
-		provideForms: provideForms(), 
-		disableDeprecatedForms: disableDeprecatedForms(),
-		HTTP_PROVIDERS: HTTP_PROVIDERS
+//		provideForms: provideForms(), 
+//		disableDeprecatedForms: disableDeprecatedForms(),
+//		HTTP_PROVIDERS: HTTP_PROVIDERS
 	},
 	directives: {}
 }
 
 export function registerDirectives(obj) {
-	jb.extend(jbart.ng.directives,obj)
+	jb.entries(obj).forEach(e=>{
+		if (!e[1]) 
+			jb.logError('registerDirectives: no object for directive ' + e[0]);
+		else
+			jbart.ng.directives[e[0]] = e[1];
+	})
 }
 export function registerProviders(obj) {
 	jb.extend(jbart.ng.providers,obj)
@@ -641,3 +718,18 @@ function garbageCollectCtxDictionary() {
 			delete jbart.ctxDictionary[''+dict[i]];
 	}
 }
+
+@NgModule({
+  imports: [],
+  declarations: [ jbComp ], // is overriden dynamically
+  exports: [ jbComp ],
+})
+class jbCompModule { }
+
+@NgModule({
+  imports:      [ jbCompModule, CommonModule, FormsModule, HttpModule, BrowserModule ],
+  declarations: [ jBartWidget ],
+  bootstrap:    [ jBartWidget ]
+})
+export class jBartWidgetModule { }
+

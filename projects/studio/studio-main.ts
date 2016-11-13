@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
+import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { Component, ElementRef } from '@angular/core';
 import {modifyOperationsEm,studioActivityEm} from './studio-utils';
 
@@ -26,34 +26,30 @@ jb.component('studio.all', {
           {$: 'group', 
             url: '/projects/studio/css/logo470x200.png', 
             title: 'title and menu', 
-            style :{$: 'layout.vertical', spacing: '14' }, 
+            style :{$: 'layout.vertical', spacing: '16' }, 
             controls: [
               {$: 'label', 
                 title: 'message', 
-                style :{$: 'customStyle', 
-                  template: '<span class="studio-message">{{title}}</span> ', 
-                  css: `{ position: absolute;
-                    color: white;  padding: 20px;  background: #327DC8;
-                    width: 1000px;
-                    margin-top: -100px;
-                    }
-                    `, 
-                  features :{$: 'label.bind-title' }
-                }
+                style :{$: 'label.studio-message' }
               }, 
               {$: 'label', 
-                title: {$: 'replace', text: '{%$globals/project%}', find: '_', replace: ' ' }, 
+                title :{$: 'replace', 
+                  find: '_', 
+                  replace: ' ', 
+                  text: '{%$globals/project%}'
+                }, 
                 style :{$: 'label.span' }, 
                 features :{$: 'css', 
                   css: '{ font: 20px Arial; margin-left: 6px; margin-top: 20px}'
                 }
               }, 
               {$: 'group', 
-                style :{$: 'layout.horizontal', spacing: 3 }, 
+                style :{$: 'layout.flex', align: 'space-between' }, 
                 controls: [
                   {$: 'studio.main-menu' }, 
                   {$: 'studio.toolbar' }
-                ]
+                ], 
+                features :{$: 'css.width', width: '1040' }
               }
             ], 
             features :{$: 'css', css: '{ padding-left: 18px; width: 100% }' }
@@ -62,12 +58,11 @@ jb.component('studio.all', {
         features :{$: 'css', css: '{ height: 90px; border-bottom: 1px #d9d9d9 solid}' }
       }, 
       {$: 'group', 
-        cssClass: 'studio-widget-placeholder', 
         title: 'preview', 
-        controls :{$: 'studio.renderWidget' }
+        controls :{$: 'studio.renderWidget' }, 
+        features :{$: 'css.class', class: 'studio-widget-placeholder' }
       }, 
       {$: 'group', 
-        cssClass: 'studio-footer', 
         title: 'pages', 
         style :{$: 'layout.horizontal' }, 
         controls: [
@@ -80,8 +75,8 @@ jb.component('studio.all', {
           {$: 'itemlist', 
             items :{$: 'studio.project-pages' }, 
             controls :{$: 'label', 
-              cssClass: 'studio-page', 
-              title :{$: 'extractSuffix', separator: '.' }
+              title :{$: 'extractSuffix', separator: '.' }, 
+              features :{$: 'css.class', class: 'studio-page' }
             }, 
             features: [
               {$: 'itemlist.selection', 
@@ -108,6 +103,7 @@ jb.component('studio.all', {
           }
         ], 
         features: [
+          {$: 'css.class', class: 'studio-footer' }, 
           {$: 'group.wait', 
             for :{$: 'studio.waitForPreviewIframe' }, 
             loadingControl :{ $label: '...' }
@@ -186,7 +182,7 @@ jb.component('studio.renderWidget',{
 		})
 	    class previewIframe { 
 				url: SafeResourceUrl;
-		  		constructor(private sanitizer: DomSanitizationService, private elementRef: ElementRef) {
+		  		constructor(private sanitizer: DomSanitizer, private elementRef: ElementRef) {
 		  		}
 		  		ngOnInit() {
 		  			var cmp = this;
@@ -211,7 +207,7 @@ jb.component('studio.renderWidget',{
 						
 						// forward the studio zone to the preview widget so it will be updated
 						jb_ui.getZone('studio.all').then(zone=> {
-							zone.onStable.subscribe(function(){
+							zone.onStable.subscribe(()=>{
 								w.jbart.studioGlobals = ctx.exp('{%$globals%}');
 								studioActivityEm.next();
 								//console.log('studio.all stable');

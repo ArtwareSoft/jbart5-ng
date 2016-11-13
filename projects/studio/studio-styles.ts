@@ -1,4 +1,5 @@
 import {jb} from 'jb-core';
+import {MdSlideToggleModule} from '@angular/material';
 
 jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
@@ -61,7 +62,7 @@ jb.component('editable-boolean.studio-slide-toggle', {
     opacity: 1; background-color: #858585 !important; 
     background-color-old: rgba(0, 150, 136, 0.26); }
       `,
-      directives: 'MdSlideToggle'
+      imports: MdSlideToggleModule
   }
 })
 
@@ -323,5 +324,22 @@ i { color: #; cursor: pointer }
 .header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } 
 `, 
     features :{$: 'group.initGroup' }
+  }
+})
+
+
+jb.component('label.studio-message', {
+  type: 'label.style', 
+  impl :{$: 'customStyle', 
+    template: '<span class="studio-message">{{title}}</span>', 
+    features :[ 
+      {$: 'label.bind-title' },
+      {$:'css',css: `{ position: absolute;
+      color: white;  padding: 20px;  background: #327DC8;
+      width: 1000px;
+      margin-top: -100px;
+      }
+      `}
+    ]
   }
 })

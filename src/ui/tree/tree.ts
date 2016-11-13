@@ -2,9 +2,8 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import * as ui_utils from 'jb-ui/jb-ui-utils';
-import {NgClass} from 'angular2/common';
-import {Observable,Subject} from 'rxjs/Rx';
-import {Directive, Component, ElementRef, Injector, Input, NgZone} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {NgModule, Directive, Component, ElementRef, Input, NgZone} from '@angular/core';
 
 jb.type('tree.nodeModel');
 jb.type('tree.style'); 
@@ -19,41 +18,6 @@ export interface jbTree {
 	triggerOnSelected(string),
 	moveSelection(number), 
 }
-
-jb.component('tree', {
-	type: 'control',
-	params: [
-		{ id: 'nodeModel', type: 'tree.nodeModel', dynamic: true, essential: true },
-		{ id: 'style', type: "tree.style", defaultValue: { $: "tree.ul-li" }, dynamic: true },
-		{ id: 'features', type: "feature[]", dynamic: true }
-	],
-	impl: function(context) { 
-		var nodeModel = context.params.nodeModel();
-		if (!nodeModel)
-			return jb.logException('missing nodeModel in tree');
-		var tree = { nodeModel: nodeModel };
-		var ctx = context.setVars({$tree: tree});
-		return jb_ui.ctrl(ctx).jbExtend({
-			host: { 'class': 'jb-tree' }, // define host element to keep the wrapper
-			beforeInit: function(cmp) {
-				cmp.tree = jb.extend(tree,{
-					expanded: jb.obj(tree.nodeModel.rootPath, true),
-					el: cmp.elementRef.nativeElement,
-					elemToPath: el => $(el).closest('.treenode').attr('path'),
-					selectionEmitter: new jb_rx.Subject(),
-				})
-			},
-		},ctx) 
-	}
-})
-
-jb.component('tree.ul-li', {
-	type: 'tree.style',
-	impl :{$:'customStyle',
-		template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
-		directives: ['TreeNode', 'TreeNodeLine'],
-	}
-})
 
 // part of ul-li
 @Component({
@@ -115,7 +79,51 @@ class TreeNode {
 	}
 }
 
-jb_ui.registerDirectives({TreeNode: TreeNode, TreeNodeLine:TreeNodeLine});
+@NgModule({
+  imports: [ CommonModule],
+  declarations: [ TreeNode, TreeNodeLine ], // is overriden dynamically
+  exports: [ TreeNode, TreeNodeLine ],
+})
+class jbTreeModule { }
+
+ //********************* jBart Components
+
+jb.component('tree', {
+	type: 'control',
+	params: [
+		{ id: 'nodeModel', type: 'tree.nodeModel', dynamic: true, essential: true },
+		{ id: 'style', type: "tree.style", defaultValue: { $: "tree.ul-li" }, dynamic: true },
+		{ id: 'features', type: "feature[]", dynamic: true }
+	],
+	impl: function(context) { 
+		var nodeModel = context.params.nodeModel();
+		if (!nodeModel)
+			return jb.logException('missing nodeModel in tree');
+		var tree = { nodeModel: nodeModel };
+		var ctx = context.setVars({$tree: tree});
+		return jb_ui.ctrl(ctx).jbExtend({
+			host: { 'class': 'jb-tree' }, // define host element to keep the wrapper
+			beforeInit: function(cmp) {
+				cmp.tree = jb.extend(tree,{
+					expanded: jb.obj(tree.nodeModel.rootPath, true),
+					el: cmp.elementRef.nativeElement,
+					elemToPath: el => $(el).closest('.treenode').attr('path'),
+					selectionEmitter: new jb_rx.Subject(),
+				})
+			},
+		},ctx) 
+	}
+})
+
+jb.component('tree.ul-li', {
+	type: 'tree.style',
+	impl :{$:'customStyle',
+		template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
+//		directives: ['TreeNode', 'TreeNodeLine'],
+		imports: [jbTreeModule]
+	}
+})
+
 
 jb.component('tree.selection', {
   type: 'feature',
@@ -335,3 +343,4 @@ jb.component('tree.drag-and-drop', {
   }
 })
 
+//jb_ui.registerDirectives({TreeNode: TreeNode, TreeNodeLine:TreeNodeLine});

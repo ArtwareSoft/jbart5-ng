@@ -20,6 +20,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                 ],
                 impl: function (ctx) {
                     return new Promise(function (resolve, reject) {
+                        console.log('starting test ' + ctx.vars.testID, ctx);
                         ctx.run({ $: 'openDialog', content: ctx.profile.control,
                             features: function (ctx2) { return ({
                                 observable: function (observable, cmp) {
@@ -31,7 +32,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                     })
                                         .subscribe(function (x) {
                                         Array.from(cmp.elementRef.nativeElement.querySelectorAll('input')).forEach(function (inp) {
-                                            return cmp.renderer.setElementAttribute(inp, 'title2', inp.value || '');
+                                            return inp.setAttribute('title2', inp.value || '');
                                         });
                                         var html = cmp.elementRef.nativeElement.outerHTML;
                                         resolve({
@@ -40,6 +41,7 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                         });
                                         if (!jbart.singleTestID)
                                             ctx2.run({ $: 'closeContainingPopup' });
+                                        console.log('finished test ' + ctx.vars.testID, ctx);
                                     });
                                 },
                                 css: jbart.singleTestID ? '' : '{display: none}'

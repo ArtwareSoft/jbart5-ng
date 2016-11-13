@@ -21,14 +21,15 @@ var js_files_to_load = [
 
       'bower_components/showdown/dist/showdown.min.js',
 
-      'node_modules/es6-shim/es6-shim.min.js',
+      'node_modules/core-js/client/shim.min.js',
       'node_modules/zone.js/dist/zone.js',
       'node_modules/reflect-metadata/Reflect.js',
       'node_modules/systemjs/dist/system.src.js',
-      'node_modules/rxjs/bundles/Rx.js',
+//      'node_modules/rxjs/bundles/Rx.js',
+      'dist/Rx.js',
 
       'bower_components/dragula.js/dist/dragula.js',
-      'node_modules/history/umd/history.js'
+      'node_modules/history/umd/history.js',
 ];
 var css_files_to_load = [
     'bower_components/codemirror/mode/css/css.js',
@@ -65,6 +66,7 @@ function jb_loadEditableFile(file) {
 
 jb_modules = 
 [
+//'rxjs/Subject',
 '@angular/core', '@angular/common', '@angular/platform-browser-dynamic',
 'jb-core',
 'jb-ui',
@@ -134,6 +136,7 @@ jb_system_config = {
         'testing': '/dist/src/testing',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
+//        'rxjs': '/node_modules/rxjs',
 //        'hammerjs' : '/node_modules/hammerjs',
         '@angular2-material': '/node_modules/@angular2-material',
         '@angular':  '/node_modules/@angular'
@@ -160,7 +163,7 @@ jb_system_config = {
           format: 'cjs',
           defaultExtension: 'js',
         },
-//        'rxjs': { main: 'Rx.js', defaultExtension: 'js' },
+//        'rxjs': { main1: '/dist/rx4jbart.umd.js', defaultExtension: 'js' },
         '@angular/core': { main: 'bundles/core.umd.js', defaultExtension: 'js' },
         '@angular/common': { main: 'bundles/common.umd.js', defaultExtension: 'js' },
         '@angular/http': { main: 'bundles/http.umd.js', defaultExtension: 'js' },
@@ -168,6 +171,7 @@ jb_system_config = {
         '@angular/compiler': { main: 'bundles/compiler.umd.js', defaultExtension: 'js' },
         '@angular/platform-browser': { main: 'bundles/platform-browser.umd.js', defaultExtension: 'js' },
         '@angular/platform-browser-dynamic': { main: 'bundles/platform-browser-dynamic.umd.js', defaultExtension: 'js' },
+        '@angular/material': { main: 'material.umd.js', defaultExtension: 'js' },
       }
 }
 
@@ -195,13 +199,16 @@ function jbLoadModules(modules) {
 }
 
 function jbBootstrap(loadedModules) {
-  var bootstrap = loadedModules['@angular/platform-browser-dynamic'].bootstrap;
-  jb_entries(jbart.ng.modules|| []).map(e=>e[1]).forEach(m =>
-    loadedModules['@angular/platform-browser-dynamic'].bootstrapModule(m)
-  )
-
-  bootstrap(loadedModules['jb-ui'].jBartWidget, jb_entries(jbart.ng.providers).map(e=>e[1]))
+  var platform = loadedModules['@angular/platform-browser-dynamic'].platformBrowserDynamic();
+  var jbartModule = loadedModules['jb-ui'].jBartWidgetModule;
+  platform.bootstrapModule(jbartModule)
     .catch(err => console.error(err))
+  // jb_entries(jbart.ng.modules|| []).map(e=>e[1]).forEach(m =>
+  //   loadedModules['@angular/platform-browser-dynamic'].bootstrapModule(m)
+  // )
+
+  // bootstrap(loadedModules['jb-ui'].jBartWidget, jb_entries(jbart.ng.providers).map(e=>e[1]))
+  //   .catch(err => console.error(err))
     // .then(()=>
     //   jbart.afterBootsrtap = true);
 }

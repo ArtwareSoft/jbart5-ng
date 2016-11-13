@@ -1,7 +1,7 @@
-System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils', '@angular/material'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1, studio_utils_1;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1, material_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -12,6 +12,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             },
             function (studio_utils_1_1) {
                 studio_utils_1 = studio_utils_1_1;
+            },
+            function (material_1_1) {
+                material_1 = material_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-new-control-dialog', {
@@ -65,7 +68,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                         style: { $: 'customStyle',
                                             template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
                                             css: 'button { width: 300px; text-align: left }',
-                                            directives: 'MdButton'
+                                            imports: material_1.MdButtonModule
                                         }
                                     }
                                 ],

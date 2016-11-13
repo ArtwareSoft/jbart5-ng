@@ -112,9 +112,10 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                 };
                 __decorate([
                     core_2.ViewChild(ripple_1.MdRipple), 
-                    __metadata('design:type', ripple_1.MdRipple)
+                    __metadata('design:type', (typeof (_a = typeof ripple_1.MdRipple !== 'undefined' && ripple_1.MdRipple) === 'function' && _a) || Object)
                 ], RippleDemo.prototype, "manualRipple", void 0);
                 return RippleDemo;
+                var _a;
             }());
             exports_1("RippleDemo", RippleDemo);
             GesturesDemo = (function () {
@@ -251,9 +252,10 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                 };
                 LiveAnnouncerDemo = __decorate([
                     core_1.Injectable({}), 
-                    __metadata('design:paramtypes', [live_announcer_1.MdLiveAnnouncer])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof live_announcer_1.MdLiveAnnouncer !== 'undefined' && live_announcer_1.MdLiveAnnouncer) === 'function' && _a) || Object])
                 ], LiveAnnouncerDemo);
                 return LiveAnnouncerDemo;
+                var _a;
             }());
             exports_1("LiveAnnouncerDemo", LiveAnnouncerDemo);
             jb_ui.registerProviders({

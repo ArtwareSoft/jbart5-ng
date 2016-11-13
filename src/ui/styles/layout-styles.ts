@@ -40,20 +40,6 @@ jb.component('layout.flex', {
       { id: 'wrap', as: 'string', options:',wrap' },
   ],
   impl :{$: 'customStyle',
-    // $vars: {
-    //    flexProps: ctx => {
-    //       var params = ctx.componentContext.params;
-    //       return [
-    //         ['display','flex'],
-    //         ['justify-content', params.align], 
-    //         ['flex-direction', params.direction], 
-    //         ['flex-wrap', params.wrap ? 'wrap' : ''], 
-    //       ].filter(x
-    //         =>x[1] != '')
-    //       .map(x=> `${x[0]}: ${x[1]}` )
-    //       .join('; ')
-    //    }
-    // },
     template: `<div class="jb-group">
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
       </div>`,

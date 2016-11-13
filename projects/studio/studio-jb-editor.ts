@@ -32,9 +32,9 @@ jb.component('studio.jb-editor', {
     style :{$: 'layout.horizontal', spacing: 3 }, 
     controls: [
       {$: 'tree', 
-        cssClass: 'jb-editor jb-control-tree studio-control-tree', 
         nodeModel :{$: 'studio.jb-editor.nodes', path: '%$path%' }, 
         features: [
+          {$: 'css.class', class: 'jb-editor jb-control-tree studio-control-tree'},
           {$: 'tree.selection', 
             databind: '%$globals/jb_editor_selection%', 
             onDoubleClick :{$: 'studio.open-jb-edit-property', 
@@ -150,11 +150,12 @@ jb.component('studio.data-browse', {
   ],
   impl :{$: 'group', 
     title: '%$title%',
-    controls :{$: 'tree', cssClass: 'jb-control-tree', 
+    controls :{$: 'tree',
         nodeModel :{$: 'tree.json-read-only', 
           object: '%$data%', rootPath: '%$title%' 
         },
         features: [
+            { $: 'css.class', class: 'jb-control-tree'},
             { $: 'tree.selection' },
             { $: 'tree.keyboard-selection'},
         ] 

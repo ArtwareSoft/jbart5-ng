@@ -1,11 +1,14 @@
-System.register(['jb-core'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/material'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1;
+    var jb_core_1, material_1;
     return {
         setters:[
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
+            },
+            function (material_1_1) {
+                material_1 = material_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('editable-text.studio-primitive-text', {
@@ -29,7 +32,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     features: { $: 'field.databind' },
                     template: "<div><md-slide-toggle color=\"primary\" class=\"studio-slide-toggle\" [ngModel]=\"jbModel()\" (change)=\"jbModel($event.target.value)\" >{{text()}}</md-slide-toggle></div>",
                     css: "\n      .studio-slide-toggle { margin: 0 !important; width: 153px; }\n  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {\n    background-color: #1f1f1f !important}\n  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {\n    background-color: #858585 !important; opacity: 0.5 }\n  .studio-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {\n    opacity: 1; background-color: #858585 !important; \n    background-color-old: rgba(0, 150, 136, 0.26); }\n      ",
-                    directives: 'MdSlideToggle'
+                    imports: material_1.MdSlideToggleModule
                 }
             });
             jb_core_1.jb.component('picklist.studio-enum', {
@@ -174,6 +177,16 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     },
                     css: ".header { display: flex; flex-direction: row; }\nbutton:hover { background: none }\nbutton { margin-left: auto }\ni { color: #; cursor: pointer }\n.title { margin: 5px } \n.content { padding-top: 2px }\n.header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } \n",
                     features: { $: 'group.initGroup' }
+                }
+            });
+            jb_core_1.jb.component('label.studio-message', {
+                type: 'label.style',
+                impl: { $: 'customStyle',
+                    template: '<span class="studio-message">{{title}}</span>',
+                    features: [
+                        { $: 'label.bind-title' },
+                        { $: 'css', css: "{ position: absolute;\n      color: white;  padding: 20px;  background: #327DC8;\n      width: 1000px;\n      margin-top: -100px;\n      }\n      " }
+                    ]
                 }
             });
         }

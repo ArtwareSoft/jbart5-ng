@@ -86,17 +86,17 @@ jb.component('new-instance', {
 	}
 })
 
-jb.component('injector-get', {
-	type: 'data',
-	params: [
-		{ id: 'provider', as: 'string', essential: true },
-	],
-	impl: (ctx,providerId) => {
-		var provider = jbart.ng.providers[providerId];
-		if (provider)
-			return ctx.vars.injector.get(provider);
-		jb.logError('injector-get: provider ' + providerId + ' is not registered. Use jb_ui.registerProviders to register it');
-	}
-})
+// jb.component('injector-get', {
+// 	type: 'data',
+// 	params: [
+// 		{ id: 'provider', as: 'string', essential: true },
+// 	],
+// 	impl: (ctx,providerId) => {
+// 		var provider = jbart.ng.providers[providerId];
+// 		if (provider)
+// 			return ctx.vars.injector.get(provider);
+// 		jb.logError('injector-get: provider ' + providerId + ' is not registered. Use jb_ui.registerProviders to register it');
+// 	}
+// })
 
 })

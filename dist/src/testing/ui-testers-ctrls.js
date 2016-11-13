@@ -26,9 +26,9 @@ System.register(['jb-core/jb'], function(exports_1, context_1) {
                                 { $filter: { $or: [{ $: 'equals', item1: '%$module%', item2: { $: 'prefix', text: '%id%', separator: '.' } }, { $isEmpty: '%$module%' }] } },
                             ] },
                         parallel_tests: { $pipeline: ['%$tests%',
+                                { $filter: false }
                             ] },
                         serial_tests: { $pipeline: ['%$tests%',
-                                { $filter: { $: 'equals', item1: 'path-test1', item2: { $: 'prefix', text: '%id%', separator: '.' } } },
                             ] },
                         total: function (ctx) {
                             return ctx.exp('%$tests%')

@@ -1,20 +1,16 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import {MdButton} from '@angular2-material/button/button.js';
-import {MdIcon} from '@angular2-material/icon/icon.js';
-import {MdIconRegistry} from '@angular2-material/icon/icon-registry';
 
-import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
-import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
+import {MdButtonModule,MdIconModule,MdIconRegistry} from '@angular/material';
 
-jb_ui.registerDirectives({MdButton: MdButton,MdIcon: MdIcon, PORTAL_DIRECTIVES:PORTAL_DIRECTIVES,MD_RIPPLE_DIRECTIVES:MD_RIPPLE_DIRECTIVES});
-jb_ui.registerProviders({MdIconRegistry: MdIconRegistry});
+//jb_ui.registerDirectives({MdButton: MdButton,MdIcon: MdIcon});
+//jb_ui.registerProviders({MdIconRegistry: MdIconRegistry});
 
 jb.component('button.md-flat', {
   type: 'button.style',
   impl :{$: 'customStyle', 
       template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
-      directives: 'MdButton'
+      imports: MdButtonModule
   }
 })
 
@@ -22,7 +18,7 @@ jb.component('button.md-raised', {
   type: 'button.style',
   impl :{$: 'customStyle', 
       template: '<div><button md-raised-button (click)="clicked()">{{title}}</button></div>',
-      directives: 'MdButton'
+      imports: MdButtonModule
   }
 })
 
@@ -37,8 +33,9 @@ jb.component('button.md-icon', {
       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons" style="font-size:%$size%px;">%$icon%</i>
               </button></div>`,
-      css: 'button {min-width: 2px; margin-top: -3px; padding: 4px}',
-      directives: 'MdButton'
+      css: 'button {min-width: 2px; padding: 4px; height: 100%; margin-left: 4px; border-radius: 10%;}',
+      imports: MdButtonModule,
+      providers: MdIconRegistry,
   }
 })
 
@@ -61,7 +58,8 @@ jb.component('button.md-icon2', {
       css: `.md-button-ripple11 { width: %$size%px; height: %$size%px;  }
       button { width: %$size%px; height: %$size%px; padding: %$padding%px }
       i { font-size:%$size%px; }`,
-      directives: 'MdButton'
+      imports: MdButtonModule,
+      providers: MdIconRegistry,
   }
 })
 
@@ -78,7 +76,8 @@ jb.component('button.md-icon-12', {
       css: `button { width: 24px; height: 24px; padding: 0; margin-left: 2px; margin-top: -2px;}
       .material-icons { font-size:12px;  }
       `,
-      directives: 'MdButton'
+      imports: MdButtonModule,
+      providers: MdIconRegistry,
   }
 })
 
@@ -94,7 +93,8 @@ jb.component('button.md-icon-fab', {
       template: `<div><button md-fab aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons md-24">%$icon%</i>
               </button></div>`,
-      directives: 'MdButton'
+      imports: MdButtonModule,
+      providers: MdIconRegistry,
   }
 })
 
@@ -109,6 +109,7 @@ jb.component('button.md-mini-fab', {
       template: `<div><button md-mini-fab aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons md-24">%$icon%</i>
               </button></div>`,
-      directives: 'MdButton'
+      imports: MdButtonModule,
+      providers: MdIconRegistry,
   }
 })

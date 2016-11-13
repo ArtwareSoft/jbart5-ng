@@ -14,6 +14,12 @@ jb.component('markdown', {
 
 jb.type('markdown.style');
 
+jb.component('markdown.showdown2', {
+    impl :{$: 'customStyle', 
+        template: '<span></span>',
+    }
+})
+
 jb.component('markdown.showdown', {
     type: 'markdown.style',
     impl: ctx => ({

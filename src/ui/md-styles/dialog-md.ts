@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import {MdButton} from '@angular2-material/button/button.js';
+import {MdButtonModule} from '@angular/material';
 
 jb.component('dialog.md-dialog-ok-cancel', {
 	type: 'dialog.style',
@@ -28,6 +28,6 @@ jb.component('dialog.md-dialog-ok-cancel', {
 				</div>		
 		`,
 	  css: `.dialog-buttons { display: flex; justify-content: flex-end; margin: 5px }`,
-      directives: 'MdButton'
+      imports: MdButtonModule,
 	}
 })

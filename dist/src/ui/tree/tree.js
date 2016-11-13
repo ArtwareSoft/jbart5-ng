@@ -1,4 +1,4 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, jb_ui, jb_rx, core_1;
-    var TreeNodeLine, TreeNode;
+    var jb_core_1, jb_ui, jb_rx, common_1, core_1;
+    var TreeNodeLine, TreeNode, jbTreeModule;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -23,45 +23,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
             },
+            function (common_1_1) {
+                common_1 = common_1_1;
+            },
             function (core_1_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
             jb_core_1.jb.type('tree.nodeModel');
             jb_core_1.jb.type('tree.style');
-            jb_core_1.jb.component('tree', {
-                type: 'control',
-                params: [
-                    { id: 'nodeModel', type: 'tree.nodeModel', dynamic: true, essential: true },
-                    { id: 'style', type: "tree.style", defaultValue: { $: "tree.ul-li" }, dynamic: true },
-                    { id: 'features', type: "feature[]", dynamic: true }
-                ],
-                impl: function (context) {
-                    var nodeModel = context.params.nodeModel();
-                    if (!nodeModel)
-                        return jb_core_1.jb.logException('missing nodeModel in tree');
-                    var tree = { nodeModel: nodeModel };
-                    var ctx = context.setVars({ $tree: tree });
-                    return jb_ui.ctrl(ctx).jbExtend({
-                        host: { 'class': 'jb-tree' },
-                        beforeInit: function (cmp) {
-                            cmp.tree = jb_core_1.jb.extend(tree, {
-                                expanded: jb_core_1.jb.obj(tree.nodeModel.rootPath, true),
-                                el: cmp.elementRef.nativeElement,
-                                elemToPath: function (el) { return $(el).closest('.treenode').attr('path'); },
-                                selectionEmitter: new jb_rx.Subject(),
-                            });
-                        },
-                    }, ctx);
-                }
-            });
-            jb_core_1.jb.component('tree.ul-li', {
-                type: 'tree.style',
-                impl: { $: 'customStyle',
-                    template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
-                    directives: ['TreeNode', 'TreeNodeLine'],
-                }
-            });
             // part of ul-li
             TreeNodeLine = (function () {
                 function TreeNodeLine() {
@@ -130,7 +100,54 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
                 ], TreeNode);
                 return TreeNode;
             }());
-            jb_ui.registerDirectives({ TreeNode: TreeNode, TreeNodeLine: TreeNodeLine });
+            jbTreeModule = (function () {
+                function jbTreeModule() {
+                }
+                jbTreeModule = __decorate([
+                    core_1.NgModule({
+                        imports: [common_1.CommonModule],
+                        declarations: [TreeNode, TreeNodeLine],
+                        exports: [TreeNode, TreeNodeLine],
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], jbTreeModule);
+                return jbTreeModule;
+            }());
+            //********************* jBart Components
+            jb_core_1.jb.component('tree', {
+                type: 'control',
+                params: [
+                    { id: 'nodeModel', type: 'tree.nodeModel', dynamic: true, essential: true },
+                    { id: 'style', type: "tree.style", defaultValue: { $: "tree.ul-li" }, dynamic: true },
+                    { id: 'features', type: "feature[]", dynamic: true }
+                ],
+                impl: function (context) {
+                    var nodeModel = context.params.nodeModel();
+                    if (!nodeModel)
+                        return jb_core_1.jb.logException('missing nodeModel in tree');
+                    var tree = { nodeModel: nodeModel };
+                    var ctx = context.setVars({ $tree: tree });
+                    return jb_ui.ctrl(ctx).jbExtend({
+                        host: { 'class': 'jb-tree' },
+                        beforeInit: function (cmp) {
+                            cmp.tree = jb_core_1.jb.extend(tree, {
+                                expanded: jb_core_1.jb.obj(tree.nodeModel.rootPath, true),
+                                el: cmp.elementRef.nativeElement,
+                                elemToPath: function (el) { return $(el).closest('.treenode').attr('path'); },
+                                selectionEmitter: new jb_rx.Subject(),
+                            });
+                        },
+                    }, ctx);
+                }
+            });
+            jb_core_1.jb.component('tree.ul-li', {
+                type: 'tree.style',
+                impl: { $: 'customStyle',
+                    template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
+                    //		directives: ['TreeNode', 'TreeNodeLine'],
+                    imports: [jbTreeModule]
+                }
+            });
             jb_core_1.jb.component('tree.selection', {
                 type: 'feature',
                 params: [
@@ -335,3 +352,4 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/core'], function(e
         }
     }
 });
+//jb_ui.registerDirectives({TreeNode: TreeNode, TreeNodeLine:TreeNodeLine});

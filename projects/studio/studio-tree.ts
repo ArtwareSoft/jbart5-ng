@@ -101,9 +101,10 @@ jb.component('studio.open-tree-menu', {
 jb.component('studio.control-tree', {
 	type: 'control',
 	impl: {
-		$: 'tree', cssClass: 'jb-control-tree studio-control-tree',
+		$: 'tree',
 		nodeModel :{$: 'studio.control-tree.nodes' },
 		features: [
+      { $: 'css.class', class: 'jb-control-tree studio-control-tree'},
 			{ $: 'tree.selection', 
 				autoSelectFirst: true, 
 				databind: '%$globals/profile_path%',

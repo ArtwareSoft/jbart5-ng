@@ -2,6 +2,7 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 import {model} from './studio-tgp-model';
 import {modifyOperationsEm} from './studio-utils';
+import {MdButtonModule} from '@angular/material';
 
 jb.component('studio.open-new-control-dialog', {
   impl :{$: 'studio.open-new-tgp-dialog',
@@ -55,7 +56,7 @@ jb.component('studio.open-new-tgp-dialog', {
               style :{$: 'customStyle', 
                 template: '<div><button md-button (click)="clicked()">{{title}}</button></div>', 
                 css: 'button { width: 300px; text-align: left }', 
-                directives: 'MdButton'
+                imports: MdButtonModule
               }
             }
           ], 

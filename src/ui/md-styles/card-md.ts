@@ -1,8 +1,6 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card/card.js';
-
-jb_ui.registerDirectives({MD_CARD_DIRECTIVES: MD_CARD_DIRECTIVES });
+import {MdCardModule} from '@angular/material';
 
 jb.component('group.md-card', {
   type: 'group.style',
@@ -11,7 +9,7 @@ jb.component('group.md-card', {
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
       </md-card></div>`,
     features :{$: 'group.initGroup'},
-    directives: 'MD_CARD_DIRECTIVES'
+    imports: MdCardModule
   }
 })
 
@@ -22,7 +20,7 @@ jb.component('group.md-card-actions', {
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
       </md-card-actions></div>`,
     features :{$: 'group.initGroup'},
-    directives: 'MD_CARD_DIRECTIVES'
+    imports: MdCardModule
   }
 })
 
@@ -33,7 +31,7 @@ jb.component('group.md-card-content', {
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
       </md-card-content></div>`,
     features :{$: 'group.initGroup'},
-    directives: 'MD_CARD_DIRECTIVES'
+    imports: MdCardModule
   }
 })
 
@@ -44,16 +42,16 @@ jb.component('group.md-card-header', {
         <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
       </md-card-header></div>`,
     features :{$: 'group.initGroup'},
-    directives: 'MD_CARD_DIRECTIVES'
+    imports: MdCardModule
   }
 })
 
 jb.component('label.md-card-title', {
     type: 'label.style',
     impl :{$: 'customStyle', 
-        template: '<div><md-card-title>{{title}}</md-card-title></div>',
+        template: '<md-card-title>{{title}}</md-card-title>',
         features :{$: 'label.bind-title' },
-        directives: 'MD_CARD_DIRECTIVES'
+        imports: MdCardModule
     }
 })
 
@@ -62,6 +60,6 @@ jb.component('label.md-card-subtitle', {
     impl :{$: 'customStyle', 
         template: '<div><md-card-subtitle>{{title}}</md-card-subtitle></div>',
         ffeatures :{$: 'label.bind-title' },
-        directives: 'MD_CARD_DIRECTIVES'
+        imports: MdCardModule
     }
 })

@@ -1,4 +1,4 @@
-System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'jb-core/jb'], function(exports_1, context_1) {
+System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObservable', 'rxjs/add/operator/map', 'rxjs/add/operator/filter', 'rxjs/add/operator/catch', 'rxjs/add/operator/do', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/observable/from', 'rxjs/add/observable/of', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'jb-core/jb'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var Subject_1, Observable_1, jb_1;
@@ -115,11 +115,17 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/add/operator/merge', '
             function (_15) {},
             function (_16) {},
             function (_17) {},
+            function (_18) {},
+            function (_19) {},
+            function (_20) {},
+            function (_21) {},
+            function (_22) {},
+            function (_23) {},
+            function (_24) {},
             function (jb_1_1) {
                 jb_1 = jb_1_1;
             }],
         execute: function() {
-            ;
             // for debug console
             window.Observable = Observable_1.Observable;
             window.Subject = Subject_1.Subject;

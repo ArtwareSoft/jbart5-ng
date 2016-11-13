@@ -1,8 +1,8 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import {MdInput} from '@angular2-material/input/input.js';
-jb_ui.registerDirectives({MdInput: MdInput});
+import {MdInputModule} from '@angular/material';
+//jb_ui.registerDirectives({MdInput: MdInput});
 
 jb.component('editable-text.md-input',{
   type: 'editable-text.style',
@@ -17,7 +17,7 @@ jb.component('editable-text.md-input',{
       		cmp.title = ctx.vars.$model.title()
       },
       css: 'md-input { {?width: %$width%px?} }',
-//      directives: 'MdInput'
+    imports: MdInputModule
 	}
 })
 

@@ -1,9 +1,7 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav/sidenav';
-
-jb_ui.registerDirectives({MD_SIDENAV_DIRECTIVES: MD_SIDENAV_DIRECTIVES});
+import {MdSidenavModule} from '@angular/material';
 
 jb.component('sidenav.md', {
   type: 'sidenav.style',
@@ -20,6 +18,7 @@ jb.component('sidenav.md', {
       </md-sidenav>
       </md-sidenav-layout>`,
     css: `md-sidenav { width: %$width%px }`,
-    features :{$: 'group.initGroup'}
+    features :{$: 'group.initGroup'},
+    imports: MdSidenavModule
   }
 })

@@ -29,8 +29,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 { $: 'pulldown.menu-item',
                                     title: 'Save',
                                     icon: 'save',
-                                    action: { $: 'studio.saveComponents' },
-                                    shortcut: 'Ctrl+S'
+                                    shortcut: 'Ctrl+S',
+                                    action: { $: 'studio.saveComponents' }
                                 },
                                 { $: 'pulldown.menu-item',
                                     title: 'Force Save',
@@ -47,28 +47,28 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             title: 'View',
                             controls: [
                                 { $: 'pulldown.menu-item',
-                                    title: 'Refresh Preview',
                                     spritePosition: '10,0',
+                                    title: 'Refresh Preview',
                                     action: { $: 'studio.refreshPreview' }
                                 },
                                 { $: 'pulldown.menu-item',
-                                    title: 'Redraw Studio',
                                     spritePosition: '10,0',
+                                    title: 'Redraw Studio',
                                     action: { $: 'studio.redrawStudio' }
                                 },
                                 { $: 'pulldown.menu-item',
-                                    title: 'Edit source',
                                     spritePosition: '3,0',
+                                    title: 'Edit source',
                                     action: { $: 'studio.editSource' }
                                 },
                                 { $: 'pulldown.menu-item',
-                                    title: 'Outline',
                                     spritePosition: '5,0',
+                                    title: 'Outline',
                                     action: { $: 'studio.open-control-tree' }
                                 },
                                 { $: 'pulldown.menu-item',
-                                    title: 'jbEditor',
                                     spritePosition: '6,0',
+                                    title: 'jbEditor',
                                     action: { $: 'studio.openjbEditor' }
                                 }
                             ]
@@ -91,19 +91,19 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                             .filter(function (x) { return x != 'window'; });
                                     },
                                     genericControl: { $: 'pulldown.menu-item',
+                                        title: '%$controlItem%',
                                         action: { $: 'studio.open-resource',
                                             resource: function (ctx) {
                                                 return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%')]);
                                             },
                                             id: '%$controlItem%'
-                                        },
-                                        title: '%$controlItem%'
+                                        }
                                     }
                                 },
                                 { $: 'pulldown.menu-item-separator' },
                                 { $: 'pulldown.menu-item',
-                                    action: { $: 'studio.addDataResource' },
-                                    title: 'Add Data Resource...'
+                                    title: 'Add Data Resource...',
+                                    action: { $: 'studio.addDataResource' }
                                 }
                             ]
                         },
@@ -117,27 +117,28 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                             .filter(function (x) { return x != 'window'; });
                                     },
                                     genericControl: { $: 'pulldown.menu-item',
+                                        title: '%$controlItem%',
                                         action: { $: 'studio.run-test',
                                             resource: function (ctx) {
                                                 return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'tests', ctx.exp('%$controlItem%')]);
                                             },
                                             id: '%$controlItem%'
-                                        },
-                                        title: '%$controlItem%'
+                                        }
                                     }
                                 },
                                 { $: 'pulldown.menu-item-separator' },
                                 { $: 'pulldown.menu-item',
-                                    action: { $: 'studio.add-test' },
-                                    title: 'Add Test...'
+                                    title: 'Add Test...',
+                                    action: { $: 'studio.add-test' }
                                 },
                                 { $: 'pulldown.menu-item',
-                                    action: { $: 'studio.run-all-tests' },
-                                    title: 'Run All Tests...'
+                                    title: 'Run All Tests...',
+                                    action: { $: 'studio.run-all-tests' }
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    features: { $: 'css.margin', top: '5' }
                 }
             });
         }

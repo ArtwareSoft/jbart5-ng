@@ -9,6 +9,15 @@ jb.component('css', {
     ({css:css})
 })
 
+jb.component('css.class', {
+  type: 'feature,dialog-feature',
+  params: [
+    { id: 'class', essential: true, as: 'string' },
+  ],
+  impl: (context,clz) => 
+    ({cssClass:clz})
+})
+
 jb.component('css.width', {
   type: 'feature,dialog-feature',
   params: [

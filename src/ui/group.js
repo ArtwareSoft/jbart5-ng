@@ -72,8 +72,9 @@ jb.component('dynamic-controls', {
 
 jb.component('group.initGroup', {
   type: 'feature',
-  impl: ctx => 
-    jb.obj('init', cmp => cmp.initGroup())
+  impl: ctx => ({
+    init: cmp => cmp.initGroup()
+  })
 })
 
 // ** sample style 
