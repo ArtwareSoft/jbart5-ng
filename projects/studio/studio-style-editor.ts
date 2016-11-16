@@ -2,23 +2,22 @@ import {jb} from 'jb-core';
 import {model} from './studio-tgp-model';
 
 jb.component('studio.open-style-editor', {
-	type: 'action',
-	  params: [
-	    { id: 'path', as: 'string' }
-	  ], 
-	impl :{$: 'openDialog',
+  type: 'action', 
+  params: [{ id: 'path', as: 'string' }], 
+  impl :{$: 'openDialog', 
     $vars: {
       styleSource :{$: 'studio.style-source', path: '%$path%' }
     }, 
-		title: 'Style Editor - %$styleSource/path%',
-		style :{$: 'dialog.studio-floating', id: 'style editor' },
-		content :{$: 'studio.style-editor', path: '%$path%' },
-		menu :{$: 'button', 
-			title: 'style menu',
-			style :{$: 'button.md-icon', icon: 'menu'},
-			action :{$: 'studio.open-style-menu', path: '%$path%' }
-		}
-	}
+    style :{$: 'dialog.studio-floating', id: 'style editor' }, 
+    content :{$: 'studio.style-editor', path: '%$path%' }, 
+    menu :{$: 'button', 
+      title: 'style menu', 
+      action :{$: 'studio.open-style-menu', path: '%$path%' }, 
+      style :{$: 'button.md-icon', icon: 'menu' }, 
+      features :{$: 'css', css: 'button { background: transparent }' }
+    }, 
+    title: 'Style Editor - %$styleSource/path%'
+  }
 })
 
 jb.component('studio.open-style-menu', {

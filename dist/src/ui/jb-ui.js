@@ -48,23 +48,21 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         return new jbComponent(ctx).jbExtend(options);
     }
     exports_1("Comp", Comp);
-    function optionsOfProfile(profile) {
-        if (!profile)
-            return {};
-        var res = {};
-        ['cssClass', 'css'] // 'atts','styles',
-            .forEach(function (p) { if (profile[p])
-            res[p] = profile[p]; });
-        return res;
-    }
-    function mergeOptions(op1, op2) {
-        var res = {};
-        if (op1.cssClass || op2.cssClass)
-            res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-        if (op1.styles || op2.styles)
-            res.styles = (op1.styles || []).concat(op2.styles || []);
-        return jb_extend({}, op1, op2, res);
-    }
+    // function optionsOfProfile(profile) {
+    // 	if (!profile) return {}
+    // 	var res = {};
+    // 	['cssClass','css'] // 'atts','styles',
+    // 		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
+    // 	return res;
+    // }
+    // function mergeOptions(op1,op2) {
+    // 	var res = {};
+    // 	if (op1.cssClass || op2.cssClass)
+    // 		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
+    // 	if (op1.styles || op2.styles)
+    // 		res.styles = (op1.styles || []).concat(op2.styles || [])
+    // 	return jb_extend({},op1,op2,res);
+    // }
     function setTemplateAtt(element, att, value) {
         if (!element.getAttribute)
             debugger;
@@ -274,6 +272,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         var ngAtt = Array.from(elem.attributes).map(function (x) { return x.name; })
                             .filter(function (x) { return x.match(/_ng/); })[0];
                         var css = this.cssFixes
+                            .map(function (x) { return x.trim(); })
                             .map(function (x) { return x.replace(/^!/, ' '); }) // replace the ! with space to allow internal selector
                             .map(function (x) { return ("[" + ngAtt + "]" + x); })
                             .join('\n');
@@ -372,10 +371,12 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     return Cmp;
                 };
                 jbComponent.prototype.jbCtrl = function (context) {
+                    // var options = mergeOptions(
+                    // 	optionsOfProfile(context.params.style && context.params.style.profile),
+                    // 	optionsOfProfile(context.profile));
+                    // if (Object.getOwnPropertyNames(options).length > 0)
+                    // 	debugger;
                     var _this = this;
-                    var options = mergeOptions(optionsOfProfile(context.params.style && context.params.style.profile), optionsOfProfile(context.profile));
-                    if (Object.getOwnPropertyNames(options).length > 0)
-                        debugger;
                     (context.params.features && context.params.features(context) || [])
                         .forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
@@ -435,7 +436,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                             _this.cssFixes.push(x);
                     });
                     (options.styles || [])
-                        .filter(function (x) { return x.match(/^!/m); }) // ! affect internal selectors
+                        .map(function (x) { return x.trim(); })
+                        .filter(function (x) { return x.match(/^\!/m); }) // ! affect internal selectors
                         .forEach(function (x) {
                         if (_this.cssFixes.indexOf(x) == -1)
                             _this.cssFixes.push(x);

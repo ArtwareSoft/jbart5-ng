@@ -1,7 +1,7 @@
 System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1, studio_utils_1;
+    var jb_core_1, studio_tgp_model_1, studio_utils_2;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -10,8 +10,8 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             function (studio_tgp_model_1_1) {
                 studio_tgp_model_1 = studio_tgp_model_1_1;
             },
-            function (studio_utils_1_1) {
-                studio_utils_1 = studio_utils_1_1;
+            function (studio_utils_2_1) {
+                studio_utils_2 = studio_utils_2_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-properties', {
@@ -211,13 +211,13 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 type: 'control',
                 params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'editable-boolean',
-                    style: { $: 'editable-boolean.studio-slide-toggle' },
-                    title: { $: 'studio.prop-name', path: '%$path%' },
                     databind: { $: 'studio.ref', path: '%$path%' },
+                    style: { $: 'editable-boolean.flipswitch' },
+                    title: { $: 'studio.prop-name', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
                         { $: 'studio.property-toobar-feature', path: '%$path%' }
-                    ],
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.property-enum', {
@@ -248,24 +248,15 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.property-tgp', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     $vars: {
                         tgpCtrl: { $: 'object', expanded: true }
                     },
                     title: { $: 'studio.prop-name', path: '%$path%' },
-                    features: [
-                        { $: 'studio.property-toobar-feature', path: '%$path%' },
-                        { $: 'studio.bindto-modifyOperations',
-                            data: '%$tgpCtrl/expanded%',
-                            path: '%$path%'
-                        }
-                    ],
                     controls: [
                         { $: 'group',
-                            style: { $: 'layout.horizontal' },
+                            style: { $: 'layout.horizontal', spacing: '0' },
                             controls: [
                                 { $: 'editable-boolean',
                                     databind: '%$tgpCtrl/expanded%',
@@ -277,8 +268,12 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                         { $: 'hidden',
                                             showCondition: {
                                                 $and: [
-                                                    { $notEmpty: { $: 'studio.non-control-children', path: '%$path%' } },
-                                                    { $notEmpty: { $: 'studio.val', path: '%$path%' } },
+                                                    {
+                                                        $notEmpty: { $: 'studio.non-control-children', path: '%$path%' }
+                                                    },
+                                                    {
+                                                        $notEmpty: { $: 'studio.val', path: '%$path%' }
+                                                    },
                                                     { $: 'notEquals',
                                                         item1: { $: 'studio.comp-name', path: '%$path%' },
                                                         item2: 'customStyle'
@@ -316,8 +311,12 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     showCondition: {
                                         $and: [
                                             '%$tgpCtrl.expanded%',
-                                            { $notEmpty: { $: 'studio.non-control-children', path: '%$path%' } },
-                                            { $notEmpty: { $: 'studio.val', path: '%$path%' } },
+                                            {
+                                                $notEmpty: { $: 'studio.non-control-children', path: '%$path%' }
+                                            },
+                                            {
+                                                $notEmpty: { $: 'studio.val', path: '%$path%' }
+                                            },
                                             { $: 'notEquals',
                                                 item1: { $: 'studio.comp-name', path: '%$path%' },
                                                 item2: 'customStyle'
@@ -329,6 +328,13 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
                                 }
                             ]
+                        }
+                    ],
+                    features: [
+                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        { $: 'studio.bindto-modifyOperations',
+                            path: '%$path%',
+                            data: '%$tgpCtrl/expanded%'
                         }
                     ]
                 }
@@ -351,7 +357,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             },
                             { $: 'picklist.dynamic-options',
                                 recalcEm: function (ctx) {
-                                    return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                    return studio_utils_2.modifyOperationsEm.filter(function (e) { return e.newComp; });
                                 }
                             }
                         ],
@@ -495,24 +501,24 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     return ({
                         // saving state on focus and setting the change on blur
                         init: function (cmp) {
-                            var before = studio_utils_1.compAsStrFromPath(path);
+                            var before = studio_utils_2.compAsStrFromPath(path);
                             if (cmp.codeMirror) {
                                 cmp.codeMirror.on('focus', function () {
-                                    return before = studio_utils_1.compAsStrFromPath(path);
+                                    return before = studio_utils_2.compAsStrFromPath(path);
                                 });
                                 cmp.codeMirror.on('blur', function () {
-                                    if (before != studio_utils_1.compAsStrFromPath(path))
-                                        studio_utils_1.notifyModification(path, before, ctx);
+                                    if (before != studio_utils_2.compAsStrFromPath(path))
+                                        studio_utils_2.notifyModification(path, before, ctx);
                                 });
                             }
                             else {
                                 $(cmp.elementRef.nativeElement).findIncludeSelf('input')
                                     .focus(function (e) {
-                                    before = studio_utils_1.compAsStrFromPath(path);
+                                    before = studio_utils_2.compAsStrFromPath(path);
                                 })
                                     .blur(function (e) {
-                                    if (before != studio_utils_1.compAsStrFromPath(path))
-                                        studio_utils_1.notifyModification(path, before, ctx);
+                                    if (before != studio_utils_2.compAsStrFromPath(path))
+                                        studio_utils_2.notifyModification(path, before, ctx);
                                 });
                             }
                         }
@@ -527,7 +533,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 ],
                 impl: function (context, path, data_ref) { return ({
                     init: function (cmp) {
-                        return studio_utils_1.modifyOperationsEm
+                        return studio_utils_2.modifyOperationsEm
                             .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
                             .filter(function (e) {
                             return e.path == path;

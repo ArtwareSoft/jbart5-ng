@@ -33,7 +33,7 @@ jb.component('button.md-icon', {
       template: `<div><button md-icon-button md-button aria-label="%$aria%" (click)="clicked()" title="{{title}}" tabIndex="-1">
                 <i class="material-icons" style="font-size:%$size%px;">%$icon%</i>
               </button></div>`,
-      css: 'button {min-width: 2px; padding: 4px; height: 100%; margin-left: 4px; border-radius: 10%;}',
+      css: `button {min-width: 2px; padding: 4px; padding-bottom: 7px; height: 100%; margin-left: 4px; border-radius: 10%;}`,
       imports: MdButtonModule,
       providers: MdIconRegistry,
   }
@@ -74,7 +74,7 @@ jb.component('button.md-icon-12', {
                 <i class="material-icons">%$icon%</i>
               </button></div>`,
       css: `button { width: 24px; height: 24px; padding: 0; margin-left: 2px; margin-top: -2px;}
-      .material-icons { font-size:12px;  }
+      .material-icons { font-size:12px; margin-top: -12px }
       `,
       imports: MdButtonModule,
       providers: MdIconRegistry,

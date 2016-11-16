@@ -17,13 +17,15 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             jb_core_1.jb.component('studio.open-control-tree', {
                 type: 'action',
                 impl: { $: 'openDialog',
-                    title: 'Outline',
                     style: { $: 'dialog.studio-floating', id: 'studio-outline', width: 300 },
                     content: { $: 'studio.control-tree' },
                     menu: { $: 'button',
+                        title: ' ',
+                        action: { $: 'studio.open-tree-menu', path: '%$globals/profile_path%' },
                         style: { $: 'button.md-icon', icon: 'menu' },
-                        action: { $: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
-                    }
+                        features: { $: 'css', css: 'button { background: none }' }
+                    },
+                    title: 'Outline'
                 }
             });
             jb_core_1.jb.component('studio.open-tree-menu', {

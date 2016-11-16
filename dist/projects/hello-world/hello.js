@@ -15,8 +15,17 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controls: [
                         { $: 'label',
                             title: 'hello test',
-                            style: { $: 'label.md-card-title' },
-                            features: { $: 'css.width', width: '200', overflow: 'scroll' }
+                            style: { $: 'label.md-card-title' }
+                        },
+                        { $: 'button',
+                            title: 'Hello',
+                            style: { $: 'button.md-icon-12', icon: 'build' }
+                        },
+                        { $: 'editable-boolean',
+                            databind: '%$globals/aa%',
+                            style: { $: 'editable-boolean.flipswitch' },
+                            textForTrue: 'yes',
+                            textForFalse: 'no'
                         }
                     ]
                 }

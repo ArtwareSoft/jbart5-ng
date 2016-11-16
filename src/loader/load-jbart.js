@@ -138,7 +138,7 @@ jb_system_config = {
         studio: '/dist/projects/studio',
 //        'rxjs': '/node_modules/rxjs',
 //        'hammerjs' : '/node_modules/hammerjs',
-        '@angular2-material': '/node_modules/@angular2-material',
+//        '@angular2-material': '/node_modules/@angular2-material',
         '@angular':  '/node_modules/@angular'
       },
       packages: {  
@@ -159,10 +159,10 @@ jb_system_config = {
         'testing': {
           defaultExtension: 'js',
         },     
-        '@angular2-material': {
-          format: 'cjs',
-          defaultExtension: 'js',
-        },
+        // '@angular2-material': {
+        //   format: 'cjs',
+        //   defaultExtension: 'js',
+        // },
 //        'rxjs': { main1: '/dist/rx4jbart.umd.js', defaultExtension: 'js' },
         '@angular/core': { main: 'bundles/core.umd.js', defaultExtension: 'js' },
         '@angular/common': { main: 'bundles/common.umd.js', defaultExtension: 'js' },

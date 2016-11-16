@@ -4,16 +4,18 @@ import {model,TgpModel} from './studio-tgp-model';
 import {pathChangesEm} from './studio-utils';
 
 jb.component('studio.open-control-tree', {
-	type: 'action',
-	impl :{$: 'openDialog',
-		title: 'Outline',
-		style :{$: 'dialog.studio-floating', id: 'studio-outline', width: 300 },
-		content :{$: 'studio.control-tree' },
-		menu :{$: 'button', 
-			style :{$: 'button.md-icon', icon: 'menu' },
-			action :{$: 'studio.open-tree-menu', path: '%$globals/profile_path%' }
-		} 
-	}
+  type: 'action', 
+  impl :{$: 'openDialog', 
+    style :{$: 'dialog.studio-floating', id: 'studio-outline', width: 300 }, 
+    content :{$: 'studio.control-tree' }, 
+    menu :{$: 'button', 
+      title: ' ', 
+      action :{$: 'studio.open-tree-menu', path: '%$globals/profile_path%' }, 
+      style :{$: 'button.md-icon', icon: 'menu' }, 
+      features :{$: 'css', css: 'button { background: none }' }
+    }, 
+    title: 'Outline'
+  }
 })
 
 jb.component('studio.open-tree-menu', {

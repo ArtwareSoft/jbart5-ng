@@ -216,18 +216,18 @@ jb.component('studio.data-script-summary', {
   }
 })
 
-jb.component('studio.property-boolean',{
-	type: 'control',
-	params: [ {id: 'path', as: 'string' } ],
-	impl :{$: 'editable-boolean',
-		style: {$: 'editable-boolean.studio-slide-toggle'},
-		title :{$: 'studio.prop-name', path: '%$path%' },
-		databind :{$: 'studio.ref', path: '%$path%' },
-		features : [
-			{$: 'studio.undo-support', path: '%$path%' },
-			{$: 'studio.property-toobar-feature', path: '%$path%' }
-		],
-	}
+jb.component('studio.property-boolean', {
+  type: 'control', 
+  params: [{ id: 'path', as: 'string' }], 
+  impl :{$: 'editable-boolean', 
+    databind :{$: 'studio.ref', path: '%$path%' }, 
+    style :{$: 'editable-boolean.flipswitch' }, 
+    title :{$: 'studio.prop-name', path: '%$path%' }, 
+    features: [
+      {$: 'studio.undo-support', path: '%$path%' }, 
+      {$: 'studio.property-toobar-feature', path: '%$path%' }
+    ]
+  }
 })
 jb.component('studio.property-enum',{
 	type: 'control',
@@ -259,24 +259,15 @@ jb.component('studio.property-slider', {
 
 jb.component('studio.property-tgp', {
   type: 'control', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
+  params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
     $vars: {
       tgpCtrl :{$: 'object', expanded: true }
     }, 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
-    features: [
-      {$: 'studio.property-toobar-feature', path: '%$path%' }, 
-      {$: 'studio.bindto-modifyOperations', 
-        data: '%$tgpCtrl/expanded%', 
-        path: '%$path%'
-      }
-    ], 
     controls: [
       {$: 'group', 
-        style :{$: 'layout.horizontal' }, 
+        style :{$: 'layout.horizontal', spacing: '0' }, 
         controls: [
           {$: 'editable-boolean', 
             databind: '%$tgpCtrl/expanded%', 
@@ -286,18 +277,21 @@ jb.component('studio.property-tgp', {
                 css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
               }, 
               {$: 'hidden', 
-                showCondition :{ 
-                  $and: 
-                  [
-                    { $notEmpty :{$: 'studio.non-control-children', path: '%$path%' } },
-                    { $notEmpty :{$: 'studio.val', path: '%$path%' } },
-                    { $: 'notEquals', 
+                showCondition :{
+                  $and: [
+                    {
+                      $notEmpty :{$: 'studio.non-control-children', path: '%$path%' }
+                    }, 
+                    {
+                      $notEmpty :{$: 'studio.val', path: '%$path%' }
+                    }, 
+                    {$: 'notEquals', 
                       item1 :{$: 'studio.comp-name', path: '%$path%' }, 
                       item2: 'customStyle'
                     }
                   ]
                 }
-              }  
+              }
             ]
           }, 
           {$: 'picklist', 
@@ -310,7 +304,7 @@ jb.component('studio.property-tgp', {
               }, 
               {$: 'picklist.dynamic-options', 
                 recalcEm: function (ctx) {
-                                                return modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                                return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
                                             }
               }
             ]
@@ -325,23 +319,33 @@ jb.component('studio.property-tgp', {
             data :{$: 'studio.comp-name', path: '%$path%' }
           }, 
           {$: 'hidden', 
-          showCondition :{ 
-            $and: 
-            [
-              '%$tgpCtrl.expanded%',
-              { $notEmpty :{$: 'studio.non-control-children', path: '%$path%' } },
-              { $notEmpty :{$: 'studio.val', path: '%$path%' } },
-              { $: 'notEquals', 
-                item1 :{$: 'studio.comp-name', path: '%$path%' }, 
-                item2: 'customStyle'
-              }
-            ]
-          }
-        },  
+            showCondition :{
+              $and: [
+                '%$tgpCtrl.expanded%', 
+                {
+                  $notEmpty :{$: 'studio.non-control-children', path: '%$path%' }
+                }, 
+                {
+                  $notEmpty :{$: 'studio.val', path: '%$path%' }
+                }, 
+                {$: 'notEquals', 
+                  item1 :{$: 'studio.comp-name', path: '%$path%' }, 
+                  item2: 'customStyle'
+                }
+              ]
+            }
+          }, 
           {$: 'css', 
             css: '{ margin-top: 9px; margin-left: -83px; margin-bottom: 4px;}'
           }
         ]
+      }
+    ], 
+    features: [
+      {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+      {$: 'studio.bindto-modifyOperations', 
+        path: '%$path%', 
+        data: '%$tgpCtrl/expanded%'
       }
     ]
   }

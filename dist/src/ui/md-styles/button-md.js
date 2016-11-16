@@ -36,7 +36,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons\" style=\"font-size:%$size%px;\">%$icon%</i>\n              </button></div>",
-                    css: 'button {min-width: 2px; padding: 4px; height: 100%; margin-left: 4px; border-radius: 10%;}',
+                    css: "button {min-width: 2px; padding: 4px; padding-bottom: 7px; height: 100%; margin-left: 4px; border-radius: 10%;}",
                     imports: material_1.MdButtonModule,
                     providers: material_1.MdIconRegistry,
                 }
@@ -68,7 +68,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons\">%$icon%</i>\n              </button></div>",
-                    css: "button { width: 24px; height: 24px; padding: 0; margin-left: 2px; margin-top: -2px;}\n      .material-icons { font-size:12px;  }\n      ",
+                    css: "button { width: 24px; height: 24px; padding: 0; margin-left: 2px; margin-top: -2px;}\n      .material-icons { font-size:12px; margin-top: -12px }\n      ",
                     imports: material_1.MdButtonModule,
                     providers: material_1.MdIconRegistry,
                 }

@@ -13,21 +13,20 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
         execute: function() {
             jb_core_1.jb.component('studio.open-style-editor', {
                 type: 'action',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'openDialog',
                     $vars: {
                         styleSource: { $: 'studio.style-source', path: '%$path%' }
                     },
-                    title: 'Style Editor - %$styleSource/path%',
                     style: { $: 'dialog.studio-floating', id: 'style editor' },
                     content: { $: 'studio.style-editor', path: '%$path%' },
                     menu: { $: 'button',
                         title: 'style menu',
+                        action: { $: 'studio.open-style-menu', path: '%$path%' },
                         style: { $: 'button.md-icon', icon: 'menu' },
-                        action: { $: 'studio.open-style-menu', path: '%$path%' }
-                    }
+                        features: { $: 'css', css: 'button { background: transparent }' }
+                    },
+                    title: 'Style Editor - %$styleSource/path%'
                 }
             });
             jb_core_1.jb.component('studio.open-style-menu', {

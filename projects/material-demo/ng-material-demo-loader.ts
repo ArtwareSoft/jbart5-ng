@@ -1,51 +1,81 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
+import { ViewChild, Injectable } from '@angular/core';
+import { MaterialModule, MdRipple, MdLiveAnnouncer, MdUniqueSelectionDispatcher, MdIconRegistry } from '@angular/material';
 
-import {Component,NgModule,Injectable} from '@angular/core';
-import {ViewChildren,QueryList,ViewEncapsulation,ViewChild,ViewContainerRef} from '@angular/core';
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input/input';
-import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button/button';
-import {MdCardModule} from '@angular2-material/card/card';
-import {MD_CHECKBOX_DIRECTIVES} from '@angular2-material/checkbox/checkbox';
-import {MD_RADIO_DIRECTIVES} from '@angular2-material/radio/radio';
-import {MdIcon} from '@angular2-material/icon/icon';
-import {MdToolbar} from '@angular2-material/toolbar/toolbar';
-//import {MdTooltip,TooltipComponent} from '@angular2-material/tooltip/tooltip';
+jb.component('material-demo.single-demo', {
+  impl :{$: 'custom-control', 
+    html: '%$demo/html%', 
+    css: '%$demo/css%', 
+    features: [
+      {$: 'feature.ng-attach-object', 
+        data :{$: 'new-instance', 
+          module: 'projects/material-demo/ng-material-demo-loader', 
+          class :{$: 'pipeline', 
+            items: [{$: 'capitalize', text: '%$demo/id%' }, '%%Demo']
+          }
+        }
+      }, 
+      {$: 'css', css: '{ min-width: 600px; max-width: 600px; }' },
+    ],
+    imports: MaterialModule,
+    providers: [ MdUniqueSelectionDispatcher, MdIconRegistry ]
+  }
+})
 
-import {MD_BUTTON_TOGGLE_DIRECTIVES} from '@angular2-material/button-toggle/button-toggle';
-import {MD_GRID_LIST_DIRECTIVES} from '@angular2-material/grid-list/grid-list';
-import {MD_LIST_DIRECTIVES} from '@angular2-material/list/list';
-import {MdRipple, MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; 
+// import {Component,NgModule,Injectable} from '@angular/core';
+// import {MD_INPUT_DIRECTIVES} from '@angular2-material/input/input';
+// import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button/button';
+// import {MdCardModule} from '@angular2-material/card/card';
+// import {MD_CHECKBOX_DIRECTIVES} from '@angular2-material/checkbox/checkbox';
+// import {MD_RADIO_DIRECTIVES} from '@angular2-material/radio/radio';
+// import {MdIcon} from '@angular2-material/icon/icon';
+// import {MdToolbar} from '@angular2-material/toolbar/toolbar';
+// //import {MdTooltip,TooltipComponent} from '@angular2-material/tooltip/tooltip';
 
-import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar/progress-bar'; 
-import {MD_PROGRESS_CIRCLE_DIRECTIVES} from '@angular2-material/progress-circle/progress-circle'; 
-import {MD_SLIDER_DIRECTIVES} from '@angular2-material/slider/slider';
+// import {MD_BUTTON_TOGGLE_DIRECTIVES} from '@angular2-material/button-toggle/button-toggle';
+// import {MD_GRID_LIST_DIRECTIVES} from '@angular2-material/grid-list/grid-list';
+// import {MD_LIST_DIRECTIVES} from '@angular2-material/list/list';
+// import {MdRipple, MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; 
 
-import {MdLiveAnnouncer} from '@angular2-material/core/a11y/live-announcer';
-import { Overlay, OverlayState,OverlayOrigin, OVERLAY_PROVIDERS, ComponentPortal, Portal,TemplatePortalDirective} from '@angular2-material/core/core';
+// import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar/progress-bar'; 
+// import {MD_PROGRESS_CIRCLE_DIRECTIVES} from '@angular2-material/progress-circle/progress-circle'; 
+// import {MD_SLIDER_DIRECTIVES} from '@angular2-material/slider/slider';
 
-import {
-  MdUniqueSelectionDispatcher
-} from '@angular2-material/core/coordination/unique-selection-dispatcher';
+// import {MdLiveAnnouncer} from '@angular2-material/core/a11y/live-announcer';
+// import { Overlay, OverlayState,OverlayOrigin, OVERLAY_PROVIDERS, ComponentPortal, Portal,TemplatePortalDirective} from '@angular2-material/core/core';
+
+// import {
+//   MdUniqueSelectionDispatcher
+// } from '@angular2-material/core/coordination/unique-selection-dispatcher';
 
 
-jb_ui.registerProviders({
-  MdUniqueSelectionDispatcher: MdUniqueSelectionDispatcher,
-  MdLiveAnnouncer: MdLiveAnnouncer,
-  OVERLAY_PROVIDERS: OVERLAY_PROVIDERS,
-});
-jb_ui.registerDirectives({
-  MD_CHECKBOX_DIRECTIVES: MD_CHECKBOX_DIRECTIVES, 
-  MD_RADIO_DIRECTIVES:MD_RADIO_DIRECTIVES, 
-  MD_BUTTON_TOGGLE_DIRECTIVES:MD_BUTTON_TOGGLE_DIRECTIVES,
-  MD_GRID_LIST_DIRECTIVES: MD_GRID_LIST_DIRECTIVES,
-  MD_LIST_DIRECTIVES: MD_LIST_DIRECTIVES,
-  MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES,
-  MD_PROGRESS_BAR_DIRECTIVES: MD_PROGRESS_BAR_DIRECTIVES,
-  MD_PROGRESS_CIRCLE_DIRECTIVES: MD_PROGRESS_CIRCLE_DIRECTIVES,
-  MD_SLIDER_DIRECTIVES: MD_SLIDER_DIRECTIVES,
-//  MdTooltip: MdTooltip,
-});
+// jb_ui.registerProviders({
+//   MdUniqueSelectionDispatcher: MdUniqueSelectionDispatcher,
+//   MdLiveAnnouncer: MdLiveAnnouncer,
+//   OVERLAY_PROVIDERS: OVERLAY_PROVIDERS,
+// });
+// jb_ui.registerDirectives({
+//   MD_CHECKBOX_DIRECTIVES: MD_CHECKBOX_DIRECTIVES, 
+//   MD_RADIO_DIRECTIVES:MD_RADIO_DIRECTIVES, 
+//   MD_BUTTON_TOGGLE_DIRECTIVES:MD_BUTTON_TOGGLE_DIRECTIVES,
+//   MD_GRID_LIST_DIRECTIVES: MD_GRID_LIST_DIRECTIVES,
+//   MD_LIST_DIRECTIVES: MD_LIST_DIRECTIVES,
+//   MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES,
+//   MD_PROGRESS_BAR_DIRECTIVES: MD_PROGRESS_BAR_DIRECTIVES,
+//   MD_PROGRESS_CIRCLE_DIRECTIVES: MD_PROGRESS_CIRCLE_DIRECTIVES,
+//   MD_SLIDER_DIRECTIVES: MD_SLIDER_DIRECTIVES,
+// //  MdTooltip: MdTooltip,
+// });
+
+export class SlideToggleDemo {
+  firstToggle: boolean;
+
+  onFormSubmit() {
+    alert(`You submitted the form.`);
+  }
+
+}
 
 export class TooltipDemo {
   position: TooltipPosition = 'below';
@@ -90,7 +120,7 @@ export class GesturesDemo {
   slideCount: number = 0;
 }
 
-export class GridlistDemo {
+export class GridListDemo {
   tiles: any[] = [
     {text: 'One', cols: 3, rows: 1, color: 'lightblue'},
     {text: 'Two', cols: 1, rows: 2, color: 'lightgreen'},
@@ -107,11 +137,12 @@ export class GridlistDemo {
     { name: 'Husi', human: 'Matias' },
   ];
 
-  fixedCols: number = 4;
-  fixedRowHeight: number = 100;
-  ratioGutter: number = 1;
-  fitListHeight: string = '400px';
-  ratio: string = '4:1';
+  basicRowHeight = 80;
+  fixedCols = 4;
+  fixedRowHeight = 100;
+  ratioGutter = 1;
+  fitListHeight = '400px';
+  ratio = '4:1';
 
   addTileCols() { this.tiles[2].cols++; }
 }
@@ -123,12 +154,17 @@ export class CheckboxDemo {
   isChecked: boolean = false;
   isDisabled: boolean = false;
   alignment: string = 'start';
+  useAlternativeColor: boolean = false;
 
   printResult() {
     if (this.isIndeterminate) {
       return 'Maybe!';
     }
     return this.isChecked ? 'Yes!' : 'No!';
+  }
+
+  checkboxColor() {
+    return this.useAlternativeColor ? 'primary' : 'accent';
   }
 }
 
@@ -214,10 +250,6 @@ export class LiveAnnouncerDemo {
     this.live.announce(message);
   }
 }
-
-jb_ui.registerProviders({
-  LiveAnnouncerDemo: LiveAnnouncerDemo,
-});
 
 export class ProgressBarDemo {
   determinateProgressValue: number = 30;

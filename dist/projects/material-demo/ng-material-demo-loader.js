@@ -1,4 +1,4 @@
-System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox', '@angular2-material/radio/radio', '@angular2-material/button-toggle/button-toggle', '@angular2-material/grid-list/grid-list', '@angular2-material/list/list', '@angular2-material/core/ripple/ripple', '@angular2-material/progress-bar/progress-bar', '@angular2-material/progress-circle/progress-circle', '@angular2-material/slider/slider', '@angular2-material/core/a11y/live-announcer', '@angular2-material/core/core', '@angular2-material/core/coordination/unique-selection-dispatcher'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/material'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,70 +10,86 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_ui, core_1, core_2, checkbox_1, radio_1, button_toggle_1, grid_list_1, list_1, ripple_1, progress_bar_1, progress_circle_1, slider_1, live_announcer_1, core_3, unique_selection_dispatcher_1;
-    var TooltipDemo, ProgressCircleDemo, RippleDemo, GesturesDemo, GridlistDemo, max, CheckboxDemo, ButtonDemo, InputDemo, ListDemo, LiveAnnouncerDemo, ProgressBarDemo;
+    var jb_core_1, core_1, material_1;
+    var SlideToggleDemo, TooltipDemo, ProgressCircleDemo, RippleDemo, GesturesDemo, GridListDemo, max, CheckboxDemo, ButtonDemo, InputDemo, ListDemo, LiveAnnouncerDemo, ProgressBarDemo;
     return {
         setters:[
-            function (jb_ui_1) {
-                jb_ui = jb_ui_1;
+            function (jb_core_1_1) {
+                jb_core_1 = jb_core_1_1;
             },
             function (core_1_1) {
                 core_1 = core_1_1;
-                core_2 = core_1_1;
             },
-            function (checkbox_1_1) {
-                checkbox_1 = checkbox_1_1;
-            },
-            function (radio_1_1) {
-                radio_1 = radio_1_1;
-            },
-            function (button_toggle_1_1) {
-                button_toggle_1 = button_toggle_1_1;
-            },
-            function (grid_list_1_1) {
-                grid_list_1 = grid_list_1_1;
-            },
-            function (list_1_1) {
-                list_1 = list_1_1;
-            },
-            function (ripple_1_1) {
-                ripple_1 = ripple_1_1;
-            },
-            function (progress_bar_1_1) {
-                progress_bar_1 = progress_bar_1_1;
-            },
-            function (progress_circle_1_1) {
-                progress_circle_1 = progress_circle_1_1;
-            },
-            function (slider_1_1) {
-                slider_1 = slider_1_1;
-            },
-            function (live_announcer_1_1) {
-                live_announcer_1 = live_announcer_1_1;
-            },
-            function (core_3_1) {
-                core_3 = core_3_1;
-            },
-            function (unique_selection_dispatcher_1_1) {
-                unique_selection_dispatcher_1 = unique_selection_dispatcher_1_1;
+            function (material_1_1) {
+                material_1 = material_1_1;
             }],
         execute: function() {
-            jb_ui.registerProviders({
-                MdUniqueSelectionDispatcher: unique_selection_dispatcher_1.MdUniqueSelectionDispatcher,
-                MdLiveAnnouncer: live_announcer_1.MdLiveAnnouncer,
-                OVERLAY_PROVIDERS: core_3.OVERLAY_PROVIDERS,
+            jb_core_1.jb.component('material-demo.single-demo', {
+                impl: { $: 'custom-control',
+                    html: '%$demo/html%',
+                    css: '%$demo/css%',
+                    features: [
+                        { $: 'feature.ng-attach-object',
+                            data: { $: 'new-instance',
+                                module: 'projects/material-demo/ng-material-demo-loader',
+                                class: { $: 'pipeline',
+                                    items: [{ $: 'capitalize', text: '%$demo/id%' }, '%%Demo']
+                                }
+                            }
+                        },
+                        { $: 'css', css: '{ min-width: 600px; max-width: 600px; }' },
+                    ],
+                    imports: material_1.MaterialModule,
+                    providers: [material_1.MdUniqueSelectionDispatcher, material_1.MdIconRegistry]
+                }
             });
-            jb_ui.registerDirectives({
-                MD_CHECKBOX_DIRECTIVES: checkbox_1.MD_CHECKBOX_DIRECTIVES,
-                MD_RADIO_DIRECTIVES: radio_1.MD_RADIO_DIRECTIVES,
-                MD_BUTTON_TOGGLE_DIRECTIVES: button_toggle_1.MD_BUTTON_TOGGLE_DIRECTIVES,
-                MD_GRID_LIST_DIRECTIVES: grid_list_1.MD_GRID_LIST_DIRECTIVES,
-                MD_LIST_DIRECTIVES: list_1.MD_LIST_DIRECTIVES,
-                MD_RIPPLE_DIRECTIVES: ripple_1.MD_RIPPLE_DIRECTIVES,
-                MD_PROGRESS_BAR_DIRECTIVES: progress_bar_1.MD_PROGRESS_BAR_DIRECTIVES,
-                MD_PROGRESS_CIRCLE_DIRECTIVES: progress_circle_1.MD_PROGRESS_CIRCLE_DIRECTIVES,
-                MD_SLIDER_DIRECTIVES: slider_1.MD_SLIDER_DIRECTIVES,
-            });
+            // import {Component,NgModule,Injectable} from '@angular/core';
+            // import {MD_INPUT_DIRECTIVES} from '@angular2-material/input/input';
+            // import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button/button';
+            // import {MdCardModule} from '@angular2-material/card/card';
+            // import {MD_CHECKBOX_DIRECTIVES} from '@angular2-material/checkbox/checkbox';
+            // import {MD_RADIO_DIRECTIVES} from '@angular2-material/radio/radio';
+            // import {MdIcon} from '@angular2-material/icon/icon';
+            // import {MdToolbar} from '@angular2-material/toolbar/toolbar';
+            // //import {MdTooltip,TooltipComponent} from '@angular2-material/tooltip/tooltip';
+            // import {MD_BUTTON_TOGGLE_DIRECTIVES} from '@angular2-material/button-toggle/button-toggle';
+            // import {MD_GRID_LIST_DIRECTIVES} from '@angular2-material/grid-list/grid-list';
+            // import {MD_LIST_DIRECTIVES} from '@angular2-material/list/list';
+            // import {MdRipple, MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; 
+            // import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar/progress-bar'; 
+            // import {MD_PROGRESS_CIRCLE_DIRECTIVES} from '@angular2-material/progress-circle/progress-circle'; 
+            // import {MD_SLIDER_DIRECTIVES} from '@angular2-material/slider/slider';
+            // import {MdLiveAnnouncer} from '@angular2-material/core/a11y/live-announcer';
+            // import { Overlay, OverlayState,OverlayOrigin, OVERLAY_PROVIDERS, ComponentPortal, Portal,TemplatePortalDirective} from '@angular2-material/core/core';
+            // import {
+            //   MdUniqueSelectionDispatcher
+            // } from '@angular2-material/core/coordination/unique-selection-dispatcher';
+            // jb_ui.registerProviders({
+            //   MdUniqueSelectionDispatcher: MdUniqueSelectionDispatcher,
+            //   MdLiveAnnouncer: MdLiveAnnouncer,
+            //   OVERLAY_PROVIDERS: OVERLAY_PROVIDERS,
+            // });
+            // jb_ui.registerDirectives({
+            //   MD_CHECKBOX_DIRECTIVES: MD_CHECKBOX_DIRECTIVES, 
+            //   MD_RADIO_DIRECTIVES:MD_RADIO_DIRECTIVES, 
+            //   MD_BUTTON_TOGGLE_DIRECTIVES:MD_BUTTON_TOGGLE_DIRECTIVES,
+            //   MD_GRID_LIST_DIRECTIVES: MD_GRID_LIST_DIRECTIVES,
+            //   MD_LIST_DIRECTIVES: MD_LIST_DIRECTIVES,
+            //   MD_RIPPLE_DIRECTIVES: MD_RIPPLE_DIRECTIVES,
+            //   MD_PROGRESS_BAR_DIRECTIVES: MD_PROGRESS_BAR_DIRECTIVES,
+            //   MD_PROGRESS_CIRCLE_DIRECTIVES: MD_PROGRESS_CIRCLE_DIRECTIVES,
+            //   MD_SLIDER_DIRECTIVES: MD_SLIDER_DIRECTIVES,
+            // //  MdTooltip: MdTooltip,
+            // });
+            SlideToggleDemo = (function () {
+                function SlideToggleDemo() {
+                }
+                SlideToggleDemo.prototype.onFormSubmit = function () {
+                    alert("You submitted the form.");
+                };
+                return SlideToggleDemo;
+            }());
+            exports_1("SlideToggleDemo", SlideToggleDemo);
             TooltipDemo = (function () {
                 function TooltipDemo() {
                     this.position = 'below';
@@ -111,11 +127,10 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                     }
                 };
                 __decorate([
-                    core_2.ViewChild(ripple_1.MdRipple), 
-                    __metadata('design:type', (typeof (_a = typeof ripple_1.MdRipple !== 'undefined' && ripple_1.MdRipple) === 'function' && _a) || Object)
+                    core_1.ViewChild(material_1.MdRipple), 
+                    __metadata('design:type', material_1.MdRipple)
                 ], RippleDemo.prototype, "manualRipple", void 0);
                 return RippleDemo;
-                var _a;
             }());
             exports_1("RippleDemo", RippleDemo);
             GesturesDemo = (function () {
@@ -130,8 +145,8 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                 return GesturesDemo;
             }());
             exports_1("GesturesDemo", GesturesDemo);
-            GridlistDemo = (function () {
-                function GridlistDemo() {
+            GridListDemo = (function () {
+                function GridListDemo() {
                     this.tiles = [
                         { text: 'One', cols: 3, rows: 1, color: 'lightblue' },
                         { text: 'Two', cols: 1, rows: 2, color: 'lightgreen' },
@@ -146,16 +161,17 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                         { name: 'Molly', human: 'Rob' },
                         { name: 'Husi', human: 'Matias' },
                     ];
+                    this.basicRowHeight = 80;
                     this.fixedCols = 4;
                     this.fixedRowHeight = 100;
                     this.ratioGutter = 1;
                     this.fitListHeight = '400px';
                     this.ratio = '4:1';
                 }
-                GridlistDemo.prototype.addTileCols = function () { this.tiles[2].cols++; };
-                return GridlistDemo;
+                GridListDemo.prototype.addTileCols = function () { this.tiles[2].cols++; };
+                return GridListDemo;
             }());
-            exports_1("GridlistDemo", GridlistDemo);
+            exports_1("GridListDemo", GridListDemo);
             max = 0;
             CheckboxDemo = (function () {
                 function CheckboxDemo() {
@@ -163,12 +179,16 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                     this.isChecked = false;
                     this.isDisabled = false;
                     this.alignment = 'start';
+                    this.useAlternativeColor = false;
                 }
                 CheckboxDemo.prototype.printResult = function () {
                     if (this.isIndeterminate) {
                         return 'Maybe!';
                     }
                     return this.isChecked ? 'Yes!' : 'No!';
+                };
+                CheckboxDemo.prototype.checkboxColor = function () {
+                    return this.useAlternativeColor ? 'primary' : 'accent';
                 };
                 return CheckboxDemo;
             }());
@@ -252,15 +272,11 @@ System.register(['jb-ui', '@angular/core', '@angular2-material/checkbox/checkbox
                 };
                 LiveAnnouncerDemo = __decorate([
                     core_1.Injectable({}), 
-                    __metadata('design:paramtypes', [(typeof (_a = typeof live_announcer_1.MdLiveAnnouncer !== 'undefined' && live_announcer_1.MdLiveAnnouncer) === 'function' && _a) || Object])
+                    __metadata('design:paramtypes', [material_1.MdLiveAnnouncer])
                 ], LiveAnnouncerDemo);
                 return LiveAnnouncerDemo;
-                var _a;
             }());
             exports_1("LiveAnnouncerDemo", LiveAnnouncerDemo);
-            jb_ui.registerProviders({
-                LiveAnnouncerDemo: LiveAnnouncerDemo,
-            });
             ProgressBarDemo = (function () {
                 function ProgressBarDemo() {
                     this.determinateProgressValue = 30;

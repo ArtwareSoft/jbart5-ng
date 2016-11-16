@@ -33,16 +33,17 @@ jb.component('custom-control', {
 		{ id: 'css', as: 'string'},
 		{ id: 'options', as: 'object'},
     	{ id: 'features', type: 'feature[]', dynamic: true },
-		{ id: 'directives', ignore: true },
+		{ id: 'imports', ignore: true },
+		{ id: 'providers', ignore: true },
 	],
 	impl: (ctx,title,html,css,options,features) => {
-//		var defaultOptions = {directives: jb.entries(jbart.ng.directives).map(x=>x[0])};
 		jbart.ctxDictionary[ctx.id] = ctx;
 		return jb_ui.Comp(jb.extend({ 
-			jbTemplate: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
+			template: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
 			css: css, 
 			featuresOptions: features(),
-			directives: ctx.profile.directives,
+			imports: ctx.profile.imports,
+			providers: ctx.profile.providers,
 		},options),ctx)
 	}
 })

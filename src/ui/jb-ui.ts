@@ -109,6 +109,7 @@ class jbComponent {
 		  		.filter(x=>x.match(/_ng/))[0];
 
 			var css = this.cssFixes
+				.map(x=>x.trim())
 				.map(x=>x.replace(/^!/,' ')) // replace the ! with space to allow internal selector
 				.map(x=>`[${ngAtt}]${x}`)
 				.join('\n');
@@ -201,11 +202,11 @@ class jbComponent {
 
 
 	jbCtrl(context) {
-		var options = mergeOptions(
-			optionsOfProfile(context.params.style && context.params.style.profile),
-			optionsOfProfile(context.profile));
-		if (Object.getOwnPropertyNames(options).length > 0)
-			debugger;
+		// var options = mergeOptions(
+		// 	optionsOfProfile(context.params.style && context.params.style.profile),
+		// 	optionsOfProfile(context.profile));
+		// if (Object.getOwnPropertyNames(options).length > 0)
+		// 	debugger;
 
 		(context.params.features && context.params.features(context) || [])
 			.forEach(f => this.jbExtend(f,context));
@@ -259,7 +260,8 @@ class jbComponent {
     		});
 
     	(options.styles || [])
-    		.filter(x=>x.match(/^!/m)) // ! affect internal selectors
+    		.map(x=>x.trim())
+    		.filter(x=>x.match(/^\!/m)) // ! affect internal selectors
     		.forEach(x=> {
     			if (this.cssFixes.indexOf(x) == -1)
     				this.cssFixes.push(x);
@@ -349,22 +351,22 @@ export function Comp(options,ctx) {
 	return new jbComponent(ctx).jbExtend(options);
 }
 
-function optionsOfProfile(profile) {
-	if (!profile) return {}
-	var res = {};
-	['cssClass','css'] // 'atts','styles',
-		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
-	return res;
-}
+// function optionsOfProfile(profile) {
+// 	if (!profile) return {}
+// 	var res = {};
+// 	['cssClass','css'] // 'atts','styles',
+// 		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
+// 	return res;
+// }
 
-function mergeOptions(op1,op2) {
-	var res = {};
-	if (op1.cssClass || op2.cssClass)
-		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-	if (op1.styles || op2.styles)
-		res.styles = (op1.styles || []).concat(op2.styles || [])
-	return jb_extend({},op1,op2,res);
-}
+// function mergeOptions(op1,op2) {
+// 	var res = {};
+// 	if (op1.cssClass || op2.cssClass)
+// 		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
+// 	if (op1.styles || op2.styles)
+// 		res.styles = (op1.styles || []).concat(op2.styles || [])
+// 	return jb_extend({},op1,op2,res);
+// }
 
 function setTemplateAtt(element,att,value) {
 	if (!element.getAttribute) debugger;
@@ -414,10 +416,11 @@ export class jbComp {
   	// redraw if script changed at studio
 
   	// create adapter observer on the preview window
-	var studioModifiedCtrlsEm = jbart.studioModifiedCtrlsEm ? jb_rx.Observable.create(function (observer) {
+	var studioModifiedCtrlsEm = jbart.studioModifiedCtrlsEm ? jb_rx.Observable.create(observer => {
   			jbart.studioModifiedCtrlsEm.subscribe( x=> 
   					observer.next(x),	
-  				x=>	observer.error(x), ()=> observer.complete() ) 
+  				x=>	observer.error(x), ()=> observer.complete() )
+  				}) 
   			: jb_rx.Observable.of();
 
 
