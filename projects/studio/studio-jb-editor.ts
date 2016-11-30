@@ -29,12 +29,14 @@ jb.component('studio.jb-editor', {
   params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
     title: 'main', 
-    style :{$: 'layout.horizontal', spacing: 3 }, 
+    style :{$: 'layout.flex', align: 'space-between', direction: '' }, 
     controls: [
       {$: 'tree', 
         nodeModel :{$: 'studio.jb-editor.nodes', path: '%$path%' }, 
         features: [
-          {$: 'css.class', class: 'jb-editor jb-control-tree studio-control-tree'},
+          {$: 'css.class', 
+            class: 'jb-editor jb-control-tree studio-control-tree'
+          }, 
           {$: 'tree.selection', 
             databind: '%$globals/jb_editor_selection%', 
             onDoubleClick :{$: 'studio.open-jb-edit-property', 
@@ -79,8 +81,10 @@ jb.component('studio.jb-editor', {
             action :{$: 'studio.delete', path: '%%' }
           }, 
           {$: 'studio.control-tree.refreshPathChanges' }, 
-          {$: 'css.width', width: '500' },
-          {$: 'feature.studio-auto-fix-path', path: '%$globals/jb_editor_selection%' }
+          {$: 'css.width', width: '500', selector: 'jb-editor' }, 
+          {$: 'feature.studio-auto-fix-path', 
+            path: '%$globals/jb_editor_selection%'
+          }
         ]
       }, 
       {$: 'group', 
@@ -138,7 +142,7 @@ jb.component('studio.jb-editor', {
         ], 
         features :{$: 'group.watch', data: '%$globals/jb_editor_selection%' }
       }
-    ],
+    ]
   }
 })
 

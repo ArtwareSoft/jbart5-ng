@@ -1,7 +1,7 @@
-System.register(['jb-core', './studio-tgp-model', './studio-utils', '@angular/material'], function(exports_1, context_1) {
+System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1, studio_utils_1, material_1;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -12,9 +12,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils', '@angular/ma
             },
             function (studio_utils_1_1) {
                 studio_utils_1 = studio_utils_1_1;
-            },
-            function (material_1_1) {
-                material_1 = material_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-new-control-dialog', {
@@ -40,7 +37,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils', '@angular/ma
                 params: [
                     { id: 'type', as: 'string' },
                     { id: 'title', as: 'string' },
-                    { id: 'onOK', type: 'action', dynamic: true },
+                    { id: 'onOK', type: 'action', dynamic: true }
                 ],
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-floating' },
@@ -54,22 +51,18 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils', '@angular/ma
                                 style: { $: 'editable-text.md-input' }
                             },
                             { $: 'itemlist-with-groups',
-                                items: { $pipeline: [
+                                items: {
+                                    $pipeline: [
                                         { $: 'studio.PTs-of-type', type: '%$type%' },
                                         { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-                                    ] },
+                                    ]
+                                },
                                 controls: [
                                     { $: 'button',
                                         title: '%%',
-                                        action: [
-                                            { $: 'closeContainingPopup' },
-                                            { $call: 'onOK' },
-                                        ],
-                                        style: { $: 'customStyle',
-                                            template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
-                                            css: 'button { width: 300px; text-align: left }',
-                                            imports: material_1.MdButtonModule
-                                        }
+                                        action: [{ $: 'closeContainingPopup' }, { $call: 'onOK' }],
+                                        style: { $: 'button.md-flat-no-background' },
+                                        features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
                                     }
                                 ],
                                 groupBy: { $: 'itemlist-heading.group-by' },

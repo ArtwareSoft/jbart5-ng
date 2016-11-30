@@ -24,6 +24,7 @@ jb.component('picklist.groups', {
   impl :{$: 'customStyle', 
     features :{$: 'field.databind' },
     template: `<div><select [ngModel]="jbModel()" (change)="jbModel($event.target.value)">
+      <option *ngIf="hasEmptyOption" [value]=""></option>
     <optgroup *ngFor="let group of groups" label="{{group.text}}">
 	    <option *ngFor="let option of group.options" [value]="option.code">{{option.text}}</option>
     </optgroup>

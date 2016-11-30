@@ -39,7 +39,7 @@ jb.component('custom-control', {
 	impl: (ctx,title,html,css,options,features) => {
 		jbart.ctxDictionary[ctx.id] = ctx;
 		return jb_ui.Comp(jb.extend({ 
-			template: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
+			jbTemplate: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
 			css: css, 
 			featuresOptions: features(),
 			imports: ctx.profile.imports,

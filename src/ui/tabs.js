@@ -49,7 +49,7 @@ jb.component('tabs.simple', {
 	        </div>
 	        <jb_comp *ngFor="let comp of selectedTabContent()" [comp]="comp"></jb_comp>
 	      </div>`,
-	     css: `.selected { border-bottom: 1px solid black }`,
+	     css: `.selected { border-bottom: 1px solid black } button { background: none }`,
 	    features :{$: 'tabs.initTabs'},
   	}
 })

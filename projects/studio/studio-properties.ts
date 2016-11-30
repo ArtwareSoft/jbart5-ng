@@ -297,16 +297,15 @@ jb.component('studio.property-tgp', {
           {$: 'picklist', 
             databind :{$: 'studio.comp-name-ref', path: '%$path%' }, 
             options :{$: 'studio.tgp-path-options', path: '%$path%' }, 
+            promote :{$: 'picklist.promote', 
+              groups :{$: 'list', items: ['layout'] }
+            }, 
             style :{$: 'picklist.groups' }, 
             features: [
               {$: 'css', 
                 css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
               }, 
-              {$: 'picklist.dynamic-options', 
-                recalcEm: function (ctx) {
-                                                return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
-                                            }
-              }
+              {$: 'studio.refresh-options-watch'}
             ]
           }
         ], 
@@ -506,6 +505,16 @@ jb.component('studio.tgp-type-options',{
 	],
 	impl: (context,type) => 
 			model.PTsOfType(type).map(op=>({ code: op, text: op}))
+})
+
+
+jb.component('studio.refresh-options-watch', {
+  type: 'feature',
+  impl :{$: 'picklist.dynamic-options', 
+        recalcEm: () => 
+          modifyOperationsEm.filter(e => 
+            e.newComp)
+  }
 })
 
 jb.component('studio.undo-support', {

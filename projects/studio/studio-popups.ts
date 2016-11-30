@@ -108,9 +108,7 @@ jb.component('studio.code-mirror-mode',{
 
 jb.component('studio.open-responsive-phone-popup', {
   type: 'action', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
+  params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating', id: 'responsive' }, 
     content :{$: 'tabs', 
@@ -135,13 +133,15 @@ jb.component('studio.open-responsive-phone-popup', {
           ]
         }, 
         genericControl :{$: 'group', 
+          title: '%$controlItem/id%', 
+          style :{$: 'property-sheet.titles-above' }, 
           controls: [
             {$: 'editable-number', 
               databind: '%$globals/responsive/{%$controlItem/id%}/width%', 
-              min: '%$controlItem/width/min%', 
-              max: '%$controlItem/width/max%', 
               title: 'width', 
               style :{$: 'editable-number.slider' }, 
+              min: '%$controlItem/width/min%', 
+              max: '%$controlItem/width/max%', 
               features: [
                 {$: 'field.default', value: '%$controlItem/width/default%' }, 
                 {$: 'field.subscribe', 
@@ -152,10 +152,10 @@ jb.component('studio.open-responsive-phone-popup', {
             }, 
             {$: 'editable-number', 
               databind: '%$globals/responsive/{%$controlItem/id%}/height%', 
-              min: '%$controlItem/height/min%', 
-              max: '%$controlItem/height/max%', 
               title: 'height', 
               style :{$: 'editable-number.slider' }, 
+              min: '%$controlItem/height/min%', 
+              max: '%$controlItem/height/max%', 
               features: [
                 {$: 'field.default', value: '%$controlItem/height/default%' }, 
                 {$: 'field.subscribe', 
@@ -165,13 +165,10 @@ jb.component('studio.open-responsive-phone-popup', {
               ]
             }
           ], 
-          title: '%$controlItem/id%', 
-          style :{$: 'property-sheet.titles-above' }, 
           features: [{$: 'css', css: '{ padding-left: 12px; padding-top: 7px }' }]
-        }, 
-        
+        }
       }, 
-      style :{$: 'tabs.md-tabs' }
+      style :{$: 'tabs.simple' }
     }, 
     title: 'responsive'
   }

@@ -62,7 +62,7 @@ jb.component('itemlist.init', {
 })
 
 jb.component('itemlist.ul-li', {
-  type: 'group.style',
+  type: 'itemlist.style',
   impl :{$: 'customStyle',
     features :{$: 'group.initGroup'},
     template: `<div><ul class="jb-itemlist">

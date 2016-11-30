@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "typeRoots": [
+      "../node_modules/@types"
+    ]    
+  },
+
+  "files": [
+ //   "test-aot.ts",
+    "../projects/aot-test/aot-test.gen.ts"
+  ],
+
+  "angularCompilerOptions": {
+   "genDir": "..",
+   "skipMetadataEmit" : true
+ }
+}

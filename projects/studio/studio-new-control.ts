@@ -26,10 +26,10 @@ jb.component('studio.open-new-control-dialog', {
 jb.component('studio.open-new-tgp-dialog', {
   type: 'action', 
   params: [
-    {id: 'type', as: 'string'},
-    {id: 'title', as: 'string'},
-    {id: 'onOK', type: 'action', dynamic: true },
-  ],
+    { id: 'type', as: 'string' }, 
+    { id: 'title', as: 'string' }, 
+    { id: 'onOK', type: 'action', dynamic: true }
+  ], 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating' }, 
     content :{$: 'group', 
@@ -42,22 +42,18 @@ jb.component('studio.open-new-tgp-dialog', {
           style :{$: 'editable-text.md-input' }
         }, 
         {$: 'itemlist-with-groups', 
-          items: { $pipeline: [
-            {$: 'studio.PTs-of-type', type: '%$type%' }, 
-            {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-          ]}, 
+          items :{
+            $pipeline: [
+              {$: 'studio.PTs-of-type', type: '%$type%' }, 
+              {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+            ]
+          }, 
           controls: [
             {$: 'button', 
               title: '%%', 
-              action : [
-                {$: 'closeContainingPopup' }, 
-                {$call: 'onOK' },
-              ],
-              style :{$: 'customStyle', 
-                template: '<div><button md-button (click)="clicked()">{{title}}</button></div>', 
-                css: 'button { width: 300px; text-align: left }', 
-                imports: MdButtonModule
-              }
+              action: [{$: 'closeContainingPopup' }, { $call: 'onOK' }], 
+              style :{$: 'button.md-flat-no-background' }, 
+              features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
             }
           ], 
           groupBy :{$: 'itemlist-heading.group-by' }, 

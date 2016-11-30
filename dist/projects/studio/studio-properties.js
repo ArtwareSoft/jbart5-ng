@@ -1,7 +1,7 @@
 System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, studio_tgp_model_1, studio_utils_2;
+    var jb_core_1, studio_tgp_model_1, studio_utils_1;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -10,8 +10,8 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             function (studio_tgp_model_1_1) {
                 studio_tgp_model_1 = studio_tgp_model_1_1;
             },
-            function (studio_utils_2_1) {
-                studio_utils_2 = studio_utils_2_1;
+            function (studio_utils_1_1) {
+                studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-properties', {
@@ -286,16 +286,15 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 { $: 'picklist',
                                     databind: { $: 'studio.comp-name-ref', path: '%$path%' },
                                     options: { $: 'studio.tgp-path-options', path: '%$path%' },
+                                    promote: { $: 'picklist.promote',
+                                        groups: { $: 'list', items: ['layout'] }
+                                    },
                                     style: { $: 'picklist.groups' },
                                     features: [
                                         { $: 'css',
                                             css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
                                         },
-                                        { $: 'picklist.dynamic-options',
-                                            recalcEm: function (ctx) {
-                                                return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
-                                            }
-                                        }
+                                        { $: 'studio.refresh-options-watch' }
                                     ]
                                 }
                             ],
@@ -357,7 +356,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             },
                             { $: 'picklist.dynamic-options',
                                 recalcEm: function (ctx) {
-                                    return studio_utils_2.modifyOperationsEm.filter(function (e) { return e.newComp; });
+                                    return studio_utils_1.modifyOperationsEm.filter(function (e) { return e.newComp; });
                                 }
                             }
                         ],
@@ -492,6 +491,16 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     return studio_tgp_model_1.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
                 }
             });
+            jb_core_1.jb.component('studio.refresh-options-watch', {
+                type: 'feature',
+                impl: { $: 'picklist.dynamic-options',
+                    recalcEm: function () {
+                        return studio_utils_1.modifyOperationsEm.filter(function (e) {
+                            return e.newComp;
+                        });
+                    }
+                }
+            });
             jb_core_1.jb.component('studio.undo-support', {
                 type: 'feature',
                 params: [
@@ -501,24 +510,24 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     return ({
                         // saving state on focus and setting the change on blur
                         init: function (cmp) {
-                            var before = studio_utils_2.compAsStrFromPath(path);
+                            var before = studio_utils_1.compAsStrFromPath(path);
                             if (cmp.codeMirror) {
                                 cmp.codeMirror.on('focus', function () {
-                                    return before = studio_utils_2.compAsStrFromPath(path);
+                                    return before = studio_utils_1.compAsStrFromPath(path);
                                 });
                                 cmp.codeMirror.on('blur', function () {
-                                    if (before != studio_utils_2.compAsStrFromPath(path))
-                                        studio_utils_2.notifyModification(path, before, ctx);
+                                    if (before != studio_utils_1.compAsStrFromPath(path))
+                                        studio_utils_1.notifyModification(path, before, ctx);
                                 });
                             }
                             else {
                                 $(cmp.elementRef.nativeElement).findIncludeSelf('input')
                                     .focus(function (e) {
-                                    before = studio_utils_2.compAsStrFromPath(path);
+                                    before = studio_utils_1.compAsStrFromPath(path);
                                 })
                                     .blur(function (e) {
-                                    if (before != studio_utils_2.compAsStrFromPath(path))
-                                        studio_utils_2.notifyModification(path, before, ctx);
+                                    if (before != studio_utils_1.compAsStrFromPath(path))
+                                        studio_utils_1.notifyModification(path, before, ctx);
                                 });
                             }
                         }
@@ -533,7 +542,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 ],
                 impl: function (context, path, data_ref) { return ({
                     init: function (cmp) {
-                        return studio_utils_2.modifyOperationsEm
+                        return studio_utils_1.modifyOperationsEm
                             .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
                             .filter(function (e) {
                             return e.path == path;

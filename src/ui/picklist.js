@@ -2,6 +2,7 @@ jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModule
 
 jb.type('picklist.style');
 jb.type('picklist.options');
+jb.type('picklist.promote');
 
 jb.component('picklist', {
   type: 'control',
@@ -9,6 +10,7 @@ jb.component('picklist', {
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'databind', as: 'ref'},
     { id: 'options', type: 'picklist.options', dynamic: true, essential: true, defaultValue: {$ : 'picklist.optionsByComma'} },
+    { id: 'promote', type: 'picklist.promote', dynamic: true },
     { id: 'style', type: 'picklist.style', defaultValue: { $: 'picklist.native' }, dynamic: true },
     { id: 'features', type: 'feature[]', dynamic: true },
   ],
@@ -18,8 +20,9 @@ jb.component('picklist', {
         cmp.recalcOptions = function() {
           cmp.options = ctx.params.options(ctx);
           var groupsHash = {};
+          var promotedGroups = (ctx.params.promote() || {}).groups || [];
           cmp.groups = [];
-          cmp.options.forEach(o=>{
+          cmp.options.filter(x=>x.text).forEach(o=>{
             var groupId = groupOfOpt(o);
             var group = groupsHash[groupId] || { options: [], text: groupId};
             if (!groupsHash[groupId]) {
@@ -28,6 +31,8 @@ jb.component('picklist', {
             }
             group.options.push({text: o.text.split('.').pop(), code: o.code });
           })
+          cmp.groups.sort((p1,p2)=>promotedGroups.indexOf(p2.text) - promotedGroups.indexOf(p1.text));
+          cmp.hasEmptyOption = cmp.options.filter(x=>!x.text)[0];
         }
         cmp.recalcOptions();
       },
@@ -38,7 +43,7 @@ jb.component('picklist', {
 
 function groupOfOpt(opt) {
   if (!opt.group && opt.text.indexOf('.') == -1)
-    return '';
+    return '---';
   return opt.group || opt.text.split('.').shift();
 }
 
@@ -48,8 +53,9 @@ jb.component('picklist.dynamic-options', {
     { id: 'recalcEm', as: 'observable'}
   ],
   impl: (ctx,recalcEm) => ({
+    observable: () => {},
     init: cmp => 
-      recalcEm
+      recalcEm && recalcEm
         .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
         .subscribe(e=>
             cmp.recalcOptions()) 
@@ -101,5 +107,15 @@ jb.component('picklist.coded-options',{
     }))
   }
 })
+
+jb.component('picklist.promote',{
+  type: 'picklist.promote',
+  params: [ 
+    { id: 'groups', as: 'array'},
+    { id: 'options', as: 'array'},
+  ],
+  impl: (context,groups,options) => 
+    ({ groups: groups, options: options})
+});
 
 })

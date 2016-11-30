@@ -13,13 +13,11 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     var jb_core_1, core_1, platform_browser_1, common_1, http_1, forms_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, jbCompModule, jBartWidgetModule;
     function apply(ctx) {
-        //	console.log('apply');
         return jb_core_1.jb.delay(1).then(function () {
             return ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
         });
     }
     exports_1("apply", apply);
-    // zone.stable (cmp.detectChanges
     function delayOutsideAngular(ctx, func) {
         jb_core_1.jb.delay(1, ctx).then(func);
     }
@@ -48,6 +46,74 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         return new jbComponent(ctx).jbExtend(options);
     }
     exports_1("Comp", Comp);
+    function injectLifeCycleMethods(Cmp) {
+        Cmp.prototype.ngOnInit = function () {
+            var _this = this;
+            try {
+                if (this.methodHandler.jbObservableFuncs.length) {
+                    this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
+                    this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
+                }
+                this.refreshCtx = function (ctx2) {
+                    _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
+                        _this.ctx = extendCtx(ctx2, _this);
+                    });
+                    return _this.ctx;
+                };
+                this.refreshCtx(this.ctx);
+                this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
+                this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
+            }
+            catch (e) {
+                jb_core_1.jb.logException(e, '');
+            }
+        };
+        Cmp.prototype.ngAfterViewInit = function () {
+            var _this = this;
+            this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
+            this.jbEmitter && this.jbEmitter.next('after-init');
+            delayOutsideAngular(this.ctx, function () {
+                if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
+                    _this.jbEmitter.next('after-init-children');
+                    if (_this.readyCounter == null)
+                        _this.jbEmitter.next('ready');
+                }
+            });
+        };
+        Cmp.prototype.ngDoCheck = function () {
+            var _this = this;
+            this.methodHandler.jbCheckFuncs.forEach(function (f) {
+                return f(_this);
+            });
+            this.refreshModel && this.refreshModel();
+            this.jbEmitter && this.jbEmitter.next('check');
+        };
+        Cmp.prototype.ngOnDestroy = function () {
+            var _this = this;
+            this.methodHandler.jbDestroyFuncs.forEach(function (f) {
+                return f(_this);
+            });
+            this.jbEmitter && this.jbEmitter.next('destroy');
+            this.jbEmitter && this.jbEmitter.complete();
+        };
+        Cmp.prototype.jbWait = function () {
+            var _this = this;
+            this.readyCounter = (this.readyCounter || 0) + 1;
+            if (this.parentCmp && this.parentCmp.jbWait)
+                this.parentWaiting = this.parentCmp.jbWait();
+            return {
+                ready: function () {
+                    _this.readyCounter--;
+                    if (!_this.readyCounter) {
+                        _this.jbEmitter && _this.jbEmitter.next('ready');
+                        if (_this.parentWaiting)
+                            _this.parentWaiting.ready();
+                    }
+                }
+            };
+        };
+    }
+    exports_1("injectLifeCycleMethods", injectLifeCycleMethods);
     // function optionsOfProfile(profile) {
     // 	if (!profile) return {}
     // 	var res = {};
@@ -203,7 +269,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         execute: function() {
             core_1.enableProdMode();
             jbart.zones = jbart.zones || {};
-            factory_hash = {}, cssFixes_hash = {};
+            factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
             jbComponent = (function () {
                 function jbComponent(ctx) {
                     this.ctx = ctx;
@@ -298,76 +364,12 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 jbComponent.prototype.createComp = function () {
                     if (!this.annotations.selector)
                         this.annotations.selector = 'jb-comp';
-                    var Cmp = function (dcl, elementRef, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.changeDt = changeDetection; };
+                    var Cmp = function (elementRef, changeDetection) { this.elementRef = elementRef; this.changeDt = changeDetection; };
                     Cmp = Reflect.decorate([
                         core_1.Component(this.annotations),
-                        Reflect.metadata('design:paramtypes', [core_1.Compiler, core_1.ElementRef, core_1.ChangeDetectorRef])
+                        Reflect.metadata('design:paramtypes', [core_1.ElementRef, core_1.ChangeDetectorRef])
                     ], Cmp);
-                    Cmp.prototype.ngOnInit = function () {
-                        var _this = this;
-                        try {
-                            if (this.methodHandler.jbObservableFuncs.length) {
-                                this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
-                                this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
-                            }
-                            this.refreshCtx = function (ctx2) {
-                                _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
-                                    _this.ctx = extendCtx(ctx2, _this);
-                                });
-                                return _this.ctx;
-                            };
-                            this.refreshCtx(this.ctx);
-                            this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
-                            this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
-                        }
-                        catch (e) {
-                            jb_core_1.jb.logException(e, '');
-                        }
-                    };
-                    Cmp.prototype.ngAfterViewInit = function () {
-                        var _this = this;
-                        this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
-                        this.jbEmitter && this.jbEmitter.next('after-init');
-                        delayOutsideAngular(this.ctx, function () {
-                            if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
-                                _this.jbEmitter.next('after-init-children');
-                                if (_this.readyCounter == null)
-                                    _this.jbEmitter.next('ready');
-                            }
-                        });
-                    };
-                    Cmp.prototype.ngDoCheck = function () {
-                        var _this = this;
-                        this.methodHandler.jbCheckFuncs.forEach(function (f) {
-                            return f(_this);
-                        });
-                        this.refreshModel && this.refreshModel();
-                        this.jbEmitter && this.jbEmitter.next('check');
-                    };
-                    Cmp.prototype.ngOnDestroy = function () {
-                        var _this = this;
-                        this.methodHandler.jbDestroyFuncs.forEach(function (f) {
-                            return f(_this);
-                        });
-                        this.jbEmitter && this.jbEmitter.next('destroy');
-                        this.jbEmitter && this.jbEmitter.complete();
-                    };
-                    Cmp.prototype.jbWait = function () {
-                        var _this = this;
-                        this.readyCounter = (this.readyCounter || 0) + 1;
-                        if (this.parentCmp && this.parentCmp.jbWait)
-                            this.parentWaiting = this.parentCmp.jbWait();
-                        return {
-                            ready: function () {
-                                _this.readyCounter--;
-                                if (!_this.readyCounter) {
-                                    _this.jbEmitter && _this.jbEmitter.next('ready');
-                                    if (_this.parentWaiting)
-                                        _this.parentWaiting.ready();
-                                }
-                            }
-                        };
-                    };
+                    injectLifeCycleMethods(Cmp);
                     return Cmp;
                 };
                 jbComponent.prototype.jbCtrl = function (context) {

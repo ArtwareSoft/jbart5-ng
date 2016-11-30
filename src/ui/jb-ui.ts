@@ -5,27 +5,15 @@ import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
-// import { NgModule, enableProdMode, Directive, Component, View, ViewContainerRef, ViewChild, Compiler, ElementRef, Renderer, Injector, Input, provide, NgZone, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
-// import { FormsModule, NG_VALUE_ACCESSOR,ControlValueAccessor, DefaultValueAccessor,  provideForms } from '@angular/forms';
-// import { HttpModule, HTTP_PROVIDERS} from '@angular/http';
-
-// import { CommonModule, NgClass,NgStyle} from '@angular/common';
-// import {PORTAL_DIRECTIVES} from '@angular2-material/core/portal/portal-directives'; // bug fix for @angular2-material
-// import {MD_RIPPLE_DIRECTIVES} from '@angular2-material/core/ripple/ripple'; // bug fix for @angular2-material
-
 import * as jb_rx from 'jb-ui/jb-rx';
-import * as jb_dialog from 'jb-ui/dialog';
 
 enableProdMode();
 jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
-//	console.log('apply');
 	return jb.delay(1).then(() =>
 			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
 }
-
-// zone.stable (cmp.detectChanges
 
 export function delayOutsideAngular(ctx,func) {
 	jb.delay(1,ctx).then(func);
@@ -38,7 +26,8 @@ export function applyPreview(ctx) {
 	)
 }
 
-var factory_hash = {}, cssFixes_hash = {};
+var factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
+
 class jbComponent {
 	constructor(private ctx) {
 		this.annotations = {};
@@ -135,68 +124,12 @@ class jbComponent {
 	createComp() {
 	    if (!this.annotations.selector)	this.annotations.selector = 'jb-comp';
 
-	    var Cmp = function(dcl, elementRef, changeDetection) { this.dcl = dcl; this.elementRef = elementRef; this.changeDt =  changeDetection }
+	    var Cmp = function(elementRef, changeDetection) { this.elementRef = elementRef; this.changeDt =  changeDetection }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [Compiler, ElementRef, ChangeDetectorRef])
+			Reflect.metadata('design:paramtypes', [ElementRef, ChangeDetectorRef])
 		], Cmp);
-		Cmp.prototype.ngOnInit = function() {
-			try {
-				if (this.methodHandler.jbObservableFuncs.length) {
-					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
-					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
-				}
-	    		this.refreshCtx = (ctx2) => {
-					this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
-		    			this.ctx = extendCtx(ctx2,this);
-		    		})
-		    		return this.ctx;
-		    	}
-		    	this.refreshCtx(this.ctx);
-				this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
-				this.methodHandler.jbInitFuncs.forEach(init=> init(this));
-		    } catch(e) { jb.logException(e,'') }
-		}
-		Cmp.prototype.ngAfterViewInit = function() {
-			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
-			this.jbEmitter && this.jbEmitter.next('after-init');
-			delayOutsideAngular(this.ctx,()=>{ 
-				if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
-					this.jbEmitter.next('after-init-children');
-					if (this.readyCounter == null)
-						this.jbEmitter.next('ready');
-				}
-			})
-		}
-
-		Cmp.prototype.ngDoCheck = function() {
-			this.methodHandler.jbCheckFuncs.forEach(f=> 
-				f(this));
-			this.refreshModel && this.refreshModel();
-			this.jbEmitter && this.jbEmitter.next('check');
-		}
-		Cmp.prototype.ngOnDestroy = function() {
-			this.methodHandler.jbDestroyFuncs.forEach(f=> 
-				f(this));
-			this.jbEmitter && this.jbEmitter.next('destroy');
-			this.jbEmitter && this.jbEmitter.complete();
-		}
-
-		Cmp.prototype.jbWait = function () {
-			this.readyCounter = (this.readyCounter || 0)+1;
-			if (this.parentCmp && this.parentCmp.jbWait)
-				this.parentWaiting = this.parentCmp.jbWait();
-			return {
-				ready: () => {
-					this.readyCounter--;
-					if (!this.readyCounter) {
-						this.jbEmitter && this.jbEmitter.next('ready');
-						if (this.parentWaiting)
-							this.parentWaiting.ready();
-					}
-				}
-			}
-		}
+		injectLifeCycleMethods(Cmp);
 		return Cmp;
 	}
 
@@ -349,6 +282,66 @@ export function ctrl(context) {
 
 export function Comp(options,ctx) {
 	return new jbComponent(ctx).jbExtend(options);
+}
+
+export function injectLifeCycleMethods(Cmp) {
+	Cmp.prototype.ngOnInit = function() {
+		try {
+			if (this.methodHandler.jbObservableFuncs.length) {
+				this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
+				this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
+			}
+    		this.refreshCtx = (ctx2) => {
+				this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
+	    			this.ctx = extendCtx(ctx2,this);
+	    		})
+	    		return this.ctx;
+	    	}
+	    	this.refreshCtx(this.ctx);
+			this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
+			this.methodHandler.jbInitFuncs.forEach(init=> init(this));
+	    } catch(e) { jb.logException(e,'') }
+	}
+	Cmp.prototype.ngAfterViewInit = function() {
+		this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
+		this.jbEmitter && this.jbEmitter.next('after-init');
+		delayOutsideAngular(this.ctx,()=>{ 
+			if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
+				this.jbEmitter.next('after-init-children');
+				if (this.readyCounter == null)
+					this.jbEmitter.next('ready');
+			}
+		})
+	}
+
+	Cmp.prototype.ngDoCheck = function() {
+		this.methodHandler.jbCheckFuncs.forEach(f=> 
+			f(this));
+		this.refreshModel && this.refreshModel();
+		this.jbEmitter && this.jbEmitter.next('check');
+	}
+	Cmp.prototype.ngOnDestroy = function() {
+		this.methodHandler.jbDestroyFuncs.forEach(f=> 
+			f(this));
+		this.jbEmitter && this.jbEmitter.next('destroy');
+		this.jbEmitter && this.jbEmitter.complete();
+	}
+
+	Cmp.prototype.jbWait = function () {
+		this.readyCounter = (this.readyCounter || 0)+1;
+		if (this.parentCmp && this.parentCmp.jbWait)
+			this.parentWaiting = this.parentCmp.jbWait();
+		return {
+			ready: () => {
+				this.readyCounter--;
+				if (!this.readyCounter) {
+					this.jbEmitter && this.jbEmitter.next('ready');
+					if (this.parentWaiting)
+						this.parentWaiting.ready();
+				}
+			}
+		}
+	}
 }
 
 // function optionsOfProfile(profile) {

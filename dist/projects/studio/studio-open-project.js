@@ -19,6 +19,40 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('studio.choose-project', {
                 type: 'control',
                 impl: { $: 'group',
+                    title: 'itemlist-with-find',
+                    controls: [
+                        { $: 'editable-text',
+                            title: 'search',
+                            databind: '%$globals/project_pattern%',
+                            style: { $: 'editable-text.md-input', width: '260' }
+                        },
+                        { $: 'itemlist',
+                            items: {
+                                $pipeline: [
+                                    '%$projects%',
+                                    { $: 'search-filter', pattern: '%$globals/project_pattern%' }
+                                ]
+                            },
+                            controls: { $: 'button',
+                                title: '%$project%',
+                                action: { $: 'runActions',
+                                    actions: { $: 'runActions',
+                                        actions: [
+                                            { $: 'goto-url',
+                                                url: '/project/studio/%$project%',
+                                                target: 'new tab'
+                                            },
+                                            { $: 'closeContainingPopup' }
+                                        ]
+                                    }
+                                },
+                                style: { $: 'button.md-flat-no-background' },
+                                features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
+                            },
+                            style: { $: 'itemlist.ul-li' },
+                            itemVariable: 'project'
+                        }
+                    ],
                     features: [
                         { $: 'group.wait',
                             for: { $: 'http.get', url: '/?op=projects' },
@@ -26,38 +60,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             mapToResource: '%projects%'
                         },
                         { $: 'css.padding', top: '15', left: '15' }
-                    ],
-                    title: 'itemlist-with-find',
-                    controls: [
-                        { $: 'editable-text',
-                            databind: '%$globals/project_pattern%',
-                            title: 'search',
-                            style: { $: 'editable-text.md-input', width: '260' }
-                        },
-                        { $: 'itemlist',
-                            items: { $pipeline: [
-                                    '%$projects%',
-                                    { $: 'search-filter', pattern: '%$globals/project_pattern%' }
-                                ] },
-                            itemVariable: 'project',
-                            style: { $: 'itemlist.ul-li' },
-                            controls: { $: 'button',
-                                title: '%$project%',
-                                style: { $: 'button.md-flat' },
-                                action: { $: 'runActions',
-                                    actions: { $: 'runActions',
-                                        actions: [
-                                            { $: 'goto-url',
-                                                target: 'new tab',
-                                                url: '/project/studio/%$project%'
-                                            },
-                                            { $: 'closeContainingPopup' }
-                                        ]
-                                    }
-                                },
-                                features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
-                            }
-                        }
                     ]
                 }
             });

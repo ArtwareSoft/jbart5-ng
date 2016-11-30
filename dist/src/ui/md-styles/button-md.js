@@ -20,6 +20,14 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                     imports: material_1.MdButtonModule
                 }
             });
+            jb_core_1.jb.component('button.md-flat-no-background', {
+                type: 'button.style',
+                impl: { $: 'customStyle',
+                    template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
+                    css: 'button {background: none}',
+                    imports: material_1.MdButtonModule
+                }
+            });
             jb_core_1.jb.component('button.md-raised', {
                 type: 'button.style',
                 impl: { $: 'customStyle',
@@ -36,7 +44,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 ],
                 impl: { $: 'customStyle',
                     template: "<div><button md-icon-button md-button aria-label=\"%$aria%\" (click)=\"clicked()\" title=\"{{title}}\" tabIndex=\"-1\">\n                <i class=\"material-icons\" style=\"font-size:%$size%px;\">%$icon%</i>\n              </button></div>",
-                    css: "button {min-width: 2px; padding: 4px; padding-bottom: 7px; height: 100%; margin-left: 4px; border-radius: 10%;}",
+                    css: "button {min-width: 2px; padding: 4px; padding-bottom: 7px; height: 100%; margin-left1: 4px; border-radius: 10%; background: none; }",
                     imports: material_1.MdButtonModule,
                     providers: material_1.MdIconRegistry,
                 }

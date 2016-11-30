@@ -25,8 +25,10 @@ var js_files_to_load = [
       'node_modules/zone.js/dist/zone.js',
       'node_modules/reflect-metadata/Reflect.js',
       'node_modules/systemjs/dist/system.src.js',
+      'node_modules/hammerjs/hammer.js',
 //      'node_modules/rxjs/bundles/Rx.js',
       'dist/Rx.js',
+      'dist/ngForCompiled.js',
 
       'bower_components/dragula.js/dist/dragula.js',
       'node_modules/history/umd/history.js',
@@ -128,7 +130,11 @@ jb_studio_modules = ['tgp-model','model-components','path','utils','main','menu'
   .map(x=>'studio/studio-' + x)
 
 jb_system_config = {
-      map: {
+    paths: {
+        // paths serve as alias
+        'npm:': '/node_modules/'
+    },
+    map: {
         'jb-core': '/dist/src/core',
         'ui': '/src/ui',
         'ui-ts': '/dist/src/ui',
@@ -139,7 +145,18 @@ jb_system_config = {
 //        'rxjs': '/node_modules/rxjs',
 //        'hammerjs' : '/node_modules/hammerjs',
 //        '@angular2-material': '/node_modules/@angular2-material',
-        '@angular':  '/node_modules/@angular'
+//        '@angular/core': 'npm:@angular/core',
+        '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
+        '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
+        '@angular/compiler': 'npm:@angular/compiler/bundles/compiler.umd.js',
+        '@angular/platform-browser': 'npm:@angular/platform-browser/bundles/platform-browser.umd.js',
+        '@angular/platform-browser-dynamic': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+        '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
+        '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
+        '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
+        '@angular/material': 'npm:@angular/material/material.umd.js',
+        // other libraries
+          'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'        
       },
       packages: {  
         'dist' : {
@@ -164,14 +181,14 @@ jb_system_config = {
         //   defaultExtension: 'js',
         // },
 //        'rxjs': { main1: '/dist/rx4jbart.umd.js', defaultExtension: 'js' },
-        '@angular/core': { main: 'bundles/core.umd.js', defaultExtension: 'js' },
-        '@angular/common': { main: 'bundles/common.umd.js', defaultExtension: 'js' },
-        '@angular/http': { main: 'bundles/http.umd.js', defaultExtension: 'js' },
-        '@angular/forms': { main: 'bundles/forms.umd.js', defaultExtension: 'js' },
-        '@angular/compiler': { main: 'bundles/compiler.umd.js', defaultExtension: 'js' },
-        '@angular/platform-browser': { main: 'bundles/platform-browser.umd.js', defaultExtension: 'js' },
-        '@angular/platform-browser-dynamic': { main: 'bundles/platform-browser-dynamic.umd.js', defaultExtension: 'js' },
-        '@angular/material': { main: 'material.umd.js', defaultExtension: 'js' },
+//            '@angular/core': { defaultExtension: 'js' },
+        // '@angular/common': { main: 'bundles/common.umd.js', defaultExtension: 'js' },
+        // '@angular/http': { main: 'bundles/http.umd.js', defaultExtension: 'js' },
+        // '@angular/forms': { main: 'bundles/forms.umd.js', defaultExtension: 'js' },
+        // '@angular/compiler': { main: 'bundles/compiler.umd.js', defaultExtension: 'js' },
+        // '@angular/platform-browser': { main: 'bundles/platform-browser.umd.js', defaultExtension: 'js' },
+        // '@angular/platform-browser-dynamic': { main: 'bundles/platform-browser-dynamic.umd.js', defaultExtension: 'js' },
+         //'@angular/material': { main: 'material.umd.js', defaultExtension: 'js' },
       }
 }
 
@@ -201,6 +218,7 @@ function jbLoadModules(modules) {
 function jbBootstrap(loadedModules) {
   var platform = loadedModules['@angular/platform-browser-dynamic'].platformBrowserDynamic();
   var jbartModule = loadedModules['jb-ui'].jBartWidgetModule;
+  registerNgFactories(loadedModules);
   platform.bootstrapModule(jbartModule)
     .catch(err => console.error(err))
   // jb_entries(jbart.ng.modules|| []).map(e=>e[1]).forEach(m =>
@@ -213,6 +231,23 @@ function jbBootstrap(loadedModules) {
     //   jbart.afterBootsrtap = true);
 }
 
+function registerNgFactories(loadedModules) {
+  var modules = Object.getOwnPropertyNames(loadedModules).filter(p=>p.indexOf('gen.ngfactory')!=-1);
+  modules.forEach(module => {
+      Object.getOwnPropertyNames(loadedModules[module])
+        .filter(p=>p!='jBartCompiledViewsModuleNgFactory')
+        .filter(p=>p.indexOf('NgFactory')!=-1)
+        .forEach(factory=>{
+          var factoryObj = loadedModules[module][factory];
+          if (typeof jbart != 'undefined') {
+            jbart.ngfactories = jbart.ngfactories || {};
+            jbart.ngfactories[factory.replace(/___/g,'.').replace(/__/g,'-')] = factoryObj;
+          }
+//          console.log(factoryObj);
+        }
+      )
+  });
+}
 // for tests
 
 if (typeof jbart != 'undefined')

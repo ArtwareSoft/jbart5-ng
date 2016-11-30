@@ -19,11 +19,11 @@ jb.component('material-demo.form', {
     controls: [
       {$: 'editable-text', 
         title: 'Company (disabled)', 
-        databind: '%$person/company%'
+        databind :{$: 'pipeline', items: ['%$person/company%', '%%aa'] }
       }, 
       {$: 'group', 
         title: 'Name', 
-        style :{$: 'layout.vertical', spacing: '33' }, 
+        style :{$: 'layout.horizontal', spacing: '25' }, 
         controls: [
           {$: 'editable-text', 
             title: 'Long Last Name That Will Be Truncated', 
@@ -146,7 +146,7 @@ jb.component('material-demo.main', {
                     }
                   ]
                 }, 
-                style :{$: 'button.md-flat' }, 
+                style :{$: 'button.md-flat-no-background' }, 
                 features :{$: 'css', css: 'button { text-align: left; width: 200px}' }
               }
             ], 
