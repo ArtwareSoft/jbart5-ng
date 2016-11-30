@@ -22,8 +22,8 @@
     "bower_components"
   ],
   "dependencies": {
-    "dragula.js": "dragula#^3.6.8",
-    "jquery": "^2.2.2",
-    "codemirror": "^5.13.2"
+    "dragula.js": "dragula#3.6.8",
+    "jquery": "2.2.2",
+    "codemirror": "5.13.2"
   }
 }
