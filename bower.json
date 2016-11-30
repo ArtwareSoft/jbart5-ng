@@ -24,6 +24,7 @@
   "dependencies": {
     "dragula.js": "dragula#3.6.8",
     "jquery": "2.2.2",
-    "codemirror": "5.13.2"
+    "codemirror": "5.13.2",
+    "showdown": "1.4.3"
   }
 }
