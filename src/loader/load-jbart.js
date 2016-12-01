@@ -38,6 +38,7 @@ var css_files_to_load = [
     'bower_components/codemirror/lib/codemirror.css',
     'bower_components/codemirror/theme/solarized.css',
     'bower_components/dragula.js/dist/dragula.css',
+    'node_modules/@angular/material/core/theming/prebuilt/indigo-pink.css',
     'css/font.css', // material fonts
     'css/ng2-styles.css'
 ];

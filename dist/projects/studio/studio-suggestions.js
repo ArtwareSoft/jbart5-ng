@@ -36,7 +36,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             style: { $: 'editable-text.studio-primitive-text' },
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
-                                { $: 'studio.property-toobar-feature', path: '%$path%' }
+                                { $: 'studio.property-toobar-feature', path: '%$path%' },
+                                { $: 'feature.debounce', debounceTime: '500' }
                             ]
                         },
                         { $: 'itemlist-with-groups',
@@ -309,8 +310,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 }) // ENTER
                                     .subscribe(function () {
                                     suggestionCtx.show = false;
-                                    if (cmp.selected && cmp.selected.paste)
+                                    if (cmp.selected && cmp.selected.paste) {
                                         cmp.selected.paste(ctx);
+                                        cmp.selected = null;
+                                    }
                                     jb_ui.apply(ctx);
                                 });
                                 keyEm.filter(function (e) { return e.keyCode == 27; }) // ESC

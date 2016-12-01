@@ -183,7 +183,7 @@ jb.component('feature.emitter',{
   impl: function(context,varName) { return  { 
     extendCtx: (ctx,cmp) => 
       ctx.setVars(jb.obj(varName,cmp.jbEmitter)),
-    observable: (obs,ctx) => {},
+    observable: () => {},
   }}
 })
 
@@ -223,6 +223,26 @@ jb.component('field.style-on-focus', {
   impl: ctx => ({
     extendComp: { jb_styleOnFocus: ctx.profile.style }
   })
+})
+
+jb.component('feature.debounce', {
+  type: 'feature',
+  params: [
+    { id: 'debounceTime', as: 'number', defaultValue: 500 },
+  ],
+  impl: (ctx,debounceTime) =>
+    ({
+      init: cmp => {
+          cmp.inputEvents = cmp.inputEvents || new jb_rx.Subject();
+          cmp.inputEvents.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+            .distinctUntilChanged()
+            .debounceTime(debounceTime)
+            .subscribe(val=>
+              jb.writeValue(ctx.vars.$model.databind,val)
+          )
+      },
+      observable: () => {},
+    })
 })
 
 

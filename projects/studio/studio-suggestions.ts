@@ -16,7 +16,8 @@ jb.component('studio.property-primitive', {
         style :{$: 'editable-text.studio-primitive-text' }, 
         features: [
           {$: 'studio.undo-support', path: '%$path%' }, 
-          {$: 'studio.property-toobar-feature', path: '%$path%' }
+          {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+          {$: 'feature.debounce', debounceTime: '500' }
         ]
       }, 
       {$: 'itemlist-with-groups', 
@@ -290,8 +291,10 @@ jb.component('itemlist.studio-suggestions-options', {
               e.keyCode == 13) // ENTER
             .subscribe(()=>{
                 suggestionCtx.show = false;
-                if (cmp.selected && cmp.selected.paste) 
+                if (cmp.selected && cmp.selected.paste) {
                   cmp.selected.paste(ctx);
+                  cmp.selected = null;
+                }
                 jb_ui.apply(ctx);
             })
           keyEm.filter(e=>e.keyCode == 27) // ESC

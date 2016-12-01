@@ -19,7 +19,8 @@ jb.component('material-demo.form', {
     controls: [
       {$: 'editable-text', 
         title: 'Company (disabled)', 
-        databind :{$: 'pipeline', items: ['%$person/company%', '%%aa'] }
+        databind :{$: 'pipeline', items: ['%$person/company%'] }, 
+        features :{$: 'feature.debounce', debounceTime: '30' }
       }, 
       {$: 'group', 
         title: 'Name', 
@@ -30,7 +31,7 @@ jb.component('material-demo.form', {
             databind: '%$person/lastName%'
           }, 
           {$: 'editable-text', 
-            title: 'First Name', 
+            title: 'First Name aa', 
             databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
             style :{$: 'editable-text.md-input' }
           }
@@ -59,6 +60,10 @@ jb.component('material-demo.form', {
             databind: '%$person/postalCode%'
           }
         ]
+      }, 
+      {$: 'label', 
+        title: '%$person/company%', 
+        style :{$: 'label.span' }
       }
     ], 
     features: [

@@ -10,9 +10,13 @@ jb.component('field.databind', {
             cmp.jbModel = (val,source) => {
               if (val == undefined) 
                 return jb.val(ctx.vars.$model.databind);
-              else if (!ctx.vars.$model.updateOnBlur || source != 'keyup')
-                jb.writeValue(ctx.vars.$model.databind,val);
-            }
+              else { // write
+                if (cmp.inputEvents && source == 'keyup')
+                  cmp.inputEvents.next(val);
+                else if (!ctx.vars.$model.updateOnBlur || source != 'keyup')
+                  jb.writeValue(ctx.vars.$model.databind,val);
+              }
+          }
       }
   }}
 })
