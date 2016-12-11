@@ -27,9 +27,13 @@ function jb_run(context,parentParam,settings) {
       case 'ignore': return context.data;
       case 'list': { debugger; return profile.map(function(inner,i) { jb_run(jb_ctx(context,{profile: inner, path: i})) }) };
       case 'runActions': return jbart.comps.runActions.impl(jb_ctx(context,{profile: { actions : profile },path:''}));
-      case 'if': 
-		return jb_run(run.ifContext, run.IfParentParam) ? 
-          jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam);      
+      case 'if': {
+          var cond = jb_run(run.ifContext, run.IfParentParam);
+          if (cond.then) 
+            return cond.then(res=>
+              res ? jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam))
+          return cond ? jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam);
+      } 
       case 'profile':
         for(var varname in profile.$vars || {})
           run.ctx.vars[varname] = jb_run(jb_ctx(run.ctx,{ profile: profile.$vars[varname], path: '$vars~'+varname }));

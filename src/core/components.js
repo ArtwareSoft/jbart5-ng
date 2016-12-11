@@ -740,8 +740,8 @@ jb_component('runActions', {
 			var innerPath = context.profile['$runActions'] ? '$runActions~' : 'items~';
 		return actions.reduce((def,action,index) =>
 			def.then(() =>
-				$.when(jb_run(jb_ctx(context,{profile: action, path: innerPath + index }),{ as: 'single'}))),
-			$.Deferred().resolve())
+				Promise.resolve(jb_run(jb_ctx(context,{profile: action, path: innerPath + index }),{ as: 'single'}))),
+			Promise.resolve())
 	}
 });
 
@@ -749,22 +749,13 @@ jb_component('runActionOnItems', {
 	type: 'action',
 	params: [ 
 		{ id: 'items', type:'data[]', as:'array', essential: true},
-		{ id: 'action', type:'action', ignore: true, essential: true }
+		{ id: 'action', type:'action', dynamic: true, essential: true }
 	],
 	impl: function(context,items) {
-		var deferred = $.Deferred();
-		function runFromIndex(index) {
-			if (index >= items.length) 
-				return deferred.resolve();
-
-			var promise = jb_run(jb_ctx(context,{data: [items[index]], profile: context.profile.action }), {as: 'single'});
-			$.when(promise).then(
-					function() { runFromIndex(index+1) },
-					deferred.reject
-			);
-		}
-		runFromIndex(0);
-		return deferred.promise();
+		return items.reduce((deferred,item)=>
+				deferred.then(data=>
+					Promise.resolve(action(context.setData(data))))
+			,Promise.resolve(context.data))
 	}
 });
 
