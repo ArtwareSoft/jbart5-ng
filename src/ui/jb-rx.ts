@@ -27,6 +27,7 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/race';
 
 
 import {jb} from 'jb-core/jb';
@@ -263,19 +264,19 @@ jb.component('rx.emit',{
 	}
 })
 
-jb.component('rx.urlPath',{
+jb.component('rx.url-path',{
 	type: 'application-feature',
 	params: [
 		{ id: 'params', type: 'data[]', as: 'array'},
 		{ id: 'databind', as: 'single' , essential: true },
 		{ id: 'base', as: 'string'},
-		{ id: 'zoneId', as: 'string'},
+		{ id: 'onUrlChange', type: 'action', dynamic: true }
 	],
-	impl: function(context,params,databind,base,zoneId) {
+	impl: function(context,params,databind,base) {
 		if (jbart.location) return;
 
 	    if (!databind || typeof databind != 'object')
-	    	return console.log('no databind for rx.urlPath')
+	    	return console.log('no databind for rx.url-path')
 
 	    var browserUrlEm = new Subject();
 		jbart.location = History.createHistory();
@@ -312,6 +313,7 @@ jb.component('rx.urlPath',{
 	    	.subscribe(url => {
 		    	jbart.location.push(url);
 		    	jb.extend(databind,urlToObj(url));
+		    	context.params.onUrlChange(context.setData(url));
 	    	})
 	}
 })

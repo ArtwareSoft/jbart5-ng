@@ -14,7 +14,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('group.md-card', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<div><md-card>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card></div>",
+                    template: "<div><md-card>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card></div>",
                     features: { $: 'group.initGroup' },
                     imports: material_1.MdCardModule
                 }
@@ -22,7 +22,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('group.md-card-actions', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<div><md-card-actions>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-actions></div>",
+                    template: "<div><md-card-actions>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card-actions></div>",
                     features: { $: 'group.initGroup' },
                     imports: material_1.MdCardModule
                 }
@@ -30,7 +30,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('group.md-card-content', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<div><md-card-content>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-content></div>",
+                    template: "<div><md-card-content>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card-content></div>",
                     features: { $: 'group.initGroup' },
                     imports: material_1.MdCardModule
                 }
@@ -38,7 +38,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('group.md-card-header', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<div><md-card-header>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </md-card-header></div>",
+                    template: "<div><md-card-header>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card-header></div>",
                     features: { $: 'group.initGroup' },
                     imports: material_1.MdCardModule
                 }

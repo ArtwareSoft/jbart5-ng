@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <title>single test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <script type="text/javascript" src="/src/loader/load-jbart.js"></script>
+
+  </head>
+
+
+<body>
+<script>
+
+  var test = location.href.split('?test=').pop();
+  if (test) {
+    document.title = test;
+    jbart.singleTestID = test;
+  }
+
+jbProjectsModules(jbart.testProjects).then(test_modules=>
+  jbLoadModules(jb_modules.concat(jb_studio_modules).concat(test_modules))
+    .then(loadedModules=>{
+        Promise.resolve(jb_ctx().run({ $: test, path: test }).then(r=>console.log(r)))
+    })   
+)
+
+  
+</script>
+
+</body>
+</html>

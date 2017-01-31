@@ -60,7 +60,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                             };
                         }
                     },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\" \n          (mouseenter)=\"ctrl.hover=true\" (mouseleave)=\"ctrl.hover=false\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [hidden]=\"!ctrl.hover\" [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\" \n          (mouseenter)=\"ctrl.hover=true\" (mouseleave)=\"ctrl.hover=false\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div [hidden]=\"!ctrl.hover\" class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
@@ -68,7 +68,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
@@ -124,7 +124,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('dialog.studio-multiline-edit', {
                 type: 'dialog.style',
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-dialog jb-popup\">\n\t\t\t\t\t\t\t<button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t<jb_comp [comp]=\"contentComp\" class=\"dialog-content\"></jb_comp>\n\t\t\t\t\t\t</div>",
+                    template: "<div class=\"jb-dialog jb-popup\">\n\t\t\t\t\t\t\t<button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n              <div *jbComp=\"contentComp\"></div>\n\t\t\t\t\t\t</div>",
                     css: "{ background: #fff; position: absolute; min-width: 280px; min-height: 200px;\n\t\t\t\t\tbox-shadow: 2px 2px 3px #d5d5d5; padding: 3px; border: 1px solid rgb(213, 213, 213)\n\t\t\t\t  }\n\t\t\t\t.dialog-close {\n\t\t\t\t\t\tposition: absolute; \n\t\t\t\t\t\tcursor: pointer; \n\t\t\t\t\t\tright: -7px; top: -22px; \n\t\t\t\t\t\tfont: 21px sans-serif; \n\t\t\t\t\t\tborder: none; \n\t\t\t\t\t\tbackground: transparent; \n\t\t\t\t\t\tcolor: #000; \n\t\t\t\t\t\ttext-shadow: 0 1px 0 #fff; \n\t\t\t\t\t\tfont-weight: 700; \n\t\t\t\t\t\topacity: .2;\n\t\t\t\t}\n\t\t\t\t.dialog-close:hover { opacity: .5 }\n\t\t\t\t",
                     features: [
                         { $: 'dialog-feature.maxZIndexOnClick' },
@@ -154,7 +154,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('group.studio-properties-accordion', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div><div class=\"content\">\n          <jb_comp *ngIf=\"ctrl.show\" [comp]=\"ctrl.comp\"></jb_comp>\n        </div>\n      </div>\n  </section>",
+                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div>\n        <div class=\"content\" *ngIf=\"ctrl.show\"><div *jbComp=\"ctrl.comp\"></div></div>\n      </div>\n  </section>",
                     methods: {
                         init: function (ctx) {
                             return function (cmp) {

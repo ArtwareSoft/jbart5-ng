@@ -109,12 +109,12 @@ function jb_profileHasValue(context,paramName) {
   return typeof context.profile[paramName] != 'undefined';
 }
 
-function jb_logError(errorStr,errorObj) {
+function jb_logError(errorStr,errorObj,ctx) {
   jbart.logs = jbart.logs || {};
   jbart.logs.error = jbart.logs.error || [];
   jbart.logs.error.push(errorStr);
   jb_trigger(jbart.logs,'add',{ type: 'error', text: errorStr });
-  console.error(errorStr,errorObj);
+  console.error(errorStr,errorObj,ctx);
 }
 
 function jb_logPerformance(type,text) {
@@ -310,6 +310,63 @@ function jb_ref(obj,top) {
     }
   }
 }
+
+function jb_new_NativePromise(cb) {
+  if (window && window.__zone_symbol__Promise) {
+    var res = new __zone_symbol__Promise(cb);
+    res.then = res.__zone_symbol__then;
+    return res;
+  }
+
+  return new Promise(cb);
+}
+
+function jb_waitFor(check) {
+  if (check())
+    return jb_NativePromise_resolve(1);
+  var set_timeout = window && window.__zone_symbol__setTimeout || setTimeout;
+
+  return jb_new_NativePromise((resolve,fail)=>{
+    function wait_and_check(counter) {
+      if (counter < 1)
+        fail();
+      set_timeout(() => {
+        if (check())
+          resolve();
+        else
+          wait_and_check(counter-1)
+      }, 50);  
+    }
+    return wait_and_check(300);
+  })
+}
+
+function jb_NativePromise_resolve(obj) {
+  return jb_new_NativePromise(resolve=>resolve(obj))
+}
+
+function jb_native_delay(ms) {
+  var set_timeout = window && window.__zone_symbol__setTimeout || setTimeout;
+  return jb_new_NativePromise(resolve => set_timeout(resolve, ms));
+}
+
+function jb_synchArray(ar) {
+  var isSynch = ar.filter(v=> v &&  (typeof v.then == 'function' || typeof v.subscribe == 'function')).length == 0;
+  if (isSynch) return ar;
+
+  var _ar = ar.filter(x=>x).map(v=>
+    (typeof v.then == 'function' || typeof v.subscribe == 'function') ? v : [v])
+
+
+  return Observable.from(_ar)
+          .concatMap(x=>
+            x)
+          .flatMap(v => 
+            Array.isArray(v) ? v : [v])
+          .toArray()
+          .toPromise()
+}
+
 
 function jb_delay(ms,ctx) {
   if (ctx && ctx.vars.ngZone)

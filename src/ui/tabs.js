@@ -13,8 +13,11 @@ jb.component('tabs', {
       	cmp.empty = jb_ui.Comp({ template: '<div></div>'},context);
       	cmp.selectedTab = 0;
 
-      	cmp.selectedTabContent = () => 
-      		[cmp.comps[cmp.selectedTab] || cmp.empty];
+
+      	cmp.selectedTabContent = index => {
+          var _index = index == null ? cmp.selectedTab : index;
+      		return cmp.comps[_index] || cmp.empty;
+        }
 
         cmp.initTabs = function() {
           (cmp.jbGroupChildrenEm || jb_rx.Observable.of(context.params.tabs(cmp.ctx)))
@@ -43,16 +46,31 @@ jb.type('tabs.style');
 jb.component('tabs.simple', {
 	type: 'tabs.style',
   	impl :{$: 'customStyle',
-	    template: `<div class="jb-tab">
-	    	<div class="tab-titles">
-	    		<button *ngFor="let title of titles; let i = index" md-button (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
-	        </div>
-	        <jb_comp *ngFor="let comp of selectedTabContent()" [comp]="comp"></jb_comp>
-	      </div>`,
+      template: `<div class="jb-tab">
+          <div class="tab-titles">
+            <button *ngFor="let title of titles; let i = index" md-button (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
+          </div>
+          <div *jbComp="selectedTabContent()"></div>
+        </div>`,
 	     css: `.selected { border-bottom: 1px solid black } button { background: none }`,
 	    features :{$: 'tabs.initTabs'},
+      noTemplateParsing: true,
   	}
 })
+
+// jb.component('tabs.simple', {
+//   type: 'tabs.style',
+//     impl :{$: 'customStyle',
+//       template: `<div class="jb-tab">
+//         <div class="tab-titles">
+//           <button *ngFor="let title of titles; let i = index" md-button (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
+//           </div>
+//           <jb_comp *ngFor="let comp of selectedTabContent()" [comp]="comp"></jb_comp>
+//         </div>`,
+//        css: `.selected { border-bottom: 1px solid black } button { background: none }`,
+//       features :{$: 'tabs.initTabs'},
+//     }
+// })
 
 // jb.component('tabs.accordion',{
 // 	type: 'tabs.style',

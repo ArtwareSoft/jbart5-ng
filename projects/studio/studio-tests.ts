@@ -2,8 +2,6 @@ import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
 if (window.jbartTest) {
-	// jb.resource('ui-tests','UrlPathEm',{ $: 'rx.urlPath', base: 'ui-tests', zoneId: 'single-test', 
-	// 	params: [ 'test','project', 'page', 'profile_path' ] , databind: '{%$globals%}' } );
 	jb.resource('ui-tests','WidgetLoaded',{ $: 'rx.subject' })
 }
 

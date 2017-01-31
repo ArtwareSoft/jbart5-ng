@@ -6,6 +6,7 @@ var js_files_to_load = [
       'src/core/pretty-print.js',
       'src/core/components.js',
       'src/core/functions.js',
+      'src/level-db/levelup.js',
 
       'bower_components/codemirror/lib/codemirror.js',
       'bower_components/codemirror/mode/xml/xml.js',
@@ -27,6 +28,7 @@ var js_files_to_load = [
       'node_modules/systemjs/dist/system.src.js',
       'node_modules/hammerjs/hammer.js',
 //      'node_modules/rxjs/bundles/Rx.js',
+      'node_modules/material-design-lite/material.js',
       'dist/Rx.js',
       'dist/ngForCompiled.js',
 
@@ -39,8 +41,9 @@ var css_files_to_load = [
     'bower_components/codemirror/theme/solarized.css',
     'bower_components/dragula.js/dist/dragula.css',
     'node_modules/@angular/material/core/theming/prebuilt/indigo-pink.css',
+    'node_modules/material-design-lite/material.min.css',
     'css/font.css', // material fonts
-    'css/ng2-styles.css'
+    'css/ng2-styles.css',
 ];
 
 if (typeof window != 'undefined' && !window.jbPackaged) {
@@ -69,13 +72,11 @@ function jb_loadEditableFile(file) {
 
 jb_modules = 
 [
-//'rxjs/Subject',
 '@angular/core', '@angular/common', '@angular/platform-browser-dynamic',
 'jb-core',
 'jb-ui',
 'ui-ts/jb-ui-utils',
 'ui-ts/jb-rx',
-'ui-ts/http',
 'ui-ts/editable-number',
 'ui-ts/tree/tree',
 'ui-ts/tree/json-tree',
@@ -112,6 +113,7 @@ jb_modules =
 'ui-ts/styles/picklist-styles',
 'ui-ts/styles/codemirror-styles',
 //'ui-ts/styles/itemlist-styles',
+'ui/mdl-styles/common-mdl-styles.js',
 
 'ui-ts/md-styles/button-md',
 'ui-ts/md-styles/dialog-md',
@@ -121,11 +123,12 @@ jb_modules =
 'ui-ts/md-styles/card-md',
 'ui-ts/md-styles/sidenav-md',
 
+'testing/data-testers',
 'testing/ui-testers',
 'testing/ui-testers-ctrls',
 ];
 
-jb_studio_modules = ['tgp-model','model-components','path','utils','main','menu','toolbar','tests','popups'
+jb_studio_modules = ['tgp-model','model-components','path','utils','main','preview','menu','toolbar','tests','popups'
 ,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
   .map(x=>'studio/studio-' + x)
@@ -140,7 +143,8 @@ jb_system_config = {
         'ui': '/src/ui',
         'ui-ts': '/dist/src/ui',
         'jb-ui': '/dist/src/ui',
-        'testing': '/dist/src/testing',
+        'testing': '/src/testing',
+        src: '/src',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
 //        'rxjs': '/node_modules/rxjs',
@@ -200,14 +204,12 @@ function jbLoadModules(modules) {
 
   return new Promise(resolve=>
     modules.map(x=>{
-      System.import(x).then(
-        (res)=>{
+      System.import(x).then(res=>{
           //console.log(x+ ' loaded successfuly');
           loadedModules[x] = res;
           loaded++;
           if (loaded == modules.length) resolve(loadedModules) 
-        },
-        (e)=>{
+        },e =>{
           loaded++;
           console.log(x,e);
           if (loaded == modules.length) resolve(loadedModules) 

@@ -22,7 +22,7 @@ jb.component('md-test.md-card-title', {
 
 jb.component('md-test.md-input', {
   type: 'test',
-  impl :{$: 'ng2-ui-test',  
+  impl :{$: 'ng2-ui-test',  disableChangeDetection: false,
     control :{ $: 'editable-text', 
       title: 'name', 
       databind: '%$person/name%', 
@@ -98,23 +98,23 @@ jb.component('md-test.editable-text-in-md-property-sheet', {
   // },
 //})
 
-jb.component('md-test.md-tabs', {
-  type: 'test',
-  impl :{$: 'ng2-ui-test', 
-  control :{$: 'tabs',
-      style :{$: 'tabs.md-tabs' },
-      tabs:[
-        {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
-        {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
-    ]
-  },
-  expectedHtmlResult :{$and: 
-      [ 
-        { $: 'contains', text: ['tab1','in tab1'] },
-        { $: 'contains', text: ['tab2'] },
-        { $not: { $: 'contains', text: ['in tab2'] } }
-       ]
-    },
-  }
-})
+// jb.component('md-test.md-tabs', {
+//   type: 'test',
+//   impl :{$: 'ng2-ui-test', 
+//   control :{$: 'tabs',
+//       style :{$: 'tabs.md-tabs' },
+//       tabs:[
+//         {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
+//         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
+//     ]
+//   },
+//   expectedHtmlResult :{$and: 
+//       [ 
+//         { $: 'contains', text: ['tab1','in tab1'] },
+//         { $: 'contains', text: ['tab2'] },
+//         { $not: { $: 'contains', text: ['in tab2'] } }
+//        ]
+//     },
+//   }
+// })
 

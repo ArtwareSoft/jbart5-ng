@@ -14,7 +14,7 @@ jb.resource('studio-helper','group-with-custom-style',
     title: 'main', 
     style : {$: 'customStyle',
     template: `<div class="jb-group">
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls" class="group-item"><div *jbComp="ctrl"></div></div>
       </div>`,
       css: `.group-item { margin-bottom: %$spacing%px; display: block }
         .group-item:last-child { margin-bottom:0 }`,
@@ -210,6 +210,20 @@ jb.component('studio-helper.menu-selection', {
   },
 })
 
+jb.component('studio-helper.data-resources', {
+  type: 'control', 
+  impl :{$: 'group', 
+    controls: [
+      {$: 'studio.data-resources' }, 
+      {$: 'button', 
+        style :{$: 'button.md-flat' }
+      }, 
+      {$: 'button', 
+        style :{$: 'button.md-flat' }
+      }
+    ]
+  }
+})
 
 
 })

@@ -42,7 +42,7 @@ jb.component('material-demo.form', {
         style :{$: 'layout.vertical' }, 
         controls: [
           {$: 'editable-text', title: 'Address', databind: '%$person/address%' }, 
-          {$: 'editable-text', title: 'Address2', databind: '%address2%' }
+          {$: 'editable-text', title: 'Address2', databind: '%$person/address2%' }
         ]
       }, 
       {$: 'group', 

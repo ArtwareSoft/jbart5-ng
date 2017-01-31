@@ -12,7 +12,7 @@ jb.component('studio.open-new-control-dialog', {
       {$: 'studio.onNextModifiedPath', 
         action: [
           {$: 'studio.openModifiedPath' }, 
-          {$: 'studio.refreshPreview' }
+          {$: 'studio.refresh-preview' }
         ]
       }, 
       {$: 'studio.insert-comp', 
@@ -111,7 +111,7 @@ jb.component('studio.openNewPage', {
       controls: [
         {$: 'editable-text', 
           databind: '%$dialogData/name%', 
-          features :{$: 'onEnter', 
+          features :{$: 'feature.onEnter', 
             action :{$: 'closeContainingPopup' }
           }, 
           title: 'page name', 

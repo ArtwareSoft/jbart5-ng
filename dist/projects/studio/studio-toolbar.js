@@ -47,7 +47,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'Refresh Preview',
-                            action: { $: 'studio.refreshPreview' },
+                            action: { $: 'studio.refresh-preview' },
                             style: { $: 'button.md-icon', icon: 'refresh' }
                         },
                         { $: 'button',
@@ -109,7 +109,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 ],
                 impl: function (context, spritePosition) {
                     return {
-                        jbTemplate: '<button class="studio-btn-toolbar" (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',
+                        template: '<button class="studio-btn-toolbar" (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',
                         init: function (cmp) {
                             cmp.pos = spritePosition.split(',').map(function (item) { return (-parseInt(item) * 16) + 'px'; }).join(' ');
                         }
@@ -121,8 +121,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: '<section class="jb-group"><jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
-                    css: "{ \n            display: flex;\n            height: 33px; \n            width: 100%;\n        }\n        * { margin-right: 0 }"
+                    template: '<section><div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div></section>',
+                    css: "section { \n            display: flex;\n            height: 33px; \n            width: 100%;\n        }\n        section>* { margin-right: 0 }"
                 }
             });
         }

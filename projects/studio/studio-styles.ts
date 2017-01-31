@@ -109,8 +109,10 @@ jb.component('property-sheet.studio-properties', {
           (mouseenter)="ctrl.hover=true" (mouseleave)="ctrl.hover=false">
         <label class="property-title">{{ctrl.comp.jb_title()}}</label>
         <div class="input-and-toolbar">
-          <jb_comp [comp]="ctrl.comp"></jb_comp>
-          <jb_comp [hidden]="!ctrl.hover" [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+          <div *jbComp="ctrl.comp"></div>
+          <div [hidden]="!ctrl.hover" class="toolbar">
+            <div *jbComp="ctrl.comp.jb_toolbar"></div>
+          </div>
         </div>
       </div>
       </div>
@@ -142,8 +144,10 @@ jb.component('property-sheet.studio-plain', {
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.comp.jb_title()}}</label>
         <div class="input-and-toolbar">
-          <jb_comp [comp]="ctrl.comp"></jb_comp>
-          <jb_comp [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+          <div *jbComp="ctrl.comp"></div>
+          <div class="toolbar">
+            <div *jbComp="ctrl.comp.jb_toolbar"></div>
+          </div>
         </div>
       </div>
       </div>
@@ -233,7 +237,7 @@ jb.component('dialog.studio-multiline-edit',{
 	impl: {$: 'customStyle',
 			template: `<div class="jb-dialog jb-popup">
 							<button class="dialog-close" (click)="dialogClose()">&#215;</button>
-							<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
+              <div *jbComp="contentComp"></div>
 						</div>`, 
 			css: `{ background: #fff; position: absolute; min-width: 280px; min-height: 200px;
 					box-shadow: 2px 2px 3px #d5d5d5; padding: 3px; border: 1px solid rgb(213, 213, 213)
@@ -290,9 +294,8 @@ jb.component('group.studio-properties-accordion', {
                 <i *ngIf="ctrl.show" class="material-icons">keyboard_arrow_down</i>
                 <i *ngIf="!ctrl.show" class="material-icons">keyboard_arrow_right</i>
           </div>
-        </div><div class="content">
-          <jb_comp *ngIf="ctrl.show" [comp]="ctrl.comp"></jb_comp>
         </div>
+        <div class="content" *ngIf="ctrl.show"><div *jbComp="ctrl.comp"></div></div>
       </div>
   </section>`, 
     methods: {

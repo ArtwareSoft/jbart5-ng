@@ -13,8 +13,8 @@ jb.component('sidenav.md', {
   ],
   impl :{$: 'customStyle',
     template: `<md-sidenav-layout>
-      <md-sidenav>
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" align="%$align%" mode="%$mode%"></jb_comp>
+      <md-sidenav align="%$align%" mode="%$mode%">
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-sidenav>
       </md-sidenav-layout>`,
     css: `md-sidenav { width: %$width%px }`,

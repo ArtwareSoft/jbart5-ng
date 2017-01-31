@@ -278,9 +278,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             })
                                 .distinctUntilChanged()
                                 .flatMap(function (e) {
-                                return getProbe().then(function (res) {
-                                    return res && res.finalResult && res.finalResult[0] && res.finalResult[0].in;
-                                });
+                                return getProbe();
+                            })
+                                .map(function (res) {
+                                return res && res.finalResult && res.finalResult[0] && res.finalResult[0].in;
                             })
                                 .map(function (probeCtx) {
                                 return new suggestions(input, ctx.params.expressionOnly).extendWithOptions(probeCtx, ctx.params.path);
@@ -289,7 +290,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 return e1.key == e2.key;
                             });
                             function getProbe() {
-                                return cmp.probeResult || ctx.run({ $: 'studio.probe', path: ctx.params.path });
+                                if (cmp.probeResult)
+                                    return cmp.probeResult;
+                                var _probe = Observable.fromPromise(ctx.run({ $: 'studio.probe', path: ctx.params.path }));
+                                _probe.subscribe(function (res) {
+                                    return cmp.probeResult = res;
+                                });
+                                // do not wait more than 500 mSec
+                                return _probe.race(Observable.of({ finalResult: [ctx] }).delay(500))
+                                    .catch(function (e) {
+                                    return jb_core_1.jb.logException(e, 'in probe exception');
+                                });
                             }
                         }
                     };

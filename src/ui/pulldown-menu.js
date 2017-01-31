@@ -3,7 +3,7 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 jb.component('pulldown.menu-item-separator', {
 	type: 'control',
 	impl: ctx => 
-		jb_ui.Comp({ jbTemplate: '<div></div>', css: '{ margin: 6px 0; border-bottom: 1px solid #EBEBEB}'},ctx)
+		jb_ui.Comp({ template: '<div></div>', css: '{ margin: 6px 0; border-bottom: 1px solid #EBEBEB}'},ctx)
 })
 
 jb.component('pulldown.menu-item-group', {
@@ -123,7 +123,7 @@ jb.component('pulldownPopup.mainMenuPopup',{
 	type: 'dialog.style',
 	impl :{$: 'customStyle',
 			template: `<div class="jb-dialog jb-popup pulldown-mainmenu-popup">
-							<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
+							<div *jbComp="contentComp" class="dialog-content"></div>
 							<div class="pulldown-menu-remove-top-border"></div>
 						</div>`, 
 			css: '.pulldown-menu-remove-top-border { width: %$popupWidth%px }',
@@ -140,7 +140,7 @@ jb.component('pulldownPopup.mainMenuPopup',{
 jb.component('pulldownPopup.contextMenuPopup',{
 	type: 'dialog.style',
 	impl :{$: 'customStyle',
-			template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
+			template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><div *jbComp="contentComp"></div></div>',
 			features: [
 				{ $: 'dialog-feature.uniqueDialog', id: 'pulldown context menu popup', remeberLastLocation: false },
 				{ $: 'dialog-feature.maxZIndexOnClick' },

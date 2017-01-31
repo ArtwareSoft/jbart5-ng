@@ -53,25 +53,9 @@ jb.component('itemlist.init', {
               });
 
           cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
-
-          cmp.ctrlOfItem = item =>
-            context.vars.$model.controls(ctx3)
       },
       observable: () => {} // to create jbEmitter
   }}
-})
-
-jb.component('itemlist.ul-li', {
-  type: 'itemlist.style',
-  impl :{$: 'customStyle',
-    features :{$: 'group.initGroup'},
-    template: `<div><ul class="jb-itemlist">
-      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading">
-        <jb_comp [comp]="ctrl.comp" [flatten]="true"></jb_comp>
-      </li>
-      </ul></div>`,
-    css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
-  }
 })
 
 jb.component('itemlist.divider', {
@@ -139,14 +123,12 @@ jb.component('itemlist.selection', {
             jb.writeValue(ctx.params.databind,cmp.selected);
         }
     },
-    innerhost: {
-      '.jb-item': {
-        '[class.active]': 'active == ctrl.comp.ctx.data',
-        '[class.selected]': 'selected == ctrl.comp.ctx.data',
-        '(mouseenter)': 'active = ctrl.comp.ctx.data',
-        '(mouseleave)': 'active = null',
-        '(click)': 'selected = ctrl.comp.ctx.data ; clickSrc.next($event)'
-      }
+    templateModifier: {
+      jbItem: `[class.active]="active == ctrl.comp.ctx.data" 
+        [class.selected]="selected == ctrl.comp.ctx.data"
+        (mouseenter)="active = ctrl.comp.ctx.data"
+        (mouseleave)="active = null"
+        (click)="selected = ctrl.comp.ctx.data ; clickSrc.next($event)"`
     },
     css: `.jb-item.selected { background: #bbb; color: #fff }
     .jb-item.active:not(.heading) { background: #337AB7; color: #fff }
@@ -217,5 +199,19 @@ jb.component('itemlist.drag-and-drop', {
       }
     })
 })
+
+jb.component('itemlist.ul-li', {
+  type: 'itemlist.style',
+  impl :{$: 'customStyle',
+    features :{$: 'group.initGroup'},
+    template: `<div><ul class="jb-itemlist">
+      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading" #jbItem>
+        <div *jbComp="ctrl.comp"></div>
+      </li>
+      </ul></div>`,
+    css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
+  }
+})
+
 
 })

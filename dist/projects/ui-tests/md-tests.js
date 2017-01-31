@@ -28,7 +28,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             });
             jb_core_1.jb.component('md-test.md-input', {
                 type: 'test',
-                impl: { $: 'ng2-ui-test',
+                impl: { $: 'ng2-ui-test', disableChangeDetection: false,
                     control: { $: 'editable-text',
                         title: 'name',
                         databind: '%$person/name%',
@@ -71,51 +71,52 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     expectedHtmlResult: { $: 'contains', text: ['Homer'] },
                 }
             });
-            //jb.component('md-test.dialog-md-alert', {
-            //type: 'test',
-            //  impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-            //   control :{$: 'button', title: 'Open Dialog', $click: true,
-            //       action :{$: 'openDialog', 
-            //         style :{$: 'dialog.md-dialog-ok-cancel'},
-            //         title: 'Hello' , 
-            //         content :{$: 'label', title: 'Hello Dialog' },      
-            //       } 
-            //   },
-            //   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
-            // },
-            //})
-            // jb.component('md-test.md-dialog-modal', {
-            //type: 'test',
-            //   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-            //   control :{$: 'button', title: 'Open Dialog', $click: true,
-            //       action :{$: 'openDialog', 
-            //         modal: true,
-            //         style :{$: 'dialog.md-dialog-ok-cancel' },
-            //         title: 'Hello' , 
-            //         content :{$: 'label', title: 'Hello Dialog' },      
-            //       } 
-            //   },
-            //   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
-            // },
-            //})
-            jb_core_1.jb.component('md-test.md-tabs', {
-                type: 'test',
-                impl: { $: 'ng2-ui-test',
-                    control: { $: 'tabs',
-                        style: { $: 'tabs.md-tabs' },
-                        tabs: [
-                            { $: 'group', title: 'tab1', controls: { $: 'label', title: 'in tab1' } },
-                            { $: 'group', title: 'tab2', controls: { $: 'label', title: 'in tab2' } },
-                        ]
-                    },
-                    expectedHtmlResult: { $and: [
-                            { $: 'contains', text: ['tab1', 'in tab1'] },
-                            { $: 'contains', text: ['tab2'] },
-                            { $not: { $: 'contains', text: ['in tab2'] } }
-                        ]
-                    },
-                }
-            });
         }
     }
 });
+//jb.component('md-test.dialog-md-alert', {
+//type: 'test',
+//  impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+//   control :{$: 'button', title: 'Open Dialog', $click: true,
+//       action :{$: 'openDialog', 
+//         style :{$: 'dialog.md-dialog-ok-cancel'},
+//         title: 'Hello' , 
+//         content :{$: 'label', title: 'Hello Dialog' },      
+//       } 
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
+// },
+//})
+// jb.component('md-test.md-dialog-modal', {
+//type: 'test',
+//   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
+//   control :{$: 'button', title: 'Open Dialog', $click: true,
+//       action :{$: 'openDialog', 
+//         modal: true,
+//         style :{$: 'dialog.md-dialog-ok-cancel' },
+//         title: 'Hello' , 
+//         content :{$: 'label', title: 'Hello Dialog' },      
+//       } 
+//   },
+//   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog', 'OK'], lookin: 'popups' },
+// },
+//})
+// jb.component('md-test.md-tabs', {
+//   type: 'test',
+//   impl :{$: 'ng2-ui-test', 
+//   control :{$: 'tabs',
+//       style :{$: 'tabs.md-tabs' },
+//       tabs:[
+//         {$: 'group', title: 'tab1', controls :{$: 'label', title: 'in tab1' }},
+//         {$: 'group', title: 'tab2', controls :{$: 'label', title: 'in tab2' }},
+//     ]
+//   },
+//   expectedHtmlResult :{$and: 
+//       [ 
+//         { $: 'contains', text: ['tab1','in tab1'] },
+//         { $: 'contains', text: ['tab2'] },
+//         { $not: { $: 'contains', text: ['in tab2'] } }
+//        ]
+//     },
+//   }
+// })

@@ -8,7 +8,7 @@ jb.component('layout.vertical', {
   ],
   impl :{$: 'customStyle',
     template: `<div class="jb-group">
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls" class="group-item"><div *jbComp="ctrl"></div></div>
       </div>`,
       css: `.group-item { margin-bottom: %$spacing%px; display: block }
         .group-item:last-child { margin-bottom:0 }`,
@@ -23,9 +23,9 @@ jb.component('layout.horizontal', {
   ],
   impl :{$: 'customStyle',
     template: `<div class="jb-group">
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls" class="group-item"><div *jbComp="ctrl"></div></div>
       </div>`,
-    css: `{display: flex}
+    css: `.jb-group {display: flex}
         .group-item { margin-right: %$spacing%px }
         .group-item:last-child { margin-right:0 }`,
     features :{$: 'group.initGroup'}
@@ -41,10 +41,10 @@ jb.component('layout.flex', {
   ],
   impl :{$: 'customStyle',
     template: `<div class="jb-group">
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls" class="group-item"><div *jbComp="ctrl"></div></div>
       </div>`,
 //    css: '{ %$flexProps% }',
-    css: '{ display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
+    css: '.jb-group { display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
     features :{$: 'group.initGroup'}
   }
 })
@@ -105,7 +105,7 @@ jb.component('flex-filler', {
         `flex-shrink: ${shrink}`, 
       ].join('; ');
 
-      return jb_ui.Comp({ jbTemplate: `<div style="${css}"></div>`},ctx)
+      return jb_ui.Comp({ template: `<div style="${css}"></div>`},ctx)
     }
 })
 

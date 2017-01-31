@@ -12,6 +12,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     };
     var jb_core_1, core_1, platform_browser_1, common_1, http_1, forms_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, jbCompModule, jBartWidgetModule;
+    //jbart.zones = jbart.zones || {}
     function apply(ctx) {
         return jb_core_1.jb.delay(1).then(function () {
             return ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
@@ -24,9 +25,10 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     exports_1("delayOutsideAngular", delayOutsideAngular);
     function applyPreview(ctx) {
         var _win = jbart.previewWindow || window;
-        jb_core_1.jb.delay(1).then(function () {
-            return jb_core_1.jb.entries(_win.jbart.zones).forEach(function (x) { return x[1].run(function () { }); });
-        });
+        _win.setTimeout(function () { }, 1);
+        //    jb.delay(1).then(()=>
+        // 	jb.entries(_win.jbart.zones).forEach(x=>x[1].run(()=>{}))
+        // )
     }
     exports_1("applyPreview", applyPreview);
     function ctrl(context) {
@@ -71,14 +73,16 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         Cmp.prototype.ngAfterViewInit = function () {
             var _this = this;
             this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
-            this.jbEmitter && this.jbEmitter.next('after-init');
-            delayOutsideAngular(this.ctx, function () {
-                if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
-                    _this.jbEmitter.next('after-init-children');
-                    if (_this.readyCounter == null)
-                        _this.jbEmitter.next('ready');
-                }
-            });
+            if (this.jbEmitter) {
+                this.jbEmitter.next('after-init');
+                jb_native_delay(1).then(function () {
+                    if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
+                        _this.jbEmitter.next('after-init-children');
+                        if (_this.readyCounter == null)
+                            _this.jbEmitter.next('ready');
+                    }
+                });
+            }
         };
         Cmp.prototype.ngDoCheck = function () {
             var _this = this;
@@ -99,8 +103,9 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         Cmp.prototype.jbWait = function () {
             var _this = this;
             this.readyCounter = (this.readyCounter || 0) + 1;
-            if (this.parentCmp && this.parentCmp.jbWait)
-                this.parentWaiting = this.parentCmp.jbWait();
+            var parentCmp = this.parentCmp && this.parentCmp.parent();
+            if (parentCmp && parentCmp.jbWait)
+                this.parentWaiting = parentCmp.jbWait();
             return {
                 ready: function () {
                     _this.readyCounter--;
@@ -114,118 +119,28 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         };
     }
     exports_1("injectLifeCycleMethods", injectLifeCycleMethods);
-    // function optionsOfProfile(profile) {
-    // 	if (!profile) return {}
-    // 	var res = {};
-    // 	['cssClass','css'] // 'atts','styles',
-    // 		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
-    // 	return res;
-    // }
-    // function mergeOptions(op1,op2) {
-    // 	var res = {};
-    // 	if (op1.cssClass || op2.cssClass)
-    // 		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-    // 	if (op1.styles || op2.styles)
-    // 		res.styles = (op1.styles || []).concat(op2.styles || [])
-    // 	return jb_extend({},op1,op2,res);
-    // }
-    function setTemplateAtt(element, att, value) {
-        if (!element.getAttribute)
-            debugger;
-        if (('' + value).indexOf('[object') != -1)
-            return; // avoid bugs - no object host
-        var currentVal = element.getAttribute(att);
-        if (att == 'ngIf')
-            element.setAttribute('template', 'ngIf ' + value);
-        else if (att == 'class')
-            element.setAttribute(att, currentVal ? currentVal + ' ' + value : value);
-        else
-            addAttribute(element, att, value);
-    }
-    function jbTemplate(options) {
-        options.jbTemplate = (options.jbTemplate || '').trim();
-        if (!options.jbTemplate)
-            return;
-        var template = parseHTML(options.jbTemplate);
-        var host = jb_extend({}, options.host);
-        Array.from(template.attributes || [])
-            .filter(function (att) {
-            var ngAtt = att.name.indexOf('*ng') != -1;
-            if (ngAtt)
-                jb_core_1.jb.logError('ng atts are not allowed in root element of template: ' + att.name, { ctx: ctrl_ctx, att: att });
-            return !ngAtt;
-        })
-            .forEach(function (att) { return host[att.name] = att.value; });
-        jb_core_1.jb.extend(options, {
-            template: template.innerHTML.trim(),
-            selector: template.tagName,
-            host: host
-        });
-    }
-    function insertComponent(comp, resolver, parentView) {
-        return comp.compile(resolver).then(function (componentFactory) {
-            return comp.registerMethods(parentView.createComponent(componentFactory), comp);
-        });
-    }
-    exports_1("insertComponent", insertComponent);
-    function parseHTML(text) {
-        var res = document.createElement('div');
-        res.innerHTML = text;
-        setNgPath(res.firstChild, '');
-        return res.firstChild;
-        function setNgPath(elem, curPath) {
-            if (!elem || elem.nodeType != 1)
-                return;
-            addAttribute(elem, 'ng-path', curPath);
-            Array.from(elem.children).forEach(function (e, index) {
-                return setNgPath(e, curPath === '' ? index : (curPath + '~' + index));
-            });
-        }
-    }
-    exports_1("parseHTML", parseHTML);
-    function addAttribute(element, attrName, attrValue) {
-        var tmpElm = document.createElement('p');
-        tmpElm.innerHTML = "<p " + attrName + "='" + attrValue + "'></p>";
-        var newAttr = tmpElm.children[0].attributes[0].cloneNode(true);
-        element.setAttributeNode(newAttr);
-    }
-    exports_1("addAttribute", addAttribute);
     function wrapWithLauchingElement(f, context, elem) {
         var native = elem.nodeType ? elem : elem.nativeElement;
         return function () {
-            f(context.setVars({ $launchingElement: { elem: elem, $el: $(native) } }));
+            f(context.setVars({ $launchingElement: { elem: elem, $el: $(native).children().first() } }));
         };
     }
     exports_1("wrapWithLauchingElement", wrapWithLauchingElement);
-    function getZone(zoneId) {
-        return new Promise(function (resolve, fail) {
-            var counter = 30;
-            var intervalID = setInterval(function () {
-                if (jbart.zones[zoneId]) {
-                    window.clearInterval(intervalID);
-                    resolve(jbart.zones[zoneId]);
-                }
-                if (--counter <= 0) {
-                    window.clearInterval(intervalID);
-                    fail();
-                }
-            }, 100);
-        });
-    }
-    exports_1("getZone", getZone);
-    function registerDirectives(obj) {
-        jb_core_1.jb.entries(obj).forEach(function (e) {
-            if (!e[1])
-                jb_core_1.jb.logError('registerDirectives: no object for directive ' + e[0]);
-            else
-                jbart.ng.directives[e[0]] = e[1];
-        });
-    }
-    exports_1("registerDirectives", registerDirectives);
-    function registerProviders(obj) {
-        jb_core_1.jb.extend(jbart.ng.providers, obj);
-    }
-    exports_1("registerProviders", registerProviders);
+    // export function getZone(zoneId) {
+    // 	return new Promise((resolve,fail)=> {
+    // 		var counter = 30;
+    // 		var intervalID = setInterval(function() {
+    // 			if (jbart.zones[zoneId]) {
+    // 				window.clearInterval(intervalID);
+    // 				resolve(jbart.zones[zoneId]);
+    // 			}
+    // 			if (--counter <= 0) {
+    // 				window.clearInterval(intervalID);
+    // 				fail();
+    // 			}
+    // 		}, 100);	
+    // 	})
+    // }
     function garbageCollectCtxDictionary() {
         var now = new Date().getTime();
         jbart.ctxDictionaryLastCleanUp = jbart.ctxDictionaryLastCleanUp || now;
@@ -268,7 +183,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
             }],
         execute: function() {
             core_1.enableProdMode();
-            jbart.zones = jbart.zones || {};
             factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
             jbComponent = (function () {
                 function jbComponent(ctx) {
@@ -311,7 +225,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 };
                 jbComponent.prototype.wrapCompWithModule = function (comp) {
                     var DynamicModule = function () { };
-                    //Reflect.getMetadata('annotations', jbCompModule)[0].declarations = [jbComp].concat(jb.entries(jbart.ng.directives).map(x=>x[1]));
                     var DynamicModule = Reflect.decorate([
                         core_1.NgModule({
                             imports: [jbCompModule, common_1.CommonModule, platform_browser_1.BrowserModule, forms_1.FormsModule]
@@ -331,7 +244,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     cmp.methodHandler = this.methodHandler;
                     var elem = cmp_ref._hostElement.nativeElement;
                     elem.setAttribute('jb-ctx', ctx.id);
-                    //		cmp.renderer.setElementAttribute(elem,'jb-ctx',ctx.id);
                     garbageCollectCtxDictionary();
                     jbart.ctxDictionary[ctx.id] = ctx;
                     if (this.cssFixes.length > 0) {
@@ -364,23 +276,18 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 jbComponent.prototype.createComp = function () {
                     if (!this.annotations.selector)
                         this.annotations.selector = 'jb-comp';
-                    var Cmp = function (elementRef, changeDetection) { this.elementRef = elementRef; this.changeDt = changeDetection; };
+                    var Cmp = function (elementRef, changeDetection, renderer) { this.elementRef = elementRef; this.changeDt = changeDetection; this.renderer = renderer; };
                     Cmp = Reflect.decorate([
                         core_1.Component(this.annotations),
-                        Reflect.metadata('design:paramtypes', [core_1.ElementRef, core_1.ChangeDetectorRef])
+                        Reflect.metadata('design:paramtypes', [core_1.ElementRef, core_1.ChangeDetectorRef, core_1.Renderer])
                     ], Cmp);
                     injectLifeCycleMethods(Cmp);
                     return Cmp;
                 };
                 jbComponent.prototype.jbCtrl = function (context) {
-                    // var options = mergeOptions(
-                    // 	optionsOfProfile(context.params.style && context.params.style.profile),
-                    // 	optionsOfProfile(context.profile));
-                    // if (Object.getOwnPropertyNames(options).length > 0)
-                    // 	debugger;
                     var _this = this;
-                    (context.params.features && context.params.features(context) || [])
-                        .forEach(function (f) { return _this.jbExtend(f, context); });
+                    var features = (context.params.features && context.params.features(context) || []);
+                    features.forEach(function (f) { return _this.jbExtend(f, context); });
                     if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
                         jb_core_1.jb.toarray(context.params.style.profile.features)
                             .forEach(function (f, i) {
@@ -398,7 +305,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         return this;
                     if (typeof options != 'object')
                         debugger;
-                    jbTemplate(options);
+                    //    	jbTemplate(options);
                     if (options.beforeInit)
                         this.methodHandler.jbBeforeInitFuncs.push(options.beforeInit);
                     if (options.init)
@@ -424,13 +331,16 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                             .map(function (x) { return x.trim(); })
                             .filter(function (x) { return x; })
                             .map(function (x) { return x + '}'; }));
-                    //		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+                    options.styles = options.styles && (options.styles || []).map(function (st) { return context.exp(st); }).map(function (x) { return x.trim(); });
                     // fix ng limit - root style as style attribute at the template
                     (options.styles || [])
                         .filter(function (x) { return x.match(/^{([^]*)}$/m); })
                         .forEach(function (x) {
-                        return jb_core_1.jb.path(options, ['atts', 'style'], x.match(/^{([^]*)}$/m)[1]);
+                        if (_this.cssFixes.indexOf(x) == -1)
+                            _this.cssFixes.push('>*' + x);
                     });
+                    // .forEach(x=>
+                    // 	jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]));
                     (options.styles || [])
                         .filter(function (x) { return x.match(/^:/m); }) // for example :hover
                         .forEach(function (x) {
@@ -438,7 +348,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                             _this.cssFixes.push(x);
                     });
                     (options.styles || [])
-                        .map(function (x) { return x.trim(); })
                         .filter(function (x) { return x.match(/^\!/m); }) // ! affect internal selectors
                         .forEach(function (x) {
                         if (_this.cssFixes.indexOf(x) == -1)
@@ -446,7 +355,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     });
                     var annotations = this.annotations;
                     var overridable_props = ['selector', 'template', 'encapsulation'];
-                    var extendable_array_props = ['styles'];
+                    var extendable_array_props = ['styles', 'imports', 'providers'];
                     overridable_props.forEach(function (prop) {
                         if (options[prop] !== undefined || annotations[prop] != undefined)
                             annotations[prop] = options[prop] || annotations[prop];
@@ -457,51 +366,21 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     });
                     if (options.disableChangeDetection)
                         annotations.changeDetection = core_1.ChangeDetectionStrategy.OnPush;
-                    if (options.imports)
-                        annotations.imports = (annotations.imports || []).concat(jb_core_1.jb.toarray(options.imports));
-                    if (options.providers)
-                        annotations.providers = (annotations.providers || []).concat(jb_core_1.jb.toarray(options.providers));
-                    // if (options.directives !== undefined)
-                    // 		annotations.directives = (annotations.directives || []).concat(
-                    // 			jb.toarray(options.directives).map(x=>
-                    // 				typeof x == 'string' ? jbart.ng.directives[x] : x)
-                    // 			)
-                    options.atts = jb_core_1.jb.extend({}, options.atts, options.host); // atts is equvivalent to host
                     if (options.cssClass)
-                        jb_core_1.jb.path(options, ['atts', 'class'], options.cssClass);
-                    Object.getOwnPropertyNames(options.atts || {})
-                        .forEach(function (att) {
-                        var val = context.exp(options.atts[att]).trim();
-                        if (att == 'ngIf')
-                            return jb_core_1.jb.path(annotations, ['host', 'template'], 'ngIf ' + val);
-                        if (att == 'class' && jb_core_1.jb.path(annotations, ['host', 'class']))
-                            val = jb_core_1.jb.path(annotations, ['host', 'class']) + ' ' + val;
-                        if (att == 'style' && (jb_core_1.jb.path(annotations, ['host', 'style']) || '').indexOf(val) == -1)
-                            val = jb_core_1.jb.path(annotations, ['host', 'style']) + '; ' + val;
-                        jb_core_1.jb.path(annotations, ['host', att], val);
-                    });
-                    if (annotations.template && typeof annotations.template != 'string')
-                        debugger;
-                    annotations.template = annotations.template && annotations.template.trim();
-                    if (options.innerhost)
-                        try {
-                            var template = parseHTML("<div>" + (annotations.template || '') + "</div>");
-                            Object.getOwnPropertyNames(options.innerhost || {}).forEach(function (selector) {
-                                var elems = selector == '*' ? [template] : Array.from(template.querySelectorAll(selector));
-                                elems.forEach(function (element) {
-                                    Object.getOwnPropertyNames(options.innerhost[selector]).forEach(function (att) {
-                                        var value = context.exp(options.innerhost[selector][att]);
-                                        setTemplateAtt(element, att, value);
-                                    });
-                                });
-                            });
-                            annotations.template = template.innerHTML;
-                        }
-                        catch (e) {
-                            jb_core_1.jb.logException(e, '');
-                        }
-                    // ng-model or ngmodel => ngModel
-                    annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, function (st) { return st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase(); });
+                        options.cssClass.split(' ').forEach(function (clz) {
+                            return jb_core_1.jb.path(options, ['host', '[class.' + clz + ']'], 'true');
+                        });
+                    if (options.host)
+                        annotations.host = jb_core_1.jb.extend(annotations.host || {}, options.host);
+                    if (annotations.template) {
+                        if (typeof annotations.template != 'string')
+                            debugger;
+                        annotations.template = annotations.template.trim();
+                        jb_core_1.jb.entries(options.templateModifier)
+                            .forEach(function (mod) {
+                            return annotations.template = annotations.template.replace('#' + mod[0], '#' + mod[0] + ' ' + mod[1]);
+                        });
+                    }
                     (options.featuresOptions || []).forEach(function (f) {
                         return _this.jbExtend(f, context);
                     });
@@ -510,167 +389,67 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 return jbComponent;
             }());
             jbComp = (function () {
-                function jbComp(compiler, ngZone) {
+                function jbComp(compiler, ngZone, view, elementRef, renderer) {
                     this.compiler = compiler;
                     this.ngZone = ngZone;
-                    this.lifeCycleEm = new jb_rx.Subject();
+                    this.view = view;
+                    this.elementRef = elementRef;
+                    this.renderer = renderer;
+                    this.destroyNotifier = new jb_rx.Subject();
                 }
+                Object.defineProperty(jbComp.prototype, "jbComp", {
+                    set: function (comp) {
+                        comp && this.draw(comp);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 jbComp.prototype.ngOnInit = function () {
-                    // redraw if script changed at studio
-                    var _this = this;
-                    // create adapter observer on the preview window
-                    var studioModifiedCtrlsEm = jbart.studioModifiedCtrlsEm ? jb_rx.Observable.create(function (observer) {
-                        jbart.studioModifiedCtrlsEm.subscribe(function (x) {
-                            return observer.next(x);
-                        }, function (x) { return observer.error(x); }, function () { return observer.complete(); });
-                    })
-                        : jb_rx.Observable.of();
-                    (jbart.modifiedCtrlsEm || jb_rx.Observable.of())
-                        .merge(studioModifiedCtrlsEm)
-                        .takeUntil(this.lifeCycleEm.filter(function (x) { return x == 'destroy'; }))
-                        .flatMap(function (e) {
-                        if (_this.comp && [_this.comp.callerPath, _this.comp.ctx && _this.comp.ctx.path].indexOf(e.path) != -1) {
-                            jb_core_1.jb.delay(100, _this.comp.ctx).then(function () {
-                                var elemToHighlight = _this._nativeElement;
-                                if (e.ngPath)
-                                    elemToHighlight = e.ngPath.split('~').reduce(function (elem, index) {
-                                        return elem && Array.from(elem.children)[index];
-                                    }, elemToHighlight.firstChild);
-                                $(elemToHighlight).addClass('jb-highlight-comp-changed');
-                            });
-                            if (jbart.profileFromPath) {
-                                var prof = jbart.profileFromPath(e.path);
-                                var ctxToRun = _this.comp.ctx.ctx({ profile: prof, comp: e.path, path: '' });
-                                var comp = ctxToRun.runItself();
-                                return [comp];
-                            }
-                        }
-                        return [];
-                    })
-                        .startWith(this.comp)
-                        .filter(function (comp) {
-                        return comp;
-                    })
-                        .subscribe(function (comp) {
-                        _this.draw(comp);
-                        if (comp != _this.comp)
-                            applyPreview(comp.ctx);
-                        _this.comp = comp;
-                    });
+                    jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
                 };
-                jbComp.prototype.ngOnDestroy = function () {
-                    this.modifiedObs && this.modifiedObs.unsubscribe();
-                    this.lifeCycleEm.next('destroy');
-                    this.lifeCycleEm.complete();
+                // ngDoCheck() {
+                // 	if (this.jbComp != this.oldComp) {
+                // 		this.oldComp = this.jbComp;
+                // 		this.draw(this.jbComp);
+                // 	}
+                // }
+                jbComp.prototype.parent = function () {
+                    try {
+                        return this.cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4.context;
+                    }
+                    catch (e) {
+                        return null;
+                    }
                 };
                 jbComp.prototype.draw = function (comp) {
                     var _this = this;
                     if (!comp)
                         return;
-                    if (this.jbDispose) {
-                        this.jbDispose();
-                        console.log('jb_comp: replacing existing component');
-                    }
-                    this.ngZone.runOutsideAngular(function () {
-                        if (comp && comp.compile)
-                            var componentFactory = comp.compile(_this.compiler);
-                        else {
-                            var dynamicModule = _this.wrapCompWithModule(comp);
-                            var componentFactory = _this.compiler.compileModuleAndAllComponentsSync(dynamicModule)
-                                .componentFactories[0];
-                        }
-                        var cmp_ref = _this.childView.createComponent(componentFactory);
+                    this._comp = comp.comp || comp;
+                    this.view.clear();
+                    [this._comp]
+                        .filter(function (comp) { return comp.compile; })
+                        .forEach(function (comp) {
+                        var componentFactory = comp.compile(_this.compiler);
+                        var cmp_ref = _this.cmp_ref = _this.view.createComponent(componentFactory);
                         comp.registerMethods && comp.registerMethods(cmp_ref, _this);
-                        _this.flattenjBComp(cmp_ref);
+                        _this.ngZone.run(function () { });
                     });
                 };
-                jbComp.prototype.wrapCompWithModule = function (comp) {
-                    var DynamicModule = function () { };
-                    var DynamicModule = Reflect.decorate([
-                        core_1.NgModule({
-                            imports: [platform_browser_1.BrowserModule],
-                            declarations: [comp],
-                            exports: [comp]
-                        }),
-                    ], DynamicModule);
-                    return DynamicModule;
-                };
-                // jbWait() {
-                // this.readyCounter = (this.readyCounter || 0)+1;
-                // if (this.parentCmp && this.parentCmp.jbWait)
-                // 	this.parentWaiting = this.parentCmp.jbWait();
-                // return {
-                // 	ready: () => {
-                // 		this.readyCounter--;
-                // 		if (!this.readyCounter) {
-                // 			this.jbEmitter && this.jbEmitter.next('ready');
-                // 			if (this.parentWaiting)
-                // 				this.parentWaiting.ready();
-                // 		}
-                // 	}
-                // }
-                // }
-                // very ugly: flatten the structure and pushing the dispose function to the group parent.
-                jbComp.prototype.flattenjBComp = function (cmp_ref) {
-                    var cmp = this;
-                    cmp.jbDispose = function () {
-                        return cmp_ref.destroy();
-                    };
-                    return;
-                    this._nativeElement = cmp_ref._hostElement.nativeElement;
-                    // assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-                    var parentInjector = cmp_ref.hostView._view.parentInjector._view.parentInjector._view;
-                    var parentCmp = parentInjector && (parentInjector._Cmp_0_4 || parentInjector.context);
-                    if (!parentCmp)
-                        return jb_core_1.jb.logError('flattenjBComp: can not get parent component');
-                    if (cmp._deleted_parent)
-                        return jb_core_1.jb.logError('flattenjBComp: deleted parent exists');
-                    this.parentCmp = parentCmp;
-                    if (!cmp.flatten)
-                        return;
-                    var to_keep = cmp_ref._hostElement.nativeElement;
-                    var to_delete = to_keep.parentNode;
-                    cmp._deleted_parent = to_delete;
-                    // copy class and ng id attributes - for css
-                    to_keep.className = ((to_keep.className || '') + ' ' + (to_delete.className || '')).trim();
-                    Array.from(to_delete.attributes).map(function (x) { return x.name; })
-                        .filter(function (x) { return x.match(/_ng/); })
-                        .forEach(function (att) {
-                        return to_keep.setAttribute(att, to_delete.getAttribute(att));
-                    });
-                    $(to_delete).replaceWith(to_keep);
-                    parentCmp.jb_disposable = parentCmp.jb_disposable || [];
-                    cmp.jbDispose = function () {
-                        if (!cmp._deleted_parent)
-                            return; // already deleted
-                        try {
-                            $(to_keep).replaceWith(cmp._deleted_parent);
-                            cmp._deleted_parent.appendChild(to_keep);
-                        }
-                        catch (e) { }
-                        cmp._deleted_parent = null;
-                        cmp_ref.destroy();
-                    };
-                    parentCmp.jb_disposable.push(cmp.jbDispose);
+                jbComp.prototype.ngOnDestroy = function () {
+                    this.destroyNotifier.next('destroy');
+                    this.destroyNotifier.complete();
                 };
                 __decorate([
                     core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], jbComp.prototype, "comp", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], jbComp.prototype, "flatten", void 0);
-                __decorate([
-                    core_1.ViewChild('jb_comp', { read: core_1.ViewContainerRef }), 
-                    __metadata('design:type', Object)
-                ], jbComp.prototype, "childView", void 0);
+                    __metadata('design:type', Object), 
+                    __metadata('design:paramtypes', [Object])
+                ], jbComp.prototype, "jbComp", null);
                 jbComp = __decorate([
-                    core_1.Component({
-                        selector: 'jb_comp',
-                        template: '<div #jb_comp></div>',
+                    core_1.Directive({
+                        selector: '[jbComp]',
                     }), 
-                    __metadata('design:paramtypes', [core_1.Compiler, core_1.NgZone])
+                    __metadata('design:paramtypes', [core_1.Compiler, core_1.NgZone, core_1.ViewContainerRef, core_1.ElementRef, core_1.Renderer])
                 ], jbComp);
                 return jbComp;
             }());
@@ -683,45 +462,39 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 }
                 jBartWidget.prototype.ngOnInit = function () {
                     var _this = this;
-                    jbart.widgetLoaded = true; // indication for waitForIframeLoad
+                    jbart.widgetLoaded = true; // indication for studio 
                     this.compId = this.elementRef.nativeElement.getAttribute('compID');
                     this.dialogs = jbart.jb_dialogs.dialogs;
-                    if (this.compId)
-                        jbart.zones[this.compId] = this.ngZone;
-                    if (this.compId == 'studio.all')
+                    // if (this.compId)
+                    // 	jbart.zones[this.compId] = this.ngZone;
+                    if (this.compId == 'studio.all') {
                         jbart.redrawStudio = function () {
                             return _this.draw();
                         };
+                    }
+                    this.isPreview = window && window.parent != window && window.parent.document.title == 'jBart Studio';
+                    if (!this.isPreview)
+                        this.draw();
                 };
                 jBartWidget.prototype.ngAfterViewInit = function () {
                     var _this = this;
-                    jb_core_1.jb.delay(100).then(function () {
-                        if (jbart.modifyOperationsEm) {
-                            _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
-                            var counterChange = jbart.studioActivityEm
-                                .map(function (x) { return jbart.previewRefreshCounter; })
-                                .distinctUntilChanged();
-                            var compIdEm = jbart.studioActivityEm
-                                .map(function () {
-                                return _this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
-                            })
-                                .distinctUntilChanged()
-                                .merge(counterChange)
-                                .startWith(_this.compId);
-                            compIdEm.subscribe(function () {
-                                return _this.draw();
-                            });
-                        }
-                        else {
-                            _this.draw();
-                        }
-                    });
+                    if (this.isPreview)
+                        jb_waitFor(function () { return jbart.studioAutoRefreshWidget; }).then(function () {
+                            jbart.studioAutoRefreshWidget(_this);
+                        });
+                };
+                jBartWidget.prototype.ngDoCheck = function () {
+                    console.log(window.document.title);
                 };
                 jBartWidget.prototype.draw = function () {
-                    this.comps = [];
                     try {
-                        if (this.compId)
-                            this.comps = [jb_run(jb_core_1.jb.ctx(this.getOrCreateInitialCtx(), { profile: { $: this.compId }, comp: this.compId, path: '' }))];
+                        if (this.compId) {
+                            this.comp = jb_run(jb_core_1.jb.ctx(this.getOrCreateInitialCtx(), { profile: { $: this.compId }, comp: this.compId, path: '' }));
+                            if (this.isPreview) {
+                                this.ngZone.run(function () { });
+                                setTimeout(function (_) { }, 1);
+                            }
+                        }
                     }
                     catch (e) {
                         jb_core_1.jb.logException(e, '');
@@ -741,7 +514,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 jBartWidget = __decorate([
                     core_1.Component({
                         selector: 'jbart',
-                        template: "<div *ngFor=\"let comp of comps\"><jb_comp [comp]=\"comp\"></jb_comp></div>\n\t\t\t\t<div *ngFor=\"let dialog of dialogs\">\n\t\t\t\t\t<jb_comp [comp]=\"dialog.comp\"></jb_comp>\n\t\t\t\t</div>",
+                        template: "<div *jbComp=\"comp\"></div>\n\t\t        <div *ngFor=\"let dialog of dialogs\"><div *jbComp=\"dialog\"></div></div>",
                         directives: [jbComp]
                     }), 
                     __metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone, core_1.Injector])
@@ -749,10 +522,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 return jBartWidget;
             }());
             exports_1("jBartWidget", jBartWidget);
-            jbart.ng = {
-                providers: {},
-                directives: {}
-            };
             jbCompModule = (function () {
                 function jbCompModule() {
                 }

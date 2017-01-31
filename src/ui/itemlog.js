@@ -13,28 +13,26 @@ jb.component('itemlog',{
     { id: 'counter',as : 'ref'},
 		{ id: 'features', type: 'feature[]', dynamic: true },
 	],
-	impl: function(context) {
-    return jb_ui.ctrl(context).jbExtend({
+	impl: ctx =>
+    jb_ui.ctrl(ctx).jbExtend({
         beforeInit: cmp => {
-          cmp.items = [];
-          cmp.itemToComp = item => 
-            context.params.controls(item.setVars(jb.obj(context.params.itemVariable,item.data))) [0];
-
-          context.params.items(context).subscribe(itemCtx=>  {
-              cmp.items.unshift(itemCtx);
-              if (context.params.counter)
-                jb.writeValue(context.params.counter,cmp.items.length)
+          cmp.ctrls = [];
+          ctx.params.items(ctx).subscribe(itemCtx=>  {
+              var ctrl = ctx.params.controls(itemCtx.setVars(jb.obj(ctx.params.itemVariable,itemCtx.data)))[0];
+              cmp.ctrls.unshift(ctrl);
+              if (ctx.params.counter)
+                jb.writeValue(ctx.params.counter,cmp.ctrls.length);
+              jb_ui.apply(ctx);
           })
       }
-    });
-	}
+    })
 })
 
 jb.component('itemlog.div', {
   type: 'group.style',
   impl :{$: 'customStyle',
-    template: `<div class="jb-group jb-itemlog"><div jb-item *ngFor="let item of items">
-        <jb_comp [comp]="itemToComp(item)" flatten="true"></jb_comp>
+    template: `<div class="jb-group jb-itemlog"><div jb-item *ngFor="let ctrl of ctrls">
+        <div *jbComp="ctrl"></div>
       </div></div>`
   }
 })

@@ -8,19 +8,19 @@ jb.component('customStyle', {
     	{ id: 'features', type: 'feature[]', dynamic: true },
 		{ id: 'methods', as: 'object'},
 		{ id: 'atts', as: 'object'},
-		{ id: 'imports', ignore: true }
+		{ id: 'imports', ignore: true },
+//		{ id: 'noTemplateParsing', as: 'boolean', defaultValue: true},
 	],
 	impl: function (context,template,css,features,methods,atts) {
 //		var defaultOptions = {directives: [], // jb.entries(jbart.ng.directives).map(x=>x[0]};
 		var options = jb.extend({
-				jbTemplate: template,
+				template: template,
 				css: css,
 				atts: atts,
 				imports: context.profile.imports,
-				featuresOptions: features()
+				featuresOptions: features(),
 			},methods);
-//		jb.extend(options,defaultOptions);
-
+//		options[context.params.noTemplateParsing ? 'template' : 'jbTemplate'] = template;
 		return options;
 	}
 })
@@ -39,7 +39,7 @@ jb.component('custom-control', {
 	impl: (ctx,title,html,css,options,features) => {
 		jbart.ctxDictionary[ctx.id] = ctx;
 		return jb_ui.Comp(jb.extend({ 
-			jbTemplate: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
+			template: `<div jb-ctx="${ctx.id}">${html}</div>`, //jb_ui.parseHTML(`<div>${html || ''}</div>`).innerHTML, 
 			css: css, 
 			featuresOptions: features(),
 			imports: ctx.profile.imports,

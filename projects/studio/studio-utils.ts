@@ -3,23 +3,10 @@ import * as jb_path from 'jb-path';
 import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
-import {model} from './studio-tgp-model';
-import {profileFromPath} from './studio-path';
-
 export var modifyOperationsEm = new jb_rx.Subject();
 export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
-jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
-    var path_parts = x.path.split('~');
-    var sub_paths = path_parts.map((e,i)=>
-      path_parts.slice(0,i+1).join('~')).reverse();
-    var firstCtrl = sub_paths
-      .filter(p=>
-      	model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
-      [0];
-     return firstCtrl ? [{ path: firstCtrl, ngPath: x.ngPath}] : [];
-})
 
 export function notifyModification(path,before,ctx,ngPath) {
 	var comp = path.split('~')[0];
@@ -76,17 +63,7 @@ jb.component('studio.message', {
 		message(message)
 })
 
-jb.component('studio.refreshPreview', {
-	type: 'action',
-	impl: () => {
-		var previewjBart = jbart.previewjbart ? jbart.previewjbart : jbart;
-		previewjBart.previewRefreshCounter = (previewjBart.previewRefreshCounter || 0) + 1;
-		if (jbart.studioActivityEm)
-			jbart.studioActivityEm.next()
-	}
-})
-
-jb.component('studio.redrawStudio', {
+jb.component('studio.redraw-studio', {
 	type: 'action',
 	impl: () => 
     	jbart.redrawStudio && jbart.redrawStudio()

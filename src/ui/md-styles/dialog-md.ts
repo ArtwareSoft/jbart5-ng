@@ -12,7 +12,7 @@ jb.component('dialog.md-dialog-ok-cancel', {
 				<div class="jb-dialog jb-default-dialog">
 				      <div class="dialog-title">{{title}}</div>
 				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
-				      <jb_comp [comp]="contentComp"></jb_comp>
+				      <div *jbComp="contentComp"></jb_comp>
 					  <div class="dialog-buttons">
 							<button md-button="" type="button" (click)="dialogClose({OK:false})">
 							  	<span class="md-button-wrapper">

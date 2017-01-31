@@ -88,6 +88,7 @@ function serveFile(req,res,path) {
           var etag = stat.size + '-' + Date.parse(stat.mtime);
           res.setHeader('Last-Modified', stat.mtime);
 
+          if (extension == 'json') res.setHeader('Content-Type', 'application/json;charset=utf8');
           if (extension == 'css') res.setHeader('Content-Type', 'text/css');
           if (extension == 'xml') res.setHeader('Content-Type', 'application/xml;charset=utf8');
           if (extension == 'js') res.setHeader('Content-Type', 'application/javascript;charset=utf8');
@@ -136,7 +137,10 @@ extend(op_post_handlers, {
 
         if (!clientReq.original) { // new comp
           var srcPath = `projects/${project}/${project}.ts`;
-          var res = ('' + fs.readFileSync(srcPath)) + '\n\n' + clientReq.toSave;
+          var res = '';
+          try { 
+            res = ('' + fs.readFileSync(srcPath)) + '\n\n' + clientReq.toSave;
+          } catch (e) {}
           var cleanNL = res.replace(/\r/g,'');
           if (_iswin)
             cleanNL = cleanNL.replace(/\n/g,'\r\n');
@@ -264,7 +268,13 @@ extend(op_get_handlers, {
         }
       });
     },
-    'getFile': function(req,res,path) {
+    'ls': function(req,res) {
+      var path = getURLParam(req,'path');
+      var full_path = settings.http_dir + path;
+      res.setHeader('Content-Type', 'application/json; charset=utf8');
+      res.end(JSON.stringify({entries: fs.readdirSync(full_path)}));
+    },
+    'getFile': function(req,res) {
       var path = getURLParam(req,'path');
       var full_path = settings.http_dir + path;
       fs.readFile(_path(full_path), function (err, content) {

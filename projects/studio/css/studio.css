@@ -33,7 +33,6 @@ body { margin: 0 }
   min-height: 12px;
   border-bottom: 1px solid #BEBEBE; 
 }
-.studio-floating-dialog>.dialog-content { min-width1: 300px; min-height1: 50px; overflow1: auto; }
 .studio-floating-dialog>.dialog-close, .studio-floating-dialog>.dialog-hide { 
 	position: absolute; cursor: pointer; right: 4px; top: 4px; font: 21px sans-serif; border: none; background: transparent; color: #000; text-shadow: 0 1px 0 #fff; font-weight: 700; opacity: .2;
 }
@@ -222,7 +221,7 @@ border: 1px solid rgb(213, 213, 213);}
 .studio-control-tree .treenode-children { margin: 0; padding: 1px 0 3px 10px; }
 .studio-control-tree .treenode { list-style: none; padding: 1px 0;}
 .studio-control-tree .treenode-line { display: -webkit-box; -webkit-box-orient: horizontal; width:100px;  }
-.studio-control-tree .treenode-label { color: #3D443D; font-size: 12px; vertical-align: top; height: 15px; -webkit-user-select: none; padding: 1px 2px 0 1px; /* display: inline-block; */ max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.studio-control-tree .treenode-label { color: #3D443D; font-size: 12px; vertical-align: top; height: 20px; line-height: 20px; -webkit-user-select: none; padding: 0 5px 0 1px; /* display: inline-block; */ max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .studio-control-tree .treenode-icon { width: 16px; height:14px; display: inline-block;  background: url('studio_icons.png?v=17_02') no-repeat; margin-right: 2px; vertical-align: top;   background-position: 0px -16px;}
 
 .studio-control-tree .treenode-expandbox { border: none; background: none; position: relative; width:9px;	height:9px;	padding: 0;	vertical-align: top;	margin-top: 3px;	margin-right: 3px;	cursor: pointer;}

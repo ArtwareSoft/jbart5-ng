@@ -52,7 +52,7 @@ jb.component('studio.choose-project', {
     ], 
     features: [
       {$: 'group.wait', 
-        for :{$: 'http.get', url: '/?op=projects' }, 
+        for :{$: 'http.get', url: '/?op=projects', json: 'true' }, 
         resource: 'projects', 
         mapToResource: '%projects%'
       }, 

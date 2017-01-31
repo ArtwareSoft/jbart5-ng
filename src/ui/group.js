@@ -26,7 +26,7 @@ jb.component('group',{
               .merge(cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
               .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
               .subscribe(comps=> {
-                  cmp.ctrls = [];
+                  var _ctrls = [];
                   cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
                   jb.logPerformance('group-change');
                   comps.forEach((comp,i)=>{
@@ -36,8 +36,9 @@ jb.component('group',{
                        comp.jbExtend(cmp.jbToExtend[i]);
                     if (!comp.jb_title)
                       debugger;
-                    cmp.ctrls.push({ title: comp.jb_title ? comp.jb_title() : '' , comp: comp } );
+                    _ctrls.push({ title: comp.jb_title ? comp.jb_title() : '' , comp: comp } );
                   })
+                  cmp.ctrls = _ctrls;
                 })
             }
       },
@@ -82,8 +83,10 @@ jb.component('group.initGroup', {
 jb.component('group.section', {
   type: 'group.style',
   impl :{$: 'customStyle',
-    template: '<section class="jb-group"><jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
-    features :{$: 'group.initGroup'}
+    template: `<section class="jb-group">
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
+        </section>`,
+    features :{$: 'group.initGroup'},
   }
 })
 
@@ -112,6 +115,17 @@ jb.component('wait', {
         error :{$call: 'errorControl' }, 
       }
   }
+})
+
+jb.component('control', {
+    type: 'control',
+    params: [
+        { id: 'style', type: 'style', dynamic: true },
+        { id: 'title', as: 'string' },
+        { id: 'features', type: 'feature[]', dynamic: true },
+    ],
+    impl: ctx => 
+        jb_ui.ctrl(ctx)
 })
 
 })

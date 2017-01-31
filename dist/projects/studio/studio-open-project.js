@@ -55,7 +55,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     ],
                     features: [
                         { $: 'group.wait',
-                            for: { $: 'http.get', url: '/?op=projects' },
+                            for: { $: 'http.get', url: '/?op=projects', json: 'true' },
                             resource: 'projects',
                             mapToResource: '%projects%'
                         },

@@ -2,7 +2,7 @@ jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb 
 jb.component('group.wait', {
   type: 'feature',
   params: [ 
-    { id: 'for', essential: true },
+    { id: 'for', essential: true, dynamic: true },
     { id: 'loadingControl', type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
     { id: 'error', type: 'control', defaultValue: { $:'label', title: 'error: %$error%', css: '{color: red; font-weight: bold}'} , dynamic: true },
     { id: 'resource', as: 'string' },
@@ -12,14 +12,14 @@ jb.component('group.wait', {
     return {
       beforeInit: function(cmp) {
           var waiting = cmp.jbWait();
-          cmp.jbGroupChildrenEm = jb_rx.observableFromCtx(context.setData(waitFor))
+          cmp.jbGroupChildrenEm = jb_rx.observableFromCtx(context.setData(waitFor()))
             .flatMap(x=>{
                 var data = context.params.mapToResource(x);
                 jb.writeToResource(context.params.resource,data,context);
                 return [context.vars.$model.controls(cmp.ctx.setData(data))];
               })
             .do(x=>
-              jb_ui.delayOutsideAngular(context,() => 
+              jb_native_delay(10).then(_=> 
                 waiting.ready()))
             .startWith([loading(context)])
             .catch(e=> 
@@ -155,16 +155,6 @@ jb.component('feature.onEnter', {
   })
 })
 
-
-jb.component('ngAtts', {
-  type: 'feature',
-  params: [
-    { id: 'atts', as: 'single' }
-  ],
-  impl: (ctx,atts) => 
-    ({atts:atts})
-})
-
 jb.component('feature.afterLoad', {
   type: 'feature',
   params: [
@@ -210,7 +200,7 @@ jb.component('hidden', {
         cmp.jb_hidden = () =>
           !showCondition(cmp.ctx)
       },
-      atts: { '[hidden]': 'jb_hidden()'}
+      host: { '[hidden]': 'jb_hidden()'}
     }
   }
 })

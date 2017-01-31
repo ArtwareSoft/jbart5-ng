@@ -6,7 +6,7 @@ jb.component('group.md-card', {
   type: 'group.style',
   impl :{$: 'customStyle',
     template: `<div><md-card>
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card></div>`,
     features :{$: 'group.initGroup'},
     imports: MdCardModule
@@ -17,7 +17,7 @@ jb.component('group.md-card-actions', {
   type: 'group.style',
   impl :{$: 'customStyle',
     template: `<div><md-card-actions>
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card-actions></div>`,
     features :{$: 'group.initGroup'},
     imports: MdCardModule
@@ -28,7 +28,7 @@ jb.component('group.md-card-content', {
   type: 'group.style',
   impl :{$: 'customStyle',
     template: `<div><md-card-content>
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card-content></div>`,
     features :{$: 'group.initGroup'},
     imports: MdCardModule
@@ -39,7 +39,7 @@ jb.component('group.md-card-header', {
   type: 'group.style',
   impl :{$: 'customStyle',
     template: `<div><md-card-header>
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card-header></div>`,
     features :{$: 'group.initGroup'},
     imports: MdCardModule

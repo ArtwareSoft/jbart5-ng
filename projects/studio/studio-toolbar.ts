@@ -41,7 +41,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'Refresh Preview', 
-        action :{$: 'studio.refreshPreview' }, 
+        action :{$: 'studio.refresh-preview' }, 
         style :{$: 'button.md-icon', icon: 'refresh' }
       }, 
       {$: 'button', 
@@ -105,7 +105,7 @@ jb.component('studio_button.toolbarButton', {
 	],
 	impl: function(context, spritePosition) {
 		return {
-			jbTemplate: '<button class="studio-btn-toolbar" (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',
+			template: '<button class="studio-btn-toolbar" (click)="clicked()"><span style="background-position: {{pos}}" title="{{title}}"></span></button>',
 			init: function(cmp) {
 				cmp.pos = spritePosition.split(',').map(item => (-parseInt(item) * 16) + 'px').join(' ');
 			}
@@ -119,13 +119,13 @@ jb.component('studio-toolbar', {
   type: 'group.style',
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup' },
-    template: '<section class="jb-group"><jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp></section>',
-    css: `{ 
+    template: '<section><div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div></section>',
+    css: `section { 
             display: flex;
             height: 33px; 
             width: 100%;
         }
-        * { margin-right: 0 }`
+        section>* { margin-right: 0 }`
   }
 })
 

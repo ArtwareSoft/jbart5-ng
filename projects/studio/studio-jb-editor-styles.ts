@@ -5,7 +5,7 @@ jb.component('dialog.studio-jb-editor-popup', {
   impl: {$: 'customStyle',
       template: `<div class="jb-dialog jb-popup">
               <button class="dialog-close" (click)="dialogClose()">&#215;</button>
-              <jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
+              <div *jbComp="contentComp"></div>
             </div>`, 
       css: `{ background: #fff; position: absolute }
         .dialog-close {
@@ -43,7 +43,7 @@ jb.component('dialog.studio-suggestions-popup',{
   type: 'dialog.style',
   impl: {$: 'customStyle',
       template: `<div class="jb-dialog jb-popup">
-              <jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
+              <div *jbComp="contentComp"></div>
             </div>`, 
       css: `{ background: #fff; position: absolute; padding: 3px 5px }`,
       features: [

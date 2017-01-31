@@ -9,8 +9,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
             }],
         execute: function() {
             if (window.jbartTest) {
-                // jb.resource('ui-tests','UrlPathEm',{ $: 'rx.urlPath', base: 'ui-tests', zoneId: 'single-test', 
-                // 	params: [ 'test','project', 'page', 'profile_path' ] , databind: '{%$globals%}' } );
                 jb_core_1.jb.resource('ui-tests', 'WidgetLoaded', { $: 'rx.subject' });
             }
             jb_tests('studio-tests', {

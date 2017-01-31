@@ -1,4 +1,4 @@
-System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObservable', 'rxjs/add/operator/map', 'rxjs/add/operator/filter', 'rxjs/add/operator/catch', 'rxjs/add/operator/do', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/observable/from', 'rxjs/add/observable/of', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'jb-core/jb'], function(exports_1, context_1) {
+System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObservable', 'rxjs/add/operator/map', 'rxjs/add/operator/filter', 'rxjs/add/operator/catch', 'rxjs/add/operator/do', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/observable/from', 'rxjs/add/observable/of', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'rxjs/add/operator/race', 'jb-core/jb'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var Subject_1, Observable_1, jb_1;
@@ -122,6 +122,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
             function (_22) {},
             function (_23) {},
             function (_24) {},
+            function (_25) {},
             function (jb_1_1) {
                 jb_1 = jb_1_1;
             }],
@@ -262,19 +263,19 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     from.subscribe(function (item) { return _to.next(item); });
                 }
             });
-            jb_1.jb.component('rx.urlPath', {
+            jb_1.jb.component('rx.url-path', {
                 type: 'application-feature',
                 params: [
                     { id: 'params', type: 'data[]', as: 'array' },
                     { id: 'databind', as: 'single', essential: true },
                     { id: 'base', as: 'string' },
-                    { id: 'zoneId', as: 'string' },
+                    { id: 'onUrlChange', type: 'action', dynamic: true }
                 ],
-                impl: function (context, params, databind, base, zoneId) {
+                impl: function (context, params, databind, base) {
                     if (jbart.location)
                         return;
                     if (!databind || typeof databind != 'object')
-                        return console.log('no databind for rx.urlPath');
+                        return console.log('no databind for rx.url-path');
                     var browserUrlEm = new Subject_1.Subject();
                     jbart.location = History.createHistory();
                     jbart.location.path = function () { return location.pathname; };
@@ -311,6 +312,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                         .subscribe(function (url) {
                         jbart.location.push(url);
                         jb_1.jb.extend(databind, urlToObj(url));
+                        context.params.onUrlChange(context.setData(url));
                     });
                 }
             });

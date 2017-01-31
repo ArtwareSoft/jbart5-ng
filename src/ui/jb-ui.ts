@@ -1,5 +1,5 @@
 import {jb} from 'jb-core';
-import { enableProdMode, Compiler, NgModule, Component, View, ViewContainerRef, ViewChild, ViewChildElementRef, ElementRef, Injector, Input, NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { enableProdMode, Compiler, Renderer, NgModule, Component, Directive, View, ViewContainerRef, ViewChild, ViewChildElementRef, ElementRef, TemplateRef, Injector, Input, NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 enableProdMode();
-jbart.zones = jbart.zones || {}
+//jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
 	return jb.delay(1).then(() =>
@@ -21,9 +21,10 @@ export function delayOutsideAngular(ctx,func) {
 
 export function applyPreview(ctx) {
     var _win = jbart.previewWindow || window;
-    jb.delay(1).then(()=>
-		jb.entries(_win.jbart.zones).forEach(x=>x[1].run(()=>{}))
-	)
+    _win.setTimeout(()=>{},1);
+ //    jb.delay(1).then(()=>
+	// 	jb.entries(_win.jbart.zones).forEach(x=>x[1].run(()=>{}))
+	// )
 }
 
 var factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
@@ -68,7 +69,6 @@ class jbComponent {
 	}
 	wrapCompWithModule(comp) {
 	    var DynamicModule = function() { }
-	    //Reflect.getMetadata('annotations', jbCompModule)[0].declarations = [jbComp].concat(jb.entries(jbart.ng.directives).map(x=>x[1]));
 		var DynamicModule = Reflect.decorate([
 			NgModule({
 				imports: [jbCompModule, CommonModule, BrowserModule, FormsModule] 
@@ -89,7 +89,6 @@ class jbComponent {
 		cmp.methodHandler = this.methodHandler;
 	  	var elem = cmp_ref._hostElement.nativeElement;
 	  	elem.setAttribute('jb-ctx',ctx.id);
-//		cmp.renderer.setElementAttribute(elem,'jb-ctx',ctx.id);
 		garbageCollectCtxDictionary();
 		jbart.ctxDictionary[ctx.id] = ctx;
 
@@ -124,10 +123,10 @@ class jbComponent {
 	createComp() {
 	    if (!this.annotations.selector)	this.annotations.selector = 'jb-comp';
 
-	    var Cmp = function(elementRef, changeDetection) { this.elementRef = elementRef; this.changeDt =  changeDetection }
+	    var Cmp = function(elementRef, changeDetection, renderer) { this.elementRef = elementRef; this.changeDt =  changeDetection; this.renderer = renderer }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [ElementRef, ChangeDetectorRef])
+			Reflect.metadata('design:paramtypes', [ElementRef, ChangeDetectorRef, Renderer])
 		], Cmp);
 		injectLifeCycleMethods(Cmp);
 		return Cmp;
@@ -135,14 +134,8 @@ class jbComponent {
 
 
 	jbCtrl(context) {
-		// var options = mergeOptions(
-		// 	optionsOfProfile(context.params.style && context.params.style.profile),
-		// 	optionsOfProfile(context.profile));
-		// if (Object.getOwnPropertyNames(options).length > 0)
-		// 	debugger;
-
-		(context.params.features && context.params.features(context) || [])
-			.forEach(f => this.jbExtend(f,context));
+		var features = (context.params.features && context.params.features(context) || []);
+		features.forEach(f => this.jbExtend(f,context));
 		if (context.params.style && context.params.style.profile && context.params.style.profile.features) {
 			jb.toarray(context.params.style.profile.features)
 				.forEach((f,i)=>
@@ -157,7 +150,7 @@ class jbComponent {
     	if (!options) return this;
     	if (typeof options != 'object')
     		debugger;
-    	jbTemplate(options);
+//    	jbTemplate(options);
 		if (options.beforeInit) this.methodHandler.jbBeforeInitFuncs.push(options.beforeInit);
 		if (options.init) this.methodHandler.jbInitFuncs.push(options.init);
 		if (options.afterViewInit) this.methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
@@ -178,12 +171,16 @@ class jbComponent {
     				.filter(x=>x)
     				.map(x=>x+'}'));
 
-//		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st));
+		options.styles = options.styles && (options.styles || []).map(st=> context.exp(st)).map(x=>x.trim());
 		// fix ng limit - root style as style attribute at the template
     	(options.styles || [])
     		.filter(x=>x.match(/^{([^]*)}$/m))
-    		.forEach(x=>
-    			jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]));
+    		.forEach(x=> {
+    			if (this.cssFixes.indexOf(x) == -1)
+    				this.cssFixes.push('>*'+x);
+    		});
+    		// .forEach(x=>
+    		// 	jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]));
 
     	(options.styles || [])
     		.filter(x=>x.match(/^:/m)) // for example :hover
@@ -193,7 +190,6 @@ class jbComponent {
     		});
 
     	(options.styles || [])
-    		.map(x=>x.trim())
     		.filter(x=>x.match(/^\!/m)) // ! affect internal selectors
     		.forEach(x=> {
     			if (this.cssFixes.indexOf(x) == -1)
@@ -202,7 +198,7 @@ class jbComponent {
 
     	var annotations = this.annotations;
 		var overridable_props = ['selector', 'template','encapsulation'];
-		var extendable_array_props = ['styles'];
+		var extendable_array_props = ['styles','imports','providers'];
 
 		overridable_props.forEach(prop => {
 			if (options[prop] !== undefined || annotations[prop] != undefined)
@@ -216,48 +212,19 @@ class jbComponent {
 		if (options.disableChangeDetection)
 			annotations.changeDetection = ChangeDetectionStrategy.OnPush;
 
-		if (options.imports)
-				annotations.imports = (annotations.imports||[]).concat(jb.toarray(options.imports));
-		if (options.providers)
-				annotations.providers = (annotations.providers||[]).concat(jb.toarray(options.providers));
-		// if (options.directives !== undefined)
-		// 		annotations.directives = (annotations.directives || []).concat(
-		// 			jb.toarray(options.directives).map(x=>
-		// 				typeof x == 'string' ? jbart.ng.directives[x] : x)
-		// 			)
+		if (options.cssClass)
+			options.cssClass.split(' ').forEach(clz =>
+				jb.path(options, ['host', '[class.'+clz+']'],'true'))
+		if (options.host)
+			annotations.host = jb.extend(annotations.host||{},options.host);
 
-		options.atts = jb.extend({},options.atts,options.host); // atts is equvivalent to host
-		if (options.cssClass) jb.path(options, ['atts', 'class'], options.cssClass);
-		Object.getOwnPropertyNames(options.atts || {})
-			.forEach(att=>{
-				var val = context.exp(options.atts[att]).trim();
-				if (att == 'ngIf')
-				 	return jb.path(annotations, ['host', 'template'], 'ngIf ' + val);
-				if (att == 'class' && jb.path(annotations, ['host', 'class']))
-					val = jb.path(annotations, ['host', 'class']) + ' ' + val;
-				if (att == 'style' && (jb.path(annotations, ['host', 'style'])||'').indexOf(val) == -1)
-					val = jb.path(annotations, ['host', 'style']) + '; ' + val;
-				jb.path(annotations, ['host', att],val)
-			})
-
-		if (annotations.template && typeof annotations.template != 'string') debugger;
-		annotations.template = annotations.template && annotations.template.trim();
-		if (options.innerhost) 
-		 try {
-			var template = parseHTML(`<div>${annotations.template || ''}</div>`);
-			Object.getOwnPropertyNames(options.innerhost || {}).forEach(function(selector) {
-				var elems = selector == '*' ? [template] : Array.from(template.querySelectorAll(selector));
-				elems.forEach(function(element) {
-					Object.getOwnPropertyNames(options.innerhost[selector]).forEach(function(att) {
-						var value = context.exp(options.innerhost[selector][att]);
-						setTemplateAtt(element, att, value);
-					})
-				})
-			});
-			annotations.template = template.innerHTML;
-	    } catch(e) { jb.logException(e,'') }
-		// ng-model or ngmodel => ngModel
-		annotations.template = (annotations.template || '').replace(/(\(|\[|\*)ng-?[a-z]/g, st => st[0] + 'ng' + (st[3] == '-' ? st[4] : st[3]).toUpperCase());
+		if (annotations.template) {
+			if (typeof annotations.template != 'string') debugger;
+			annotations.template = annotations.template.trim();
+			jb.entries(options.templateModifier)
+				.forEach(mod=>
+					annotations.template = annotations.template.replace('#'+mod[0],'#'+mod[0]+ ' ' +mod[1]));
+		}
 
 		(options.featuresOptions || []).forEach(f => 
 			this.jbExtend(f, context))
@@ -304,14 +271,16 @@ export function injectLifeCycleMethods(Cmp) {
 	}
 	Cmp.prototype.ngAfterViewInit = function() {
 		this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
-		this.jbEmitter && this.jbEmitter.next('after-init');
-		delayOutsideAngular(this.ctx,()=>{ 
-			if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
-				this.jbEmitter.next('after-init-children');
-				if (this.readyCounter == null)
-					this.jbEmitter.next('ready');
-			}
-		})
+		if (this.jbEmitter) {
+			this.jbEmitter.next('after-init');
+			jb_native_delay(1).then(()=>{ 
+				if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
+					this.jbEmitter.next('after-init-children');
+					if (this.readyCounter == null)
+						this.jbEmitter.next('ready');
+				}
+			})
+		}
 	}
 
 	Cmp.prototype.ngDoCheck = function() {
@@ -329,8 +298,9 @@ export function injectLifeCycleMethods(Cmp) {
 
 	Cmp.prototype.jbWait = function () {
 		this.readyCounter = (this.readyCounter || 0)+1;
-		if (this.parentCmp && this.parentCmp.jbWait)
-			this.parentWaiting = this.parentCmp.jbWait();
+		var parentCmp = this.parentCmp && this.parentCmp.parent();
+		if (parentCmp && parentCmp.jbWait)
+			this.parentWaiting = parentCmp.jbWait();
 		return {
 			ready: () => {
 				this.readyCounter--;
@@ -344,302 +314,107 @@ export function injectLifeCycleMethods(Cmp) {
 	}
 }
 
-// function optionsOfProfile(profile) {
-// 	if (!profile) return {}
-// 	var res = {};
-// 	['cssClass','css'] // 'atts','styles',
-// 		.forEach(p=> {if(profile[p]) res[p]=profile[p]});
-// 	return res;
-// }
-
-// function mergeOptions(op1,op2) {
-// 	var res = {};
-// 	if (op1.cssClass || op2.cssClass)
-// 		res.cssClass = ((op1.cssClass || '') + ' ' + (op2.cssClass || '')).trim();
-// 	if (op1.styles || op2.styles)
-// 		res.styles = (op1.styles || []).concat(op2.styles || [])
-// 	return jb_extend({},op1,op2,res);
-// }
-
-function setTemplateAtt(element,att,value) {
-	if (!element.getAttribute) debugger;
-	if (('' + value).indexOf('[object') != -1) return; // avoid bugs - no object host
-	var currentVal = element.getAttribute(att);
-	if (att == 'ngIf')
-	 	element.setAttribute('template', 'ngIf ' + value);
-	else if (att == 'class')
-		element.setAttribute(att, currentVal ? currentVal + ' ' + value : value);
-	else
-		addAttribute(element, att, value);
-}
-
-function jbTemplate(options) {
-	options.jbTemplate = (options.jbTemplate||'').trim();
-	if (!options.jbTemplate) return
-	var template = parseHTML(options.jbTemplate);
-	var host = jb_extend({},options.host);
-	Array.from(template.attributes||[])
-		.filter(att=> {
-			var ngAtt = att.name.indexOf('*ng') != -1;
-			if (ngAtt)
-				jb.logError('ng atts are not allowed in root element of template: ' + att.name, {ctx:ctrl_ctx,att:att})
-			return !ngAtt;
-		})
-		.forEach(att=>host[att.name]=att.value);
-	
-	jb.extend(options, {
-		template: template.innerHTML.trim(),
-		selector: template.tagName,
-		host: host
-	})
-}
-
-@Component({
-    selector: 'jb_comp',
-    template: '<div #jb_comp></div>',
+@Directive({
+    selector: '[jbComp]',
 })
 export class jbComp {
-  @Input() comp;
-  @Input() flatten;
-  @ViewChild('jb_comp', {read: ViewContainerRef}) childView;
-  constructor(private compiler :Compiler,private ngZone: NgZone) {
-  	this.lifeCycleEm = new jb_rx.Subject();
+  @Input() set jbComp(comp) {
+  	comp && this.draw(comp);
   }
+
+  constructor(private compiler :Compiler, private ngZone: NgZone, private view: ViewContainerRef, private elementRef: ElementRef, private renderer: Renderer) {}
+
   ngOnInit() {
-  	// redraw if script changed at studio
-
-  	// create adapter observer on the preview window
-	var studioModifiedCtrlsEm = jbart.studioModifiedCtrlsEm ? jb_rx.Observable.create(observer => {
-  			jbart.studioModifiedCtrlsEm.subscribe( x=> 
-  					observer.next(x),	
-  				x=>	observer.error(x), ()=> observer.complete() )
-  				}) 
-  			: jb_rx.Observable.of();
-
-
-	(jbart.modifiedCtrlsEm || jb_rx.Observable.of())
-				.merge(studioModifiedCtrlsEm)
-				.takeUntil(this.lifeCycleEm.filter(x=> x== 'destroy'))
-				.flatMap(e=> {
-					if (this.comp && [this.comp.callerPath, this.comp.ctx && this.comp.ctx.path].indexOf(e.path) != -1) {
-						jb.delay(100,this.comp.ctx).then(() => {// height in delay
-							var elemToHighlight = this._nativeElement;
-							if (e.ngPath)
-								elemToHighlight = e.ngPath.split('~').reduce((elem,index)=>
-									elem && Array.from(elem.children)[index]
-									, elemToHighlight.firstChild)
-
-				  			$(elemToHighlight).addClass('jb-highlight-comp-changed')
-				  		});
-
-						if (jbart.profileFromPath) {
-							var prof = jbart.profileFromPath(e.path);
-							var ctxToRun = this.comp.ctx.ctx({profile: prof, comp: e.path,path:''});
-							var comp = ctxToRun.runItself();
-							return [comp];
-						}
-					}
-					return [];
-				})
-				.startWith(this.comp)
-				.filter(comp=>
-					comp)
-				.subscribe(comp=> {
-					this.draw(comp);
-					if (comp != this.comp) // changed
-						applyPreview(comp.ctx);
-					this.comp = comp;
-				})
+  	jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
   }
 
-  ngOnDestroy() {
-  	this.modifiedObs && this.modifiedObs.unsubscribe();
-  	this.lifeCycleEm.next('destroy');
-  	this.lifeCycleEm.complete();
+  // ngDoCheck() {
+  // 	if (this.jbComp != this.oldComp) {
+  // 		this.oldComp = this.jbComp;
+  // 		this.draw(this.jbComp);
+  // 	}
+  // }
+
+  parent() {
+  	try {
+		return this.cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4.context;
+	} catch (e) {
+		return null;
+	}
   }
 
   draw(comp) {
   	if (!comp) return;
-
-  	if (this.jbDispose) {
-  		this.jbDispose();
-  		console.log('jb_comp: replacing existing component');
-  	}
-  	this.ngZone.runOutsideAngular(() => {
-	  	if (comp && comp.compile)
-	  		var componentFactory = comp.compile(this.compiler)
-	  	else {
-	  		var dynamicModule = this.wrapCompWithModule(comp);
-	  		var componentFactory = this.compiler.compileModuleAndAllComponentsSync(dynamicModule)
-					.componentFactories[0]
-	  	}
-
-	   	var cmp_ref = this.childView.createComponent(componentFactory);
-	   	comp.registerMethods && comp.registerMethods(cmp_ref,this);
-	    this.flattenjBComp(cmp_ref);
-	})
+  	this._comp = comp.comp || comp;
+  	this.view.clear();
+  	[this._comp]
+  		.filter(comp=>comp.compile)
+  		.forEach(comp=>{
+	  		var componentFactory = comp.compile(this.compiler);
+		   	var cmp_ref = this.cmp_ref = this.view.createComponent(componentFactory);
+		   	comp.registerMethods && comp.registerMethods(cmp_ref,this);
+			this.ngZone.run(()=>{});
+	 	})
   }
 
-  wrapCompWithModule(comp) {
-	    var DynamicModule = function() { }
-		var DynamicModule = Reflect.decorate([
-			NgModule({
-				imports: [BrowserModule],
-  				declarations: [comp],
-  				exports: [comp]
-  			}),
-		], DynamicModule);
-
-		return DynamicModule;
-	}
-
-
- // jbWait() {
-	// this.readyCounter = (this.readyCounter || 0)+1;
-	// if (this.parentCmp && this.parentCmp.jbWait)
-	// 	this.parentWaiting = this.parentCmp.jbWait();
-	// return {
-	// 	ready: () => {
-	// 		this.readyCounter--;
-	// 		if (!this.readyCounter) {
-	// 			this.jbEmitter && this.jbEmitter.next('ready');
-	// 			if (this.parentWaiting)
-	// 				this.parentWaiting.ready();
-	// 		}
-	// 	}
-	// }
- // }
-
-// very ugly: flatten the structure and pushing the dispose function to the group parent.
-  flattenjBComp(cmp_ref) {
-  	var cmp = this;
-  	cmp.jbDispose = () => 
-  		cmp_ref.destroy();
-  	return;
-
-  	this._nativeElement = cmp_ref._hostElement.nativeElement;
-  	// assigning the disposable functions on the parent cmp. Probably these lines will need a change on next ng versions
-	var parentInjector = cmp_ref.hostView._view.parentInjector._view.parentInjector._view;
-	var parentCmp = parentInjector && (parentInjector._Cmp_0_4 || parentInjector.context);
-  	if (!parentCmp)
-  		return jb.logError('flattenjBComp: can not get parent component');
-  	if (cmp._deleted_parent)
-  		return jb.logError('flattenjBComp: deleted parent exists');
-  	this.parentCmp = parentCmp;
-  	if (!cmp.flatten) 
-  		return;
-
-  	var to_keep = cmp_ref._hostElement.nativeElement;
-  	var to_delete = to_keep.parentNode
-  	cmp._deleted_parent = to_delete;
-  	// copy class and ng id attributes - for css
-  	to_keep.className = ((to_keep.className||'') + ' ' + (to_delete.className||'')).trim();
-  	Array.from(to_delete.attributes).map(x=>x.name)
-  		.filter(x=>x.match(/_ng/))
-  		.forEach(att=>
-  			to_keep.setAttribute(att,to_delete.getAttribute(att))
-  		)
-	$(to_delete).replaceWith(to_keep);
-  	parentCmp.jb_disposable = parentCmp.jb_disposable || [];
-  	
-  	cmp.jbDispose = () => { // put it back as it was, then dispose
-  		if (!cmp._deleted_parent) return; // already deleted
-  		try {
-			$(to_keep).replaceWith(cmp._deleted_parent);
-			cmp._deleted_parent.appendChild(to_keep);
-		} catch(e) {}
-		cmp._deleted_parent = null;
-		cmp_ref.destroy();
-  	}
-  	parentCmp.jb_disposable.push(cmp.jbDispose)
+  destroyNotifier = new jb_rx.Subject();
+  ngOnDestroy() {
+  	this.destroyNotifier.next('destroy');
+  	this.destroyNotifier.complete();
   }
-}
-
-
-export function insertComponent(comp, resolver, parentView) {
-  	return comp.compile(resolver).then(componentFactory => 
-  		comp.registerMethods(parentView.createComponent(componentFactory),comp)
-    )
-}
-
-export function parseHTML(text) {
-	var res = document.createElement('div');
-	res.innerHTML = text;
-	setNgPath(res.firstChild,'');
-	return res.firstChild;
-
-	function setNgPath(elem,curPath) {
-		if (!elem || elem.nodeType != 1) return;
-		addAttribute(elem, 'ng-path', curPath);
-		Array.from(elem.children).forEach((e,index)=>
-			setNgPath(e,curPath === '' ? index : (curPath+'~'+index))
-		)
-	}
-}
-export function addAttribute(element, attrName, attrValue) {
-	var tmpElm = document.createElement('p');
-	tmpElm.innerHTML = "<p " + attrName + "='" + attrValue + "'></p>";
-	var newAttr = tmpElm.children[0].attributes[0].cloneNode(true);
-	element.setAttributeNode(newAttr);
 }
 
 @Component({
     selector: 'jbart',
-	template:  `<div *ngFor="let comp of comps"><jb_comp [comp]="comp"></jb_comp></div>
-				<div *ngFor="let dialog of dialogs">
-					<jb_comp [comp]="dialog.comp"></jb_comp>
-				</div>`,
+	template:  `<div *jbComp="comp"></div>
+		        <div *ngFor="let dialog of dialogs"><div *jbComp="dialog"></div></div>`,
 	directives: [jbComp]
 })
 export class jBartWidget {
 	constructor(private elementRef: ElementRef, public ngZone: NgZone, private injector: Injector) { }
 	ngOnInit() { 
-		jbart.widgetLoaded = true; // indication for waitForIframeLoad
+		jbart.widgetLoaded = true; // indication for studio 
 		this.compId = this.elementRef.nativeElement.getAttribute('compID');
 		this.dialogs = jbart.jb_dialogs.dialogs;
-		if (this.compId)
-			jbart.zones[this.compId] = this.ngZone;
+		// if (this.compId)
+		// 	jbart.zones[this.compId] = this.ngZone;
 
-		if (this.compId == 'studio.all') // assign redrawStudio function
+		if (this.compId == 'studio.all') { // assign redrawStudio function
 			jbart.redrawStudio = () =>
 				this.draw();
+		}
+		this.isPreview = window && window.parent != window && window.parent.document.title == 'jBart Studio';
+		if (!this.isPreview)
+			this.draw();
 	}
 
 	ngAfterViewInit() {
-		jb.delay(100).then(()=>{
-			if (jbart.modifyOperationsEm) { // studio source changes
-				this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
-				var counterChange = jbart.studioActivityEm
-					.map(x=>jbart.previewRefreshCounter)
-					.distinctUntilChanged()
-
-				var compIdEm = jbart.studioActivityEm
-					.map(()=>
-							this.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
-					.distinctUntilChanged()
-					.merge(counterChange)
-					.startWith(this.compId);
-
-				compIdEm.subscribe(()=>
-							this.draw())
-			} else { // no studio
-				this.draw();
-			}
-		})
+		if (this.isPreview)
+		    jb_waitFor(()=>jbart.studioAutoRefreshWidget).then(()=>{
+		    	jbart.studioAutoRefreshWidget(this)
+		    })
 	}
 
-	private draw() {
-		this.comps = [];
+	ngDoCheck() {
+		console.log(window.document.title)
+	}
+
+	draw() {
 		try {
-			if (this.compId)
-				this.comps = [jb_run(jb.ctx(this.getOrCreateInitialCtx(),
-					{ profile:{ $: this.compId }, comp: this.compId, path: '' })) ];
+			if (this.compId) {
+				this.comp = jb_run(jb.ctx(this.getOrCreateInitialCtx(),
+					{ profile:{ $: this.compId }, comp: this.compId, path: '' }));
+				if (this.isPreview) {
+					this.ngZone.run(()=>{});
+					setTimeout(_=>{},1);
+				}
+			}
 		} catch(e) { 
 			jb.logException(e,'') 
 		}	
 	}
 
-    private getOrCreateInitialCtx() {
+    getOrCreateInitialCtx() {
     	if (!jbart.initialCtx) {
 	    	var ns = this.compId.split('.')[0];
 			var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
@@ -655,46 +430,25 @@ export class jBartWidget {
 export function wrapWithLauchingElement(f,context,elem) {
 	var native = elem.nodeType ? elem : elem.nativeElement;
 	return function() {
-		f(context.setVars({ $launchingElement: { elem: elem, $el : $(native) }}));
+		f(context.setVars({ $launchingElement: { elem: elem, $el : $(native).children().first() }}));
 	}
 }
 
-export function getZone(zoneId) {
-	return new Promise((resolve,fail)=> {
-		var counter = 30;
-		var intervalID = setInterval(function() {
-			if (jbart.zones[zoneId]) {
-				window.clearInterval(intervalID);
-				resolve(jbart.zones[zoneId]);
-			}
-			if (--counter <= 0) {
-				window.clearInterval(intervalID);
-				fail();
-			}
-		}, 100);	
-	})
-}
-
-jbart.ng = {
-	providers: {
-//		provideForms: provideForms(), 
-//		disableDeprecatedForms: disableDeprecatedForms(),
-//		HTTP_PROVIDERS: HTTP_PROVIDERS
-	},
-	directives: {}
-}
-
-export function registerDirectives(obj) {
-	jb.entries(obj).forEach(e=>{
-		if (!e[1]) 
-			jb.logError('registerDirectives: no object for directive ' + e[0]);
-		else
-			jbart.ng.directives[e[0]] = e[1];
-	})
-}
-export function registerProviders(obj) {
-	jb.extend(jbart.ng.providers,obj)
-}
+// export function getZone(zoneId) {
+// 	return new Promise((resolve,fail)=> {
+// 		var counter = 30;
+// 		var intervalID = setInterval(function() {
+// 			if (jbart.zones[zoneId]) {
+// 				window.clearInterval(intervalID);
+// 				resolve(jbart.zones[zoneId]);
+// 			}
+// 			if (--counter <= 0) {
+// 				window.clearInterval(intervalID);
+// 				fail();
+// 			}
+// 		}, 100);	
+// 	})
+// }
 
 function garbageCollectCtxDictionary() {
 	var now = new Date().getTime();
@@ -717,7 +471,7 @@ function garbageCollectCtxDictionary() {
 
 @NgModule({
   imports: [],
-  declarations: [ jbComp ], // is overriden dynamically
+  declarations: [ jbComp ],
   exports: [ jbComp ],
 })
 class jbCompModule { }

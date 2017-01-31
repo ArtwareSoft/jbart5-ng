@@ -1,6 +1,4 @@
-import { jb } from 'jb-core/jb';
-
-jb.component('ui-tests.show-tests', {
+jb_component('ui-tests.show-tests', {
 	type: 'control',
 	impl :{$: 'group',
 		$vars : {
@@ -63,29 +61,42 @@ jb.component('ui-tests.show-tests', {
 })
 
 
-jb.component('ui-tests.single-test', {
+jb_component('ui-tests.single-test', {
 	type: 'control',
 	impl :{$: 'group',
  		controls: {$: 'itemlog',
-			items: ctx =>
-				ctx.setVars({testID:jbart.singleTestID}).run(jbart.comps[jbart.singleTestID].impl) ,
+			items: ctx => {
+				if (!jbart.comps[jbart.singleTestID]) {
+					jb_logErr('Can not find test ' + jbart.singleTestID)
+					return [];
+				}
+				return ctx.setVars({testID:jbart.singleTestID}).run(jbart.comps[jbart.singleTestID].impl)
+			},
 			controls :{$: 'ui-tests.show-one-test' } 
 		}
 	}
 })
 
-jb.component('ui-tests.show-one-test', {
+jb_component('ui-tests.run-test-only', {
+	type: 'action',
+	impl : ctx => {
+		var impl = jbart.comps[jbart.singleTestID].impl;
+		return impl && ctx.run(impl.control)
+	}
+})
+
+jb_component('ui-tests.show-one-test', {
 	type: 'control',
 	params: [
 		{ id: 'testResult',as: 'single', defaultValue: '%%'},
 	],
 	impl :{$: 'group',
-//		layout :{$: 'md-layout', layout: 'row',  },
+		style: {$: 'layout.flex', direction: 'row' },
 		controls: 
 			[
 				{	$: 'button', title: {$firstSucceeding: ['%$testResult/title%','%$testResult/id%']},
 					style :{$: 'button.href' },
-					features :{$: 'css', css: '{ padding: 0 5px 0 5px }'},
+					features :{$: 'css', css: '{ padding: 0 5px 0 5px; } a { color: blue}'},
 					action :{$: 'goto-url', url: '/projects/ui-tests/single-test.html?test=%$testResult/id%' }
 				},
 				{ $: 'label', title: 'success', 
@@ -115,7 +126,7 @@ jb.component('ui-tests.show-one-test', {
 	}
 })
 
-jb.component('ui-tests.show-one-test-in-project', {
+jb_component('ui-tests.show-one-test-in-project', {
 	type: 'control',
 	impl :{$: 'group',
 		layout :{$: 'md-layout', layout: 'row',  },

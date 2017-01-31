@@ -20,7 +20,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                     { id: 'opened', as: 'boolean', type: 'boolean' }
                 ],
                 impl: { $: 'customStyle',
-                    template: "<md-sidenav-layout>\n      <md-sidenav>\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" align=\"%$align%\" mode=\"%$mode%\"></jb_comp>\n      </md-sidenav>\n      </md-sidenav-layout>",
+                    template: "<md-sidenav-layout>\n      <md-sidenav align=\"%$align%\" mode=\"%$mode%\">\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-sidenav>\n      </md-sidenav-layout>",
                     css: "md-sidenav { width: %$width%px }",
                     features: { $: 'group.initGroup' },
                     imports: material_1.MdSidenavModule

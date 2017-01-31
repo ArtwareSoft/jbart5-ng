@@ -16,7 +16,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         })
             .first();
     }
-    function showBox(cmp, profElem, _window, previewOffset) {
+    function showBox(cmp, _profElem, _window, previewOffset) {
+        var profElem = _profElem.children().first();
         if (profElem.offset() == null || $('#jb-preview').offset() == null)
             return;
         cmp.top = previewOffset + profElem.offset().top;
@@ -26,21 +27,25 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         else
             cmp.width = profElem.outerWidth();
         cmp.height = profElem.outerHeight();
-        cmp.title = studio_tgp_model_1.model.shortTitle(pathFromElem(_window, profElem));
+        cmp.title = studio_tgp_model_1.model.shortTitle(pathFromElem(_window, _profElem));
         var $el = $(cmp.elementRef.nativeElement);
         var $titleText = $el.find('.title .text');
         console.log('selected', profElem.outerWidth(), profElem.outerHeight());
         Array.from(profElem.parents())
             .forEach(function (el) { return console.log('parent', $(el).outerWidth(), $(el).outerHeight()); });
-        var same_size_parents = Array.from(profElem.parents())
+        var same_size_parents = Array.from(_profElem.parents())
+            .map(function (el) { return $(el); })
             .filter(function (el) {
-            return profElem.outerWidth() >= $(el).outerWidth() && profElem.outerHeight() >= $(el).outerHeight();
-        })
-            .filter(function (el) {
-            return $(el).attr('jb-ctx');
+            return el.attr('jb-ctx');
         })
             .map(function (el) {
-            return studio_tgp_model_1.model.shortTitle(pathFromElem(_window, $(el)));
+            return el.children().first();
+        })
+            .filter(function (el) {
+            return profElem.outerWidth() >= el.outerWidth() && profElem.outerHeight() >= el.outerHeight();
+        })
+            .map(function (el) {
+            return studio_tgp_model_1.model.shortTitle(pathFromElem(_window, el));
         })
             .join(', ');
         $el.find('.title .text').text(cmp.title + same_size_parents);
@@ -156,11 +161,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                         });
                     var boxes = [];
                     //		$('.jbstudio_highlight_in_preview').remove();
-                    elems.forEach(function (elem) {
+                    elems.map(function (el) { return $(el).children().first(); })
+                        .forEach(function ($el) {
                         var $box = $('<div class="jbstudio_highlight_in_preview"/>');
                         $box.css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue', opacity: '1', zIndex: 5000 }); // cannot assume css class in preview window
-                        var offset = $(elem).offset();
-                        $box.css('left', offset.left).css('top', offset.top).width($(elem).outerWidth()).height($(elem).outerHeight());
+                        var offset = $el.offset();
+                        $box.css('left', offset.left).css('top', offset.top).width($el.outerWidth()).height($el.outerHeight());
                         if ($box.width() == $(_window.document.body).width())
                             $box.width($box.width() - 10);
                         boxes.push($box[0]);

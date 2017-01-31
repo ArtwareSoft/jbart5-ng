@@ -30,10 +30,12 @@ jb.component('dialog.studio-floating', {
 	impl :{$: 'customStyle',
 			template: `<div class="jb-dialog jb-default-dialog">
 				      		  <div class="dialog-title noselect">{{title}}</div>
-				      		  <jb_comp *ngIf="hasMenu" class="dialog-menu" [comp]="menuComp"></jb_comp>
+				      		  <div *ngIf="hasMenu" class="dialog-menu">
+				      		  	<div *jbComp="menuComp"></div>
+				      		  </div>
 							  <button class="dialog-close" (click)="dialogClose()">&#215;</button>
 							  <div class="jb-dialog-content-parent">
- 								<jb_comp [comp]="contentComp" class="dialog-content"></jb_comp>
+					              <div *jbComp="contentComp"></div>
 						  	  </div>
 						</div>`,
 			features: [
@@ -42,7 +44,7 @@ jb.component('dialog.studio-floating', {
 					{$: 'dialog-feature.maxZIndexOnClick', minZIndex: 5000 },
 					{$: 'studio-dialog-feature.studioPopupLocation' },
 			],
-			css: `{ position: fixed;
+			css: `.jb-dialog { position: fixed;
 						background: #F9F9F9; 
 						width: %$width%px; 
 						max-width: 800px;

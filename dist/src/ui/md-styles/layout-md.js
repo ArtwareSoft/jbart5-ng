@@ -46,7 +46,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 return cmp.extendChild(index, { atts: child });
                             });
                         },
-                        jbTemplate: "<div class=\"md-layout\">\n            <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n          </div>",
+                        template: "<div class=\"md-layout\">\n            <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n          </div>",
                         atts: atts
                     };
                 }

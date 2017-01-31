@@ -121,10 +121,11 @@ function eventToProfileElem(e,_window) {
 	return $($el.get().concat($el.parents().get()))
 		.filter((i,e) => 
 			$(e).attr('jb-ctx') )
-		.first();
+		.first()
 }
 
-function showBox(cmp,profElem,_window,previewOffset) {
+function showBox(cmp,_profElem,_window,previewOffset) {
+	var profElem = 	_profElem.children().first();
 	if (profElem.offset() == null || $('#jb-preview').offset() == null) 
 		return;
 
@@ -136,7 +137,7 @@ function showBox(cmp,profElem,_window,previewOffset) {
 		cmp.width = profElem.outerWidth();
 	cmp.height = profElem.outerHeight();
 
-	cmp.title = model.shortTitle(pathFromElem(_window,profElem));
+	cmp.title = model.shortTitle(pathFromElem(_window,_profElem));
 
 	var $el = $(cmp.elementRef.nativeElement);
 	var $titleText = $el.find('.title .text');
@@ -144,13 +145,16 @@ function showBox(cmp,profElem,_window,previewOffset) {
 	Array.from(profElem.parents())
 		.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
 
-	var same_size_parents = Array.from(profElem.parents())
-		.filter(el=>
-			profElem.outerWidth() >= $(el).outerWidth() && profElem.outerHeight() >= $(el).outerHeight())
+	var same_size_parents = Array.from(_profElem.parents())
+		.map(el=>$(el))
 		.filter(el => 
-			$(el).attr('jb-ctx') )
+			el.attr('jb-ctx') )
 		.map(el=>
-			model.shortTitle(pathFromElem(_window,$(el)))		
+			el.children().first())
+		.filter(el=>
+			profElem.outerWidth() >= el.outerWidth() && profElem.outerHeight() >= el.outerHeight())
+		.map(el=>
+			model.shortTitle(pathFromElem(_window,el))		
 		)
 		.join(', ')
 	$el.find('.title .text').text(cmp.title+same_size_parents);
@@ -181,14 +185,15 @@ jb.component('studio.highlight-in-preview',{
 		
 //		$('.jbstudio_highlight_in_preview').remove();
 		
-		elems.forEach(function(elem) {
-			var $box = $('<div class="jbstudio_highlight_in_preview"/>');
-			$box.css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue', opacity: '1', zIndex: 5000 }); // cannot assume css class in preview window
-			var offset = $(elem).offset();
-			$box.css('left',offset.left).css('top',offset.top).width($(elem).outerWidth()).height($(elem).outerHeight());				
-			if ($box.width() == $(_window.document.body).width())
-				$box.width($box.width()-10);
-			boxes.push($box[0]);
+		elems.map(el=>$(el).children().first())
+			.forEach($el => {
+				var $box = $('<div class="jbstudio_highlight_in_preview"/>');
+				$box.css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue', opacity: '1', zIndex: 5000 }); // cannot assume css class in preview window
+				var offset = $el.offset();
+				$box.css('left',offset.left).css('top',offset.top).width($el.outerWidth()).height($el.outerHeight());				
+				if ($box.width() == $(_window.document.body).width())
+					$box.width($box.width()-10);
+				boxes.push($box[0]);
 		})
 
 		$(_window.document.body).append($(boxes));	

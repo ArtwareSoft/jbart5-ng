@@ -11,14 +11,14 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('group.div', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
+                    template: "<div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>",
                     features: { $: 'group.initGroup' }
                 }
             });
             jb_core_1.jb.component('group.expandable', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<section class=\"jb-group\">\n       <div class=\"header\">\n        <div class=\"title\">{{title}}</div>\n        <button md-icon-button md-button (click)=\"toggle()\" title=\"{{expand_title()}}\">\n        <i *ngIf=\"show\" class=\"material-icons\">keyboard_arrow_down</i>\n        <i *ngIf=\"!show\" class=\"material-icons\">keyboard_arrow_right</i>\n        </button>\n      </div>\n      <div *ngIf=\"show\">\n          <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n</section>",
+                    template: "<section class=\"jb-group\">\n       <div class=\"header\">\n        <div class=\"title\">{{title}}</div>\n        <button md-icon-button md-button (click)=\"toggle()\" title=\"{{expand_title()}}\">\n        <i *ngIf=\"show\" class=\"material-icons\">keyboard_arrow_down</i>\n        <i *ngIf=\"!show\" class=\"material-icons\">keyboard_arrow_right</i>\n        </button>\n      </div>\n      <template [ngIf]=\"show\">\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </template>\n</section>",
                     methods: {
                         init: function (ctx) {
                             return function (cmp) {
@@ -35,7 +35,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
             jb_core_1.jb.component('group.accordion', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <button md-icon-button md-button (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </button>\n        </div>\n        <jb_comp *ngIf=\"ctrl.show\" [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n  </section>",
+                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <button md-icon-button md-button (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </button>\n        </div>\n      <template [ngIf]=\"ctrl.show\">\n        <div *jbComp=\"ctrl.comp\"></div>\n      </template>\n      </div>\n  </section>",
                     methods: {
                         init: function (ctx) { return function (cmp) {
                             cmp.expand_title = function (ctrl) {
@@ -60,8 +60,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div class=\"toolbar\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\"></jb_comp>\n      </div>",
-                    css: ".toolbar { \n            display: flex;\n            background: #F5F5F5; \n            height: 33px; \n            width: 100%;\n            border-bottom: 1px solid #D9D9D9; \n            border-top: 1px solid #fff;\n        }\n        * { margin-right: 0 }"
+                    template: "<div class=\"toolbar\">\n        <div *ngComps=\"ctrls\"></div>\n      </div>",
+                    css: "{ \n            display: flex;\n            background: #F5F5F5; \n            height: 33px; \n            width: 100%;\n            border-bottom: 1px solid #D9D9D9; \n            border-top: 1px solid #fff;\n        }\n        * { margin-right: 0 }"
                 }
             });
         }

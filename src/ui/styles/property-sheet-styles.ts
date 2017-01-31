@@ -10,7 +10,7 @@ jb.component('property-sheet.titles-above', {
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
-        <jb_comp [comp]="ctrl.comp"></jb_comp>
+        <div *jbComp="ctrl.comp"></div>
       </div>
       </div>
     `,
@@ -39,7 +39,7 @@ jb.component('property-sheet.titles-above-float-left', {
     template: `<div>
         <div *ngFor="let ctrl of ctrls" class="property">
           <label class="property-title">{{ctrl.title}}</label>
-          <jb_comp [comp]="ctrl.comp"></jb_comp>
+          <div *jbComp="ctrl.comp"></div>
         </div>
         <div class="clearfix"></div>
       </div>
@@ -73,7 +73,7 @@ jb.component('property-sheet.titles-left', {
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
-        <jb_comp [comp]="ctrl.comp" class="property-ctrl"></jb_comp>
+        <div *jbComp="ctrl.comp" class="property-ctrl"></div>
       </div>
     </div>`,
     css: `.property { margin-bottom: %$vSpacing%px; display: flex }
@@ -143,8 +143,8 @@ jb.component('property-sheet.style-on-focus', {
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
         <div class="input-and-toolbar">
-          <jb_comp [comp]="getComp(ctrl)"></jb_comp>
-          <jb_comp [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+          <div *jbComp="getComp(ctrl)"></div>
+          <div *jbComp="ctrl.comp.jb_toolbar" class="toolbar"></div>
         </div>
       </div>
       </div>
@@ -188,8 +188,8 @@ jb.component('property-sheet.growing', {
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
         <div class="input-and-toolbar">
-          <jb_comp [comp]="ctrl.comp"></jb_comp>
-          <jb_comp [comp]="ctrl.comp.jb_toolbar" class="toolbar"></jb_comp>
+          <div *jbComp="ctrl.comp"></div>
+          <div *jbComp="ctrl.comp.jb_toolbar" class="toolbar"></div>
         </div>
       </div>
       </div>

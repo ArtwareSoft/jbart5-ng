@@ -4,9 +4,7 @@ import * as jb_ui from 'jb-ui';
 jb.component('group.div', {
   type: 'group.style',
   impl :{$: 'customStyle',
-    template: `<div class="jb-group">
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true" class="group-item"></jb_comp>
-      </div>`,
+    template: `<div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>`,
     features :{$: 'group.initGroup'}
   }
 })
@@ -22,9 +20,9 @@ jb.component('group.expandable', {
         <i *ngIf="!show" class="material-icons">keyboard_arrow_right</i>
         </button>
       </div>
-      <div *ngIf="show">
-          <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp"></jb_comp>
-      </div>
+      <template [ngIf]="show">
+        <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
+      </template>
 </section>`, 
       methods: {
         init: function (ctx) {
@@ -56,7 +54,9 @@ jb.component('group.accordion', {
                 <i *ngIf="!ctrl.show" class="material-icons">keyboard_arrow_right</i>
           </button>
         </div>
-        <jb_comp *ngIf="ctrl.show" [comp]="ctrl.comp"></jb_comp>
+      <template [ngIf]="ctrl.show">
+        <div *jbComp="ctrl.comp"></div>
+      </template>
       </div>
   </section>`, 
       methods: {
@@ -86,9 +86,9 @@ jb.component('toolbar.simple', {
   impl :{$: 'customStyle', 
     features :{$: 'group.initGroup' },
     template: `<div class="toolbar">
-        <jb_comp *ngFor="let ctrl of ctrls" [comp]="ctrl.comp" [flatten]="true"></jb_comp>
+        <div *ngComps="ctrls"></div>
       </div>`,
-    css: `.toolbar { 
+    css: `{ 
             display: flex;
             background: #F5F5F5; 
             height: 33px; 

@@ -260,15 +260,24 @@ jb.component('group.studio-suggestions', {
           .distinctUntilChanged()
 //          .do(x=>console.log(1,x))
           .flatMap(e=>
-            getProbe().then(res=>
-              res && res.finalResult && res.finalResult[0] && res.finalResult[0].in))
+            getProbe())
+          .map(res=>
+              res && res.finalResult && res.finalResult[0] && res.finalResult[0].in)
           .map(probeCtx=> 
             new suggestions(input,ctx.params.expressionOnly).extendWithOptions(probeCtx,ctx.params.path))
           .distinctUntilChanged((e1,e2)=>
             e1.key == e2.key)
 
         function getProbe() {
-          return cmp.probeResult || ctx.run({$: 'studio.probe', path: ctx.params.path });
+          if (cmp.probeResult)
+            return cmp.probeResult;
+          var _probe = Observable.fromPromise(ctx.run({$: 'studio.probe', path: ctx.params.path }));
+          _probe.subscribe(res=>
+            cmp.probeResult = res)
+          // do not wait more than 500 mSec
+          return _probe.race(Observable.of({finalResult: [ctx] }).delay(500))
+            .catch(e=>
+                jb.logException(e,'in probe exception'))
         }
       }
   }}

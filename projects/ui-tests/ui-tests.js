@@ -1,4 +1,4 @@
-import {jb} from 'jb-core';
+jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
 
 jb.resource('ui-tests','people',[
   { "name": "Homer Simpson" ,age: 42 , male: true},
@@ -94,6 +94,34 @@ jb.component('ui-test.group', {
 },
 })
 
+jb.component('ui-test.group-horizontal', {
+  impl :{$: 'ng2-ui-test',  
+  control :{$: 'group', 
+    style: {$: 'layout.horizontal' },
+    controls: 
+      [ 
+        { $: 'button', title: 'button1' } ,
+        { $: 'label' , title: 'label1' } ,
+      ]
+  },
+  expectedHtmlResult: { $: 'contains', text: ['button1','label1'] }
+},
+})
+
+jb.component('ui-test.group-flex', {
+  impl :{$: 'ng2-ui-test',  
+  control :{$: 'group', 
+    style: {$: 'layout.flex', direction: 'row' },
+    controls: 
+      [ 
+        { $: 'button', title: 'button1' } ,
+        { $: 'label' , title: 'label1' } ,
+      ]
+  },
+  expectedHtmlResult: { $: 'contains', text: ['button1','label1'] }
+},
+})
+
 jb.component('ui-test.button-click', {
   impl :{$: 'ng2-ui-test',  
   control :{$: 'button', 
@@ -129,7 +157,7 @@ jb.component('ui-test.features-css', {
     title: 'Hello World2', 
     features :{ $css: '{color: cyan; font-weight: bold}' },
   },
-  expectedHtmlResult: { $: 'contains', text: ['cyan'] }
+  expectedHtmlResult: { $: 'contains', text: ['Hello'] }
 },
 })
 
@@ -153,7 +181,7 @@ jb.component('ui-test.itemlist-with-select', {
 })
 
 jb.component('ui-test.http-get', {
-  impl:{$: 'ng2-ui-test',  
+  impl:{$: 'ng2-ui-test',  disableChangeDetection: false,
   control :{$: 'group', 
     controls :{$: 'itemlist', 
         items: '%$peopleFromUrl%',
@@ -730,7 +758,7 @@ jb.component('ui-test.tabs', {
 })
 
 jb.component('ui-test.group.accordion', {
-  impl :{$: 'ng2-ui-test', 
+  impl :{$: 'ng2-ui-test', disableChangeDetection: false,
   control :{$: 'group',
       style :{$: 'group.accordion'},
       controls:[
@@ -757,4 +785,7 @@ jb.component('ui-test.markdown', {
 | Tuesday | chicken | $8    |    ` },
     expectedHtmlResult: { $: 'contains', text: 'table' }
 },
+})
+
+
 })

@@ -37,19 +37,24 @@ function jb_run(context,parentParam,settings) {
       case 'profile':
         for(var varname in profile.$vars || {})
           run.ctx.vars[varname] = jb_run(jb_ctx(run.ctx,{ profile: profile.$vars[varname], path: '$vars~'+varname }));
-        run.preparedParams.forEach(function(paramObj) {
+        run.preparedParams.forEach(paramObj => {
           switch (paramObj.type) {
             case 'function': run.ctx.params[paramObj.name] = paramObj.func; break;
             case 'array': run.ctx.params[paramObj.name] = 
-              paramObj.array.map(function(prof,i) { return jb_run(jb_ctx(run.ctx,{profile: prof, path: paramObj.name+'~'+i}),paramObj.param); } ); break;  // maybe we should [].concat and handle nulls
+                paramObj.array.map((prof,i) => jb_run(jb_ctx(run.ctx,{profile: prof, path: paramObj.name+'~'+i}),paramObj.param) )
+              ; break;  // maybe we should [].concat and handle nulls
             default: run.ctx.params[paramObj.name] = jb_run(paramObj.context, paramObj.param);
           }
         });
         var out;
         if (run.impl) {
-          run.args = prepareGCArgs(run.ctx,run.preparedParams);
+          var args = prepareGCArgs(run.ctx,run.preparedParams);
           if (profile.$debugger) debugger;
-          out = run.impl.apply(null,run.args);
+          if (! args.then)
+            out = run.impl.apply(null,args);
+          else
+            return args.then(args=>
+              jb_tojstype(run.impl.apply(null,args),jstype, context))
         }
         else {
           run.ctx.callerPath = context.path;
@@ -69,7 +74,20 @@ function jb_run(context,parentParam,settings) {
   }
 
   function prepareGCArgs(ctx,preparedParams) {
-    return [ctx].concat(preparedParams.map(param=>ctx.params[param.name]))
+    var delayed = preparedParams.filter(param => {
+      var v = ctx.params[param.name] || {};
+      return (v.then || v.subscribe ) && param.param.as != 'observable'
+    });
+    if (delayed.length == 0 || typeof Observable == 'undefined')
+      return [ctx].concat(preparedParams.map(param=>ctx.params[param.name]))
+
+    return Observable.from(preparedParams)
+        .concatMap(param=>
+          ctx.params[param.name])
+        .toArray()
+        .map(x=>
+          [ctx].concat(x))
+        .toPromise()
   }
 }
 
@@ -341,11 +359,12 @@ function jb_tojstype(value,jstype,context) {
   if (typeof jbart.jstypes[jstype] != 'function') debugger;
   return jbart.jstypes[jstype](value,context);
 }
-function jb_tostring(value) { return jb_tojstype(value,'string'); }
-function jb_toarray(value) { return jb_tojstype(value,'array'); }
-function jb_toboolean(value) { return jb_tojstype(value,'boolean'); }
-function jb_tosingle(value) { return jb_tojstype(value,'single'); }
-function jb_tonumber(value) { return jb_tojstype(value,'number'); }
+
+function jb_tostring(value) { return jb_tojstype(value,'string') }
+function jb_toarray(value) { return jb_tojstype(value,'array') }
+function jb_toboolean(value) { return jb_tojstype(value,'boolean') }
+function jb_tosingle(value) { return jb_tojstype(value,'single') }
+function jb_tonumber(value) { return jb_tojstype(value,'number') }
 
 function jb_initJstypes() {
   jbart.jstypes = {

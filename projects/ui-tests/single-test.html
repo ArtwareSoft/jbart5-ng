@@ -13,11 +13,13 @@
   <jbart compID="ui-tests.single-test">loading tests</jbart>
 <script>
 
-  var test = location.href.split('?test=').pop();
+  var test = location.href.split('?test=').pop().split('&')[0];
   if (test) {
     document.title = test;
     jbart.singleTestID = test;
   }
+  if (location.href.indexOf('minimal=') != -1)
+    document.querySelector('jbart').setAttribute('compID','ui-tests.run-test-only')
 
 jbProjectsModules(jbart.testProjects).then(test_modules=>
   jbLoadModules(jb_modules.concat(jb_studio_modules).concat(test_modules))

@@ -25,34 +25,56 @@ jb_component('call',{
  	}
 });
 
+
+function jb_pipe(context,items,ptName) {
+	// if (Array.isArray(context.data) && context.data.length > 0)
+	// 	var start = context.data
+	// else
+		var start = [jb_toarray(context.data)[0]]; // use only one data item, the first or null
+	if (typeof context.profile.items == 'string')
+		return context.runInner(context.profile.items,null,'items');
+	var profiles = jb_toarray(context.profile.items || context.profile[ptName]);
+	if (context.profile.items && context.profile.items.sugar)
+		var innerPath =  '' ;
+	else 
+		var innerPath = context.profile[ptName] ? (ptName + '~') : 'items~';
+
+	if (ptName == '$pipe') // promise pipe
+		return profiles.reduce((deferred,prof,index) => {
+			return deferred.then(data=>
+				jb_synchArray(data))
+			.then(data=>
+				step(prof,index,data))
+		}, Promise.resolve(start))
+
+	return profiles.reduce((data,prof,index) => 
+		step(prof,index,data), start)
+
+
+	function step(profile,i,data) {
+		var parentParam = (i == profiles.length - 1 && context.parentParam) ? context.parentParam : { as: 'array'};
+		if (jb_profileType(profile) == 'aggregator')
+			return jb_run(jb_ctx(context,	{ data: data, profile: profile, path: innerPath+i }), parentParam);
+		return [].concat.apply([],data.map(item =>
+				jb_run(jb_ctx(context,{data: item, profile: profile, path: innerPath+i}), parentParam)
+			)).filter(x=>x!=null);
+	}
+}
+
 jb_component('pipeline',{
 	type: "data",
 	params: [
-		{ id: 'items', type: "data,aggregator[]", ignore: true, essential: true, composite: true }
+		{ id: 'items', type: "data,aggregator[]", ignore: true, essential: true, composite: true },
 	],
-	impl: function(context,items) {
-		var data = jb_toarray(context.data);
-		var curr = [data[0]]; // use only one data item, the first or null
-		if (typeof context.profile.items == 'string')
-			return context.runInner(context.profile.items,null,'items');
-		var profiles = jb_toarray(context.profile.items || context.profile['$pipeline']);
-		if (context.profile.items && context.profile.items.sugar)
-			var innerPath =  '' ;
-		else 
-			var innerPath = context.profile['$pipeline'] ? '$pipeline~' : 'items~';
+	impl: (ctx,items) => jb_pipe(ctx,items,'$pipeline')
+})
 
-		profiles.forEach(function(profile,i) {
-			var parentParam = (i == profiles.length - 1 && context.parentParam) ? context.parentParam : { as: 'array'};
-			if (jb_profileType(profile) == 'aggregator')
-				curr = jb_run(jb_ctx(context,	{ data: curr, profile: profile, path: innerPath+i }), parentParam);
-			else 
-				curr = [].concat.apply([],curr.map(function(item) {
-					return jb_run(jb_ctx(context,{data: item, profile: profile, path: innerPath+i}), parentParam);
-				})).filter(notNull);
-		});
-		return curr;
-		function notNull(value) { return value != null; }
-  }
+jb_component('pipe', { // synched pipeline
+	type: "data",
+	params: [
+		{ id: 'items', type: "data,aggregator[]", ignore: true, essential: true, composite: true },
+	],
+	impl: (ctx,items) => jb_pipe(ctx,items,'$pipe')
 })
 
 jb_component('run',{
@@ -449,7 +471,7 @@ jb_component('log',{
 			(window.parent || window).console.log(out);
 		else
 			console.log(out);
-		return context.data;
+		return out;
 	}
 });
 
@@ -812,5 +834,20 @@ jb_component('onNextTimer',{
 	impl: (ctx,action) => {
 		jb_delay(1,ctx).then(()=>
 			action())
+	}
+})
+
+jb_component('http.get', {
+	params: [
+		{ id: 'url', as: 'string' },
+		{ id: 'json', as: 'boolean' }
+	],
+	impl: (ctx,url,_json) => {
+		var json = _json || url.match(/json$/);
+		return fetch(url)
+			  .then(r => 
+			  		json ? r.json() : r.text())
+			  .catch(e =>
+			  		jb_logException(e))
 	}
 })

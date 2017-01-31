@@ -15,9 +15,17 @@ jb.component('hello-world.main', {
       }, 
       {$: 'editable-boolean', 
         databind: '%$globals/aa%', 
-        style :{$: 'editable-boolean.flipswitch' }, 
+        style :{$: 'editable-boolean.md-slide-toggle' }, 
         textForTrue: 'yes', 
         textForFalse: 'no'
+      }, 
+      {$: 'button', 
+        title: 'hello', 
+        style :{$: 'button.mdl-flat', rippleEffect: 'true' }
+      }, 
+      {$: 'button', 
+        title: 'hello', 
+        style :{$: 'button.mdl-flat-ripple' }
       }
     ]
   }

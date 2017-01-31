@@ -22,7 +22,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         { $: 'studio.onNextModifiedPath',
                             action: [
                                 { $: 'studio.openModifiedPath' },
-                                { $: 'studio.refreshPreview' }
+                                { $: 'studio.refresh-preview' }
                             ]
                         },
                         { $: 'studio.insert-comp',
@@ -118,7 +118,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         controls: [
                             { $: 'editable-text',
                                 databind: '%$dialogData/name%',
-                                features: { $: 'onEnter',
+                                features: { $: 'feature.onEnter',
                                     action: { $: 'closeContainingPopup' }
                                 },
                                 title: 'page name',

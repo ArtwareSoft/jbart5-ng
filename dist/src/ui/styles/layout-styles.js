@@ -17,7 +17,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     { id: 'spacing', as: 'number', defaultValue: 3 }
                 ],
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
+                    template: "<div class=\"jb-group\">\n        <div *ngFor=\"let ctrl of ctrls\" class=\"group-item\"><div *jbComp=\"ctrl\"></div></div>\n      </div>",
                     css: ".group-item { margin-bottom: %$spacing%px; display: block }\n        .group-item:last-child { margin-bottom:0 }",
                     features: { $: 'group.initGroup' }
                 }
@@ -28,8 +28,8 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     { id: 'spacing', as: 'number', defaultValue: 3 }
                 ],
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
-                    css: "{display: flex}\n        .group-item { margin-right: %$spacing%px }\n        .group-item:last-child { margin-right:0 }",
+                    template: "<div class=\"jb-group\">\n        <div *ngFor=\"let ctrl of ctrls\" class=\"group-item\"><div *jbComp=\"ctrl\"></div></div>\n      </div>",
+                    css: ".jb-group {display: flex}\n        .group-item { margin-right: %$spacing%px }\n        .group-item:last-child { margin-right:0 }",
                     features: { $: 'group.initGroup' }
                 }
             });
@@ -41,9 +41,9 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     { id: 'wrap', as: 'string', options: ',wrap' },
                 ],
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-group\">\n        <jb_comp *ngFor=\"let ctrl of ctrls\" [comp]=\"ctrl.comp\" [flatten]=\"true\" class=\"group-item\"></jb_comp>\n      </div>",
+                    template: "<div class=\"jb-group\">\n        <div *ngFor=\"let ctrl of ctrls\" class=\"group-item\"><div *jbComp=\"ctrl\"></div></div>\n      </div>",
                     //    css: '{ %$flexProps% }',
-                    css: '{ display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
+                    css: '.jb-group { display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
                     features: { $: 'group.initGroup' }
                 }
             });
@@ -97,7 +97,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                         ("flex-grow: " + grow),
                         ("flex-shrink: " + shrink),
                     ].join('; ');
-                    return jb_ui.Comp({ jbTemplate: "<div style=\"" + css + "\"></div>" }, ctx);
+                    return jb_ui.Comp({ template: "<div style=\"" + css + "\"></div>" }, ctx);
                 }
             });
             jb_core_1.jb.component('responsive.only-for-phone', {

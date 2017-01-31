@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_rx, studio_tgp_model_1, studio_path_1;
+    var jb_core_1, jb_rx;
     var modifyOperationsEm, studioActivityEm, pathChangesEm;
     function notifyModification(path, before, ctx, ngPath) {
         var comp = path.split('~')[0];
@@ -57,28 +57,11 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
             },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
-            },
-            function (studio_tgp_model_1_1) {
-                studio_tgp_model_1 = studio_tgp_model_1_1;
-            },
-            function (studio_path_1_1) {
-                studio_path_1 = studio_path_1_1;
             }],
         execute: function() {
             exports_1("modifyOperationsEm", modifyOperationsEm = new jb_rx.Subject());
             exports_1("studioActivityEm", studioActivityEm = new jb_rx.Subject());
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
-            jbart.modifiedCtrlsEm = modifyOperationsEm.flatMap(function (x) {
-                var path_parts = x.path.split('~');
-                var sub_paths = path_parts.map(function (e, i) {
-                    return path_parts.slice(0, i + 1).join('~');
-                }).reverse();
-                var firstCtrl = sub_paths
-                    .filter(function (p) {
-                    return studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(studio_path_1.profileFromPath(p)), 'control');
-                })[0];
-                return firstCtrl ? [{ path: firstCtrl, ngPath: x.ngPath }] : [];
-            });
             // ********* Components ************
             jb_core_1.jb.component('studio.message', {
                 type: 'action',
@@ -87,16 +70,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-path'
                     return message(message);
                 }
             });
-            jb_core_1.jb.component('studio.refreshPreview', {
-                type: 'action',
-                impl: function () {
-                    var previewjBart = jbart.previewjbart ? jbart.previewjbart : jbart;
-                    previewjBart.previewRefreshCounter = (previewjBart.previewRefreshCounter || 0) + 1;
-                    if (jbart.studioActivityEm)
-                        jbart.studioActivityEm.next();
-                }
-            });
-            jb_core_1.jb.component('studio.redrawStudio', {
+            jb_core_1.jb.component('studio.redraw-studio', {
                 type: 'action',
                 impl: function () {
                     return jbart.redrawStudio && jbart.redrawStudio();

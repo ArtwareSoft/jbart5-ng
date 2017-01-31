@@ -15,7 +15,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div *jbComp=\"ctrl.comp\"></div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: %$spacing%px }\n      .property:last-child { margin-bottom:0 }\n      .property>.property-title {\n        width:100px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n      }\n      .property>div { display:inline-block }"
                 }
             });
@@ -27,7 +27,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n        <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n          <label class=\"property-title\">{{ctrl.title}}</label>\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n        </div>\n        <div class=\"clearfix\"></div>\n      </div>\n    ",
+                    template: "<div>\n        <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n          <label class=\"property-title\">{{ctrl.title}}</label>\n          <div *jbComp=\"ctrl.comp\"></div>\n        </div>\n        <div class=\"clearfix\"></div>\n      </div>\n    ",
                     css: ".property { \n          float: left;\n          width: %$fieldWidth%px;\n          margin-right: %$spacing}%px \n        }\n      .clearfix { clear: both }\n      .property:last-child { margin-right:0 }\n      .property>.property-title {\n        margin-bottom: 3px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        font-size:14px;\n      }",
                 }
             });
@@ -40,7 +40,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 ],
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <jb_comp [comp]=\"ctrl.comp\" class=\"property-ctrl\"></jb_comp>\n      </div>\n    </div>",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div *jbComp=\"ctrl.comp\" class=\"property-ctrl\"></div>\n      </div>\n    </div>",
                     css: ".property { margin-bottom: %$vSpacing%px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;\n      }\n      .property>*:last-child { margin-right:0 }"
                 }
             });
@@ -93,7 +93,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             });
                         }; }
                     },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"getComp(ctrl)\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"getComp(ctrl)\"></div>\n          <div *jbComp=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: %$vSpacing%px; display: flex; position: relative; height: 20px }\n      .focused .input-and-toolbar { zoom: 150%; position: absolute; z-index: 500; transition: zoom 2s}\n      .input-and-toolbar { display: flex;margin-right:0;  }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;"
                 }
             });
@@ -118,7 +118,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             });
                         }; }
                     },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div class=\"input-and-toolbar\">\n          <jb_comp [comp]=\"ctrl.comp\"></jb_comp>\n          <jb_comp [comp]=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></jb_comp>\n        </div>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div *jbComp=\"ctrl.comp.jb_toolbar\" class=\"toolbar\"></div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: %$vSpacing%px; display: flex; position: relative; height: 20px }\n      .focused .input-and-toolbar { zoom: 150%; position: absolute; z-index: 500; transition: zoom 2s}\n      .input-and-toolbar { display: flex;margin-right:0;  }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;"
                 }
             });

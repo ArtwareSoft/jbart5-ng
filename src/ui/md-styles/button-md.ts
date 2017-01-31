@@ -18,7 +18,7 @@ jb.component('button.md-flat-no-background', {
   type: 'button.style',
   impl :{$: 'customStyle', 
       template: '<div><button md-button (click)="clicked()">{{title}}</button></div>',
-      css: 'button {background: none}'
+      css: 'button {background: none}',
       imports: MdButtonModule
   }
 })

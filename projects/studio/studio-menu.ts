@@ -42,12 +42,12 @@ jb.component('studio.main-menu', {
           {$: 'pulldown.menu-item', 
             spritePosition: '10,0', 
             title: 'Refresh Preview', 
-            action :{$: 'studio.refreshPreview' }
+            action :{$: 'studio.refresh-preview' }
           }, 
           {$: 'pulldown.menu-item', 
             spritePosition: '10,0', 
             title: 'Redraw Studio', 
-            action :{$: 'studio.redrawStudio' }
+            action :{$: 'studio.redraw-studio' }
           }, 
           {$: 'pulldown.menu-item', 
             spritePosition: '3,0', 

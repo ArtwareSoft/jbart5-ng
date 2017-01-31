@@ -4,7 +4,7 @@ jb.component('field.databind', {
   type: 'feature',
   impl: ctx => {
     if (!ctx.vars.$model || !ctx.vars.$model.databind)
-      jb.logError('bind-field: No databind in model');
+      jb.logError('bind-field: No databind in model', ctx.vars.$model, ctx);
     return {
       init: function(cmp) {
             cmp.jbModel = (val,source) => {

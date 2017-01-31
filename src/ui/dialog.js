@@ -29,7 +29,7 @@ jb.component('openDialog', {
 			beforeInit: function(cmp) {
 				cmp.title = ctx.params.title(ctx);
 				cmp.dialog = dialog;
-				cmp.dialog.$el = $(cmp.elementRef.nativeElement);
+				cmp.dialog.$el = $(cmp.elementRef.nativeElement).children().first();
 				cmp.dialog.$el.css('z-index',100);
 
 				cmp.dialogClose = dialog.close;
@@ -55,10 +55,11 @@ jb.component('closeContainingPopup', {
 jb.component('dialog.default', {
 	type: 'dialog.style',
 	impl :{$: 'customStyle',
+		noTemplateParsing: true,
 		template: `<div class="jb-dialog jb-default-dialog">
 				      <div class="dialog-title">{{title}}</div>
 				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
-				      <jb_comp [comp]="contentComp"></jb_comp>
+				      <div *jbComp="contentComp"></div>
 				    </div>` 
 	}
 })
@@ -66,7 +67,7 @@ jb.component('dialog.default', {
 jb.component('dialog.popup', {
   type: 'dialog.style',
   impl :{$: 'customStyle',
-      template: '<div class="jb-dialog jb-popup"><jb_comp [comp]="contentComp" class="dialog-content"></jb_comp></div>',
+      template: '<div class="jb-dialog jb-popup"><div *jbComp="contentComp" class="dialog-content"></div></div>',
       features: [
         { $: 'dialog-feature.maxZIndexOnClick' },
         { $: 'dialog-feature.closeWhenClickingOutside' },
@@ -262,13 +263,12 @@ jb.component('dialog-feature.dragTitle', {
 	impl: function(context, id) { 
 		var dialog = context.vars.$dialog;
 		return {
-		      innerhost: { '.dialog-title' : {
-		      	'(mousedown)': 'mousedownEm.next($event)', 
-		       }},
 		       css: '.dialog-title { cursor: pointer }',
 	           observable: () => {}, // create jbEmitter
 		       init: function(cmp) {
-		       	  cmp.mousedownEm = cmp.mousedownEm || new jb_rx.Subject();
+		       	  var titleElem = cmp.elementRef.nativeElement.querySelector('.dialog-title');
+		       	  cmp.mousedownEm = jb_rx.Observable.fromEvent(titleElem, 'mousedown')
+		       	  	.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
 		       	  
 				  if (id && sessionStorage.getItem(id)) {
 						var pos = JSON.parse(sessionStorage.getItem(id));

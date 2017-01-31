@@ -1,5 +1,13 @@
 jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
 
+jb_component('delayedObj', {
+  params: [
+    { id: 'obj', type: 'data' }
+  ],
+  impl: (ctx,obj) => 
+    jb_native_delay(1).then(_=>obj)
+})
+
 jb.component('data-test.join', {
 	 impl :{$: 'data-test', 
 		calculate: {$pipeline: [ {$list: [1,2]}, {$: 'join'} ]},
@@ -41,5 +49,47 @@ jb.component('data-test.empty-param-as-string', {
     }
 })
 
+jb.component('data-test.wait-for-promise', {
+  impl: {$: 'data-test', 
+      calculate: {$: 'log', obj: ctx => 
+          jb_delay(100).then(()=>5) },
+    expectedResult: { $: 'contains', text: '5' }
+  }
+})
+
+jb.component('data-test.pipe', {
+   impl :{$: 'data-test', 
+    calculate: {$pipe : [ ctx => [1,2] , {$join: ','}  ]},
+    expectedResult :{$: 'contains', text: '1,2' }
+  },
+})
+
+jb.component('data-test.pipe-with-promise', {
+   impl :{$: 'data-test', 
+    calculate: {$pipe : [ ctx => jb_NativePromise_resolve([1,2]), {$join: ','}  ]},
+    expectedResult :{$: 'contains', text: '1,2' }
+  },
+})
+
+jb.component('data-test.pipe-with-promise2', {
+   impl :{$: 'data-test', 
+    calculate: {$pipe : [ { $delayedObj: {$list: [1,2]} } , {$join: ','}  ]},
+    expectedResult :{$: 'contains', text: '1,2' }
+  },
+})
+
+jb.component('data-test.pipe-with-promise3', {
+   impl :{$: 'data-test', 
+    calculate: {$pipe : [ { $list: [ { $delayedObj: 1 } , 2, { $delayedObj: 3 }]}, {$join: ','}  ]},
+    expectedResult :{$: 'contains', text: '1,2,3' }
+  },
+})
+
+jb.component('data-test.pipe-with-observable', {
+   impl :{$: 'data-test', 
+    calculate: {$pipe : [ ctx => Observable.of([1,2]), '%%a' ,{$join: ','}  ]},
+    expectedResult :{$: 'contains', text: '1a,2a' }
+  },
+})
 
 })

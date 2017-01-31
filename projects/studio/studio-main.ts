@@ -1,13 +1,6 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
 
-import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { Component, ElementRef } from '@angular/core';
-import {modifyOperationsEm,studioActivityEm} from './studio-utils';
-
-
-//jbart.studio = jbart.studio || {}
-
 jb.component('studio.all', {
   type: 'control', 
   impl :{$: 'group', 
@@ -122,11 +115,11 @@ jb.component('studio.all', {
     features: [
       {$: 'group.watch', data: '%$globals/project%' }, 
       {$: 'feature.init', 
-        action :{$: 'rx.urlPath', 
+        action :{$: 'rx.url-path', 
           params: ['project', 'page', 'profile_path'], 
           databind: '%$globals%', 
           base: 'studio', 
-          zoneId: 'studio.all'
+          onUrlChange: {$: 'studio.refresh-preview' }
         }
       }
     ]
@@ -144,7 +137,7 @@ jb.component('studio.currentProfilePath', {
 	impl: { $firstSucceeding: ['%$simulateProfilePath%', '%$globals/profile_path%', '%$globals/project%.%$globals/page%'] }
 })
 
-jb.component('studio.is-single-test',{
+jb.component('studio.is-single-test', {
 	type: 'boolean',
 	impl: ctx => {
 		var page = location.href.split('/')[6];
@@ -153,7 +146,7 @@ jb.component('studio.is-single-test',{
   	}
 })
 
-jb.component('studio.cmps-of-project',{
+jb.component('studio.cmps-of-project', {
   type: 'data',
   params: [
     { id: 'project', as: 'string'}
@@ -163,107 +156,12 @@ jb.component('studio.cmps-of-project',{
               .filter(id=>id.split('.')[0] == prj)
 })
 
-jb.component('studio.project-pages',{
+jb.component('studio.project-pages', {
 	type: 'data',
   impl: {$pipeline: [ 
           {$: 'studio.cmps-of-project', project: '%$globals/project%' },
           { $filter: {$: 'studio.is-of-type', type: 'control', path: '%%'} },
           {$: 'suffix', separator: '.' }
       ]}
-})
-
-jb.component('studio.renderWidget',{
-	type: 'control',
-	impl: function (ctx) {
-		@Component({
-			selector: 'previewIframe',
-			template: `<iframe sandbox="allow-same-origin allow-forms allow-scripts" style="box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px"
-					seamless="" id="jb-preview" frameborder="0" [src]="project_url"></iframe>`,
-		})
-	    class previewIframe { 
-				url: SafeResourceUrl;
-		  		constructor(private sanitizer: DomSanitizer, private elementRef: ElementRef) {
-		  		}
-		  		ngOnInit() {
-		  			var cmp = this;
-					cmp.project = ctx.exp('%$globals/project%');
-					cmp.project_url = cmp.sanitizer.bypassSecurityTrustResourceUrl('/project/'+cmp.project+ '?cacheKiller='+(''+Math.random()).slice(10));
-					if (!cmp.project) debugger;
-					var iframe = cmp.elementRef.nativeElement.firstElementChild;
-					window.jb_studio_window = true; // let studio widgets run in a special mode
-					waitForIframeLoad(iframe).then(function() {
-						var w = iframe.contentWindow;
-						w.jbart.studioWindow = window;
-						w.jbart.studioGlobals = ctx.exp('{%$globals%}');
-						w.jbart.modifyOperationsEm = modifyOperationsEm;
-						w.jbart.studioActivityEm = studioActivityEm;
-						w.jbart.studioModifiedCtrlsEm = jbart.modifiedCtrlsEm;
-            w.jbart.profileFromPath = jbart.profileFromPath;
-						jbart.previewWindow = w;
-						jbart.previewjbart = w.jbart;
-						jbart.preview_jbart_widgets = w.jbart_widgets;
-						document.title = cmp.project + ' with jBart';
-//						jbart.previewjbart.comps[cmp.project + '.tests'] = jbart.previewjbart.comps['ui-tests.show-project-tests'];
-						
-						// forward the studio zone to the preview widget so it will be updated
-						jb_ui.getZone('studio.all').then(zone=> {
-							zone.onStable.subscribe(()=>{
-								w.jbart.studioGlobals = ctx.exp('{%$globals%}');
-								studioActivityEm.next();
-								//console.log('studio.all stable');
-								// refresh preview
-								jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
-								//w.setTimeout(()=>{},1); 
-							});
-						})
-						jb.trigger(jbart, 'preview_loaded');
-					})
-		  		}
-		}
-		previewIframe.jb_title = 
-			() => 'previewIframe';
-	 	return previewIframe;
-	}
-})
-
-
-jb.component('studio.setPreviewSize', {
-	type: 'action',
-	params: [
-		{ id: 'width', as: 'number'},
-		{ id: 'height', as: 'number'},
-	],
-	impl: (ctx,width,height) => {
-		if (width)
-			$('#jb-preview').width(width);
-		if (height)
-			$('#jb-preview').height(height);
-	}
-})
-function waitForIframeLoad(iframe) {
-	if (!iframe)
-		debugger;
-	return new Promise((resolve,fail)=> {
-		var counter = 300;
-		var intervalID = setInterval(function() {
-			if (jb.path(iframe,['contentWindow','jbart','widgetLoaded'])) {
-				window.clearInterval(intervalID);
-				resolve();
-			}
-			if (--counter <= 0) {
-				window.clearInterval(intervalID);
-				fail();
-			}
-		}, 100);	
-	})
-}
-
-jb.component('studio.waitForPreviewIframe',{
-	type:'action',
-	impl: function(context) {
-		if (jbart.previewjbart) return;
-		return new Promise(resolve => 
-			jb.bind(jbart, 'preview_loaded', resolve))
-	}
 })
 
