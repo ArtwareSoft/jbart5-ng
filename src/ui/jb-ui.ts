@@ -81,13 +81,15 @@ class jbComponent {
 
 		return DynamicModule;
 	}
-	registerMethods(cmp_ref,parent) { // should be called by the instantiator
+	registerMethods(cmp_ref) { // should be called by the instantiator
 		var cmp = cmp_ref._hostElement.component; // hostView._view._Cmp_0_4;
-		cmp.parentCmp = parent;
+//		cmp.parentCmp = parent;
 		var ctx = this.ctx;
 		cmp.ctx = ctx;
 		cmp.methodHandler = this.methodHandler;
 	  	var elem = cmp_ref._hostElement.nativeElement;
+	  	while (ctx.profile.__innerImplementation)
+	  		ctx = ctx.componentContext._parent;
 	  	elem.setAttribute('jb-ctx',ctx.id);
 		garbageCollectCtxDictionary();
 		jbart.ctxDictionary[ctx.id] = ctx;
@@ -296,22 +298,22 @@ export function injectLifeCycleMethods(Cmp) {
 		this.jbEmitter && this.jbEmitter.complete();
 	}
 
-	Cmp.prototype.jbWait = function () {
-		this.readyCounter = (this.readyCounter || 0)+1;
-		var parentCmp = this.parentCmp && this.parentCmp.parent();
-		if (parentCmp && parentCmp.jbWait)
-			this.parentWaiting = parentCmp.jbWait();
-		return {
-			ready: () => {
-				this.readyCounter--;
-				if (!this.readyCounter) {
-					this.jbEmitter && this.jbEmitter.next('ready');
-					if (this.parentWaiting)
-						this.parentWaiting.ready();
-				}
-			}
-		}
-	}
+	// Cmp.prototype.jbWait = function () {
+	// 	this.readyCounter = (this.readyCounter || 0)+1;
+	// 	var parentCmp = this.parentCmp && this.parentCmp.parent();
+	// 	if (parentCmp && parentCmp.jbWait)
+	// 		this.parentWaiting = parentCmp.jbWait();
+	// 	return {
+	// 		ready: () => {
+	// 			this.readyCounter--;
+	// 			if (!this.readyCounter) {
+	// 				this.jbEmitter && this.jbEmitter.next('ready');
+	// 				if (this.parentWaiting)
+	// 					this.parentWaiting.ready();
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 
 @Directive({
@@ -335,14 +337,6 @@ export class jbComp {
   // 	}
   // }
 
-  parent() {
-  	try {
-		return this.cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4.context;
-	} catch (e) {
-		return null;
-	}
-  }
-
   draw(comp) {
   	if (!comp) return;
   	this._comp = comp.comp || comp;
@@ -351,8 +345,8 @@ export class jbComp {
   		.filter(comp=>comp.compile)
   		.forEach(comp=>{
 	  		var componentFactory = comp.compile(this.compiler);
-		   	var cmp_ref = this.cmp_ref = this.view.createComponent(componentFactory);
-		   	comp.registerMethods && comp.registerMethods(cmp_ref,this);
+		   	var cmp_ref = this.view.createComponent(componentFactory);
+		   	comp.registerMethods && comp.registerMethods(cmp_ref);
 			this.ngZone.run(()=>{});
 	 	})
   }
@@ -393,10 +387,6 @@ export class jBartWidget {
 		    jb_waitFor(()=>jbart.studioAutoRefreshWidget).then(()=>{
 		    	jbart.studioAutoRefreshWidget(this)
 		    })
-	}
-
-	ngDoCheck() {
-		console.log(window.document.title)
 	}
 
 	draw() {

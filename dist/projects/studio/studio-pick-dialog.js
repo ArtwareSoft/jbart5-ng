@@ -3,7 +3,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_ui, jb_rx, studio_tgp_model_1;
     function pathFromElem(_window, profElem) {
-        return _window.jbart.ctxDictionary[profElem.attr('jb-ctx')].path;
+        try {
+            return _window.jbart.ctxDictionary[profElem.attr('jb-ctx') || profElem.parent().attr('jb-ctx')].path;
+        }
+        catch (e) {
+            return '';
+        }
         //profElem.attr('jb-path');
     }
     function eventToProfileElem(e, _window) {
@@ -30,9 +35,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         cmp.title = studio_tgp_model_1.model.shortTitle(pathFromElem(_window, _profElem));
         var $el = $(cmp.elementRef.nativeElement);
         var $titleText = $el.find('.title .text');
-        console.log('selected', profElem.outerWidth(), profElem.outerHeight());
-        Array.from(profElem.parents())
-            .forEach(function (el) { return console.log('parent', $(el).outerWidth(), $(el).outerHeight()); });
+        //	console.log('selected',profElem.outerWidth(),profElem.outerHeight());
+        // Array.from(profElem.parents())
+        // 	.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
         var same_size_parents = Array.from(_profElem.parents())
             .map(function (el) { return $(el); })
             .filter(function (el) {

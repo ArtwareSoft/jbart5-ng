@@ -17,10 +17,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
             .flatMap(function (e) {
             var comp = jbComp._comp;
             if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-                jb_native_delay(100).then(function () {
-                    var elemToHighlight = $(jbComp.elementRef.nativeElement).children().first();
-                    elemToHighlight.addClass('jb-highlight-comp-changed');
-                });
+                //            jb_native_delay(100).then(() => {// highlight on delay
+                var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
+                elemToHighlight.addClass('jb-highlight-comp-changed');
+                //            });
                 if (studio_path_1.profileFromPath) {
                     var prof = studio_path_1.profileFromPath(e.path);
                     var ctxToRun = comp.ctx.ctx({ profile: prof, comp: e.path, path: '' });
@@ -33,6 +33,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
             .catch(function (e) {
             return jb_logException(e);
         })
+            .takeUntil(jbComp.destroyNotifier.toPromise())
             .subscribe(function (comp) {
             if (comp != jbComp._comp)
                 jbComp.draw(comp);
@@ -42,12 +43,12 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
     function studioAutoRefreshWidget(widget) {
         var counterChange = studio_utils_1.studioActivityEm.map(function (x) { return previewRefreshCounter; }).distinctUntilChanged();
         var compIdEm = studio_utils_1.studioActivityEm
-            .merge(counterChange)
             .startWith(1)
             .map(function () {
             return widget.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
         })
             .distinctUntilChanged()
+            .merge(counterChange)
             .catch(function (e) {
             return jb_logException(e);
         })

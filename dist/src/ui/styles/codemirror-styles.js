@@ -85,6 +85,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                     { id: 'mode', as: 'string' },
                     { id: 'debounceTime', as: 'number', defaultValue: 300 },
                     { id: 'lineWrapping', as: 'boolean' },
+                    { id: 'onCtrlEnter', type: 'action', dynamic: true },
                 ],
                 impl: function (context, cm_settings, _enableFullScreen, resizer, height, mode, debounceTime, lineWrapping) {
                     return {
@@ -100,7 +101,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', 'jb-ui'], function(exports_1, context
                                 // mode: 'jbart5',
                                 extraKeys: {
                                     'Ctrl-Space': 'autocomplete',
-                                    'Ctrl-Enter': function () { }
+                                    'Ctrl-Enter': function () { return context.params.onCtrlEnter(); }
                                 },
                             });
                             var $el = $(cmp.elementRef.nativeElement);

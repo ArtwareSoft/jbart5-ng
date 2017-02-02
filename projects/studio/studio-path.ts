@@ -39,7 +39,7 @@ export function profileFromPath(path,silent) {
 	var id = path.split('~')[0];
 	var comp = jbart_base().comps[id] || jbart.comps[id];
 	comp = comp && comp.impl;
-	if (!comp) {
+	if (!comp && !silent) {
 		jb.logError('profileFromPath: can not find path ',path);
 		return;
 	}

@@ -347,8 +347,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var res = JSON.stringify(comp.impl, function (key, val) { return typeof val === 'function' ? '' + val : val; }, 4);
                     var profile = studio_path_1.profileFromPath(path);
                     // inject conditional param values
-                    (comp.params || [])
-                        .forEach(function (p) {
+                    (comp.params || []).forEach(function (p) {
                         var pUsage = '%$' + p.id + '%';
                         var pVal = '' + (profile[p.id] || p.defaultValue || '');
                         res = res.replace(new RegExp('{\\?(.*?)\\?}', 'g'), function (match, condition_exp) {
@@ -356,8 +355,9 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                                 return pVal ? condition_exp : '';
                             return match;
                         });
-                    })(comp.params || [])
-                        .forEach(function (p) {
+                    });
+                    // inject param values 
+                    (comp.params || []).forEach(function (p) {
                         var pVal = '' + (profile[p.id] || p.defaultValue || ''); // only primitives
                         res = res.replace(new RegExp("%\\$" + p.id + "%", 'g'), pVal);
                     });

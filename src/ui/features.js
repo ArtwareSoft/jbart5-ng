@@ -11,16 +11,16 @@ jb.component('group.wait', {
   impl: function(context,waitFor,loading,error) { 
     return {
       beforeInit: function(cmp) {
-          var waiting = cmp.jbWait();
+//          var waiting = cmp.jbWait();
           cmp.jbGroupChildrenEm = jb_rx.observableFromCtx(context.setData(waitFor()))
             .flatMap(x=>{
                 var data = context.params.mapToResource(x);
                 jb.writeToResource(context.params.resource,data,context);
                 return [context.vars.$model.controls(cmp.ctx.setData(data))];
               })
-            .do(x=>
-              jb_native_delay(10).then(_=> 
-                waiting.ready()))
+            // .do(x=>
+            //   jb_native_delay(10).then(_=> 
+            //     waiting.ready()))
             .startWith([loading(context)])
             .catch(e=> 
               jb_rx.Observable.of([error(context.setVars({error:e}))]));

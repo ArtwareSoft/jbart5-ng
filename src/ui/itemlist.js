@@ -11,7 +11,7 @@ jb.component('itemlist', {
     { id: 'itemVariable', as: 'string', defaultValue: 'item' },
     { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true },
   ],
-  impl :{$: 'group', 
+  impl :{$: 'group', __innerImplementation: true,
     title: '%$title%',
     style :{$call: 'style'},
     controls :{$: 'dynamic-controls', 

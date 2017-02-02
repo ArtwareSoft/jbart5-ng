@@ -61,22 +61,34 @@ jb.component('studio.open-style-menu', {
 
 jb.component('studio.style-editor', {
   type: 'control', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
+  params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
     style :{$: 'property-sheet.titles-above' }, 
     controls: [
       {$: 'editable-text', 
         title: 'css', 
-        databind :{$: 'studio.profile-as-text',  path: '%$styleSource/path%~css', stringOnly: true }, 
-        features :{$: 'studio.undo-support', path: '%styleSource/path%' }, 
-        style :{$: 'editable-text.codemirror', mode: 'css', height: 300 }
+        databind :{$: 'studio.profile-as-text', 
+          stringOnly: true, 
+          path: '%$styleSource/path%~css'
+        }, 
+        style :{$: 'editable-text.codemirror', 
+          height: 300, 
+          mode: 'css', 
+          onCtrlEnter :{$: 'studio.refresh-preview' }
+        }, 
+        features :{$: 'studio.undo-support', path: '%styleSource/path%' }
       }, 
       {$: 'editable-text', 
         title: 'template', 
-        databind :{$: 'studio.profile-as-text',  path: '%$styleSource/path%~template', stringOnly: true }, 
-        style :{$: 'editable-text.codemirror', mode: 'htmlmixed', height: '200' }, 
+        databind :{$: 'studio.profile-as-text', 
+          stringOnly: true, 
+          path: '%$styleSource/path%~template'
+        }, 
+        style :{$: 'editable-text.codemirror', 
+          height: '200', 
+          mode: 'htmlmixed', 
+          onCtrlEnter :{$: 'studio.refresh-preview' }
+        }, 
         features :{$: 'studio.undo-support', path: '%$styleSource/path%' }
       }
     ]

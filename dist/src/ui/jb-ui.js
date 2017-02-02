@@ -100,23 +100,22 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
             this.jbEmitter && this.jbEmitter.next('destroy');
             this.jbEmitter && this.jbEmitter.complete();
         };
-        Cmp.prototype.jbWait = function () {
-            var _this = this;
-            this.readyCounter = (this.readyCounter || 0) + 1;
-            var parentCmp = this.parentCmp && this.parentCmp.parent();
-            if (parentCmp && parentCmp.jbWait)
-                this.parentWaiting = parentCmp.jbWait();
-            return {
-                ready: function () {
-                    _this.readyCounter--;
-                    if (!_this.readyCounter) {
-                        _this.jbEmitter && _this.jbEmitter.next('ready');
-                        if (_this.parentWaiting)
-                            _this.parentWaiting.ready();
-                    }
-                }
-            };
-        };
+        // Cmp.prototype.jbWait = function () {
+        // 	this.readyCounter = (this.readyCounter || 0)+1;
+        // 	var parentCmp = this.parentCmp && this.parentCmp.parent();
+        // 	if (parentCmp && parentCmp.jbWait)
+        // 		this.parentWaiting = parentCmp.jbWait();
+        // 	return {
+        // 		ready: () => {
+        // 			this.readyCounter--;
+        // 			if (!this.readyCounter) {
+        // 				this.jbEmitter && this.jbEmitter.next('ready');
+        // 				if (this.parentWaiting)
+        // 					this.parentWaiting.ready();
+        // 			}
+        // 		}
+        // 	}
+        // }
     }
     exports_1("injectLifeCycleMethods", injectLifeCycleMethods);
     function wrapWithLauchingElement(f, context, elem) {
@@ -236,13 +235,15 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     ], DynamicModule);
                     return DynamicModule;
                 };
-                jbComponent.prototype.registerMethods = function (cmp_ref, parent) {
+                jbComponent.prototype.registerMethods = function (cmp_ref) {
                     var cmp = cmp_ref._hostElement.component; // hostView._view._Cmp_0_4;
-                    cmp.parentCmp = parent;
+                    //		cmp.parentCmp = parent;
                     var ctx = this.ctx;
                     cmp.ctx = ctx;
                     cmp.methodHandler = this.methodHandler;
                     var elem = cmp_ref._hostElement.nativeElement;
+                    while (ctx.profile.__innerImplementation)
+                        ctx = ctx.componentContext._parent;
                     elem.setAttribute('jb-ctx', ctx.id);
                     garbageCollectCtxDictionary();
                     jbart.ctxDictionary[ctx.id] = ctx;
@@ -413,14 +414,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 // 		this.draw(this.jbComp);
                 // 	}
                 // }
-                jbComp.prototype.parent = function () {
-                    try {
-                        return this.cmp_ref.hostView._view.parentInjector._view.parentInjector._view._Cmp_0_4.context;
-                    }
-                    catch (e) {
-                        return null;
-                    }
-                };
                 jbComp.prototype.draw = function (comp) {
                     var _this = this;
                     if (!comp)
@@ -431,8 +424,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         .filter(function (comp) { return comp.compile; })
                         .forEach(function (comp) {
                         var componentFactory = comp.compile(_this.compiler);
-                        var cmp_ref = _this.cmp_ref = _this.view.createComponent(componentFactory);
-                        comp.registerMethods && comp.registerMethods(cmp_ref, _this);
+                        var cmp_ref = _this.view.createComponent(componentFactory);
+                        comp.registerMethods && comp.registerMethods(cmp_ref);
                         _this.ngZone.run(function () { });
                     });
                 };
@@ -482,9 +475,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         jb_waitFor(function () { return jbart.studioAutoRefreshWidget; }).then(function () {
                             jbart.studioAutoRefreshWidget(_this);
                         });
-                };
-                jBartWidget.prototype.ngDoCheck = function () {
-                    console.log(window.document.title);
                 };
                 jBartWidget.prototype.draw = function () {
                     try {

@@ -38,7 +38,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
         var id = path.split('~')[0];
         var comp = studio_utils_1.jbart_base().comps[id] || jbart.comps[id];
         comp = comp && comp.impl;
-        if (!comp) {
+        if (!comp && !silent) {
             jb_core_1.jb.logError('profileFromPath: can not find path ', path);
             return;
         }

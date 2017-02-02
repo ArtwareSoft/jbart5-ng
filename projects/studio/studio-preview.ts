@@ -23,14 +23,13 @@ var modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
 
 function studioAutoRefreshComp(jbComp) {
     modifiedCtrlsEm
-//      .takeUntil(jbComp.destroyNotifier)
       .flatMap(e=> {
         var comp = jbComp._comp;
         if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-            jb_native_delay(100).then(() => {// highlight on delay
-               var elemToHighlight = $(jbComp.elementRef.nativeElement).children().first();
+//            jb_native_delay(100).then(() => {// highlight on delay
+               var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
                elemToHighlight.addClass('jb-highlight-comp-changed')
-            });
+//            });
 
             if (profileFromPath) {
               var prof = profileFromPath(e.path);
@@ -43,6 +42,7 @@ function studioAutoRefreshComp(jbComp) {
       })
       .catch(e =>
             jb_logException(e))
+      .takeUntil(jbComp.destroyNotifier.toPromise())
       .subscribe(comp=> {
           if (comp != jbComp._comp) 
             jbComp.draw(comp);
@@ -54,11 +54,11 @@ function studioAutoRefreshWidget(widget) {
     var counterChange = studioActivityEm.map(x=>previewRefreshCounter).distinctUntilChanged();
 
     var compIdEm = studioActivityEm
-      .merge(counterChange)
       .startWith(1)
       .map(()=>
           widget.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
       .distinctUntilChanged()
+      .merge(counterChange)
       .catch(e =>
             jb_logException(e))
       .subscribe(()=>

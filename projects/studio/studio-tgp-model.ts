@@ -369,8 +369,7 @@ export class TgpModel {
 
 		var profile = profileFromPath(path);
 		// inject conditional param values
-		(comp.params||[])
-			.forEach(p=>{ 
+		(comp.params||[]).forEach(p=>{ 
 				var pUsage = '%$'+p.id+'%';
 				var pVal = '' + (profile[p.id] || p.defaultValue || '');
 				res = res.replace(new RegExp('{\\?(.*?)\\?}','g'),(match,condition_exp)=>{ // conditional exp
@@ -378,13 +377,12 @@ export class TgpModel {
 							return pVal ? condition_exp : '';
 						return match;
 					});
-			})
+		});
 		// inject param values 
-		(comp.params||[])
-			.forEach(p=>{ 
+		(comp.params||[]).forEach(p=>{ 
 				var pVal = '' + (profile[p.id] || p.defaultValue || ''); // only primitives
 				res = res.replace(new RegExp(`%\\$${p.id}%`,'g') , pVal);
-			})
+		});
 
 		jb.writeValue(profileRefFromPath(path),evalProfile(res));
 	}

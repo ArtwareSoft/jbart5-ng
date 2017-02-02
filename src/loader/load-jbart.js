@@ -27,7 +27,7 @@ var js_files_to_load = [
       'node_modules/reflect-metadata/Reflect.js',
       'node_modules/systemjs/dist/system.src.js',
       'node_modules/hammerjs/hammer.js',
-//      'node_modules/rxjs/bundles/Rx.js',
+//      'node_modules/rxjs/bundljb_coes/Rx.js',
       'node_modules/material-design-lite/material.js',
       'dist/Rx.js',
       'dist/ngForCompiled.js',
@@ -36,12 +36,12 @@ var js_files_to_load = [
       'node_modules/history/umd/history.js',
 ];
 var css_files_to_load = [
-    'bower_components/codemirror/mode/css/css.js',
     'bower_components/codemirror/lib/codemirror.css',
     'bower_components/codemirror/theme/solarized.css',
     'bower_components/dragula.js/dist/dragula.css',
     'node_modules/@angular/material/core/theming/prebuilt/indigo-pink.css',
     'node_modules/material-design-lite/material.min.css',
+    'node_modules/material-design-lite/dist/material.indigo-pink.min.css',
     'css/font.css', // material fonts
     'css/ng2-styles.css',
 ];

@@ -111,7 +111,11 @@ jb.component('dialog-feature.studio-pick', {
 })
 
 function pathFromElem(_window,profElem) {
-	return _window.jbart.ctxDictionary[profElem.attr('jb-ctx')].path;
+	try {
+		return _window.jbart.ctxDictionary[profElem.attr('jb-ctx') || profElem.parent().attr('jb-ctx')].path;
+	} catch (e) {
+		return '';
+	}
 	//profElem.attr('jb-path');
 }
 
@@ -141,9 +145,9 @@ function showBox(cmp,_profElem,_window,previewOffset) {
 
 	var $el = $(cmp.elementRef.nativeElement);
 	var $titleText = $el.find('.title .text');
-	console.log('selected',profElem.outerWidth(),profElem.outerHeight());
-	Array.from(profElem.parents())
-		.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
+//	console.log('selected',profElem.outerWidth(),profElem.outerHeight());
+	// Array.from(profElem.parents())
+	// 	.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
 
 	var same_size_parents = Array.from(_profElem.parents())
 		.map(el=>$(el))

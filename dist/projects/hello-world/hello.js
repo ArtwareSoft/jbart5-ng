@@ -52,6 +52,11 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 "state": 'CA',
                 "postalCode": "94043",
             });
+            jb_core_1.jb.resource('hello-world', 'people', [
+                { "name": "Homer Simpson", age: 42, male: true },
+                { "name": "Marge Simpson", age: 38, male: false },
+                { "name": "Bart Simpson", age: 12, male: true }
+            ]);
             jb_core_1.jb.component('hello-world.form', {
                 type: 'control',
                 impl: { $: 'group',

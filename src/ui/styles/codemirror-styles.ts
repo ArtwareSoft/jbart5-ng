@@ -12,6 +12,7 @@ jb.component('editable-text.codemirror', {
 		{ id: 'mode', as: 'string' },
 		{ id: 'debounceTime', as: 'number', defaultValue: 300 },
 		{ id: 'lineWrapping', as: 'boolean' },
+		{ id: 'onCtrlEnter', type: 'action', dynamic: true },
 	],
 	impl: function(context, cm_settings, _enableFullScreen, resizer, height, mode, debounceTime, lineWrapping) {
 		return {
@@ -27,7 +28,7 @@ jb.component('editable-text.codemirror', {
 					// mode: 'jbart5',
 					extraKeys: { 
 						'Ctrl-Space': 'autocomplete',
-						'Ctrl-Enter': () => {}
+						'Ctrl-Enter': () => context.params.onCtrlEnter()
 					},
 				});
 				var $el = $(cmp.elementRef.nativeElement);

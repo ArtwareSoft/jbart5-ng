@@ -48,6 +48,12 @@ jb.resource('hello-world','person',{
   "postalCode": "94043",
 })
 
+jb.resource('hello-world','people',[
+  { "name": "Homer Simpson" ,age: 42 , male: true},
+  { "name": "Marge Simpson" ,age: 38 , male: false},
+  { "name": "Bart Simpson"  ,age: 12 , male: true}
+]);
+
 jb.component('hello-world.form', {
   type: 'control', 
   impl :{$: 'group', 
