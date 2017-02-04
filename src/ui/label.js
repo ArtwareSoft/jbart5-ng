@@ -62,6 +62,21 @@ jb.component('label.h2', {
     }
 });
 
+jb.component('label.h3', {
+    type: 'label.style',
+    impl :{$: 'customStyle', 
+        template: '<h3>{{title}}</h3>',
+        features :{$: 'label.bind-title' }
+    }
+});
+
+jb.component('label.h4', {
+    type: 'label.style',
+    impl :{$: 'customStyle', 
+        template: '<h4>{{title}}</h4>',
+        features :{$: 'label.bind-title' }
+    }
+});
 
 
 

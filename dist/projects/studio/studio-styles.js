@@ -60,7 +60,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                             };
                         }
                     },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\" \n          (mouseenter)=\"ctrl.hover=true\" (mouseleave)=\"ctrl.hover=false\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div [hidden]=\"!ctrl.hover\" class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\" \n          (mouseenter)=\"ctrl.hover=true\" (mouseleave)=\"ctrl.hover=false\">\n        <label class=\"property-title\" title=\"{{ctrl.comp.jb_title()}}\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div [hidden]=\"!ctrl.hover\" class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });
@@ -68,7 +68,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     features: { $: 'group.initGroup' },
-                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
+                    template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\" title=\"{{ctrl.comp.jb_title()}}\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
             });

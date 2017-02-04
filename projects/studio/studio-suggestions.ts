@@ -42,6 +42,7 @@ jb.component('studio.property-primitive', {
       }
     ], 
     features: [
+//      {$: 'feature.disableChangeDetection' },
       {$: 'group.studio-suggestions', path: '%$path%', expressionOnly: true }, 
       {$: 'studio.property-toobar-feature', path: '%$path%' }
     ]
@@ -80,13 +81,16 @@ jb.component('studio.jb-floating-input', {
         ]
       }
     ], 
-    features :{$: 'group.studio-suggestions', 
-      path: '%$path%', 
-      closeFloatingInput: [
-        {$: 'closeContainingPopup', OK: true }, 
-        {$: 'tree.regain-focus' }
-      ]
-    }
+    features : [
+      {$: 'group.studio-suggestions', 
+        path: '%$path%', 
+        closeFloatingInput: [
+          {$: 'closeContainingPopup', OK: true }, 
+          {$: 'tree.regain-focus' }
+        ]
+      },
+//      {$: 'feature.disableChangeDetection' },
+    ]
   }
 })
 
@@ -132,7 +136,7 @@ export class suggestions {
     var vars = jb.entries(jb.extend({},(probeCtx.componentContext||{}).params,probeCtx.vars,probeCtx.resources))
         .map(x=>new ValueOption('$'+x[0],x[1],this.pos,this.tail))
         .filter(x=> x.toPaste.indexOf('$$') != 0)
-        .filter(x=>['$ngZone','$window'].indexOf(x.toPaste) == -1)
+        .filter(x=>['$ngZone','$window','$injector'].indexOf(x.toPaste) == -1)
 
     if (this.inputVal.indexOf('=') == 0 && !this.expressionOnly)
       this.options = model.PTsOfPath(path).map(compName=> {
@@ -254,6 +258,8 @@ jb.component('group.studio-suggestions', {
           .debounceTime(20) // solves timing of closing the floating input
           .filter(e=>
             suggestionCtx.show = new suggestions(input,ctx.params.expressionOnly).suggestionsRelevant() )
+          .catch(e=>
+            console.log(1,e))
           .map(e=>
             input.value)
 //          .do(x=>console.log(0,x))
@@ -265,17 +271,21 @@ jb.component('group.studio-suggestions', {
               res && res.finalResult && res.finalResult[0] && res.finalResult[0].in)
           .map(probeCtx=> 
             new suggestions(input,ctx.params.expressionOnly).extendWithOptions(probeCtx,ctx.params.path))
+          .catch(e=>
+            console.log(2,e))
           .distinctUntilChanged((e1,e2)=>
             e1.key == e2.key)
+          .catch(e=>
+            console.log(3,e))
 
         function getProbe() {
           if (cmp.probeResult)
-            return cmp.probeResult;
-          var _probe = Observable.fromPromise(ctx.run({$: 'studio.probe', path: ctx.params.path }));
+            return [cmp.probeResult];
+          var _probe = jb_rx.Observable.fromPromise(ctx.run({$: 'studio.probe', path: ctx.params.path }));
           _probe.subscribe(res=>
             cmp.probeResult = res)
           // do not wait more than 500 mSec
-          return _probe.race(Observable.of({finalResult: [ctx] }).delay(500))
+          return _probe.race(jb_rx.Observable.of({finalResult: [ctx] }).delay(500))
             .catch(e=>
                 jb.logException(e,'in probe exception'))
         }

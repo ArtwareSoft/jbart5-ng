@@ -14842,6 +14842,8 @@ System.registerDynamic('rxjs/util/subscribeToResult', ['rxjs/util/root', 'rxjs/u
     var InnerSubscriber_1 = $__require('rxjs/InnerSubscriber');
     var observable_1 = $__require('rxjs/symbol/observable');
     function subscribeToResult(outerSubscriber, result, outerValue, outerIndex) {
+        if (!result)
+            debugger;
         var destination = new InnerSubscriber_1.InnerSubscriber(outerSubscriber, outerValue, outerIndex);
         if (destination.closed) {
             return null;

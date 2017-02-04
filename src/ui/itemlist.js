@@ -36,7 +36,7 @@ jb.component('itemlist.init', {
   impl: function(context, items, itemsArrayVariable,watch) {
     return {
       beforeInit: function(cmp) {
-          var itemsEm = cmp.jbEmitter
+        var itemsEm = cmp.jbEmitter
               .filter(x => x == 'check')
               .map(x=>
                 items(cmp.ctx))
@@ -46,6 +46,8 @@ jb.component('itemlist.init', {
                 ! jb_compareArrays(items,(cmp.ctrls || []).map(ctrl => ctrl.comp.ctx.data))
                 )
               .map(items=> {
+                  if (context.vars.itemlistCntr)
+                    context.vars.itemlistCntr.items = items;
                   var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
                   var ctx3 = itemsArrayVariable ? ctx2.setVars(jb.obj(itemsArrayVariable,items)) : ctx2;
                   var ctrls = context.vars.$model.controls(ctx3);
@@ -72,10 +74,12 @@ jb.component('itemlist.divider', {
 jb.component('itemlist.selection', {
   type: 'feature',
   params: [
-    { id: 'databind', as: 'ref' },
+    { id: 'databind', as: 'ref', defaultValue: {$: 'itemlist-container.selected' } },
     { id: 'onSelection', type: 'action', dynamic: true },
     { id: 'onDoubleClick', type: 'action', dynamic: true },
-    { id: 'autoSelectFirst', type: 'boolean'}
+    { id: 'autoSelectFirst', type: 'boolean'},
+    { id: 'cssForSelected', as: 'string', defaultValue1: 'background: #bbb; color: #fff'},
+    { id: 'cssForActive', as: 'string', defaultValue1: 'background: #337AB7; color: #fff'},
   ],
   impl: ctx => ({
     init: cmp => {
@@ -102,8 +106,8 @@ jb.component('itemlist.selection', {
         var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
             .map(()=> cmp.selected)
             .filter(x=>x) 
-            .distinctUntilChanged()
-            .skip(1);
+            .distinctUntilChanged();
+//            .skip(1);
 
         doubleClick.subscribe(()=>
           ctx.params.onDoubleClick(ctx.setData(cmp.selected)));
@@ -123,15 +127,12 @@ jb.component('itemlist.selection', {
             jb.writeValue(ctx.params.databind,cmp.selected);
         }
     },
-    templateModifier: {
-      jbItem: `[class.active]="active == ctrl.comp.ctx.data" 
-        [class.selected]="selected == ctrl.comp.ctx.data"
-        (mouseenter)="active = ctrl.comp.ctx.data"
-        (mouseleave)="active = null"
+    templateModifier: { // [class.active1]="active == ctrl.comp.ctx.data"  (mouseenter)="active = ctrl.comp.ctx.data" (mouseleave)="active = null"
+      jbItem: `[class.selected]="selected == ctrl.comp.ctx.data"
         (click)="selected = ctrl.comp.ctx.data ; clickSrc.next($event)"`
     },
-    css: `.jb-item.selected { background: #bbb; color: #fff }
-    .jb-item.active:not(.heading) { background: #337AB7; color: #fff }
+    css: `.jb-item.selected { ${ctx.params.cssForSelected} }
+    .jb-item.active:not(.heading) {  ${ctx.params.cssForActive} }
     `,
     observable: () => {} // create jbEmitter
   })

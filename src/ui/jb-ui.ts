@@ -409,7 +409,8 @@ export class jBartWidget {
 	    	var ns = this.compId.split('.')[0];
 			var resources = (jb.widgets[ns] && jb.widgets[ns].resources) || {};
 			jb.extend(resources, { window: window, globals: { } });
-			jbart.initialCtx = jb.ctx({ resources: resources, vars: {ngZone: this.ngZone, injector: this.injector} }, {});
+			jbart.initialCtx = jb.ctx({ resources: resources, vars: {ngZone: this.ngZone, 
+				injector: this.injector} }, {});
 		}
 		if (jbart.studioGlobals)
 			return jbart.initialCtx.setVars({studio: {project: jbart.studioGlobals.project, page: jbart.studioGlobals.page}})

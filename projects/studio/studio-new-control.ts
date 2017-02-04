@@ -59,7 +59,7 @@ jb.component('studio.open-new-tgp-dialog', {
           groupBy :{$: 'itemlist-heading.group-by' }, 
           headingCtrl :{$: 'label', 
             title: '%title%', 
-            style :{$: 'label.h2' }, 
+            style :{$: 'label.h4' }, 
             features: [{$: 'css.margin', top: '10' }]
           }, 
           features :{$: 'css.height', height: '400', overflow: 'scroll', minMax: '' }

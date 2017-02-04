@@ -107,7 +107,7 @@ jb.component('property-sheet.studio-properties', {
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property" 
           (mouseenter)="ctrl.hover=true" (mouseleave)="ctrl.hover=false">
-        <label class="property-title">{{ctrl.comp.jb_title()}}</label>
+        <label class="property-title" title="{{ctrl.comp.jb_title()}}">{{ctrl.comp.jb_title()}}</label>
         <div class="input-and-toolbar">
           <div *jbComp="ctrl.comp"></div>
           <div [hidden]="!ctrl.hover" class="toolbar">
@@ -142,7 +142,7 @@ jb.component('property-sheet.studio-plain', {
     features :{$: 'group.initGroup' }, 
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property">
-        <label class="property-title">{{ctrl.comp.jb_title()}}</label>
+        <label class="property-title" title="{{ctrl.comp.jb_title()}}">{{ctrl.comp.jb_title()}}</label>
         <div class="input-and-toolbar">
           <div *jbComp="ctrl.comp"></div>
           <div class="toolbar">

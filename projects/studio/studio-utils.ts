@@ -99,3 +99,4 @@ jb.component('studio.comp-source',{
 	impl: (context,comp) => 
 		compAsStr(comp.split('~')[0])
 })
+

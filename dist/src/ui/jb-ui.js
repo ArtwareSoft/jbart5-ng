@@ -495,7 +495,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         var ns = this.compId.split('.')[0];
                         var resources = (jb_core_1.jb.widgets[ns] && jb_core_1.jb.widgets[ns].resources) || {};
                         jb_core_1.jb.extend(resources, { window: window, globals: {} });
-                        jbart.initialCtx = jb_core_1.jb.ctx({ resources: resources, vars: { ngZone: this.ngZone, injector: this.injector } }, {});
+                        jbart.initialCtx = jb_core_1.jb.ctx({ resources: resources, vars: { ngZone: this.ngZone,
+                                injector: this.injector } }, {});
                     }
                     if (jbart.studioGlobals)
                         return jbart.initialCtx.setVars({ studio: { project: jbart.studioGlobals.project, page: jbart.studioGlobals.page } });

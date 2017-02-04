@@ -15,17 +15,17 @@ jb.component('mdl-style.init-dynamic', {
     })
 })
 
+// ****** button styles
+
 jb.component('button.mdl-flat', {
   type: 'button.style',
   params: [
   	{id: 'rippleEffect', as: 'boolean'}
   ],
   impl :{$: 'customStyle', 
-//  	  $vars: { rippleEffectCls: {$if: '%$rippleEffect%', then: 'mdl-js-ripple-effect', else: '' }},
       template: '<button class="mdl-button mdl-js-button" (click)="clicked()">{{title}}</button>',
       features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
       host: { '[class.mdl-js-ripple-effect]': 'true' },
-      noTemplateParsing: true,
   }
 })
 
@@ -36,6 +36,19 @@ jb.component('button.mdl-flat-ripple', {
       features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
   }
 })
+
+// ****** label styles
+
+jb.component('label.mdl-button', {
+    type: 'label.style',
+    impl :{$: 'customStyle', 
+        template: '<div class="mdl-button mdl-js-button mdl-js-ripple-effect">{{title}}</div>',
+        features :[
+          {$: 'label.bind-title' },
+          {$: 'mdl-style.init-dynamic', query: '.mdl-js-ripple-effect'}
+        ],
+    }
+});
 
 
 })

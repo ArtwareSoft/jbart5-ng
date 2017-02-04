@@ -62,6 +62,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         }
                     ],
                     features: [
+                        //      {$: 'feature.disableChangeDetection' },
                         { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
                         { $: 'studio.property-toobar-feature', path: '%$path%' }
                     ]
@@ -99,13 +100,15 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             ]
                         }
                     ],
-                    features: { $: 'group.studio-suggestions',
-                        path: '%$path%',
-                        closeFloatingInput: [
-                            { $: 'closeContainingPopup', OK: true },
-                            { $: 'tree.regain-focus' }
-                        ]
-                    }
+                    features: [
+                        { $: 'group.studio-suggestions',
+                            path: '%$path%',
+                            closeFloatingInput: [
+                                { $: 'closeContainingPopup', OK: true },
+                                { $: 'tree.regain-focus' }
+                            ]
+                        },
+                    ]
                 }
             });
             suggestions = (function () {
@@ -147,7 +150,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                     var vars = jb_core_1.jb.entries(jb_core_1.jb.extend({}, (probeCtx.componentContext || {}).params, probeCtx.vars, probeCtx.resources))
                         .map(function (x) { return new ValueOption('$' + x[0], x[1], _this.pos, _this.tail); })
                         .filter(function (x) { return x.toPaste.indexOf('$$') != 0; })
-                        .filter(function (x) { return ['$ngZone', '$window'].indexOf(x.toPaste) == -1; });
+                        .filter(function (x) { return ['$ngZone', '$window', '$injector'].indexOf(x.toPaste) == -1; });
                     if (this.inputVal.indexOf('=') == 0 && !this.expressionOnly)
                         this.options = studio_tgp_model_1.model.PTsOfPath(path).map(function (compName) {
                             var name = compName.substring(compName.indexOf('.') + 1);
@@ -273,6 +276,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 .filter(function (e) {
                                 return suggestionCtx.show = new suggestions(input, ctx.params.expressionOnly).suggestionsRelevant();
                             })
+                                .catch(function (e) {
+                                return console.log(1, e);
+                            })
                                 .map(function (e) {
                                 return input.value;
                             })
@@ -286,18 +292,24 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 .map(function (probeCtx) {
                                 return new suggestions(input, ctx.params.expressionOnly).extendWithOptions(probeCtx, ctx.params.path);
                             })
+                                .catch(function (e) {
+                                return console.log(2, e);
+                            })
                                 .distinctUntilChanged(function (e1, e2) {
                                 return e1.key == e2.key;
+                            })
+                                .catch(function (e) {
+                                return console.log(3, e);
                             });
                             function getProbe() {
                                 if (cmp.probeResult)
-                                    return cmp.probeResult;
-                                var _probe = Observable.fromPromise(ctx.run({ $: 'studio.probe', path: ctx.params.path }));
+                                    return [cmp.probeResult];
+                                var _probe = jb_rx.Observable.fromPromise(ctx.run({ $: 'studio.probe', path: ctx.params.path }));
                                 _probe.subscribe(function (res) {
                                     return cmp.probeResult = res;
                                 });
                                 // do not wait more than 500 mSec
-                                return _probe.race(Observable.of({ finalResult: [ctx] }).delay(500))
+                                return _probe.race(jb_rx.Observable.of({ finalResult: [ctx] }).delay(500))
                                     .catch(function (e) {
                                     return jb_core_1.jb.logException(e, 'in probe exception');
                                 });
