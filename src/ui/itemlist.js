@@ -78,7 +78,7 @@ jb.component('itemlist.selection', {
     { id: 'onSelection', type: 'action', dynamic: true },
     { id: 'onDoubleClick', type: 'action', dynamic: true },
     { id: 'autoSelectFirst', type: 'boolean'},
-    { id: 'cssForSelected', as: 'string', defaultValue1: 'background: #bbb; color: #fff'},
+    { id: 'cssForSelected', as: 'string', defaultValue: 'background: #bbb; color: #fff'},
     { id: 'cssForActive', as: 'string', defaultValue1: 'background: #337AB7; color: #fff'},
   ],
   impl: ctx => ({
@@ -100,8 +100,8 @@ jb.component('itemlist.selection', {
             .map(()=> 
               jb.val(ctx.params.databind))
             .filter(x=>
-              x != cmp.selected)
-            .distinctUntilChanged();
+              x != cmp.selected);
+//            .distinctUntilChanged();
 
         var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
             .map(()=> cmp.selected)
@@ -131,9 +131,9 @@ jb.component('itemlist.selection', {
       jbItem: `[class.selected]="selected == ctrl.comp.ctx.data"
         (click)="selected = ctrl.comp.ctx.data ; clickSrc.next($event)"`
     },
-    css: `.jb-item.selected { ${ctx.params.cssForSelected} }
-    .jb-item.active:not(.heading) {  ${ctx.params.cssForActive} }
-    `,
+    css: '.jb-item.selected { color:red;' + ctx.params.cssForSelected + ' }',
+//    .jb-item.active:not(.heading) {  ${ctx.params.cssForActive} }
+//    `,
     observable: () => {} // create jbEmitter
   })
 })

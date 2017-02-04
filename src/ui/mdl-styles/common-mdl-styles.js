@@ -32,14 +32,14 @@ jb.component('button.mdl-flat', {
 jb.component('button.mdl-flat-ripple', {
   type: 'button.style',
   impl :{$: 'customStyle', 
-      template: '<div><button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="clicked()">{{title}}</button></div>',
+      template: '<button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="clicked()">{{title}}</button>',
       features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
   }
 })
 
 // ****** label styles
 
-jb.component('label.mdl-button', {
+jb.component('label.mdl-ripple-effect', {
     type: 'label.style',
     impl :{$: 'customStyle', 
         template: '<div class="mdl-button mdl-js-button mdl-js-ripple-effect">{{title}}</div>',

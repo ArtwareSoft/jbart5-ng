@@ -180,28 +180,6 @@ jb.component('ui-test.itemlist-with-select', {
 },
 })
 
-jb.component('ui-test.http-get', {
-  impl:{$: 'ng2-ui-test',  disableChangeDetection: false,
-  control :{$: 'group', 
-    controls :{$: 'itemlist', 
-        items: '%$peopleFromUrl%',
-        controls :{$:'group',
-          controls: [ 
-            { $: 'label', title: '%name%' }, 
-            { $: 'label', title: '%age%' }, 
-          ]
-        }
-    },
-    features :{$: 'group.wait', 
-      for :{$: 'http.get', url: '/projects/ui-tests/people.json'},
-      resource: 'peopleFromUrl', 
-      mapToResource: '%people%'        
-    }
-  },
-  expectedHtmlResult: { $: 'contains', text: ['Homer Simpson', '42'] },
-},
-})
-
 jb.component('ui-test.itemlist-DD', {
   impl :{$: 'ng2-ui-test', control :{$: 'group', controls: 
   [

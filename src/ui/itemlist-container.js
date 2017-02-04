@@ -6,20 +6,35 @@ jb.component('group.itemlist-container', {
     { id: 'id', as: 'string' },
     { id: 'defaultItem', as: 'single' },
   ],
-  impl: ctx => ({
+  impl: context => ({
   	    extendCtx: ctx =>
         	ctx.setVars({ itemlistCntr: {
-        		id: ctx.id,
+        		id: context.params.id,
         		selected: null,
         		init: items =>
         			this.items = items,
         		add: function(item) {
-        			var toAdd = item || JSON.parse(JSON.stringify(ctx.params.defaultItem || {}));
-        			this.items && this.items.push(toAdd)
+        			this.selected = item || JSON.parse(JSON.stringify(context.params.defaultItem || {}));
+    				this.items && this.items.push(this.selected);
         		},
         		delete: function(item) {
-        			if (this.items && this.items.indexOf(item) != -1)
-        				this.items.splice(this.items.indexOf(item))	
+        			if (this.items && this.items.indexOf(item) != -1) {
+        				this.changeSelectionBeforeDelete();
+        				this.items.splice(this.items.indexOf(item),1)	
+        			}
+        		},
+        		changeSelectionBeforeDelete: function() {
+        			if (this.items && this.selected) {
+        				var curIndex = this.items.indexOf(this.selected);
+        				if (curIndex == -1)
+        					this.selected = null;
+        				else if (curIndex == 0 && this.items.length > 0)
+        					this.selected = this.items[1];
+        				else if (this.items.length > 0)
+        					this.selected = this.items[curIndex -1];
+        				else
+        					this.selected = null;
+        			}
         		}
         	}})
     })
@@ -27,7 +42,10 @@ jb.component('group.itemlist-container', {
 
 jb.component('group.itemlist-selected', {
   type: 'feature',
-  impl: {$: 'group.data', data : {$: 'itemlist-container.selected'}}
+  impl: { $list : [ 	
+  			{$: 'group.data', data : {$: 'itemlist-container.selected'}},
+  			{$: 'hidden', showCondition: {$notEmpty: {$: 'itemlist-container.selected' } } }
+  		]}
 })
 
 jb.component('itemlist-container.add', {

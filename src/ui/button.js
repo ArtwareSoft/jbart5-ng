@@ -5,9 +5,9 @@ jb.type('button.style')
 jb.component('button', {
   type: "control",
   params: [
-    { id: 'title', as: 'string', dynamic: true, essential: true },
+    { id: 'title', as: 'string', dynamic: true, essential: true, defaultTValue: 'click me' },
     { id: 'action', type: 'action', essential: true, dynamic: true },
-    { id: 'style', type: 'button.style', defaultValue: { $: 'button.md-flat' }, dynamic: true },
+    { id: 'style', type: 'button.style', defaultValue: { $: 'button.md-raised' }, dynamic: true },
     { id: 'features', type: 'feature[]', dynamic: true },
     { id: '$click', type: 'boolean' }, // used by tests to simulate click
   ],

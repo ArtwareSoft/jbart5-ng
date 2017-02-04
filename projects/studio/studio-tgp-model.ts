@@ -347,8 +347,8 @@ export class TgpModel {
 		var result = { $: compName };
 		// copy default values
 		(comp.params || []).forEach(p=>{
-			if (p.defaultValue)
-				result[p.id] = JSON.parse(JSON.stringify(p.defaultValue))
+			if (p.defaultValue || p.defaultTValue)
+				result[p.id] = JSON.parse(JSON.stringify(p.defaultValue || p.defaultTValue))
 		})
 		// find group parent that can insert the control
 		var group_path = path;

@@ -92,4 +92,12 @@ jb.component('data-test.pipe-with-observable', {
   },
 })
 
+jb.component('data-test.http-get', {
+   impl :{$: 'data-test', 
+    calculate: {$pipe : [ {$: 'http.get', url: '/projects/ui-tests/people.json'}, '%people/name%', {$join:','}  ]},
+    expectedResult :{$: 'contains', text: 'Homer' }
+  },
+})
+
+
 })
