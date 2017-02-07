@@ -263,7 +263,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                                 tree.expanded[tree.selected] = (event.keyCode == 39);
                         });
                         function runActionInTreeContext(action) {
-                            jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected).setVars({ regainFocus: cmp.getKeyboardFocus }), tree.el.querySelector('.treenode.selected'))();
+                            jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected), tree.el.querySelector('.treenode.selected'))();
                         }
                     }
                 }); }
@@ -271,7 +271,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
             jb_core_1.jb.component('tree.regain-focus', {
                 type: 'action',
                 impl: function (ctx) {
-                    return ctx.vars.regainFocus && ctx.vars.regainFocus();
+                    return ctx.vars.$tree && ctx.vars.$tree.regainFocus && ctx.vars.$tree.regainFocus();
                 }
             });
             jb_core_1.jb.component('tree.keyboard-shortcut', {

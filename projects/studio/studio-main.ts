@@ -80,8 +80,8 @@ jb.component('studio.all', {
                       to: '%$globals/profile_path%', 
                       value: '{%$globals/project%}.{%$globals/page%}'
                     }, 
-                    {$: 'studio.open-properties' }, 
-                    {$: 'studio.open-control-tree' }
+                    // {$: 'studio.open-properties' }, 
+                    // {$: 'studio.open-control-tree' }
                   ]
                 }, 
                 autoSelectFirst: true

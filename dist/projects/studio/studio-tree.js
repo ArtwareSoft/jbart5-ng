@@ -43,7 +43,18 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             },
                             { $: 'pulldown.menu-item',
                                 title: 'Wrap with group',
-                                action: { $: 'studio.wrap-with-group', path: '%$path%' }
+                                action: [
+                                    { $: 'studio.wrap-with-group', path: '%$path%' },
+                                    { $: 'onNextTimer',
+                                        action: [
+                                            { $: 'writeValue',
+                                                to: '%$globals/profile_path%',
+                                                value: '%$path%~controls~0'
+                                            },
+                                            { $: 'tree.regain-focus' }
+                                        ]
+                                    }
+                                ]
                             },
                             { $: 'pulldown.menu-item',
                                 title: 'Duplicate',

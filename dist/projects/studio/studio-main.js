@@ -87,8 +87,6 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                                         to: '%$globals/profile_path%',
                                                         value: '{%$globals/project%}.{%$globals/page%}'
                                                     },
-                                                    { $: 'studio.open-properties' },
-                                                    { $: 'studio.open-control-tree' }
                                                 ]
                                             },
                                             autoSelectFirst: true

@@ -246,8 +246,7 @@ jb.component('tree.keyboard-selection', {
 
 				function runActionInTreeContext(action) {
 					jb_ui.wrapWithLauchingElement(action, 
-						context.setData(tree.selected).setVars({regainFocus: cmp.getKeyboardFocus }), 
-						tree.el.querySelector('.treenode.selected'))()
+						context.setData(tree.selected), tree.el.querySelector('.treenode.selected'))()
 				}
 			}
 		})
@@ -256,7 +255,7 @@ jb.component('tree.keyboard-selection', {
 jb.component('tree.regain-focus', {
 	type: 'action',
 	impl : ctx =>
-		ctx.vars.regainFocus && ctx.vars.regainFocus()
+		ctx.vars.$tree && ctx.vars.$tree.regainFocus && ctx.vars.$tree.regainFocus()
 })
 
 jb.component('tree.keyboard-shortcut', {
@@ -319,7 +318,6 @@ jb.component('tree.onMouseRight', {
 	    }
 	})
 })
-
 
 jb.component('tree.drag-and-drop', {
   type: 'feature',
