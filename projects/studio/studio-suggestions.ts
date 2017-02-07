@@ -29,7 +29,8 @@ jb.component('studio.property-primitive', {
         watchItems: true, 
         features: [
           {$: 'itemlist.studio-suggestions-options' }, 
-          {$: 'itemlist.selection', autoSelectFirst: true }, 
+          {$: 'itemlist.selection', autoSelectFirst: true, 
+            onDoubleClick: ctx => ctx.data.paste(ctx), databind: '%$suggestionCtx/selected%' }, 
           {$: 'hidden', showCondition: '%$suggestionCtx/show%' }, 
           {$: 'css.height', height: '500', overflow: 'auto', minMax: 'max' }, 
           {$: 'css.width', width: '300', overflow: 'auto' }, 
@@ -69,10 +70,8 @@ jb.component('studio.jb-floating-input', {
         watchItems: true, 
         features: [
           {$: 'itemlist.studio-suggestions-options' }, 
-          {$: 'itemlist.selection', 
-            onDoubleClick: function (ctx) {
-                                        return ctx.data.paste(ctx);
-                                    }, 
+          {$: 'itemlist.selection', databind: '%$suggestionCtx/selected%',
+            onDoubleClick: ctx => ctx.data.paste(ctx),
             autoSelectFirst: true
           }, 
           {$: 'hidden', showCondition: '%$suggestionCtx/show%' }, 
@@ -183,10 +182,13 @@ class ValueOption {
     }
     paste(ctx) {
       var toPaste = this.toPaste + (typeof this.value == 'object' ? '/' : '%');
-      var input = ctx.vars.suggestionCtx.input;
+      var suggestionCtx = ctx.vars.suggestionCtx;
+      var input = suggestionCtx.input;
       var pos = this.pos + 1;
       input.value = input.value.substr(0,this.pos-this.tail.length) + toPaste + input.value.substr(pos);
-      jb.delay(1,ctx).then (() => {
+      suggestionCtx.show = false;
+      suggestionCtx.selected = null;
+      return jb.delay(1,ctx).then (() => {
         input.selectionStart = pos + toPaste.length;
         input.selectionEnd = input.selectionStart;
       })
@@ -310,9 +312,9 @@ jb.component('itemlist.studio-suggestions-options', {
               e.keyCode == 13) // ENTER
             .subscribe(()=>{
                 suggestionCtx.show = false;
-                if (cmp.selected && cmp.selected.paste) {
-                  cmp.selected.paste(ctx);
-                  cmp.selected = null;
+                if (suggestionCtx.selected && suggestionCtx.selected.paste) {
+                  suggestionCtx.selected.paste(ctx);
+                  suggestionCtx.selected = null;
                 }
                 jb_ui.apply(ctx);
             })
@@ -325,7 +327,7 @@ jb.component('itemlist.studio-suggestions-options', {
               .subscribe(e=>{
                   var diff = e.keyCode == 40 ? 1 : -1;
                   var items = cmp.items; //.filter(item=>!item.heading);
-                  cmp.selected = items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
+                  suggestionCtx.selected = items[(items.indexOf(suggestionCtx.selected) + diff + items.length) % items.length] || suggestionCtx.selected;
                   // cmp.changeDt.markForCheck();
                   // cmp.changeDt.detectChanges();
                   e.preventDefault();
@@ -334,7 +336,7 @@ jb.component('itemlist.studio-suggestions-options', {
           suggestionCtx.suggestionEm.subscribe(e=> {
               suggestionCtx.show = e.options.length > 0;
               suggestionCtx.options = e.options;
-              cmp.selected = e.options[0];
+              suggestionCtx.selected = e.options[0];
               cmp.changeDt.markForCheck();
               cmp.changeDt.detectChanges();
             })

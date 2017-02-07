@@ -7,10 +7,11 @@ jb.component('group.itemlist-container', {
     { id: 'defaultItem', as: 'single' },
   ],
   impl: context => ({
-  	    extendCtx: ctx =>
+  	    extendCtx: (ctx,cmp) =>
         	ctx.setVars({ itemlistCntr: {
         		id: context.params.id,
         		selected: null,
+        		cmp: cmp,
         		init: items =>
         			this.items = items,
         		add: function(item) {
@@ -85,6 +86,32 @@ jb.component('itemlist-container.selected', {
 				ctx.vars.itemlistCntr.selected = value;
 		}
 	})
+})
+
+jb.component('itemlist.obj-as-items', {
+  type: 'data',
+  params: [
+    { id: 'obj', as: 'single', defaultValue: '%%' },
+  ],
+  impl: ctx => {
+  	if (!ctx.vars.itemlistCntr) return [];
+  	var cmp = ctx.vars.itemlistCntr.cmp;
+  	if (!cmp.obj) {
+  		cmp.obj = ctx.params.obj;
+  		cmp.items = jb.entries(cmp.obj).map(e=>({key:e[0],val: e[1]})).concat({key:'',val:''});
+  		cmp.jbEmitter
+  			.filter(x=>x=='check')
+  			.subscribe(_=>{
+  				Object.getOwnPropertyNames(cmp.obj).forEach(p=> {delete cmp.obj[p]})
+	  			cmp.items.forEach(item=>{
+	  				if (item.key) cmp.obj[item.key]=item.val
+	  			})
+	  			if (!cmp.items.filter(e=>!e.key)[0])
+	  				cmp.items.push({key:'',val:''})
+  		})
+  	}
+  	return cmp.items;
+  }
 })
 
 // templates

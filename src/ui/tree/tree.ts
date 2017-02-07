@@ -124,7 +124,6 @@ jb.component('tree.ul-li', {
 	}
 })
 
-
 jb.component('tree.selection', {
   type: 'feature',
   params: [
@@ -133,15 +132,22 @@ jb.component('tree.selection', {
 	  { id: 'onDoubleClick', type: 'action', dynamic: true },
 	  { id: 'autoSelectFirst', type: 'boolean' }
   ],
-  impl: function(context) {
-  	return {
+  impl: context=> ({
+	    observable: () => {},
+      	host: {
+        	'(click)': 'clickSource.next($event)',
+      	},
   		init: function(cmp) {
   		  var tree = cmp.tree;
-	      cmp.click = new jb_rx.Subject();
+	      cmp.clickSource = cmp.clickSource || new jb_rx.Subject();
+	      cmp.click = cmp.click || cmp.clickSource
+	          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
       	  cmp.click.buffer(cmp.click.debounceTime(250)) // double click
   				.filter(x => x.length === 2)
   				.subscribe(x=> {
-					jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)()
+					jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, 
+						context.setData(tree.selected), x[0].srcElement)()
   				})
 
   		  var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind,cmp)
@@ -161,7 +167,7 @@ jb.component('tree.selection', {
 			  },'')
 			  if (context.params.databind)
 				  jb.writeValue(context.params.databind, selected);
-			  context.params.onSelection(context.setData(selected));
+			  context.params.onSelection(cmp.ctx.setData(selected));
 		  });
 		  // first auto selection selection
 		  var first_selected = jb.val(context.params.databind);
@@ -176,14 +182,8 @@ jb.component('tree.selection', {
 		  	.subscribe(x=> tree.selectionEmitter.next(x))
 
   		},
-      	host: {
-        	'(click)': 'click.next($event)',
-      	},
-	    observable: () => {} 
-  	}
-  }
+  	})
 })
-
 
 jb.component('tree.keyboard-selection', {
 	type: 'feature',
@@ -198,7 +198,7 @@ jb.component('tree.keyboard-selection', {
 			host: {
         		'(keydown)': 'keydownSrc.next($event)',
 				'tabIndex': '0',
-		        '(mousedown)': 'getKeyboardFocus()',
+		        '(mouseup)': 'getKeyboardFocus()',
 			},
 			init: cmp=> {
 				var tree = cmp.tree;
@@ -270,7 +270,7 @@ jb.component('tree.keyboard-shortcut', {
 			host: {
         		'(keydown)': 'keydownSrc.next($event)',
 				'tabIndex': '0',
-		        '(mousedown)': 'getKeyboardFocus()',
+		        '(mouseup)': 'getKeyboardFocus()',
 			},
 			init: cmp=> {
 				var tree = cmp.tree;
@@ -294,6 +294,30 @@ jb.component('tree.keyboard-shortcut', {
 				})
 			}
 		})
+})
+
+jb.component('tree.onMouseRight', {
+  type: 'feature',
+  params: [
+	  { id: 'action', type: 'action', dynamic: true, essential: true },
+  ],
+  impl: (context,action) => ({
+	    observable: () => {},
+      	host: {
+        	'(contextmenu)' : 'contextmenuSrc.next($event)'
+      	},
+  		init: function(cmp) {
+  		  var tree = cmp.tree;
+	      cmp.contextmenuSrc = cmp.contextmenuSrc || new jb_rx.Subject();
+	      cmp.contextmenuSrc.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+	          .subscribe(e=>{
+	          		ui_utils.stop_prop (e);
+	        		var selected = tree.elemToPath(e.target);
+	        		tree.selectionEmitter.next(selected);
+					jb_ui.wrapWithLauchingElement(action, cmp.ctx.setData(selected), e.target)();
+	        	})
+	    }
+	})
 })
 
 

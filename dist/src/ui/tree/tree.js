@@ -1,4 +1,4 @@
-System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular/core'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angular/common', '@angular/core'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, jb_ui, jb_rx, common_1, core_1;
+    var jb_core_1, jb_ui, jb_rx, ui_utils, common_1, core_1;
     var TreeNodeLine, TreeNode, jbTreeModule;
     return {
         setters:[
@@ -22,6 +22,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular
             },
             function (jb_rx_1) {
                 jb_rx = jb_rx_1;
+            },
+            function (ui_utils_1) {
+                ui_utils = ui_utils_1;
             },
             function (common_1_1) {
                 common_1 = common_1_1;
@@ -156,51 +159,51 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular
                     { id: 'onDoubleClick', type: 'action', dynamic: true },
                     { id: 'autoSelectFirst', type: 'boolean' }
                 ],
-                impl: function (context) {
-                    return {
-                        init: function (cmp) {
-                            var tree = cmp.tree;
-                            cmp.click = new jb_rx.Subject();
-                            cmp.click.buffer(cmp.click.debounceTime(250)) // double click
-                                .filter(function (x) { return x.length === 2; })
-                                .subscribe(function (x) {
-                                jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)();
-                            });
-                            var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind, cmp)
-                                .distinctUntilChanged()) || jb_rx.Observable.of();
-                            tree.selectionEmitter
-                                .merge(databindObs)
-                                .filter(function (x) { return x; })
-                                .subscribe(function (selected) {
-                                if (tree.selected == selected)
-                                    return;
-                                tree.selected = selected;
-                                selected.split('~').slice(0, -1).reduce(function (base, x) {
-                                    var path = base ? (base + '~' + x) : x;
-                                    tree.expanded[path] = true;
-                                    return path;
-                                }, '');
-                                if (context.params.databind)
-                                    jb_core_1.jb.writeValue(context.params.databind, selected);
-                                context.params.onSelection(context.setData(selected));
-                            });
-                            // first auto selection selection
-                            var first_selected = jb_core_1.jb.val(context.params.databind);
-                            if (!first_selected && context.params.autoSelectFirst) {
-                                var first = tree.el.querySelectorAll('.treenode')[0];
-                                first_selected = tree.elemToPath(first);
-                            }
-                            if (first_selected)
-                                jb_core_1.jb.delay(1).then(function () { return tree.selectionEmitter.next(first_selected); });
-                            cmp.click.map(function (event) { return tree.elemToPath(event.target); })
-                                .subscribe(function (x) { return tree.selectionEmitter.next(x); });
-                        },
-                        host: {
-                            '(click)': 'click.next($event)',
-                        },
-                        observable: function () { }
-                    };
-                }
+                impl: function (context) { return ({
+                    observable: function () { },
+                    host: {
+                        '(click)': 'clickSource.next($event)',
+                    },
+                    init: function (cmp) {
+                        var tree = cmp.tree;
+                        cmp.clickSource = cmp.clickSource || new jb_rx.Subject();
+                        cmp.click = cmp.click || cmp.clickSource
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
+                        cmp.click.buffer(cmp.click.debounceTime(250)) // double click
+                            .filter(function (x) { return x.length === 2; })
+                            .subscribe(function (x) {
+                            jb_ui.wrapWithLauchingElement(context.params.onDoubleClick, context.setData(tree.selected), x[0].srcElement)();
+                        });
+                        var databindObs = (context.params.databind && jb_rx.refObservable(context.params.databind, cmp)
+                            .distinctUntilChanged()) || jb_rx.Observable.of();
+                        tree.selectionEmitter
+                            .merge(databindObs)
+                            .filter(function (x) { return x; })
+                            .subscribe(function (selected) {
+                            if (tree.selected == selected)
+                                return;
+                            tree.selected = selected;
+                            selected.split('~').slice(0, -1).reduce(function (base, x) {
+                                var path = base ? (base + '~' + x) : x;
+                                tree.expanded[path] = true;
+                                return path;
+                            }, '');
+                            if (context.params.databind)
+                                jb_core_1.jb.writeValue(context.params.databind, selected);
+                            context.params.onSelection(cmp.ctx.setData(selected));
+                        });
+                        // first auto selection selection
+                        var first_selected = jb_core_1.jb.val(context.params.databind);
+                        if (!first_selected && context.params.autoSelectFirst) {
+                            var first = tree.el.querySelectorAll('.treenode')[0];
+                            first_selected = tree.elemToPath(first);
+                        }
+                        if (first_selected)
+                            jb_core_1.jb.delay(1).then(function () { return tree.selectionEmitter.next(first_selected); });
+                        cmp.click.map(function (event) { return tree.elemToPath(event.target); })
+                            .subscribe(function (x) { return tree.selectionEmitter.next(x); });
+                    },
+                }); }
             });
             jb_core_1.jb.component('tree.keyboard-selection', {
                 type: 'feature',
@@ -215,7 +218,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular
                     host: {
                         '(keydown)': 'keydownSrc.next($event)',
                         'tabIndex': '0',
-                        '(mousedown)': 'getKeyboardFocus()',
+                        '(mouseup)': 'getKeyboardFocus()',
                     },
                     init: function (cmp) {
                         var tree = cmp.tree;
@@ -282,7 +285,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular
                     host: {
                         '(keydown)': 'keydownSrc.next($event)',
                         'tabIndex': '0',
-                        '(mousedown)': 'getKeyboardFocus()',
+                        '(mouseup)': 'getKeyboardFocus()',
                     },
                     init: function (cmp) {
                         var tree = cmp.tree;
@@ -305,6 +308,29 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', '@angular/common', '@angular
                                 return;
                             if (event.keyCode == keyCode)
                                 action(context.setData(tree.selected));
+                        });
+                    }
+                }); }
+            });
+            jb_core_1.jb.component('tree.onMouseRight', {
+                type: 'feature',
+                params: [
+                    { id: 'action', type: 'action', dynamic: true, essential: true },
+                ],
+                impl: function (context, action) { return ({
+                    observable: function () { },
+                    host: {
+                        '(contextmenu)': 'contextmenuSrc.next($event)'
+                    },
+                    init: function (cmp) {
+                        var tree = cmp.tree;
+                        cmp.contextmenuSrc = cmp.contextmenuSrc || new jb_rx.Subject();
+                        cmp.contextmenuSrc.takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .subscribe(function (e) {
+                            ui_utils.stop_prop(e);
+                            var selected = tree.elemToPath(e.target);
+                            tree.selectionEmitter.next(selected);
+                            jb_ui.wrapWithLauchingElement(action, cmp.ctx.setData(selected), e.target)();
                         });
                     }
                 }); }

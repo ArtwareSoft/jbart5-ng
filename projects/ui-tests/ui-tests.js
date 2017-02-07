@@ -260,6 +260,31 @@ jb.component('ui-test.tree-DD', {
 },
 })
 
+jb.component('ui-test.tree-right-click', {
+  impl :{$: 'ng2-ui-test',  
+  control :{$: 'tree',
+    nodeModel :{$: 'tree.json-read-only', 
+      object: '%$personWithChildren%', rootPath: 'Homer' 
+    },
+    features: [
+        { $: 'tree.keyboard-selection' },
+        { $: 'tree.drag-and-drop'},
+        { $: 'tree.selection', 
+          onDoubleClick :{$: 'openDialog', title: 'double %%',
+            features :{$: 'dialog-feature.nearLauncherLocation' }
+          },
+        },
+        { $: 'tree.onMouseRight', 
+          action :{$: 'openDialog', title: 'right %%',
+            features :{$: 'dialog-feature.nearLauncherLocation' }
+          }
+        }
+    ] 
+  },
+  expectedHtmlResult: { $: 'contains', text: ['Homer'] } ,
+},
+})
+
 jb.component('ui-test.itemlist-add-button', {
   impl :{$: 'ng2-ui-test',  
   control: { $: 'group', controls: 

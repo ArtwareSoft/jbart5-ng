@@ -18,7 +18,11 @@ jb.component('itemlists.master-detail-readonly', {
         controls: [
           {$: 'label', 
             title: '%name%', 
-            style :{$: 'label.mdl-ripple-effect' }
+            style :{$: 'label.mdl-ripple-effect' }, 
+            features: [
+              {$: 'css.width', width: '150' }, 
+              {$: 'css', css: '{text-align: left}' }
+            ]
           }
         ], 
         style :{$: 'itemlist.ul-li' }, 
@@ -71,7 +75,11 @@ jb.component('itemlists.master-detail-writable', {
             controls: [
               {$: 'label', 
                 title: '%name%', 
-                style :{$: 'label.mdl-ripple-effect' }
+                style :{$: 'label.mdl-ripple-effect' }, 
+                features: [
+                  {$: 'css.width', width: '150' }, 
+                  {$: 'css', css: '{text-align: left}' }
+                ]
               }
             ], 
             style :{$: 'itemlist.ul-li' }, 
@@ -134,6 +142,57 @@ jb.component('itemlists.master-detail-writable', {
   }
 })
 
-
+jb.component('itemlists.obj-as-items', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'obj-as-items', 
+    controls: [
+      {$: 'itemlist', 
+        items :{$: 'itemlist.obj-as-items', obj: '%$people[0]%' }, 
+        controls: [
+          {$: 'group', 
+            style :{$: 'layout.horizontal', spacing: 3 }, 
+            controls: [
+              {$: 'editable-text', 
+                title: 'key', 
+                databind: '%key%', 
+                style :{$: 'editable-text.input' }
+              }, 
+              {$: 'editable-text', 
+                title: 'value', 
+                databind: '%val%', 
+                style :{$: 'editable-text.input' }
+              }, 
+              {$: 'button', 
+                title: 'delete', 
+                action :{$: 'itemlist-container.delete', item: '%%' }, 
+                style :{$: 'button.x', size: '21' }
+              }
+            ]
+          }
+        ], 
+        style :{$: 'itemlist.ul-li' }, 
+        watchItems: true, 
+        itemVariable: 'item'
+      }, 
+      {$: 'group', 
+        controls: [
+          {$: 'editable-text', 
+            databind: '%%', 
+            style :{$: 'editable-text.codemirror', 
+              enableFullScreen: true, 
+              debounceTime: 300
+            }
+          }
+        ], 
+        features :{$: 'group.data', 
+          data :{$: 'stringify', value: '%$people[0]%', space: 2 }, 
+          watch: true
+        }
+      }
+    ], 
+    features :{$: 'group.itemlist-container' }
+  }
+})
 
 })

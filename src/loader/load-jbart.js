@@ -139,6 +139,11 @@ jb_system_config = {
         // paths serve as alias
         'npm:': '/node_modules/'
     },
+    meta: { 
+      'src': { scriptLoad: true }, 
+      'ui': { scriptLoad: true }, 
+      'testing': { scriptLoad: true }, 
+    },
     map: {
         'jb-core': '/dist/src/core',
         'ui': '/src/ui',

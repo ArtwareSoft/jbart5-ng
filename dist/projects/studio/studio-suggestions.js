@@ -49,7 +49,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             watchItems: true,
                             features: [
                                 { $: 'itemlist.studio-suggestions-options' },
-                                { $: 'itemlist.selection', autoSelectFirst: true },
+                                { $: 'itemlist.selection', autoSelectFirst: true,
+                                    onDoubleClick: function (ctx) { return ctx.data.paste(ctx); }, databind: '%$suggestionCtx/selected%' },
                                 { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
                                 { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
                                 { $: 'css.width', width: '300', overflow: 'auto' },
@@ -88,10 +89,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             watchItems: true,
                             features: [
                                 { $: 'itemlist.studio-suggestions-options' },
-                                { $: 'itemlist.selection',
-                                    onDoubleClick: function (ctx) {
-                                        return ctx.data.paste(ctx);
-                                    },
+                                { $: 'itemlist.selection', databind: '%$suggestionCtx/selected%',
+                                    onDoubleClick: function (ctx) { return ctx.data.paste(ctx); },
                                     autoSelectFirst: true
                                 },
                                 { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
@@ -200,10 +199,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 };
                 ValueOption.prototype.paste = function (ctx) {
                     var toPaste = this.toPaste + (typeof this.value == 'object' ? '/' : '%');
-                    var input = ctx.vars.suggestionCtx.input;
+                    var suggestionCtx = ctx.vars.suggestionCtx;
+                    var input = suggestionCtx.input;
                     var pos = this.pos + 1;
                     input.value = input.value.substr(0, this.pos - this.tail.length) + toPaste + input.value.substr(pos);
-                    jb_core_1.jb.delay(1, ctx).then(function () {
+                    suggestionCtx.show = false;
+                    suggestionCtx.selected = null;
+                    return jb_core_1.jb.delay(1, ctx).then(function () {
                         input.selectionStart = pos + toPaste.length;
                         input.selectionEnd = input.selectionStart;
                     });
@@ -333,9 +335,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 }) // ENTER
                                     .subscribe(function () {
                                     suggestionCtx.show = false;
-                                    if (cmp.selected && cmp.selected.paste) {
-                                        cmp.selected.paste(ctx);
-                                        cmp.selected = null;
+                                    if (suggestionCtx.selected && suggestionCtx.selected.paste) {
+                                        suggestionCtx.selected.paste(ctx);
+                                        suggestionCtx.selected = null;
                                     }
                                     jb_ui.apply(ctx);
                                 });
@@ -349,7 +351,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                     .subscribe(function (e) {
                                     var diff = e.keyCode == 40 ? 1 : -1;
                                     var items = cmp.items; //.filter(item=>!item.heading);
-                                    cmp.selected = items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
+                                    suggestionCtx.selected = items[(items.indexOf(suggestionCtx.selected) + diff + items.length) % items.length] || suggestionCtx.selected;
                                     // cmp.changeDt.markForCheck();
                                     // cmp.changeDt.detectChanges();
                                     e.preventDefault();
@@ -357,7 +359,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 suggestionCtx.suggestionEm.subscribe(function (e) {
                                     suggestionCtx.show = e.options.length > 0;
                                     suggestionCtx.options = e.options;
-                                    cmp.selected = e.options[0];
+                                    suggestionCtx.selected = e.options[0];
                                     cmp.changeDt.markForCheck();
                                     cmp.changeDt.detectChanges();
                                 });

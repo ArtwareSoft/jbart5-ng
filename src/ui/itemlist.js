@@ -131,7 +131,7 @@ jb.component('itemlist.selection', {
       jbItem: `[class.selected]="selected == ctrl.comp.ctx.data"
         (click)="selected = ctrl.comp.ctx.data ; clickSrc.next($event)"`
     },
-    css: '.jb-item.selected { color:red;' + ctx.params.cssForSelected + ' }',
+    css: '.jb-item.selected { ' + ctx.params.cssForSelected + ' }',
 //    .jb-item.active:not(.heading) {  ${ctx.params.cssForActive} }
 //    `,
     observable: () => {} // create jbEmitter

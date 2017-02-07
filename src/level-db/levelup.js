@@ -55,6 +55,33 @@ jb_component('level-up.file-db', {
 	})
 })
 
+jb_component('level-up.in-memory', {
+	type: 'level-up.db',
+	params: [
+		{ id: 'obj' ,as : 'single' },
+	],
+	impl : (ctx,obj) => ({
+		get: (key,cb) => 
+			cb(null,obj[key]),
+
+		put: (key,value,cb) => 
+			cb(obj[key]=value),
+
+		createReadStream: () => {
+			var listener = {
+				on: (type,observer) => {
+					if (type == 'data')
+						observer(Object.getOwnPropertyNames(obj))
+					else
+						observer();
+					return listener;
+				}
+			}
+			return listener;
+		}
+	})
+})
+
 
 jb_component('level-up.get', {
 	type: 'data',
@@ -90,7 +117,8 @@ jb_component('level-up.entries', {
 	impl: (ctx,db,key,value) =>
 		Observable.create(observer =>
 			db && db.createReadStream()
-			  .on('data', data => observer.next(data))
+			  .on('data', data => 
+			  		Array.isArray(data) ? data.forEach(x => observer.next(x)) : observer.next(data))
 			  .on('error', err => {throw err})
 			  .on('close', () => observer.complete())
 			  .on('end', () => observer.complete())

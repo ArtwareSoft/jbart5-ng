@@ -119,9 +119,10 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     }
     exports_1("injectLifeCycleMethods", injectLifeCycleMethods);
     function wrapWithLauchingElement(f, context, elem) {
-        var native = elem.nodeType ? elem : elem.nativeElement;
         return function () {
-            f(context.setVars({ $launchingElement: { elem: elem, $el: $(native).children().first() } }));
+            var native = elem.nodeType ? elem : elem.nativeElement;
+            // .children().first()
+            f(context.setVars({ $launchingElement: { $el: $(native) } }));
         };
     }
     exports_1("wrapWithLauchingElement", wrapWithLauchingElement);
