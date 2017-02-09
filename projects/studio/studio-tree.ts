@@ -113,52 +113,57 @@ jb.component('studio.open-tree-menu', {
 
 jb.component('studio.control-tree', {
   type: 'control', 
-  impl :{$: 'tree', 
-    nodeModel :{$: 'studio.control-tree.nodes' }, 
-    features: [
-      {$: 'css.class', class: 'jb-control-tree studio-control-tree' }, 
-      {$: 'tree.selection', 
-        databind: '%$globals/profile_path%', 
-        onSelection :{$: 'studio.highlight-in-preview', 
-          path :{$: 'studio.currentProfilePath' }
-        }, 
-        onDoubleClick: [
-          {$: 'studio.open-properties' }, 
-          {$: 'studio.highlight-in-preview', 
-            path :{$: 'studio.currentProfilePath' }
+  impl :{$: 'group', 
+    controls: [
+      {$: 'tree', 
+        nodeModel :{$: 'studio.control-tree.nodes' }, 
+        features: [
+          {$: 'css.class', class: 'jb-control-tree studio-control-tree' }, 
+          {$: 'tree.selection', 
+            databind: '%$globals/profile_path%', 
+            onSelection :{$: 'studio.highlight-in-preview', 
+              path :{$: 'studio.currentProfilePath' }
+            }, 
+            onDoubleClick: [
+              {$: 'studio.open-properties' }, 
+              {$: 'studio.highlight-in-preview', 
+                path :{$: 'studio.currentProfilePath' }
+              }
+            ], 
+            autoSelectFirst: true
+          }, 
+          {$: 'tree.keyboard-selection', 
+            onEnter :{$: 'studio.open-properties' }
+          }, 
+          {$: 'tree.drag-and-drop' }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Ctrl+C', 
+            action :{$: 'studio.copy', path: '%%' }
+          }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Ctrl+V', 
+            action :{$: 'studio.paste', path: '%%' }
+          }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Ctrl+Z', 
+            action :{$: 'studio.undo', path: '%%' }
+          }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Ctrl+Y', 
+            action :{$: 'studio.redo', path: '%%' }
+          }, 
+          {$: 'tree.keyboard-shortcut', 
+            key: 'Delete', 
+            action :{$: 'studio.delete', path: '%%' }
+          }, 
+          {$: 'studio.control-tree.refreshPathChanges' }, 
+          {$: 'tree.onMouseRight', 
+            action :{$: 'studio.open-tree-menu', path: '%%' }
           }
-        ], 
-        autoSelectFirst: true
-      }, 
-      {$: 'tree.keyboard-selection', 
-        onEnter :{$: 'studio.open-properties' }
-      }, 
-      {$: 'tree.drag-and-drop' }, 
-      {$: 'tree.keyboard-shortcut', 
-        key: 'Ctrl+C', 
-        action :{$: 'studio.copy', path: '%%' }
-      }, 
-      {$: 'tree.keyboard-shortcut', 
-        key: 'Ctrl+V', 
-        action :{$: 'studio.paste', path: '%%' }
-      }, 
-      {$: 'tree.keyboard-shortcut', 
-        key: 'Ctrl+Z', 
-        action :{$: 'studio.undo', path: '%%' }
-      }, 
-      {$: 'tree.keyboard-shortcut', 
-        key: 'Ctrl+Y', 
-        action :{$: 'studio.redo', path: '%%' }
-      }, 
-      {$: 'tree.keyboard-shortcut', 
-        key: 'Delete', 
-        action :{$: 'studio.delete', path: '%%' }
-      }, 
-      {$: 'studio.control-tree.refreshPathChanges' }, 
-      { $: 'tree.onMouseRight', 
-          action :{$: 'studio.open-tree-menu', path: '%%' }
+        ]
       }
-    ]
+    ], 
+    features :{$: 'css.padding', top: '10' }
   }
 })
 

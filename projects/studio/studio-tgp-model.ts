@@ -124,8 +124,17 @@ export class TgpModel {
 			compName = `pipeline (${val.length})`;
 		if (Array.isArray(val) && this.paramType(path) == 'action')
 			compName = `actions (${val.length})`;
+		var summary = '';
+		if (collapsed && typeof val == 'object')
+			summary = ': ' + Object.getOwnPropertyNames(val)
+				.filter(p=> p != '$')
+				.map(p=>val[p])
+				.filter(v=>typeof v == 'string')
+				.map(v=>v.substr(0,10))
+				.join(', ');
+
 		if (compName)
-			return prop + `= <span class="treenode-val">${compName}</span>`;
+			return prop + `= <span class="treenode-val">${compName}${summary}</span>`;
 		else if (typeof val == 'string')
 			return prop + (collapsed ? `: <span class="treenode-val" title="${val}">${val}</span>` : '');
 		return prop + (Array.isArray(val) ? ` (${val.length})` : '');
@@ -140,7 +149,7 @@ export class TgpModel {
 		if (this.childrenType == 'jb-editor') 
 			return this.jbEditorTitle(path,collapsed);
 
-		return (val && val.title) || (val && jb.compName(val)) || path.split('~').pop();
+		return (val && typeof val.title == 'string' && val.title) || (val && val.remark) || (val && jb.compName(val)) || path.split('~').pop();
 	}
 
 	icon(path) {

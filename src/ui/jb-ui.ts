@@ -344,10 +344,11 @@ export class jbComp {
   	[this._comp]
   		.filter(comp=>comp.compile)
   		.forEach(comp=>{
+//  			jb.logError('draw');
 	  		var componentFactory = comp.compile(this.compiler);
 		   	var cmp_ref = this.view.createComponent(componentFactory);
 		   	comp.registerMethods && comp.registerMethods(cmp_ref);
-			this.ngZone.run(()=>{});
+//			this.ngZone.run(()=>{});
 	 	})
   }
 
@@ -389,6 +390,10 @@ export class jBartWidget {
 		    })
 	}
 
+	ngDoCheck() {
+		console.log('checking widget ' + this.compId)
+	}
+
 	draw() {
 		try {
 			if (this.compId) {
@@ -420,9 +425,12 @@ export class jBartWidget {
 
 export function wrapWithLauchingElement(f,context,elem) {
 	return function() {
-		var native = elem.nodeType ? elem : elem.nativeElement;
+		if (elem.nativeElement && elem.nativeElement.tagName == 'JB-COMP')
+			var $el = $(elem.nativeElement).children().first();
+		else if (elem.nodeType)
+			var $el = $(elem);
 		// .children().first()
-		f(context.setVars({ $launchingElement: { $el : $(native) }}));
+		f(context.setVars({ $launchingElement: { $el : $el }}));
 	}
 }
 

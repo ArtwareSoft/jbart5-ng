@@ -151,7 +151,8 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                             ],
                             features: { $: 'group.watch', data: '%$globals/jb_editor_selection%' }
                         }
-                    ]
+                    ],
+                    features: { $: 'css.padding', top: '10' }
                 }
             });
             jb_core_1.jb.component('studio.data-browse', {

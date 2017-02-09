@@ -80,7 +80,7 @@ jb.component('studio-helper.studio-properties', {
   type: 'control', 
   impl :{$: 'group', 
     $vars: { circuit: 'studio-helper-dummy.simple-label' }, 
-    controls :{$: 'studio.properties' , path: 'studio-helper-dummy.simple-label' }, 
+    controls :{$: 'studio.properties', path: 'studio-helper-dummy.simple-label' }
   }
 })
 

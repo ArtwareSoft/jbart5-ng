@@ -28,7 +28,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             },
                             'Properties of %comp% %title%'
                         ] },
-                    style: { $: 'dialog.studio-floating', id: 'studio-properties', width: '500' },
+                    style: { $: 'dialog.studio-floating', id: 'studio-properties', width: '492' },
                     content: { $: 'studio.properties',
                         path: { $: 'studio.currentProfilePath' }
                     },
@@ -48,17 +48,18 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             });
             jb_core_1.jb.component('studio.properties', {
                 type: 'control',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
+                params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
                     style: { $: 'group.studio-properties-accordion' },
                     controls: [
                         { $: 'group',
-                            title: { $pipeline: [
+                            remark: 'properties',
+                            title: {
+                                $pipeline: [
                                     { $: 'studio.val', path: '%$path%' },
                                     { $: 'count',
-                                        items: { $pipeline: [
+                                        items: {
+                                            $pipeline: [
                                                 { $: 'objectProperties' },
                                                 { $: 'filter',
                                                     filter: { $: 'notEquals', item1: '%%', item2: 'features' }
@@ -69,40 +70,45 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                                 { $: 'filter',
                                                     filter: { $: 'notEquals', item1: '%%', item2: 'controls' }
                                                 }
-                                            ] }
+                                            ]
+                                        }
                                     },
                                     'Properties (%%)'
-                                ] },
+                                ]
+                            },
                             style: { $: 'property-sheet.studio-properties' },
                             controls: { $: 'dynamic-controls',
-                                controlItems: { $pipeline: [
+                                controlItems: {
+                                    $pipeline: [
                                         { $: 'studio.non-control-children', path: '%$path%' },
                                         { $: 'filter',
                                             filter: { $: 'not',
                                                 of: { $: 'endsWith', endsWith: '~features', text: '%%' }
                                             }
                                         }
-                                    ] },
+                                    ]
+                                },
                                 genericControl: { $: 'studio.property-field', path: '%$controlItem%' }
                             },
                             features: { $: 'group.studio-watch-path', path: '%$path%' }
                         },
                         { $: 'group',
-                            title: { $pipeline: [
+                            remark: 'features',
+                            title: {
+                                $pipeline: [
                                     { $: 'studio.val', path: '%$path%' },
                                     { $: 'count', items: '%features%' },
                                     'Features (%%)'
-                                ] },
-                            features: { $: 'group.studio-watch-path', path: '%$path%' },
-                            controls: { $: 'studio.property-array', path: '%$path%~features' }
+                                ]
+                            },
+                            controls: { $: 'studio.property-array', path: '%$path%~features' },
+                            features: { $: 'group.studio-watch-path', path: '%$path%' }
                         }
                     ],
                     features: [
-                        { $: 'css.width', width: '502' },
                         { $: 'group.dynamic-sub-titles' },
-                        { $: 'css.margin', left: '-10' },
                         { $: 'hidden',
-                            showCondition: { $: 'studio.has-param', param: 'features', path: '%$path%' }
+                            showCondition: { $: 'studio.has-param', path: '%$path%', param: 'features' }
                         }
                     ]
                 }

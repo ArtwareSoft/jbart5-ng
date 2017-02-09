@@ -123,8 +123,16 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         compName = "pipeline (" + val.length + ")";
                     if (Array.isArray(val) && this.paramType(path) == 'action')
                         compName = "actions (" + val.length + ")";
+                    var summary = '';
+                    if (collapsed && typeof val == 'object')
+                        summary = ': ' + Object.getOwnPropertyNames(val)
+                            .filter(function (p) { return p != '$'; })
+                            .map(function (p) { return val[p]; })
+                            .filter(function (v) { return typeof v == 'string'; })
+                            .map(function (v) { return v.substr(0, 10); })
+                            .join(', ');
                     if (compName)
-                        return prop + ("= <span class=\"treenode-val\">" + compName + "</span>");
+                        return prop + ("= <span class=\"treenode-val\">" + compName + summary + "</span>");
                     else if (typeof val == 'string')
                         return prop + (collapsed ? ": <span class=\"treenode-val\" title=\"" + val + "\">" + val + "</span>" : '');
                     return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
@@ -136,7 +144,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return path;
                     if (this.childrenType == 'jb-editor')
                         return this.jbEditorTitle(path, collapsed);
-                    return (val && val.title) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
+                    return (val && typeof val.title == 'string' && val.title) || (val && val.remark) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
                 };
                 TgpModel.prototype.icon = function (path) {
                     if (studio_path_1.parentPath(path)) {

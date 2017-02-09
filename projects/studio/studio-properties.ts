@@ -18,7 +18,7 @@ jb.component('studio.open-properties', {
       }, 
       'Properties of %comp% %title%'
     ]}, 
-    style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '500' }, 
+    style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '492' }, 
     content :{$: 'studio.properties', 
       path :{$: 'studio.currentProfilePath' }
     }, 
@@ -40,61 +40,67 @@ jb.component('studio.open-source-dialog', {
 
 jb.component('studio.properties', {
   type: 'control', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
+  params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
     style :{$: 'group.studio-properties-accordion' }, 
     controls: [
       {$: 'group', 
-        title: { $pipeline: [
-          {$: 'studio.val', path: '%$path%' }, 
-          {$: 'count', 
-            items: { $pipeline: [
-              {$: 'objectProperties' }, 
-              {$: 'filter', 
-                filter :{$: 'notEquals', item1: '%%', item2: 'features' }
-              }, 
-              {$: 'filter', 
-                filter :{$: 'notEquals', item1: '%%', item2: '$' }
-              }, 
-              {$: 'filter', 
-                filter :{$: 'notEquals', item1: '%%', item2: 'controls' }
+        remark: 'properties', 
+        title :{
+          $pipeline: [
+            {$: 'studio.val', path: '%$path%' }, 
+            {$: 'count', 
+              items :{
+                $pipeline: [
+                  {$: 'objectProperties' }, 
+                  {$: 'filter', 
+                    filter :{$: 'notEquals', item1: '%%', item2: 'features' }
+                  }, 
+                  {$: 'filter', 
+                    filter :{$: 'notEquals', item1: '%%', item2: '$' }
+                  }, 
+                  {$: 'filter', 
+                    filter :{$: 'notEquals', item1: '%%', item2: 'controls' }
+                  }
+                ]
               }
-            ]}
-          }, 
-          'Properties (%%)'
-        ]}, 
+            }, 
+            'Properties (%%)'
+          ]
+        }, 
         style :{$: 'property-sheet.studio-properties' }, 
         controls :{$: 'dynamic-controls', 
-          controlItems: { $pipeline: [
-            {$: 'studio.non-control-children', path: '%$path%' }, 
-            {$: 'filter', 
-              filter :{$: 'not', 
-                of :{$: 'endsWith', endsWith: '~features', text: '%%' }
+          controlItems :{
+            $pipeline: [
+              {$: 'studio.non-control-children', path: '%$path%' }, 
+              {$: 'filter', 
+                filter :{$: 'not', 
+                  of :{$: 'endsWith', endsWith: '~features', text: '%%' }
+                }
               }
-            }
-          ]}, 
+            ]
+          }, 
           genericControl :{$: 'studio.property-field', path: '%$controlItem%' }
         }, 
         features :{$: 'group.studio-watch-path', path: '%$path%' }
       }, 
       {$: 'group', 
-        title: { $pipeline: [
-          {$: 'studio.val', path: '%$path%' }, 
-          {$: 'count', items: '%features%' }, 
-          'Features (%%)'
-        ]}, 
-        features :{$: 'group.studio-watch-path', path: '%$path%' }, 
-        controls :{$: 'studio.property-array', path: '%$path%~features' }
+        remark: 'features', 
+        title :{
+          $pipeline: [
+            {$: 'studio.val', path: '%$path%' }, 
+            {$: 'count', items: '%features%' }, 
+            'Features (%%)'
+          ]
+        }, 
+        controls :{$: 'studio.property-array', path: '%$path%~features' }, 
+        features :{$: 'group.studio-watch-path', path: '%$path%' }
       }
     ], 
     features: [
-      {$: 'css.width', width: '502' }, 
       {$: 'group.dynamic-sub-titles' }, 
-      {$: 'css.margin', left: '-10' }, 
       {$: 'hidden', 
-        showCondition :{$: 'studio.has-param', param: 'features', path: '%$path%' }
+        showCondition :{$: 'studio.has-param', path: '%$path%', param: 'features' }
       }
     ]
   }

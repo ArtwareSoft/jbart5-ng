@@ -142,7 +142,8 @@ jb.component('studio.jb-editor', {
         ], 
         features :{$: 'group.watch', data: '%$globals/jb_editor_selection%' }
       }
-    ]
+    ], 
+    features :{$: 'css.padding', top: '10' }
   }
 })
 

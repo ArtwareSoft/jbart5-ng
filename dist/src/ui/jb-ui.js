@@ -120,9 +120,12 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     exports_1("injectLifeCycleMethods", injectLifeCycleMethods);
     function wrapWithLauchingElement(f, context, elem) {
         return function () {
-            var native = elem.nodeType ? elem : elem.nativeElement;
+            if (elem.nativeElement && elem.nativeElement.tagName == 'JB-COMP')
+                var $el = $(elem.nativeElement).children().first();
+            else if (elem.nodeType)
+                var $el = $(elem);
             // .children().first()
-            f(context.setVars({ $launchingElement: { $el: $(native) } }));
+            f(context.setVars({ $launchingElement: { $el: $el } }));
         };
     }
     exports_1("wrapWithLauchingElement", wrapWithLauchingElement);
@@ -424,10 +427,11 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     [this._comp]
                         .filter(function (comp) { return comp.compile; })
                         .forEach(function (comp) {
+                        //  			jb.logError('draw');
                         var componentFactory = comp.compile(_this.compiler);
                         var cmp_ref = _this.view.createComponent(componentFactory);
                         comp.registerMethods && comp.registerMethods(cmp_ref);
-                        _this.ngZone.run(function () { });
+                        //			this.ngZone.run(()=>{});
                     });
                 };
                 jbComp.prototype.ngOnDestroy = function () {
@@ -476,6 +480,9 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         jb_waitFor(function () { return jbart.studioAutoRefreshWidget; }).then(function () {
                             jbart.studioAutoRefreshWidget(_this);
                         });
+                };
+                jBartWidget.prototype.ngDoCheck = function () {
+                    console.log('checking widget ' + this.compId);
                 };
                 jBartWidget.prototype.draw = function () {
                     try {
