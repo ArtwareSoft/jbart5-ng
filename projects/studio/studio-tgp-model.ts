@@ -126,12 +126,7 @@ export class TgpModel {
 			compName = `actions (${val.length})`;
 		var summary = '';
 		if (collapsed && typeof val == 'object')
-			summary = ': ' + Object.getOwnPropertyNames(val)
-				.filter(p=> p != '$')
-				.map(p=>val[p])
-				.filter(v=>typeof v == 'string')
-				.map(v=>v.substr(0,10))
-				.join(', ');
+			summary = ': ' + this.summary(path).substr(0,20);
 
 		if (compName)
 			return prop + `= <span class="treenode-val">${compName}${summary}</span>`;
@@ -150,6 +145,16 @@ export class TgpModel {
 			return this.jbEditorTitle(path,collapsed);
 
 		return (val && typeof val.title == 'string' && val.title) || (val && val.remark) || (val && jb.compName(val)) || path.split('~').pop();
+	}
+
+	summary(path) {
+		var val = profileFromPath(path);
+		if (typeof val != 'object') return '';
+		return Object.getOwnPropertyNames(val)
+			.filter(p=> p != '$')
+			.map(p=>val[p])
+			.filter(v=>typeof v == 'string')
+			.join(', ');
 	}
 
 	icon(path) {

@@ -92,7 +92,7 @@ select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
 jb.component('property-sheet.studio-properties', {
   type: 'group.style', 
   impl :{$: 'customStyle', 
-    features :{$: 'group.initGroup' }, 
+    features :{$: 'group.init-group' }, 
     methods: {
       afterViewInit: function (ctx) { return function (cmp) {
                             return jb.delay(1).then(function () {
@@ -139,7 +139,7 @@ jb.component('property-sheet.studio-properties', {
 jb.component('property-sheet.studio-plain', {
   type: 'group.style', 
   impl :{$: 'customStyle', 
-    features :{$: 'group.initGroup' }, 
+    features :{$: 'group.init-group' }, 
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title" title="{{ctrl.comp.jb_title()}}">{{ctrl.comp.jb_title()}}</label>
@@ -288,9 +288,9 @@ jb.component('group.studio-properties-accordion', {
   impl :{$: 'customStyle', 
     template: `<section class="jb-group">
       <div *ngFor="let ctrl of ctrls" class="accordion-section">
-        <div class="header">
+        <div class="header" (click)="toggle(ctrl)">
           <div class="title">{{ctrl.title}}</div>
-          <div class="expand" (click)="toggle(ctrl)" title="{{expand_title(ctrl)}}">
+          <div class="expand" title="{{expand_title(ctrl)}}">
                 <i *ngIf="ctrl.show" class="material-icons">keyboard_arrow_down</i>
                 <i *ngIf="!ctrl.show" class="material-icons">keyboard_arrow_right</i>
           </div>
@@ -298,26 +298,6 @@ jb.component('group.studio-properties-accordion', {
         <div class="content" *ngIf="ctrl.show"><div *jbComp="ctrl.comp"></div></div>
       </div>
   </section>`, 
-    methods: {
-      init: function (ctx) {
-                            return function (cmp) {
-                                cmp.expand_title = function (ctrl) {
-                                    return ctrl.show ? 'collapse' : 'expand';
-                                };
-                                cmp.toggle = function (newCtrl) {
-                                    return cmp.ctrls.forEach(function (ctrl) {
-                                        return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
-                                    });
-                                };
-                            };
-                        }, 
-      afterViewInit: function (ctx) {
-                            return function (cmp) {
-                                if (cmp.ctrls && cmp.ctrls[0])
-                                    cmp.ctrls[0].show = true;
-                            };
-                        }
-    }, 
     css: `.header { display: flex; flex-direction: row; }
 button:hover { background: none }
 button { margin-left: auto }
@@ -326,7 +306,10 @@ i { color: #; cursor: pointer }
 .content { padding-top: 2px }
 .header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } 
 `, 
-    features :{$: 'group.initGroup' }
+      features : [ 
+        {$: 'group.init-group' },
+        {$: 'group.init-accordion' },
+      ]
   }
 })
 
@@ -335,14 +318,11 @@ jb.component('label.studio-message', {
   type: 'label.style', 
   impl :{$: 'customStyle', 
     template: '<span class="studio-message">{{title}}</span>', 
-    features :[ 
-      {$: 'label.bind-title' },
-      {$:'css',css: `{ position: absolute;
+    css: `span { position: absolute;
       color: white;  padding: 20px;  background: #327DC8;
       width: 1000px;
       margin-top: -100px;
-      }
-      `}
-    ]
+      }`,
+    features: {$: 'label.bind-title' }
   }
 })

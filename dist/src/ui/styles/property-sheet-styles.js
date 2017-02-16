@@ -14,7 +14,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     { id: 'spacing', as: 'number', defaultValue: 20 }
                 ],
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div *jbComp=\"ctrl.comp\"></div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: %$spacing%px }\n      .property:last-child { margin-bottom:0 }\n      .property>.property-title {\n        width:100px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n      }\n      .property>div { display:inline-block }"
                 }
@@ -26,7 +26,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     { id: 'fieldWidth', as: 'number', defaultValue: 200 },
                 ],
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     template: "<div>\n        <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n          <label class=\"property-title\">{{ctrl.title}}</label>\n          <div *jbComp=\"ctrl.comp\"></div>\n        </div>\n        <div class=\"clearfix\"></div>\n      </div>\n    ",
                     css: ".property { \n          float: left;\n          width: %$fieldWidth%px;\n          margin-right: %$spacing}%px \n        }\n      .clearfix { clear: both }\n      .property:last-child { margin-right:0 }\n      .property>.property-title {\n        margin-bottom: 3px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        font-size:14px;\n      }",
                 }
@@ -39,7 +39,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     { id: 'titleWidth', as: 'number', defaultValue: 100 },
                 ],
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\">{{ctrl.title}}</label>\n        <div *jbComp=\"ctrl.comp\" class=\"property-ctrl\"></div>\n      </div>\n    </div>",
                     css: ".property { margin-bottom: %$vSpacing%px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .property>.property-title {\n        width: %$titleWidth%px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: %$hSpacing%px;\n      }\n      .property>*:last-child { margin-right:0 }"
                 }
@@ -52,7 +52,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     { id: 'titleWidth', as: 'number', defaultValue: 100 },
                 ],
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     methods: {
                         init: function (ctx) { return function (cmp) {
                             cmp.getComp = function (ctrl) {
@@ -105,7 +105,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     { id: 'titleWidth', as: 'number', defaultValue: 100 },
                 ],
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     methods: {
                         afterViewInit: function (ctx) { return function (cmp) {
                             return jb_core_1.jb.delay(1).then(function () {

@@ -44,9 +44,10 @@ function studioAutoRefreshComp(jbComp) {
             jb_logException(e))
       .takeUntil(jbComp.destroyNotifier.toPromise())
       .subscribe(comp=> {
-          if (comp != jbComp._comp) 
+          if (comp != jbComp._comp) {
             jbComp.draw(comp);
-           //applyPreview(comp.ctx);
+            studioActivityEm.next(previewRefreshCounter++); // refresh preview
+         }
       })
 }
 

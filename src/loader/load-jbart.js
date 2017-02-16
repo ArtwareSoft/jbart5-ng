@@ -139,10 +139,15 @@ jb_system_config = {
         // paths serve as alias
         'npm:': '/node_modules/'
     },
-    meta: { 
-      'src': { scriptLoad: true }, 
-      'ui': { scriptLoad: true }, 
-      'testing': { scriptLoad: true }, 
+    meta: {
+      'ui/*.js': { format: 'global', scriptLoad: true }, 
+      'src/ui/*.js': { format: 'global', scriptLoad: true }, 
+      '/src/ui/*.js': { format: 'global', scriptLoad: true }, 
+      'projects_js/*/*.js': { format: 'global', scriptLoad: true }, 
+      'testing/*.js': { format: 'global', scriptLoad: true }, 
+      // 'src/**': { scriptLoad: true }, 
+      // 'ui/**': { scriptLoad: true }, 
+      // 'testing/**': { scriptLoad: true }, 
     },
     map: {
         'jb-core': '/dist/src/core',
@@ -151,6 +156,7 @@ jb_system_config = {
         'jb-ui': '/dist/src/ui',
         'testing': '/src/testing',
         src: '/src',
+        projects_js: '/projects',
         projects: '/dist/projects',
         studio: '/dist/projects/studio',
 //        'rxjs': '/node_modules/rxjs',
@@ -209,7 +215,10 @@ function jbLoadModules(modules) {
   var loaded = 0, loadedModules= {};
 
   return new Promise(resolve=>
-    modules.map(x=>{
+    modules
+    .map(m=>
+      m.match(/^projects\/.*js$/) ? m.replace('projects/','projects_js') : m)
+    .map(x=>{
       System.import(x).then(res=>{
           //console.log(x+ ' loaded successfuly');
           loadedModules[x] = res;
@@ -217,7 +226,8 @@ function jbLoadModules(modules) {
           if (loaded == modules.length) resolve(loadedModules) 
         },e =>{
           loaded++;
-          console.log(x,e);
+          if (e.message.indexOf('did not call System.register or AMD define') == -1)
+            console.log(x,e);
           if (loaded == modules.length) resolve(loadedModules) 
         }
       )

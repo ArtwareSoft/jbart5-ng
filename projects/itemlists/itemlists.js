@@ -1,13 +1,11 @@
-jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
-
-jb.resource('itemlists','people',[
+jb_resource('itemlists','people',[
   { "name": "Homer Simpson" ,age: 42 , male: true},
   { "name": "Marge Simpson" ,age: 38 , male: false},
   { "name": "Bart Simpson"  ,age: 12 , male: true}
 ]);
 
 
-jb.component('itemlists.master-detail-readonly', {
+jb_component('itemlists.master-detail-readonly', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'itemlist', 
@@ -60,7 +58,7 @@ jb.component('itemlists.master-detail-readonly', {
   }
 })
 
-jb.component('itemlists.master-detail-writable', {
+jb_component('itemlists.master-detail-writable', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'itemlist', 
@@ -142,7 +140,7 @@ jb.component('itemlists.master-detail-writable', {
   }
 })
 
-jb.component('itemlists.obj-as-items', {
+jb_component('itemlists.obj-as-items', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'obj-as-items', 
@@ -195,4 +193,50 @@ jb.component('itemlists.obj-as-items', {
   }
 })
 
+jb_component('itemlists.table', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'table', 
+    controls: [
+      {$: 'itemlist', 
+        items: '%$people%', 
+        controls: [
+          {$: 'label', 
+            title: '%name% yaniv', 
+            style :{$: 'label.span' }
+          }, 
+          {$: 'label', 
+            title: '%age%', 
+            style :{$: 'label.span' }
+          }
+        ], 
+        style :{$: 'customStyle', 
+          template: `<div><ul class="jb-itemlist">
+      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading" #jbItem>
+        <div *jbComp="ctrl.comp"></div>
+      </li>
+      </ul></div>`, 
+          css: 'ul, li { list-style: none; padding: 0; margin: 0;}', 
+          features :{$: 'group.init-group' }
+        }, 
+        watchItems: true, 
+        itemVariable: 'item'
+      }
+    ]
+  }
+})
+
+
+
+jb_component('itemlists.l', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'l', 
+    controls: [
+      {$: 'label', 
+        title: 'hello', 
+        style :{$: 'label.span' }
+      }
+    ]
+  }
 })

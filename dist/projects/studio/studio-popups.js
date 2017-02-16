@@ -33,7 +33,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     { id: 'height', as: 'number', default: 100 },
                 ],
                 impl: { $: 'customStyle',
-                    template: "<div class=\"jb-dialog jb-default-dialog\">\n\t\t\t\t      \t\t  <div class=\"dialog-title noselect\">{{title}}</div>\n\t\t\t\t      \t\t  <div *ngIf=\"hasMenu\" class=\"dialog-menu\">\n\t\t\t\t      \t\t  \t<div *jbComp=\"menuComp\"></div>\n\t\t\t\t      \t\t  </div>\n\t\t\t\t\t\t\t  <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t  <div class=\"jb-dialog-content-parent\">\n\t\t\t\t\t              <div *jbComp=\"contentComp\"></div>\n\t\t\t\t\t\t  \t  </div>\n\t\t\t\t\t\t</div>",
+                    template: "<div class=\"jb-dialog jb-default-dialog\" {?dialogId=\"%$id%\"?}>\n\t\t\t\t      \t\t  <div class=\"dialog-title noselect\">{{title}}</div>\n\t\t\t\t      \t\t  <div *ngIf=\"hasMenu\" class=\"dialog-menu\">\n\t\t\t\t      \t\t  \t<div *jbComp=\"menuComp\"></div>\n\t\t\t\t      \t\t  </div>\n\t\t\t\t\t\t\t  <button class=\"dialog-close\" (click)=\"dialogClose()\">&#215;</button>\n\t\t\t\t\t\t\t  <div class=\"jb-dialog-content-parent\">\n\t\t\t\t\t              <div *jbComp=\"contentComp\"></div>\n\t\t\t\t\t\t  \t  </div>\n\t\t\t\t\t\t</div>",
                     features: [
                         { $: 'dialog-feature.dragTitle', id: '%$id%' },
                         { $: 'dialog-feature.uniqueDialog', id: '%$id%', remeberLastLocation: true },

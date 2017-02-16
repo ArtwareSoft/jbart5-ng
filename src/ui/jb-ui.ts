@@ -163,9 +163,6 @@ class jbComponent {
 		if (options.extendCtx) this.methodHandler.extendCtxFuncs.push(options.extendCtx);
 		if (options.extendComp) jb.extend(this,options.extendComp);
 
-		if (options.invisible) 
-			this.invisible = true;
-
 	   	if (options.css)
     		options.styles = (options.styles || [])
     				.concat(options.css.split(/}\s*/m)
@@ -227,6 +224,9 @@ class jbComponent {
 				.forEach(mod=>
 					annotations.template = annotations.template.replace('#'+mod[0],'#'+mod[0]+ ' ' +mod[1]));
 		}
+
+		if (options.wrapWithngIf) 
+			annotations.template = `<template [ngIf]="jbIf()">${annotations.template}</template>`;
 
 		(options.featuresOptions || []).forEach(f => 
 			this.jbExtend(f, context))

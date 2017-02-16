@@ -36,7 +36,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     controls: [
                         { $: 'button',
                             title: 'Customize style',
-                            style: { $: 'button.md-icon-12', icon: 'build' },
+                            style: { $: 'button.mdl-icon-12', icon: 'build' },
                             action: [{ $: 'studio.make-local', path: '%$path%' }, { $: 'studio.open-style-editor', path: '%$path%' }],
                             features: { $: 'hidden',
                                 showCondition: {
@@ -53,7 +53,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'button',
                             title: 'style editor',
                             action: { $: 'studio.open-style-editor', path: '%$path%' },
-                            style: { $: 'button.md-icon-12', icon: 'build' },
+                            style: { $: 'button.mdl-icon-12', icon: 'build' },
                             features: { $: 'hidden',
                                 showCondition: { $: 'equals',
                                     item1: { $: 'studio.comp-name', path: '%$path%' },
@@ -63,7 +63,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'multiline edit',
-                            style: { $: 'button.md-icon-12', icon: 'build' },
+                            style: { $: 'button.mdl-icon-12', icon: 'build' },
                             features: { $: 'hidden',
                                 showCondition: { $: 'equals',
                                     item1: { $pipeline: [{ $: 'studio.param-def', path: '%$path%' }, '%as%'] },
@@ -74,7 +74,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'more...',
-                            style: { $: 'button.md-icon-12', icon: 'more_vert' },
+                            style: { $: 'button.mdl-icon-12', icon: 'more_vert' },
                             action: { $: 'studio.open-property-menu', path: '%$path%' }
                         }
                     ]

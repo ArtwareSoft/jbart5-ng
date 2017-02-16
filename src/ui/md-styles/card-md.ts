@@ -8,7 +8,7 @@ jb.component('group.md-card', {
     template: `<div><md-card>
         <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card></div>`,
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     imports: MdCardModule
   }
 })
@@ -19,7 +19,7 @@ jb.component('group.md-card-actions', {
     template: `<div><md-card-actions>
         <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card-actions></div>`,
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     imports: MdCardModule
   }
 })
@@ -30,7 +30,7 @@ jb.component('group.md-card-content', {
     template: `<div><md-card-content>
         <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card-content></div>`,
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     imports: MdCardModule
   }
 })
@@ -41,7 +41,7 @@ jb.component('group.md-card-header', {
     template: `<div><md-card-header>
         <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
       </md-card-header></div>`,
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     imports: MdCardModule
   }
 })

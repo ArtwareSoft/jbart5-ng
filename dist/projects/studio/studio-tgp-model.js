@@ -125,12 +125,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         compName = "actions (" + val.length + ")";
                     var summary = '';
                     if (collapsed && typeof val == 'object')
-                        summary = ': ' + Object.getOwnPropertyNames(val)
-                            .filter(function (p) { return p != '$'; })
-                            .map(function (p) { return val[p]; })
-                            .filter(function (v) { return typeof v == 'string'; })
-                            .map(function (v) { return v.substr(0, 10); })
-                            .join(', ');
+                        summary = ': ' + this.summary(path).substr(0, 20);
                     if (compName)
                         return prop + ("= <span class=\"treenode-val\">" + compName + summary + "</span>");
                     else if (typeof val == 'string')
@@ -145,6 +140,16 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     if (this.childrenType == 'jb-editor')
                         return this.jbEditorTitle(path, collapsed);
                     return (val && typeof val.title == 'string' && val.title) || (val && val.remark) || (val && jb_core_1.jb.compName(val)) || path.split('~').pop();
+                };
+                TgpModel.prototype.summary = function (path) {
+                    var val = studio_path_1.profileFromPath(path);
+                    if (typeof val != 'object')
+                        return '';
+                    return Object.getOwnPropertyNames(val)
+                        .filter(function (p) { return p != '$'; })
+                        .map(function (p) { return val[p]; })
+                        .filter(function (v) { return typeof v == 'string'; })
+                        .join(', ');
                 };
                 TgpModel.prototype.icon = function (path) {
                     if (studio_path_1.parentPath(path)) {

@@ -26,7 +26,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'add resource',
-                            style: { $: 'button.md-icon', icon: 'add', size: 20 }
+                            style: { $: 'button.mdl-icon', icon: 'add', size: 20 }
                         },
                         { $: 'group',
                             style: { $: 'group.section' },

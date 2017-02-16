@@ -29,7 +29,7 @@ jb.component('sidenav.md', {
       </md-sidenav>
       </md-sidenav-layout>`,
     css: `md-sidenav { width: %$width%px }`,
-    features :{$: 'group.initGroup'}
+    features :{$: 'group.init-group'}
   }
 })
 

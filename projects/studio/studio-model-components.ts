@@ -41,6 +41,12 @@ jb.component('studio.short-title', {
 		model.shortTitle(path)
 })
 
+jb.component('studio.summary', {
+	params: [ {id: 'path', as: 'string' } ],
+	impl: (context,path) => 
+		model.summary(path)
+})
+
 jb.component('studio.has-param', {
 	params: [ 
 		{ id: 'path', as: 'string' }, 
@@ -188,6 +194,36 @@ jb.component('studio.make-local',{
 	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context,true)
 })
 
+jb.component('studio.components-statistics',{
+	type: 'data',
+	impl: ctx => {
+	  var refs = {};
+      Object.getOwnPropertyNames(jbart.comps).forEach(k=>
+      	refs[k] = { refs: calcRefs(jbart.comps[k].impl), by: [] }
+      );
+      Object.getOwnPropertyNames(jbart.comps).forEach(k=>
+      	refs[k].refs.forEach(cross=>
+      		refs[cross] && refs[cross].by.push(k))
+      );
+
+      var cmps = Object.getOwnPropertyNames(jbart.comps)
+          .map(k=>jbart.comps[k])
+          .map(comp=>({
+          	id: k,
+          	refs: refs[k].refs,
+          	referredBy: refs[k].by,
+          	type: jbart.comps[k].type,
+          	implType: type of jbart.comps[k].impl,
+          	text: jb_prettyPrintComp(jbart.comps[k]),
+          	size: jb_prettyPrintComp(jbart.comps[k]).length
+          }))
+
+      function calcRefs(profile) {
+      	return Object.getOwnPropertyNames(profile).reduce((res,prop)=>
+      		res.concat(calcRefs,profile[prop]),[jb.compName(profile)])
+      }
+	}
+})
 
 
 

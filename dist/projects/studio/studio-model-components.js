@@ -50,6 +50,12 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     return studio_tgp_model_1.model.shortTitle(path);
                 }
             });
+            jb_core_1.jb.component('studio.summary', {
+                params: [{ id: 'path', as: 'string' }],
+                impl: function (context, path) {
+                    return studio_tgp_model_1.model.summary(path);
+                }
+            });
             jb_core_1.jb.component('studio.has-param', {
                 params: [
                     { id: 'path', as: 'string' },
@@ -189,6 +195,36 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                 type: 'action',
                 params: [{ id: 'path', as: 'string' }],
                 impl: function (context, path) { return studio_tgp_model_1.model.modify(studio_tgp_model_1.model.makeLocal, path, { ctx: context }, context, true); }
+            });
+            jb_core_1.jb.component('studio.components-statistics', {
+                type: 'data',
+                impl: function (ctx) {
+                    var refs = {};
+                    Object.getOwnPropertyNames(jbart.comps).forEach(function (k) {
+                        return refs[k] = { refs: calcRefs(jbart.comps[k].impl), by: [] };
+                    });
+                    Object.getOwnPropertyNames(jbart.comps).forEach(function (k) {
+                        return refs[k].refs.forEach(function (cross) {
+                            return refs[cross] && refs[cross].by.push(k);
+                        });
+                    });
+                    var cmps = Object.getOwnPropertyNames(jbart.comps)
+                        .map(function (k) { return jbart.comps[k]; })
+                        .map(function (comp) { return ({
+                        id: k,
+                        refs: refs[k].refs,
+                        referredBy: refs[k].by,
+                        type: jbart.comps[k].type,
+                        implType: type, of: jbart.comps[k].impl,
+                        text: jb_prettyPrintComp(jbart.comps[k]),
+                        size: jb_prettyPrintComp(jbart.comps[k]).length
+                    }); });
+                    function calcRefs(profile) {
+                        return Object.getOwnPropertyNames(profile).reduce(function (res, prop) {
+                            return res.concat(calcRefs, profile[prop]);
+                        }, [jb_core_1.jb.compName(profile)]);
+                    }
+                }
             });
         }
     }

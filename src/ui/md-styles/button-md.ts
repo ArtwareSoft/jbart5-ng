@@ -72,7 +72,7 @@ jb.component('button.md-icon2', {
   }
 })
 
-jb.component('button.md-icon-12', {
+jb.component('button.mdl-icon-12', {
   type: 'button.style',
   params: [
     { id: 'icon', as: 'string', default: 'code' },

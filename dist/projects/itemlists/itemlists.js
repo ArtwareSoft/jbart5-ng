@@ -176,3 +176,23 @@ jb.component('itemlists.obj-as-items', {
         features: { $: 'group.itemlist-container' }
     }
 });
+jb.component('itemlists.table', {
+    type: 'control',
+    impl: { $: 'group',
+        title: 'table',
+        controls: [
+            { $: 'itemlist',
+                items: '%$people%',
+                controls: [
+                    { $: 'label',
+                        title: '%name%aa',
+                        style: { $: 'label.span' }
+                    }
+                ],
+                style: { $: 'itemlist.ul-li' },
+                watchItems: true,
+                itemVariable: 'item'
+            }
+        ]
+    }
+});

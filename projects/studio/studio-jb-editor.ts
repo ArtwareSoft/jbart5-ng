@@ -17,7 +17,7 @@ jb.component('studio.open-jb-editor', {
         height: '400'
       }, 
       menu :{$: 'button', 
-        style :{$: 'button.md-icon', icon: 'menu'},
+        style :{$: 'button.mdl-icon', icon: 'menu'},
         action :{$: 'studio.open-jb-editor-menu', path: '%$globals/jb_editor_selection%' }
       },
       title: 'Inteliscript'
@@ -135,7 +135,7 @@ jb.component('studio.jb-editor', {
                 }
               }
             ], 
-            features :{$: 'group-item.if', 
+            features :{$: 'feature.if', 
               showCondition: '%$globals/jb_editor_selection%'
             }
           }

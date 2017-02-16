@@ -23,7 +23,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     menu: { $: 'button',
                         title: 'style menu',
                         action: { $: 'studio.open-style-menu', path: '%$path%' },
-                        style: { $: 'button.md-icon', icon: 'menu' },
+                        style: { $: 'button.mdl-icon', icon: 'menu' },
                         features: { $: 'css', css: 'button { background: transparent }' }
                     },
                     title: 'Style Editor - %$styleSource/path%'

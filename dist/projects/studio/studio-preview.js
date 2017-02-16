@@ -35,9 +35,10 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
         })
             .takeUntil(jbComp.destroyNotifier.toPromise())
             .subscribe(function (comp) {
-            if (comp != jbComp._comp)
+            if (comp != jbComp._comp) {
                 jbComp.draw(comp);
-            //applyPreview(comp.ctx);
+                studio_utils_1.studioActivityEm.next((exports_1("previewRefreshCounter", ++previewRefreshCounter) - 1)); // refresh preview
+            }
         });
     }
     function studioAutoRefreshWidget(widget) {

@@ -19,7 +19,7 @@ jb.component('studio.data-resources', {
       }, 
       {$: 'button', 
         title: 'add resource', 
-        style :{$: 'button.md-icon', icon: 'add', size: 20 }
+        style :{$: 'button.mdl-icon', icon: 'add', size: 20 }
       }, 
       {$: 'group', 
         style :{$: 'group.section' }, 

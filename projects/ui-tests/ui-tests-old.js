@@ -83,10 +83,10 @@ jb_tests('md-ui-tests', {
     expectedHtmlResult: { $: 'contains', text: ['name', 'Homer'] }
   },
 
-  'button.md-icon' :{$: 'ng2-ui-test',  
+  'button.mdl-icon' :{$: 'ng2-ui-test',  
     control :{$: 'button', 
       title: 'ccc',
-      style :{$: 'button.md-icon', icon: 'save' }, 
+      style :{$: 'button.mdl-icon', icon: 'save' }, 
     },
     expectedHtmlResult: { $: 'contains', text: 'cc' }
   },
@@ -507,7 +507,7 @@ ngIf :{$: 'ng2-ui-test',
                 features :{$: 'field.toolbar', 
                   toolbar :{$: 'button',
                       title: 'more',
-                      style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                      style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
                     }
                 }
               },
@@ -528,7 +528,7 @@ ngIf :{$: 'ng2-ui-test',
                   {$: 'field.toolbar', 
                     toolbar :{$: 'button',
                         title: 'more',
-                        style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                        style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
                       }
                   },
                   {$: 'field.style-on-focus', 

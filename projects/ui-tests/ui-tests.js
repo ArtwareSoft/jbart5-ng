@@ -455,7 +455,7 @@ jb.component('ui-test.property-sheet.growing', {
                 features :{$: 'field.toolbar', 
                   toolbar :{$: 'button',
                       title: 'more',
-                      style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                      style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
                     }
                 }
               },
@@ -478,7 +478,7 @@ jb.component('ui-test.property-sheet.style-on-focus', {
                   {$: 'field.toolbar', 
                     toolbar :{$: 'button',
                         title: 'more',
-                        style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+                        style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
                       }
                   },
                   {$: 'field.style-on-focus', 

@@ -328,8 +328,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         this.methodHandler.extendCtxFuncs.push(options.extendCtx);
                     if (options.extendComp)
                         jb_core_1.jb.extend(this, options.extendComp);
-                    if (options.invisible)
-                        this.invisible = true;
                     if (options.css)
                         options.styles = (options.styles || [])
                             .concat(options.css.split(/}\s*/m)
@@ -386,6 +384,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                             return annotations.template = annotations.template.replace('#' + mod[0], '#' + mod[0] + ' ' + mod[1]);
                         });
                     }
+                    if (options.wrapWithngIf)
+                        annotations.template = "<template [ngIf]=\"jbIf()\">" + annotations.template + "</template>";
                     (options.featuresOptions || []).forEach(function (f) {
                         return _this.jbExtend(f, context);
                     });

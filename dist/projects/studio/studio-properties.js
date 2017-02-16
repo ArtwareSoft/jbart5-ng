@@ -102,7 +102,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 ]
                             },
                             controls: { $: 'studio.property-array', path: '%$path%~features' },
-                            features: { $: 'group.studio-watch-path', path: '%$path%' }
+                            features: [{ $: 'group.studio-watch-path', path: '%$path%' }]
                         }
                     ],
                     features: [
@@ -408,7 +408,11 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                         }
                                     ]
                                 },
-                                { $: 'studio.property-toobar', path: '%$path%' }
+                                { $: 'studio.property-toobar', path: '%$path%' },
+                                { $: 'label',
+                                    title: { $: 'studio.summary', path: '%$path%' },
+                                    style: { $: 'label.span' }
+                                }
                             ],
                             features: [{ $: 'css', css: '{ position: relative; margin-left2: -80px }' }]
                         },
@@ -418,7 +422,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 { $: 'group.watch',
                                     data: { $: 'studio.comp-name', path: '%$path%' }
                                 },
-                                { $: 'hidden', showCondition: '%$tgpCtrl.expanded%' },
+                                { $: 'feature.if', showCondition: '%$tgpCtrl.expanded%' },
                                 { $: 'css',
                                     css: '{ margin-top: 9px; margin-left2: -100px; margin-bottom: 4px;}'
                                 }

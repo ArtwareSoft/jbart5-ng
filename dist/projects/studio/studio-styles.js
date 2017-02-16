@@ -46,7 +46,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('property-sheet.studio-properties', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     methods: {
                         afterViewInit: function (ctx) {
                             return function (cmp) {
@@ -67,7 +67,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('property-sheet.studio-plain', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     template: "<div>\n      <div *ngFor=\"let ctrl of ctrls\" class=\"property\">\n        <label class=\"property-title\" title=\"{{ctrl.comp.jb_title()}}\">{{ctrl.comp.jb_title()}}</label>\n        <div class=\"input-and-toolbar\">\n          <div *jbComp=\"ctrl.comp\"></div>\n          <div class=\"toolbar\">\n            <div *jbComp=\"ctrl.comp.jb_toolbar\"></div>\n          </div>\n        </div>\n      </div>\n      </div>\n    ",
                     css: ".property { margin-bottom: 5px; display: flex }\n      .property:last-child { margin-bottom:0px }\n      .input-and-toolbar { display: flex; }\n      .toolbar { height: 16px; margin-left: 10px }\n      .property>.property-title {\n        min-width: 90px;\n        width: 90px;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        vertical-align:top;\n        margin-top:2px;\n        font-size:14px;\n        margin-right: 10px;\n        margin-left: 7px;\n      },\n      .property>*:last-child { margin-right:0 }"
                 }
@@ -154,39 +154,20 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
             jb_core_1.jb.component('group.studio-properties-accordion', {
                 type: 'group.style',
                 impl: { $: 'customStyle',
-                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" (click)=\"toggle(ctrl)\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div>\n        <div class=\"content\" *ngIf=\"ctrl.show\"><div *jbComp=\"ctrl.comp\"></div></div>\n      </div>\n  </section>",
-                    methods: {
-                        init: function (ctx) {
-                            return function (cmp) {
-                                cmp.expand_title = function (ctrl) {
-                                    return ctrl.show ? 'collapse' : 'expand';
-                                };
-                                cmp.toggle = function (newCtrl) {
-                                    return cmp.ctrls.forEach(function (ctrl) {
-                                        return ctrl.show = ctrl == newCtrl ? !ctrl.show : false;
-                                    });
-                                };
-                            };
-                        },
-                        afterViewInit: function (ctx) {
-                            return function (cmp) {
-                                if (cmp.ctrls && cmp.ctrls[0])
-                                    cmp.ctrls[0].show = true;
-                            };
-                        }
-                    },
+                    template: "<section class=\"jb-group\">\n      <div *ngFor=\"let ctrl of ctrls\" class=\"accordion-section\">\n        <div class=\"header\" (click)=\"toggle(ctrl)\">\n          <div class=\"title\">{{ctrl.title}}</div>\n          <div class=\"expand\" title=\"{{expand_title(ctrl)}}\">\n                <i *ngIf=\"ctrl.show\" class=\"material-icons\">keyboard_arrow_down</i>\n                <i *ngIf=\"!ctrl.show\" class=\"material-icons\">keyboard_arrow_right</i>\n          </div>\n        </div>\n        <div class=\"content\" *ngIf=\"ctrl.show\"><div *jbComp=\"ctrl.comp\"></div></div>\n      </div>\n  </section>",
                     css: ".header { display: flex; flex-direction: row; }\nbutton:hover { background: none }\nbutton { margin-left: auto }\ni { color: #; cursor: pointer }\n.title { margin: 5px } \n.content { padding-top: 2px }\n.header { background: #eee; margin-bottom: 2px; display: flex; justify-content: space-between } \n",
-                    features: { $: 'group.initGroup' }
+                    features: [
+                        { $: 'group.init-group' },
+                        { $: 'group.init-accordion' },
+                    ]
                 }
             });
             jb_core_1.jb.component('label.studio-message', {
                 type: 'label.style',
                 impl: { $: 'customStyle',
                     template: '<span class="studio-message">{{title}}</span>',
-                    features: [
-                        { $: 'label.bind-title' },
-                        { $: 'css', css: "{ position: absolute;\n      color: white;  padding: 20px;  background: #327DC8;\n      width: 1000px;\n      margin-top: -100px;\n      }\n      " }
-                    ]
+                    css: "span { position: absolute;\n      color: white;  padding: 20px;  background: #327DC8;\n      width: 1000px;\n      margin-top: -100px;\n      }",
+                    features: { $: 'label.bind-title' }
                 }
             });
         }

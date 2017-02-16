@@ -11,7 +11,7 @@ jb.component('studio.open-control-tree', {
     menu :{$: 'button', 
       title: ' ', 
       action :{$: 'studio.open-tree-menu', path: '%$globals/profile_path%' }, 
-      style :{$: 'button.md-icon', icon: 'menu' }, 
+      style :{$: 'button.mdl-icon', icon: 'menu' }, 
       features :{$: 'css', css: 'button { background: none }' }
     }, 
     title: 'Outline'

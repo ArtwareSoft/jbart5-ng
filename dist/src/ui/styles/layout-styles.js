@@ -19,7 +19,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-group\">\n        <div *ngFor=\"let ctrl of ctrls\" class=\"group-item\"><div *jbComp=\"ctrl\"></div></div>\n      </div>",
                     css: ".group-item { margin-bottom: %$spacing%px; display: block }\n        .group-item:last-child { margin-bottom:0 }",
-                    features: { $: 'group.initGroup' }
+                    features: { $: 'group.init-group' }
                 }
             });
             jb_core_1.jb.component('layout.horizontal', {
@@ -30,7 +30,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                 impl: { $: 'customStyle',
                     template: "<div class=\"jb-group\">\n        <div *ngFor=\"let ctrl of ctrls\" class=\"group-item\"><div *jbComp=\"ctrl\"></div></div>\n      </div>",
                     css: ".jb-group {display: flex}\n        .group-item { margin-right: %$spacing%px }\n        .group-item:last-child { margin-right:0 }",
-                    features: { $: 'group.initGroup' }
+                    features: { $: 'group.init-group' }
                 }
             });
             jb_core_1.jb.component('layout.flex', {
@@ -44,7 +44,7 @@ System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
                     template: "<div class=\"jb-group\">\n        <div *ngFor=\"let ctrl of ctrls\" class=\"group-item\"><div *jbComp=\"ctrl\"></div></div>\n      </div>",
                     //    css: '{ %$flexProps% }',
                     css: '.jb-group { display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
-                    features: { $: 'group.initGroup' }
+                    features: { $: 'group.init-group' }
                 }
             });
             jb_core_1.jb.component('flex-layout-container.align-main-axis', {

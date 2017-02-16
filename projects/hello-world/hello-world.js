@@ -2,7 +2,15 @@ jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-co
 
 jb.component('hello-world.main', {
   type: 'control', 
-  impl :{$: 'label', title: 'hello world' }
+  impl :{$: 'group', 
+    controls: [
+      {$: 'label', title: 'hello world' }, 
+      {$: 'button', 
+        title: 'click me', 
+        style :{$: 'button.mdl-icon', icon: 'build', size: 20 }
+      }
+    ]
+  }
 })
 
 jb.resource('hello-world','person',{

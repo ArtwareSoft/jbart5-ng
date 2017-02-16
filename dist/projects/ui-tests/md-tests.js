@@ -42,7 +42,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'ng2-ui-test',
                     control: { $: 'button',
                         title: 'ccc',
-                        style: { $: 'button.md-icon', icon: 'save' },
+                        style: { $: 'button.mdl-icon', icon: 'save' },
                     },
                     expectedHtmlResult: { $: 'contains', text: 'cc' }
                 },

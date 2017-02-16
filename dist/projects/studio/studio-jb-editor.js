@@ -27,7 +27,7 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                         height: '400'
                     },
                     menu: { $: 'button',
-                        style: { $: 'button.md-icon', icon: 'menu' },
+                        style: { $: 'button.mdl-icon', icon: 'menu' },
                         action: { $: 'studio.open-jb-editor-menu', path: '%$globals/jb_editor_selection%' }
                     },
                     title: 'Inteliscript'
@@ -144,7 +144,7 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                                             }
                                         }
                                     ],
-                                    features: { $: 'group-item.if',
+                                    features: { $: 'feature.if',
                                         showCondition: '%$globals/jb_editor_selection%'
                                     }
                                 }

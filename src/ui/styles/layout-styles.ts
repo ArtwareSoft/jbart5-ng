@@ -12,7 +12,7 @@ jb.component('layout.vertical', {
       </div>`,
       css: `.group-item { margin-bottom: %$spacing%px; display: block }
         .group-item:last-child { margin-bottom:0 }`,
-    features :{$: 'group.initGroup'}
+    features :{$: 'group.init-group'}
   }
 })
 
@@ -28,7 +28,7 @@ jb.component('layout.horizontal', {
     css: `.jb-group {display: flex}
         .group-item { margin-right: %$spacing%px }
         .group-item:last-child { margin-right:0 }`,
-    features :{$: 'group.initGroup'}
+    features :{$: 'group.init-group'}
   }
 })
 
@@ -45,7 +45,7 @@ jb.component('layout.flex', {
       </div>`,
 //    css: '{ %$flexProps% }',
     css: '.jb-group { display: flex; {?justify-content:%$align%;?} {?flex-direction:%$direction%;?} {?flex-wrap:%$wrap%;?} }',
-    features :{$: 'group.initGroup'}
+    features :{$: 'group.init-group'}
   }
 })
 

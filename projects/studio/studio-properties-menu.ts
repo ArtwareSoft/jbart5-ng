@@ -30,7 +30,7 @@ jb.component('studio.property-toobar', {
         controls : [
         {$: 'button', 
           title: 'Customize style', 
-          style :{$: 'button.md-icon-12', icon: 'build' },
+          style :{$: 'button.mdl-icon-12', icon: 'build' },
           action : [ {$: 'studio.make-local', path: '%$path%' }, {$: 'studio.open-style-editor', path: '%$path%' } ],
           features :{$: 'hidden', 
             showCondition :{
@@ -47,7 +47,7 @@ jb.component('studio.property-toobar', {
           {$: 'button', 
             title: 'style editor', 
             action :{$: 'studio.open-style-editor', path: '%$path%' }, 
-            style :{$: 'button.md-icon-12', icon: 'build' },
+            style :{$: 'button.mdl-icon-12', icon: 'build' },
             features :{$: 'hidden', 
               showCondition :{$: 'equals', 
                   item1 :{$: 'studio.comp-name', path: '%$path%' }, 
@@ -57,7 +57,7 @@ jb.component('studio.property-toobar', {
           },
         {$: 'button', 
           title: 'multiline edit', 
-          style :{$: 'button.md-icon-12', icon: 'build' },
+          style :{$: 'button.mdl-icon-12', icon: 'build' },
           features :{$: 'hidden', 
             showCondition: {$: 'equals', 
               item1: { $pipeline: [ {$: 'studio.param-def', path: '%$path%' }, '%as%']},
@@ -69,7 +69,7 @@ jb.component('studio.property-toobar', {
 
 	        {$: 'button', 
 	          title: 'more...', 
-	          style :{$: 'button.md-icon-12', icon: 'more_vert' }, 
+	          style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
 	          action :{$: 'studio.open-property-menu', path: '%$path%' }
 	        }
         ]

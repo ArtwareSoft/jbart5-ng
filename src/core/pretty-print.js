@@ -1,6 +1,6 @@
 function jb_prettyPrintComp(compId,comp) {
   if (comp)
-    return "jb.component('" + compId + "', "
+    return "jb_component('" + compId + "', "
       + jb_prettyPrintWithPositions(comp).result + ')'
 }
 

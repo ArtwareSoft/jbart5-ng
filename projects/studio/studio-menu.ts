@@ -13,7 +13,7 @@ jb.component('studio.main-menu', {
             title: 'New Project', 
             icon: 'new', 
             shortcut: '', 
-            action :{$: 'studio.saveComponents' }
+            action :{$: 'studio.save-components' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Open Project ...', 
@@ -23,12 +23,12 @@ jb.component('studio.main-menu', {
             title: 'Save', 
             icon: 'save', 
             shortcut: 'Ctrl+S', 
-            action :{$: 'studio.saveComponents' }
+            action :{$: 'studio.save-components' }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Force Save', 
             icon: 'save', 
-            action :{$: 'studio.saveComponents', force: true }
+            action :{$: 'studio.save-components', force: true }
           }, 
           {$: 'pulldown.menu-item', 
             title: 'Source ...', 

@@ -18,7 +18,7 @@ jb.resource('studio-helper','group-with-custom-style',
       </div>`,
       css: `.group-item { margin-bottom: %$spacing%px; display: block }
         .group-item:last-child { margin-bottom:0 }`,
-    features :{$: 'group.initGroup'}
+    features :{$: 'group.init-group'}
   },
     controls : [
     {$: 'group', title: '2.0', controls : 
@@ -80,6 +80,7 @@ jb.component('studio-helper.studio-properties', {
   type: 'control', 
   impl :{$: 'group', 
     $vars: { circuit: 'studio-helper-dummy.simple-label' }, 
+    title: '', 
     controls :{$: 'studio.properties', path: 'studio-helper-dummy.simple-label' }
   }
 })
@@ -103,7 +104,6 @@ jb.component('studio-helper.sample-control', {
           {$: 'label', title: '2.1' }, 
           {$: 'button', 
             title: '2.2', 
-            
             action :{$: 'toggleBooleanValue', of: '' }
           }
         ]

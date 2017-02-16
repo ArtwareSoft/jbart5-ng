@@ -37,7 +37,7 @@ jb.component('md-test.button-md-icon', {
   impl :{$: 'ng2-ui-test',  
     control :{$: 'button', 
       title: 'ccc',
-      style :{$: 'button.md-icon', icon: 'save' }, 
+      style :{$: 'button.mdl-icon', icon: 'save' }, 
     },
     expectedHtmlResult: { $: 'contains', text: 'cc' }
   },

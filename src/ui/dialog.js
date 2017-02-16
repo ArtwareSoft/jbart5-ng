@@ -36,7 +36,7 @@ jb.component('openDialog', {
 				cmp.contentComp = ctx.params.content(ctx);
 				cmp.menuComp = ctx.params.menu(ctx);
 				cmp.hasMenu = !!ctx.params.menu.profile;
-			}
+			},
 		});
 		jbart.jb_dialogs.addDialog(dialog,ctx);
 	}

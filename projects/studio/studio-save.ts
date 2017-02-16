@@ -1,4 +1,5 @@
 import {jb} from 'jb-core';
+import * as jb_rx from 'jb-ui/jb-rx';
 import {model} from './studio-tgp-model';
 import {compAsStr,modifyOperationsEm,message} from './studio-utils';
 
@@ -11,39 +12,42 @@ modifyOperationsEm.subscribe(e=>{
 	}
 })
 
-jb.component('studio.saveComponents', {
+jb.component('studio.save-components', {
 	params: [
 		{ id: 'force',as: 'boolean', type: 'boolean' }
 	],
-	impl :{$rxLog : {$rxPipe: [
-			ctx => jb.entries(modified).map(x=>
-				({key:x[0],val:x[1]})),
-			ctx => {
-				var comp = ctx.data.key;
+	impl : (ctx,force) => 
+		jb_rx.Observable.from(jb.entries(modified))
+			.filter(x=>x)
+			.concatMap(toSave=>{
+				var comp = toSave[0], val = toSave[1];
 				message('saving ' + comp);
-				if (ctx.exp('%$force%') && !ctx.data.val.original)
-					ctx.data.val.original = `jb.component('${comp}', {`;
+				if (force && !val.original)
+					val.original = `jb.component('${comp}', {`;
 
 				return $.ajax({ 
-					url: `/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${ctx.exp('%$force%')}`, 
+					url: `/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${force}`, 
 					type: 'POST', 
-					data: JSON.stringify({ original: ctx.data.val && ctx.data.val.original, toSave: compAsStr(comp) }),
-					headers: { 'Content-Type': 'text/plain' } 
-				}).then(
-					result => {
-						message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''), result.type != 'success');
-						if (result.type == 'success')
-							delete modified[comp];
-					},
-					e=> {
-						message('error saving: ' + e);
-						jb.logException(e,'error while saving ' + comp)
-					}
-				)
-			}
-		]}, 
-		$vars: {
-			force: '%$force%'
-		}
-	}
+					data: JSON.stringify({ original: val && val.original, toSave: compAsStr(comp) }),
+					headers: { 'Content-Type': 'application/json; charset=UTF-8' } 
+				}).then(res=>({ res: res , comp: comp }),
+					e=>
+						throw { e: e , comp: comp })
+
+				// return fetch(`/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${force}`, {
+				// 	method: 'post',  
+				// 	body: JSON.stringify({ original: val && val.original, toSave: compAsStr(comp) }),
+				//     headers: { 'Content-type': 'application/json; charset=UTF-8' },  
+				// })
+			})
+			.catch(e=>{
+				message('error saving: ' + e.e);
+				jb.logException(e,'error while saving ' + e.comp)
+			})
+			.subscribe(entry=>{
+				var result = entry.res;
+				message((result.type || '') + ': ' + (result.desc || '') + (result.message || ''), result.type != 'success');
+				if (result.type == 'success')
+					delete modified[entry.comp];
+			})
 });

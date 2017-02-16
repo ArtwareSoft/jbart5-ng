@@ -84,14 +84,15 @@ jb.component('group.watch', {
   })
 })
 
-// static if - to watch condition, parent component need to be refreshed
-jb.component('group-item.if', {
+jb.component('feature.if', {
   type: 'feature',
   params: [
-    { id: 'showCondition', type: 'boolean', as: 'boolean', essential: true },
+    { id: 'showCondition', as: 'boolean', essential: true, dynamic: true },
   ],
   impl: (context, condition) => ({
-    invisible: !condition
+    init: cmp =>
+      cmp.jbIf = condition,
+    wrapWithngIf: true
   })
 })
 

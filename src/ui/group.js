@@ -30,8 +30,8 @@ jb.component('group',{
                   cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
                   jb.logPerformance('group-change');
                   comps.forEach((comp,i)=>{
-                    if (!comp || comp.invisible)
-                      return;
+                    // if (!comp || comp.invisible)
+                    //   return;
                     if (cmp.jbToExtend[i])
                        comp.jbExtend(cmp.jbToExtend[i]);
                     if (!comp.jb_title)
@@ -71,7 +71,7 @@ jb.component('dynamic-controls', {
   }
 })
 
-jb.component('group.initGroup', {
+jb.component('group.init-group', {
   type: 'feature',
   impl: ctx => ({
     init: cmp => cmp.initGroup()
@@ -86,7 +86,7 @@ jb.component('group.section', {
     template: `<section class="jb-group">
         <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
         </section>`,
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
   }
 })
 

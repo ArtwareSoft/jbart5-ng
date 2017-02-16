@@ -29,56 +29,56 @@ jb.component('studio.toolbar', {
       {$: 'button', 
         title: 'Select', 
         action :{$: 'studio.pickAndOpen' }, 
-        style :{$: 'button.md-icon', 
+        style :{$: 'button.mdl-icon', 
           features :{$: 'css', css: '{transform: scaleX(-1)}'}, 
           icon: 'call_made'
         }
       }, 
       {$: 'button', 
         title: 'Save', 
-        action :{$: 'studio.saveComponents' }, 
-        style :{$: 'button.md-icon', icon: 'save' }
+        action :{$: 'studio.save-components' }, 
+        style :{$: 'button.mdl-icon', icon: 'save' }
       }, 
       {$: 'button', 
         title: 'Refresh Preview', 
         action :{$: 'studio.refresh-preview' }, 
-        style :{$: 'button.md-icon', icon: 'refresh' }
+        style :{$: 'button.mdl-icon', icon: 'refresh' }
       }, 
       {$: 'button', 
         title: 'Javascript', 
         action :{$: 'studio.editSource' }, 
-        style :{$: 'button.md-icon', icon: 'code' }
+        style :{$: 'button.mdl-icon', icon: 'code' }
       }, 
       {$: 'button', 
         title: 'Outline', 
         action :{$: 'studio.open-control-tree' }, 
-        style :{$: 'button.md-icon', icon: 'format_align_left' }
+        style :{$: 'button.mdl-icon', icon: 'format_align_left' }
       }, 
       {$: 'button', 
         title: 'Properties', 
         action :{$: 'studio.open-properties' }, 
-        style :{$: 'button.md-icon', icon: 'storage' }
+        style :{$: 'button.mdl-icon', icon: 'storage' }
       }, 
       {$: 'button', 
         title: 'jbEditor', 
         action :{$: 'studio.open-jb-editor', path: '%$globals/profile_path%' }, 
-        style :{$: 'button.md-icon', icon: 'build' }
+        style :{$: 'button.mdl-icon', icon: 'build' }
       }, 
       {$: 'button', 
         title: 'show data', 
         action :{$: 'studio.showProbeData' }, 
-        style :{$: 'button.md-icon', icon: 'input' }
+        style :{$: 'button.mdl-icon', icon: 'input' }
       }, 
       {$: 'button', 
         title: 'insert control', 
         action :{$: 'studio.open-new-control-dialog' }, 
-        style :{$: 'button.md-icon', icon: 'add' }, 
+        style :{$: 'button.mdl-icon', icon: 'add' }, 
         
       }, 
       {$: 'button', 
         title: 'responsive-phone', 
         action :{$: 'studio.open-responsive-phone-popup' }, 
-        style :{$: 'button.md-icon', icon: 'tablet_android' }
+        style :{$: 'button.mdl-icon', icon: 'tablet_android' }
       }
     ], 
     features: [
@@ -118,13 +118,14 @@ jb.component('studio_button.toolbarButton', {
 jb.component('studio-toolbar', {
   type: 'group.style',
   impl :{$: 'customStyle', 
-    features :{$: 'group.initGroup' },
+    features :{$: 'group.init-group' },
     template: '<section><div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div></section>',
     css: `section { 
             display: flex;
             height: 33px; 
             width: 100%;
         }
+        section>*:not(:last-child) { padding-right: 8px }
         section>* { margin-right: 0 }`
   }
 })

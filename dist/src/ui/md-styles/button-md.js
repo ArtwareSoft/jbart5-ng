@@ -68,7 +68,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                     providers: material_1.MdIconRegistry,
                 }
             });
-            jb_core_1.jb.component('button.md-icon-12', {
+            jb_core_1.jb.component('button.mdl-icon-12', {
                 type: 'button.style',
                 params: [
                     { id: 'icon', as: 'string', default: 'code' },

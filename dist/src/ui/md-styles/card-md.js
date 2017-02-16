@@ -15,7 +15,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     template: "<div><md-card>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card></div>",
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     imports: material_1.MdCardModule
                 }
             });
@@ -23,7 +23,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     template: "<div><md-card-actions>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card-actions></div>",
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     imports: material_1.MdCardModule
                 }
             });
@@ -31,7 +31,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     template: "<div><md-card-content>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card-content></div>",
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     imports: material_1.MdCardModule
                 }
             });
@@ -39,7 +39,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 type: 'group.style',
                 impl: { $: 'customStyle',
                     template: "<div><md-card-header>\n        <div *ngFor=\"let ctrl of ctrls\"><div *jbComp=\"ctrl\"></div></div>\n      </md-card-header></div>",
-                    features: { $: 'group.initGroup' },
+                    features: { $: 'group.init-group' },
                     imports: material_1.MdCardModule
                 }
             });

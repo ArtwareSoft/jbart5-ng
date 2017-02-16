@@ -6,7 +6,7 @@ jb.component('property-sheet.titles-above', {
     { id: 'spacing', as: 'number', defaultValue: 20 }
   ],
   impl :{$: 'customStyle', 
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
@@ -35,7 +35,7 @@ jb.component('property-sheet.titles-above-float-left', {
     { id: 'fieldWidth', as: 'number', defaultValue: 200 },
   ],
   impl :{$: 'customStyle', 
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     template: `<div>
         <div *ngFor="let ctrl of ctrls" class="property">
           <label class="property-title">{{ctrl.title}}</label>
@@ -69,7 +69,7 @@ jb.component('property-sheet.titles-left', {
     { id: 'titleWidth', as: 'number', defaultValue: 100 },
   ],
   impl :{$: 'customStyle', 
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     template: `<div>
       <div *ngFor="let ctrl of ctrls" class="property">
         <label class="property-title">{{ctrl.title}}</label>
@@ -99,7 +99,7 @@ jb.component('property-sheet.style-on-focus', {
     { id: 'titleWidth', as: 'number', defaultValue: 100 },
   ],
   impl :{$: 'customStyle', 
-    features : {$: 'group.initGroup'},
+    features : {$: 'group.init-group'},
     methods: {
         init: ctx => cmp => {
           cmp.getComp = ctrl =>
@@ -172,7 +172,7 @@ jb.component('property-sheet.growing', {
     { id: 'titleWidth', as: 'number', defaultValue: 100 },
   ],
   impl :{$: 'customStyle', 
-    features : {$: 'group.initGroup'},
+    features : {$: 'group.init-group'},
     methods: {
         afterViewInit: ctx => cmp =>
           jb.delay(1).then(() =>

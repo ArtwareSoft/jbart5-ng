@@ -28,7 +28,7 @@ jb.component('dialog.studio-floating', {
 		{ id: 'height', as: 'number', default: 100},
 	],
 	impl :{$: 'customStyle',
-			template: `<div class="jb-dialog jb-default-dialog">
+			template: `<div class="jb-dialog jb-default-dialog" {?dialogId="%$id%"?}>
 				      		  <div class="dialog-title noselect">{{title}}</div>
 				      		  <div *ngIf="hasMenu" class="dialog-menu">
 				      		  	<div *jbComp="menuComp"></div>

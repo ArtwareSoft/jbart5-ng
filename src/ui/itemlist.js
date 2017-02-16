@@ -204,7 +204,7 @@ jb.component('itemlist.drag-and-drop', {
 jb.component('itemlist.ul-li', {
   type: 'itemlist.style',
   impl :{$: 'customStyle',
-    features :{$: 'group.initGroup'},
+    features :{$: 'group.init-group'},
     template: `<div><ul class="jb-itemlist">
       <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading" #jbItem>
         <div *jbComp="ctrl.comp"></div>
