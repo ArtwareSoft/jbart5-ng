@@ -5,6 +5,7 @@
   <title>Hello World</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"> 
   <script type="text/javascript" src="/src/loader/load-jbart.js"></script>
+  <script type="text/javascript" src="/projects/hello-world/hello-world.js"></script>
 
   </head>
 
@@ -14,8 +15,7 @@
 
 <script>
 
-jbLoadModules(jb_modules.concat(['/projects/hello-world/hello-world.js']))
-  .then(loadedModules=>
+jbLoadModules(jb_modules).then(loadedModules=>
     jbBootstrap(loadedModules)
   );
   

@@ -213,7 +213,7 @@ jb.component('studio.components-statistics',{
           	refs: refs[k].refs,
           	referredBy: refs[k].by,
           	type: jbart.comps[k].type,
-          	implType: type of jbart.comps[k].impl,
+          	implType: typeof jbart.comps[k].impl,
           	text: jb_prettyPrintComp(jbart.comps[k]),
           	size: jb_prettyPrintComp(jbart.comps[k]).length
           }))

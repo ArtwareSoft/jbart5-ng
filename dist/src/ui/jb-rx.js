@@ -1,12 +1,12 @@
-System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObservable', 'rxjs/add/operator/map', 'rxjs/add/operator/filter', 'rxjs/add/operator/catch', 'rxjs/add/operator/do', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/observable/from', 'rxjs/add/observable/of', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'rxjs/add/operator/race', 'jb-core/jb'], function(exports_1, context_1) {
+System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObservable', 'rxjs/add/operator/map', 'rxjs/add/operator/filter', 'rxjs/add/operator/catch', 'rxjs/add/operator/do', 'rxjs/add/operator/merge', 'rxjs/add/operator/concat', 'rxjs/add/operator/mergeMap', 'rxjs/add/operator/concatMap', 'rxjs/add/operator/startWith', 'rxjs/add/operator/takeUntil', 'rxjs/add/observable/fromPromise', 'rxjs/add/observable/fromEvent', 'rxjs/add/observable/from', 'rxjs/add/observable/of', 'rxjs/add/operator/distinctUntilChanged', 'rxjs/add/operator/debounceTime', 'rxjs/add/operator/buffer', 'rxjs/add/operator/skip', 'rxjs/add/operator/last', 'rxjs/add/operator/delay', 'rxjs/add/operator/take', 'rxjs/add/operator/toArray', 'rxjs/add/operator/toPromise', 'rxjs/add/operator/race'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var Subject_1, Observable_1, jb_1;
+    var Subject_1, Observable_1;
     function tap(label) { return function (ctx) { console.log('tap' + label || '', ctx.data); return ctx.data; }; }
     exports_1("tap", tap);
     function concat(obs_array) {
         return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), obs_array)
-            .map(function (x) { return (x instanceof jb_1.jb.Ctx) ? x.data : x; });
+            .map(function (x) { return (x instanceof jb.Ctx) ? x.data : x; });
     }
     exports_1("concat", concat);
     function refObservable(ref, cmp) {
@@ -17,7 +17,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
         return cmp.jbEmitter
             .filter(function (x) { return x == 'check'; })
             .map(function () {
-            return jb_1.jb.val(ref);
+            return jb.val(ref);
         })
             .distinctUntilChanged(jb_compareArrays);
     }
@@ -37,17 +37,17 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
         else
             return Observable_1.Observable.of(ctx);
         function mapToCtx(obs) {
-            return obs.map(function (x) { return (x instanceof jb_1.jb.Ctx) ? x : ctx.setData(x); });
+            return obs.map(function (x) { return (x instanceof jb.Ctx) ? x : ctx.setData(x); });
         }
     }
     exports_1("observableFromCtx", observableFromCtx);
     function pipe(profiles, observable, context) {
         return profiles.reduce(function (aggregated, prof, _index) {
-            if (jb_1.jb.isProfOfType(prof, 'rx.elem'))
+            if (jb.isProfOfType(prof, 'rx.elem'))
                 return context.runInner(prof, null, _index).$pipe(aggregated);
             return aggregated.concatMap(function (ctx) {
                 //var ctx = context.setData(ctx.data);
-                var res = jb_1.jb.toarray(ctx.runInner(prof, null, _index)).map(function (data) {
+                var res = jb.toarray(ctx.runInner(prof, null, _index)).map(function (data) {
                     return ctxWithVar(ctx.setData(data), prof);
                 });
                 return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), res.map(function (ctx2) {
@@ -57,7 +57,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
         }, observable);
         function ctxWithVar(ctx, prof) {
             if (prof.$var)
-                return ctx.setVars(jb_1.jb.obj(prof.$var, ctx.data));
+                return ctx.setVars(jb.obj(prof.$var, ctx.data));
             return ctx;
         }
     }
@@ -122,10 +122,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
             function (_22) {},
             function (_23) {},
             function (_24) {},
-            function (_25) {},
-            function (jb_1_1) {
-                jb_1 = jb_1_1;
-            }],
+            function (_25) {}],
         execute: function() {
             // for debug console
             window.Observable = Observable_1.Observable;
@@ -134,8 +131,8 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
             jbart.jstypes.observable = function (obj, ctx) {
                 return observableFromCtx(ctx.setData(obj));
             };
-            jb_1.jb.type('rx.elem');
-            jb_1.jb.component('rxLog', {
+            jb.type('rx.elem');
+            jb.component('rxLog', {
                 type: 'rx.elem',
                 params: [
                     { id: 'pipe', as: 'observable' }
@@ -144,7 +141,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     return pipe.subscribe(function (x) { return console.log(x.data); });
                 }
             });
-            jb_1.jb.component('rxPipe', {
+            jb.component('rxPipe', {
                 type: 'rx.elem',
                 params: [
                     { id: 'items', type: 'data,rx.elem[]', ignore: true, essential: true }
@@ -158,7 +155,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     };
                 }
             });
-            jb_1.jb.component('rxFilter', {
+            jb.component('rxFilter', {
                 type: 'rx.elem',
                 params: [
                     { id: 'filter', type: 'boolean', dynamic: true }
@@ -171,7 +168,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     };
                 }
             });
-            jb_1.jb.component('rxParallel', {
+            jb.component('rxParallel', {
                 type: 'rx.elem',
                 params: [
                     { id: 'item', dynamic: true },
@@ -179,13 +176,13 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                 impl: function (context, item, keepOrder) {
                     return { $pipe: function (obs) {
                             return obs.flatMap(function (ctx) {
-                                return Observable_1.Observable.prototype.merge.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) { return observableFromCtx(ctx.setData(data)); }));
+                                return Observable_1.Observable.prototype.merge.apply(Observable_1.Observable.of(), jb.toarray(item(ctx)).map(function (data) { return observableFromCtx(ctx.setData(data)); }));
                             });
                         }
                     };
                 }
             });
-            jb_1.jb.component('rxParallelKeepOrder', {
+            jb.component('rxParallelKeepOrder', {
                 type: 'rx.elem',
                 params: [
                     { id: 'item', dynamic: true },
@@ -195,7 +192,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                             var parallel_results = [], emitted = 0;
                             var out = new Subject_1.Subject();
                             obs.flatMap(function (ctx, i) {
-                                return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), jb_1.jb.toarray(item(ctx)).map(function (data) {
+                                return Observable_1.Observable.prototype.concat.apply(Observable_1.Observable.of(), jb.toarray(item(ctx)).map(function (data) {
                                     var res = observableFromCtx(ctx.setData(data));
                                     res.subscribe(function (x) {
                                         parallel_results[i] = parallel_results[i] || [];
@@ -208,14 +205,14 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                                 .subscribe(function () {
                                 while (parallel_results[emitted])
                                     parallel_results[emitted++].forEach(function (x) { return out.next(x); });
-                            }, function (x) { return jb_1.jb.logError('rxParallelKeepOrder'); }, function () {
+                            }, function (x) { return jb.logError('rxParallelKeepOrder'); }, function () {
                                 return out.complete();
                             });
                             return out;
                         } };
                 }
             });
-            jb_1.jb.component('rx.distinctUntilChanged', {
+            jb.component('rx.distinctUntilChanged', {
                 type: 'rx.elem',
                 params: [
                     { id: 'keySelector', type: 'rx.keySelector' },
@@ -230,7 +227,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     }
                 }); }
             });
-            jb_1.jb.component('rx.concat', {
+            jb.component('rx.concat', {
                 type: 'rx.elem',
                 params: [
                     { id: 'items', type: 'data,rx.elem[]', ignore: true, essential: true }
@@ -243,7 +240,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     }
                 }); }
             });
-            jb_1.jb.component('rx.subject', {
+            jb.component('rx.subject', {
                 type: 'rx.subject,rx.observable,rx.observer',
                 params: [
                     { id: 'pipe', type: 'rx.elem', dynamic: true, defaultValue: { $: 'rx.distinctUntilChanged' } },
@@ -253,7 +250,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     return Subject_1.Subject.create(function (x) { return subject.next(x); }, pipe().$pipe(subject));
                 }
             });
-            jb_1.jb.component('rx.emit', {
+            jb.component('rx.emit', {
                 type: 'action',
                 params: [
                     { id: 'from', as: 'observable' },
@@ -263,7 +260,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     from.subscribe(function (item) { return _to.next(item); });
                 }
             });
-            jb_1.jb.component('rx.url-path', {
+            jb.component('rx.url-path', {
                 type: 'application-feature',
                 params: [
                     { id: 'params', type: 'data[]', as: 'array' },
@@ -311,13 +308,13 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                         .distinctUntilChanged()
                         .subscribe(function (url) {
                         jbart.location.push(url);
-                        jb_1.jb.extend(databind, urlToObj(url));
+                        jb.extend(databind, urlToObj(url));
                         context.params.onUrlChange(context.setData(url));
                     });
                 }
             });
             // ************** tests ******************
-            jb_1.jb.component('rx-test', {
+            jb.component('rx-test', {
                 type: 'test',
                 params: [
                     { id: 'result', as: 'observable', dynamic: true },
@@ -332,7 +329,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                     });
                 }
             });
-            jb_1.jb.component('containsSeq', {
+            jb.component('containsSeq', {
                 type: 'boolean',
                 params: [
                     { id: 'seq', type: 'data[]', as: 'array' },
@@ -341,7 +338,7 @@ System.register(['rxjs/Subject', 'rxjs/Observable', 'rxjs/observable/FromObserva
                 impl: function (context, seq, observable) {
                     return observable.take(seq.length)
                         .map(function (x) { return x.data; }).toArray()
-                        .map(function (arr) { return jb_1.jb.compareArrays(arr, seq); })
+                        .map(function (arr) { return jb.compareArrays(arr, seq); })
                         .map(function (x) { return context.setData(x); });
                 }
             });

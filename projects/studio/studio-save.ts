@@ -30,9 +30,10 @@ jb.component('studio.save-components', {
 					type: 'POST', 
 					data: JSON.stringify({ original: val && val.original, toSave: compAsStr(comp) }),
 					headers: { 'Content-Type': 'application/json; charset=UTF-8' } 
-				}).then(res=>({ res: res , comp: comp }),
-					e=>
-						throw { e: e , comp: comp })
+				}).then(
+					res=>({ res: res , comp: comp }),
+					e=> { throw { e: e , comp: comp } }
+				)
 
 				// return fetch(`/?op=saveComp&comp=${comp}&project=${ctx.exp('%$globals/project%')}&force=${force}`, {
 				// 	method: 'post',  

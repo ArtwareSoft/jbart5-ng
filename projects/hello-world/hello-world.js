@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
-
 jb.component('hello-world.main', {
   type: 'control', 
   impl :{$: 'group', 
@@ -7,7 +5,12 @@ jb.component('hello-world.main', {
       {$: 'label', title: 'hello world' }, 
       {$: 'button', 
         title: 'click me', 
-        style :{$: 'button.mdl-icon', icon: 'build', size: 20 }
+        style :{$: 'button.mdl-icon', size: 20, icon: 'build' }
+      }, 
+      {$: 'editable-boolean', 
+        style :{$: 'editable-boolean.checkbox' }, 
+        textForTrue: 'yes', 
+        textForFalse: 'no'
       }
     ]
   }
@@ -22,9 +25,4 @@ jb.resource('hello-world','person',{
   "city": 'mountain view',
   "state": 'CA',
   "postalCode": "94043",
-})
-
-
-
-
 })

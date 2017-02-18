@@ -367,7 +367,6 @@ function jb_synchArray(ar) {
           .toPromise()
 }
 
-
 function jb_delay(ms,ctx) {
   if (ctx && ctx.vars.ngZone)
     return ctx.vars.ngZone.runOutsideAngular(() =>

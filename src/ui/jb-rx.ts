@@ -30,7 +30,7 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/race';
 
 
-import {jb} from 'jb-core/jb';
+//import {jb} from 'jb-core/jb';
 //import * as jb_ui from 'jb-ui/jb-ui';
 
 export {Subject} from 'rxjs/Subject';

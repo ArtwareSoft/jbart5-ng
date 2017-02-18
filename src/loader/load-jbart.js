@@ -6,6 +6,7 @@ var js_files_to_load = [
       'src/core/pretty-print.js',
       'src/core/components.js',
       'src/core/functions.js',
+      'src/core/jb-api.js',
       'src/level-db/levelup.js',
 
       'bower_components/codemirror/lib/codemirror.js',
@@ -27,7 +28,6 @@ var js_files_to_load = [
       'node_modules/reflect-metadata/Reflect.js',
       'node_modules/systemjs/dist/system.src.js',
       'node_modules/hammerjs/hammer.js',
-//      'node_modules/rxjs/bundljb_coes/Rx.js',
       'node_modules/material-design-lite/material.js',
       'dist/Rx.js',
       'dist/ngForCompiled.js',
@@ -73,7 +73,6 @@ function jb_loadEditableFile(file) {
 jb_modules = 
 [
 '@angular/core', '@angular/common', '@angular/platform-browser-dynamic',
-'jb-core',
 'jb-ui',
 'ui-ts/jb-ui-utils',
 'ui-ts/jb-rx',

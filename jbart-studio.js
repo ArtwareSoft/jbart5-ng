@@ -137,25 +137,20 @@ extend(op_post_handlers, {
 
         if (!clientReq.original) { // new comp
           var srcPath = `projects/${project}/${project}.ts`;
-          var toStore = clientReq.toSave;
           try {
             fs.statSync(srcPath) 
           } catch(e) {
             srcPath = srcPath.replace(/ts$/,'js');
-            toStore = toStore.replace(/^jb\./g,'jb_');
           }
           try { 
             var current = ('' + fs.readFileSync(srcPath));
-            if (current.indexOf('jbLoadModules') == 0)
-              toStore = current.replace(/\n*\)\}$/, '\n' + toStore + '\n\n})')
-            else
-              toStore =  current + '\n\n' + toStore;
+            var toStore =  current + '\n\n' + toStore;
+            var cleanNL = toStore.replace(/\r/g,'');
+            if (_iswin)
+              cleanNL = cleanNL.replace(/\n/g,'\r\n');
+            fs.writeFileSync(srcPath,cleanNL);
+            return endWithSuccess(res,`component ${comp} added to ${srcPath}`);
           } catch (e) {}
-          var cleanNL = toStore.replace(/\r/g,'');
-          if (_iswin)
-            cleanNL = cleanNL.replace(/\n/g,'\r\n');
-          fs.writeFileSync(srcPath,cleanNL);
-          return endWithSuccess(res,`component ${comp} added to ${srcPath}`);
         }
 
         var comp_found = false;
@@ -185,8 +180,8 @@ extend(op_post_handlers, {
 
         function findSection(source,toFind,srcFile) {
           var index = source.indexOf(toFind[0]);
-          if (index == -1)
-            index = source.indexOf(toFind[0].replace('jb_','jb.'));
+          // if (index == -1)
+          //   index = source.indexOf(toFind[0].replace('jb_','jb.'));
           if (index != -1 && force) {// ignore content - just look for the end
             for(end_index=index;end_index<source.length;end_index++)
               if ((source[end_index]||'').match(/^}\)$/m))
