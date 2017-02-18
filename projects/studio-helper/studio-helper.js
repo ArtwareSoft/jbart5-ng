@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
-
 jb.resource('studio-helper','people-array', { "people": [
   { "name": "Homer Simpson" ,"age": 42 , "male": true},
   { "name": "Marge Simpson" ,"age": 38 , "male": false},
@@ -223,7 +221,4 @@ jb.component('studio-helper.data-resources', {
       }
     ]
   }
-})
-
-
 })

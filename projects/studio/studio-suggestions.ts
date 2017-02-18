@@ -16,7 +16,7 @@ jb.component('studio.property-primitive', {
         style :{$: 'editable-text.studio-primitive-text' }, 
         features: [
           {$: 'studio.undo-support', path: '%$path%' }, 
-          {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+          {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
           {$: 'feature.debounce', debounceTime: '500' }
         ]
       }, 
@@ -57,7 +57,7 @@ jb.component('studio.property-primitive', {
     ], 
     features: [
       {$: 'group.studio-suggestions', path: '%$path%', expressionOnly: true }, 
-      {$: 'studio.property-toobar-feature', path: '%$path%' }
+      {$: 'studio.property-toolbar-feature', path: '%$path%' }
     ]
   }
 })

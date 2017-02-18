@@ -50,6 +50,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 type: 'control',
                 params: [{ id: 'path', as: 'string' }],
                 impl: { $: 'group',
+                    title: '',
                     style: { $: 'group.studio-properties-accordion' },
                     controls: [
                         { $: 'group',
@@ -176,7 +177,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     databind: { $: 'studio.ref', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' },
                     ]
                 }
             });
@@ -189,7 +190,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' },
                     ],
                     controls: { $: 'button',
                         title: { $: 'studio.data-script-summary', path: '%$path%' },
@@ -222,7 +223,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     features: [
                         { $: 'studio.undo-support', path: '%$path%' },
-                        { $: 'studio.property-toobar-feature', path: '%$path%' }
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' }
                     ]
                 }
             });
@@ -336,7 +337,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         }
                     ],
                     features: [
-                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' },
                         { $: 'studio.bindto-modifyOperations',
                             path: '%$path%',
                             data: '%$tgpCtrl/expanded%'
@@ -350,7 +351,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 impl: { $: 'group',
                     title: { $: 'studio.prop-name', path: '%$path%' },
                     features: [
-                        { $: 'studio.property-toobar-feature', path: '%$path%' },
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' },
                     ],
                     controls: { $: 'picklist',
                         databind: { $: 'studio.comp-name-ref', path: '%$path%' },
@@ -408,7 +409,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                         }
                                     ]
                                 },
-                                { $: 'studio.property-toobar', path: '%$path%' },
+                                { $: 'studio.property-toolbar', path: '%$path%' },
                                 { $: 'label',
                                     title: { $: 'studio.summary', path: '%$path%' },
                                     style: { $: 'label.span' }

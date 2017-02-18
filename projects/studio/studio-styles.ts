@@ -120,7 +120,7 @@ jb.component('property-sheet.studio-properties', {
     css: `.property { margin-bottom: 5px; display: flex }
       .property:last-child { margin-bottom:0px }
       .input-and-toolbar { display: flex; }
-      .toolbar { height: 16px; margin-left: 10px }
+      .toolbar { height: 16px; margin-left: 10px; margin-top: -5px; }
       .property>.property-title {
         min-width: 90px;
         width: 90px;

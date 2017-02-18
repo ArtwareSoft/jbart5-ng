@@ -36,7 +36,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             style: { $: 'editable-text.studio-primitive-text' },
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
-                                { $: 'studio.property-toobar-feature', path: '%$path%' },
+                                { $: 'studio.property-toolbar-feature', path: '%$path%' },
                                 { $: 'feature.debounce', debounceTime: '500' }
                             ]
                         },
@@ -77,7 +77,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                     ],
                     features: [
                         { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
-                        { $: 'studio.property-toobar-feature', path: '%$path%' }
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' }
                     ]
                 }
             });

@@ -42,6 +42,7 @@ jb.component('studio.properties', {
   type: 'control', 
   params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'group', 
+    title: '', 
     style :{$: 'group.studio-properties-accordion' }, 
     controls: [
       {$: 'group', 
@@ -178,7 +179,7 @@ jb.component('studio.property-primitive2', {
     databind :{$: 'studio.ref', path: '%$path%' }, 
     features: [
       {$: 'studio.undo-support', path: '%$path%' }, 
-      {$: 'studio.property-toobar-feature', path: '%$path%'},
+      {$: 'studio.property-toolbar-feature', path: '%$path%'},
       // {$: 'editable-text.suggestions-input-feature', 
       //   path: '%$path%', 
       //   action :{$: 'studio.jb-open-suggestions', path: '%$path%' }
@@ -196,7 +197,7 @@ jb.component('studio.property-script', {
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     features: [
           {$: 'studio.undo-support', path: '%$path%' }, 
-          {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+          {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
     ],
     controls :{$: 'button', 
         title :{$: 'studio.data-script-summary', path: '%$path%' }, 
@@ -231,7 +232,7 @@ jb.component('studio.property-boolean', {
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     features: [
       {$: 'studio.undo-support', path: '%$path%' }, 
-      {$: 'studio.property-toobar-feature', path: '%$path%' }
+      {$: 'studio.property-toolbar-feature', path: '%$path%' }
     ]
   }
 })
@@ -347,7 +348,7 @@ jb.component('studio.property-tgp', {
       }
     ], 
     features: [
-      {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+      {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
       {$: 'studio.bindto-modifyOperations', 
         path: '%$path%', 
         data: '%$tgpCtrl/expanded%'
@@ -362,7 +363,7 @@ jb.component('studio.property-custom-style', {
   impl :{$: 'group', 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     features : [
-      {$: 'studio.property-toobar-feature', path: '%$path%' }, 
+      {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
     ],
     controls :{$: 'picklist', 
             databind :{$: 'studio.comp-name-ref', path: '%$path%' }, 
@@ -421,7 +422,7 @@ jb.component('studio.property-tgp-in-array', {
               }
             ]
           }, 
-          {$: 'studio.property-toobar', path: '%$path%' }, 
+          {$: 'studio.property-toolbar', path: '%$path%' }, 
           {$: 'label', 
             title :{$: 'studio.summary', path: '%$path%' }, 
             style :{$: 'label.span' }

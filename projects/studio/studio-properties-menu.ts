@@ -1,26 +1,14 @@
-import {jb} from 'jb-core';
-
-jb.component('studio.property-toobar-feature', {
+jb.component('studio.property-toolbar-feature', {
   type: 'feature', 
   params: [
     { id: 'path', as: 'string' }
   ], 
   impl :{$: 'field.toolbar', 
-        toolbar :{$: 'studio.property-toobar', path: '%$path%' } 
+        toolbar :{$: 'studio.property-toolbar', path: '%$path%' } 
     }
 }) 
 
-jb.component('studio.property-toobar-feature2', {
-  type: 'feature', 
-  params: [
-    { id: 'path', as: 'string' }
-  ], 
-  impl :{$: 'field.toolbar', $trace1:true,
-        toolbar :{$: 'studio.property-toobar', path: '%$path%', $trace1:true } 
-    }
-}) 
-
-jb.component('studio.property-toobar', {
+jb.component('studio.property-toolbar', {
   type: 'control', 
   params: [
     { id: 'path', as: 'string' }
@@ -55,23 +43,12 @@ jb.component('studio.property-toobar', {
                 }
             }
           },
-        {$: 'button', 
-          title: 'multiline edit', 
-          style :{$: 'button.mdl-icon-12', icon: 'build' },
-          features :{$: 'hidden', 
-            showCondition: {$: 'equals', 
-              item1: { $pipeline: [ {$: 'studio.param-def', path: '%$path%' }, '%as%']},
-              item2: 'string'
-            }
-          },
-          action :{$: 'studio.open-multiline-edit', path: '%$path%' }
-        }, 
 
-	        {$: 'button', 
-	          title: 'more...', 
-	          style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
-	          action :{$: 'studio.open-property-menu', path: '%$path%' }
-	        }
+          {$: 'button', 
+            title: 'more...', 
+            style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
+            action :{$: 'studio.open-property-menu', path: '%$path%' }
+          }
         ]
     }
 }) 
@@ -95,6 +72,17 @@ jb.component('studio.open-property-menu', {
               showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
             }
           },
+        {$: 'pulldown.menu-item', 
+          title: 'multiline edit', 
+          features :{$: 'hidden', 
+            showCondition: {$: 'equals', 
+              item1: { $pipeline: [ {$: 'studio.param-def', path: '%$path%' }, '%as%']},
+              item2: 'string'
+            }
+          },
+          action :{$: 'studio.open-multiline-edit', path: '%$path%' }
+        }, 
+
         {$: 'pulldown.menu-item', 
           title: 'Goto %$compName%', 
           features :{$: 'hidden', showCondition: '%$compName%' }, 
@@ -124,3 +112,4 @@ jb.component('studio.open-property-menu', {
     }
   }
 })
+
