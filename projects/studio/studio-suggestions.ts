@@ -22,15 +22,28 @@ jb.component('studio.property-primitive', {
       }, 
       {$: 'itemlist-with-groups', 
         items: '%$suggestionCtx/options%', 
-        controls :{$: 'label', 
-          title: '%text%', 
-          features :{$: 'css.padding', top: '', left: '3', bottom: '' }
+        controls :{$: 'group', 
+          style :{$: 'layout.flex', align: 'space-between', direction: 'row' }, 
+          controls: [
+            {$: 'label', 
+              title: '%text%', 
+              features :{$: 'css.padding', top: '', left: '3', bottom: '' }
+            }, 
+            {$: 'button', 
+              title: 'select and close', 
+              style :{$: 'button.mdl-icon-12', icon: 'done' },
+              action :{$: 'studio.paste-suggestion', close: true}, 
+            }
+          ]
         }, 
         watchItems: true, 
         features: [
           {$: 'itemlist.studio-suggestions-options' }, 
-          {$: 'itemlist.selection', autoSelectFirst: true, 
-            onDoubleClick: ctx => ctx.data.paste(ctx), databind: '%$suggestionCtx/selected%' }, 
+          {$: 'itemlist.selection', 
+            databind: '%$suggestionCtx/selected%', 
+            onDoubleClick :{$ 'studio.paste-suggestion'}, 
+            autoSelectFirst: true
+          }, 
           {$: 'hidden', showCondition: '%$suggestionCtx/show%' }, 
           {$: 'css.height', height: '500', overflow: 'auto', minMax: 'max' }, 
           {$: 'css.width', width: '300', overflow: 'auto' }, 
@@ -43,7 +56,6 @@ jb.component('studio.property-primitive', {
       }
     ], 
     features: [
-//      {$: 'feature.disableChangeDetection' },
       {$: 'group.studio-suggestions', path: '%$path%', expressionOnly: true }, 
       {$: 'studio.property-toobar-feature', path: '%$path%' }
     ]
@@ -92,6 +104,17 @@ jb.component('studio.jb-floating-input', {
     ]
   }
 })
+
+jb.component('studio.paste-suggestion', {
+  type: 'control', 
+  params: [
+    { id: 'option', as: 'single', defaultValue: '%%' },
+    { id: 'close', as: 'boolean', description: 'ends with % or /' }
+  ], 
+  impl: (ctx,option,close) =>
+    option.paste(ctx,close)
+})
+
 
 function rev(str) {
   return str.split('').reverse().join('');
@@ -180,8 +203,8 @@ class ValueOption {
         return ` (${val})`;
       return ``;
     }
-    paste(ctx) {
-      var toPaste = this.toPaste + (typeof this.value == 'object' ? '/' : '%');
+    paste(ctx,close) {
+      var toPaste = this.toPaste + ((typeof this.value != 'object' || close) ? '%' : '/');
       var suggestionCtx = ctx.vars.suggestionCtx;
       var input = suggestionCtx.input;
       var pos = this.pos + 1;

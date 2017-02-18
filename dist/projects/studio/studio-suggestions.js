@@ -42,15 +42,28 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         },
                         { $: 'itemlist-with-groups',
                             items: '%$suggestionCtx/options%',
-                            controls: { $: 'label',
-                                title: '%text%',
-                                features: { $: 'css.padding', top: '', left: '3', bottom: '' }
+                            controls: { $: 'group',
+                                style: { $: 'layout.flex', align: 'space-between', direction: 'row' },
+                                controls: [
+                                    { $: 'label',
+                                        title: '%text%',
+                                        features: { $: 'css.padding', top: '', left: '3', bottom: '' }
+                                    },
+                                    { $: 'button',
+                                        title: 'select and close',
+                                        style: { $: 'button.mdl-icon-12', icon: 'done' },
+                                        action: { $: 'studio.paste-suggestion', close: true },
+                                    }
+                                ]
                             },
                             watchItems: true,
                             features: [
                                 { $: 'itemlist.studio-suggestions-options' },
-                                { $: 'itemlist.selection', autoSelectFirst: true,
-                                    onDoubleClick: function (ctx) { return ctx.data.paste(ctx); }, databind: '%$suggestionCtx/selected%' },
+                                { $: 'itemlist.selection',
+                                    databind: '%$suggestionCtx/selected%',
+                                    onDoubleClick: { $: 'studio.paste-suggestion' },
+                                    autoSelectFirst: true
+                                },
                                 { $: 'hidden', showCondition: '%$suggestionCtx/show%' },
                                 { $: 'css.height', height: '500', overflow: 'auto', minMax: 'max' },
                                 { $: 'css.width', width: '300', overflow: 'auto' },
@@ -63,7 +76,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         }
                     ],
                     features: [
-                        //      {$: 'feature.disableChangeDetection' },
                         { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
                         { $: 'studio.property-toobar-feature', path: '%$path%' }
                     ]
@@ -108,6 +120,16 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             ]
                         },
                     ]
+                }
+            });
+            jb_core_1.jb.component('studio.paste-suggestion', {
+                type: 'control',
+                params: [
+                    { id: 'option', as: 'single', defaultValue: '%%' },
+                    { id: 'close', as: 'boolean', description: 'ends with % or /' }
+                ],
+                impl: function (ctx, option, close) {
+                    return option.paste(ctx, close);
                 }
             });
             suggestions = (function () {
@@ -197,8 +219,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         return " (" + val + ")";
                     return "";
                 };
-                ValueOption.prototype.paste = function (ctx) {
-                    var toPaste = this.toPaste + (typeof this.value == 'object' ? '/' : '%');
+                ValueOption.prototype.paste = function (ctx, close) {
+                    var toPaste = this.toPaste + ((typeof this.value != 'object' || close) ? '%' : '/');
                     var suggestionCtx = ctx.vars.suggestionCtx;
                     var input = suggestionCtx.input;
                     var pos = this.pos + 1;
