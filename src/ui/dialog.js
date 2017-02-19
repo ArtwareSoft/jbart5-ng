@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.component('openDialog', {
 	type: 'action',
 	params: [
@@ -350,5 +348,3 @@ class jbDialogs {
 }
 
 jbart.jb_dialogs = new jbDialogs;
-
-})

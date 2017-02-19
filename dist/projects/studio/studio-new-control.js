@@ -32,6 +32,49 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     ]
                 }
             });
+            jb_core_1.jb.component('studio.select-PT', {
+                type: 'control',
+                params: [
+                    { id: 'type', as: 'string' },
+                    { id: 'title', as: 'string' },
+                    { id: 'onSelect', type: 'action', dynamic: true }
+                ],
+                impl: { $: 'group',
+                    title: 'itemlist-with-find',
+                    style: { $: 'layout.vertical', spacing: 3 },
+                    controls: [
+                        { $: 'editable-text',
+                            title: 'search',
+                            databind: '%$globals/ctrl_pattern%',
+                            style: { $: 'editable-text.md-input' }
+                        },
+                        { $: 'itemlist-with-groups',
+                            items: {
+                                $pipeline: [
+                                    { $: 'studio.PTs-of-type', type: '%$type%' },
+                                    { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+                                ]
+                            },
+                            controls: [
+                                { $: 'button',
+                                    title: '%%',
+                                    action: [{ $: 'closeContainingPopup' }, { $call: 'onSelect' }],
+                                    style: { $: 'button.md-flat-no-background' },
+                                    features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
+                                }
+                            ],
+                            groupBy: { $: 'itemlist-heading.group-by' },
+                            headingCtrl: { $: 'label',
+                                title: '%title%',
+                                style: { $: 'label.h4' },
+                                features: [{ $: 'css.margin', top: '10' }]
+                            },
+                            features: { $: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
+                        }
+                    ],
+                    features: [{ $: 'css.margin', top: '10', left: '20' }]
+                }
+            });
             jb_core_1.jb.component('studio.open-new-tgp-dialog', {
                 type: 'action',
                 params: [
@@ -41,41 +84,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 ],
                 impl: { $: 'openDialog',
                     style: { $: 'dialog.studio-floating' },
-                    content: { $: 'group',
-                        title: 'itemlist-with-find',
-                        style: { $: 'layout.vertical', spacing: 3 },
-                        controls: [
-                            { $: 'editable-text',
-                                title: 'search',
-                                databind: '%$globals/ctrl_pattern%',
-                                style: { $: 'editable-text.md-input' }
-                            },
-                            { $: 'itemlist-with-groups',
-                                items: {
-                                    $pipeline: [
-                                        { $: 'studio.PTs-of-type', type: '%$type%' },
-                                        { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-                                    ]
-                                },
-                                controls: [
-                                    { $: 'button',
-                                        title: '%%',
-                                        action: [{ $: 'closeContainingPopup' }, { $call: 'onOK' }],
-                                        style: { $: 'button.md-flat-no-background' },
-                                        features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
-                                    }
-                                ],
-                                groupBy: { $: 'itemlist-heading.group-by' },
-                                headingCtrl: { $: 'label',
-                                    title: '%title%',
-                                    style: { $: 'label.h4' },
-                                    features: [{ $: 'css.margin', top: '10' }]
-                                },
-                                features: { $: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
-                            }
-                        ],
-                        features: [{ $: 'css.margin', top: '10', left: '20' }]
-                    },
+                    content: { $: 'studio.select-PT', type: '%$type%', onSelect: { $call: 'onOK' } },
                     title: '%$title%',
                     modal: true,
                     features: [

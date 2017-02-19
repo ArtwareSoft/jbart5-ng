@@ -1,7 +1,5 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.component('markdown', {
-    type: 'control',
+    type: 'control', category: 'control:20',
     params: [
         { id: 'markdown', as: 'string', essential: true, dynamic: true },
         { id: 'style', type: 'markdown.style', defaultValue: { $: 'markdown.showdown' }, dynamic: true },
@@ -36,7 +34,4 @@ jb.component('markdown.showdown', {
           }
         }
     })
-})
-
-
 })

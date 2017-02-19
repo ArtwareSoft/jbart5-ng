@@ -1,4 +1,3 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
 jb.component('group.wait', {
   type: 'feature',
   params: [ 
@@ -255,6 +254,4 @@ jb.component('feature.keyboard-shortcut', {
             })
           }
     })
-})
-
 })

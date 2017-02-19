@@ -1,4 +1,4 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
+jb.mdl_counter = jb.mdl_counter || 0;
 
 jb.component('mdl-style.init-dynamic', {
   type: 'feature',
@@ -82,4 +82,37 @@ jb.component('label.mdl-ripple-effect', {
 });
 
 
+// *************** inputs 
+
+jb.component('editable-text.mdl-search', {
+  type: 'editable-text.style',
+  impl :{$: 'customStyle', 
+      features :{$: 'field.databind' },
+      template: `
+  <div class="mdl-textfield mdl-js-textfield">
+    <input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')" 
+      class="mdl-textfield__input" type="text" id="search_${++jb.mdl_counter}">
+    <label class="mdl-textfield__label" for="search_${jb.mdl_counter}">{{title}}</label>
+    <i class="material-icons">search</i>
+  </div>`
+  }
 })
+
+jb.component('editable-text.mdl-input', {
+  type: 'editable-text.style',
+  params: [
+    { id: 'width', as: 'number' },
+  ],
+  impl :{$: 'customStyle', 
+   template: `<div class="mdl-textfield mdl-js-textfield">
+    <input class="mdl-textfield__input" type="text" id="input_${++jb.mdl_counter}">
+    <label class="mdl-textfield__label" for="input_${jb.mdl_counter}">{{title}}</label>
+  </div>`,
+      css: 'input { {?width: %$width%px?} }',
+      features :[
+          {$: 'field.databind' },
+          {$: 'mdl-style.init-dynamic', query: '.mdl-js-textfield'}
+      ],
+  }
+})
+

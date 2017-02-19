@@ -1,7 +1,5 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.component('itemlist', {
-  type: 'control',
+  type: 'control', category: 'group:80',
   params: [
     { id: 'title', as: 'string' },
     { id: 'items', as: 'array' , dynamic: true, essential: true },
@@ -212,7 +210,4 @@ jb.component('itemlist.ul-li', {
       </ul></div>`,
     css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
   }
-})
-
-
 })

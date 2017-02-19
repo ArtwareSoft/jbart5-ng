@@ -234,6 +234,10 @@ function jbLoadModules(modules) {
 }
 
 function jbBootstrap(loadedModules) {
+  if (typeof window != 'undefined') { // put jb_ui as global to avoid imports
+    window.jb_ui = loadedModules['jb-ui'];
+    window.jb_rx = loadedModules['ui-ts/jb-rx'];
+  }
   var platform = loadedModules['@angular/platform-browser-dynamic'].platformBrowserDynamic();
   var jbartModule = loadedModules['jb-ui'].jBartWidgetModule;
   registerNgFactories(loadedModules);

@@ -15,7 +15,7 @@ System.register(['jb-core/jb', 'jb-ui/jb-ui'], function(exports_1, context_1) {
             ;
             jb_1.jb.type('editable-number.style');
             jb_1.jb.component('editable-number', {
-                type: 'control',
+                type: 'control', category: 'field:30',
                 params: [
                     { id: 'databind', as: 'ref' },
                     { id: 'title', as: 'string', dynamic: true },

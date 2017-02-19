@@ -1,9 +1,7 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('button.style')
 
 jb.component('button', {
-  type: "control",
+  type: 'control', category: 'basic:100',
   params: [
     { id: 'title', as: 'string', dynamic: true, essential: true, defaultTValue: 'click me' },
     { id: 'action', type: 'action', essential: true, dynamic: true },
@@ -62,8 +60,4 @@ jb.component('button.popup-menu', {
     button:focus { outline: none; }
     `
   }
-})
-
-
-
 })

@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.component('field.databind', {
   type: 'feature',
   impl: ctx => {
@@ -7,6 +5,7 @@ jb.component('field.databind', {
       jb.logError('bind-field: No databind in model', ctx.vars.$model, ctx);
     return {
       init: function(cmp) {
+            cmp.title = ctx.vars.$model.title();
             cmp.jbModel = (val,source) => {
               if (val == undefined) 
                 return jb.val(ctx.vars.$model.databind);
@@ -74,6 +73,4 @@ jb.component('field.toolbar', {
   impl: (context,toolbar) => ({
     extendComp: { jb_toolbar: toolbar() }
   })
-})
-
 })

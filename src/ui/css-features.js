@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.component('css', {
   type: 'feature,dialog-feature',
   params: [
@@ -130,8 +128,4 @@ jb.component('css.border', {
   ],
   impl: (context,width,side,style,color,selector) => 
     ({css: `${selector} { border${side?'-'+side:''}: ${width}px ${style} ${color} }`})
-})
-
-
-
 })

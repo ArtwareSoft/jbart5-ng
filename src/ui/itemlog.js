@@ -1,9 +1,7 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.type('itemlog.style');
 
-jb.component('itemlog',{
-	type: 'control',
+jb.component('itemlog', {
+	type: 'control', category: 'group:50',
 	params: [
 		{ id: 'title', as: 'string' },
 		{ id: 'items', as: 'observable' , dynamic: true, essential: true },
@@ -35,6 +33,4 @@ jb.component('itemlog.div', {
         <div *jbComp="ctrl"></div>
       </div></div>`
   }
-})
-
 })

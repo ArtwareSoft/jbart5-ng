@@ -1,7 +1,5 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.component('tabs', {
-	type: 'control',
+	type: 'control', category: 'group:80',
 	params: [
 		{ id: 'tabs', type: 'control[]', essential: true, flattenArray: true, dynamic: true },
 		{ id: 'style', type: 'tabs.style', dynamic: true, defaultValue: { $: 'tabs.simple' } },
@@ -54,31 +52,6 @@ jb.component('tabs.simple', {
         </div>`,
 	     css: `.selected { border-bottom: 1px solid black } button { background: none }`,
 	    features :{$: 'tabs.initTabs'},
-      noTemplateParsing: true,
   	}
 })
 
-// jb.component('tabs.simple', {
-//   type: 'tabs.style',
-//     impl :{$: 'customStyle',
-//       template: `<div class="jb-tab">
-//         <div class="tab-titles">
-//           <button *ngFor="let title of titles; let i = index" md-button (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
-//           </div>
-//           <jb_comp *ngFor="let comp of selectedTabContent()" [comp]="comp"></jb_comp>
-//         </div>`,
-//        css: `.selected { border-bottom: 1px solid black } button { background: none }`,
-//       features :{$: 'tabs.initTabs'},
-//     }
-// })
-
-// jb.component('tabs.accordion',{
-// 	type: 'tabs.style',
-// 	impl :{$: 'group', 
-// 		cssClass: 'jb-accordion',
-// 		controls: ctx => jb_rx.concat(ctx.vars.$model.tabs()),
-// 		style :{$: 'group-expandable-subgroups' } 
-// 	}
-// }) 
-
-})

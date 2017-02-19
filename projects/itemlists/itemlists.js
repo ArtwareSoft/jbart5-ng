@@ -54,7 +54,7 @@ jb_component('itemlists.master-detail-readonly', {
         ]
       }
     ], 
-    features :{$: 'group.itemlist-container', autoSelectFirst: 'true' }
+    features :{$: 'group.itemlist-writable-container', autoSelectFirst: 'true' }
   }
 })
 
@@ -130,7 +130,7 @@ jb_component('itemlists.master-detail-writable', {
       }
     ], 
     features: [
-      {$: 'group.itemlist-container', 
+      {$: 'group.itemlist-writable-container', 
         defaultItem :{
           $asIs: { name: 'no name' }
         }
@@ -189,7 +189,7 @@ jb_component('itemlists.obj-as-items', {
         }
       }
     ], 
-    features :{$: 'group.itemlist-container' }
+    features :{$: 'group.itemlist-writable-container' }
   }
 })
 

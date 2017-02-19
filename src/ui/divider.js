@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('divider.style');
 
 jb.component('divider', {
@@ -29,6 +27,4 @@ jb.component('divider.flex-auto-grow', {
         template: '<div></div>',
         css: `{ flex-grow: 10 } `
     }
-})
-
 })

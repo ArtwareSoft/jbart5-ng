@@ -1,6 +1,5 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
-jb.component('group.itemlist-container', {
+jb.component('group.itemlist-writable-container', {
+  description: 'itemlist writable container to support addition, deletion and selection',
   type: 'feature',
   params: [
     { id: 'id', as: 'string' },
@@ -114,9 +113,4 @@ jb.component('itemlist.obj-as-items', {
   }
 })
 
-// templates
 
-// md left-right
-
-
-})

@@ -1,9 +1,7 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('editable-text.style');
 
-jb.component('editable-text',{
-  type: 'control',
+jb.component('editable-text', {
+  type: 'control', category: 'field:100',
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'databind', as: 'ref'},
@@ -30,7 +28,4 @@ jb.component('editable-text.textarea', {
       features :{$: 'field.databind' },
       template: `<div><textarea [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></textarea></div>`,
 	}
-})
-
-
 })

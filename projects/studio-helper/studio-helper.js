@@ -193,7 +193,6 @@ jb.component('studio-helper.group-with-label', {
   }
 })
 
-
 jb.component('studio-helper.menu-selection', {
   type: 'control', 
   impl: {$: 'group', 
@@ -222,3 +221,10 @@ jb.component('studio-helper.data-resources', {
     ]
   }
 })
+
+jb.component('studio-helper.select-control', {
+  type: 'control', 
+  impl :{$: 'studio.select-PT', type: 'control' } 
+})
+
+

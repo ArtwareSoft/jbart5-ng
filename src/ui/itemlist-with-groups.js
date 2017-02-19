@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.type('itemlist.heading','inject headings to itemlist');
 jb.type('itemlist-heading.style');
 
@@ -105,7 +103,4 @@ jb.component('itemlist-heading.group-by', {
         [{ title: group, heading: true }].concat(groups[group]) ));
       return result;
     }
-})
-
-
 })

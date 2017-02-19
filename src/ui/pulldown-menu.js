@@ -1,7 +1,5 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.component('pulldown.menu-item-separator', {
-	type: 'control',
+	type: 'control', 
 	impl: ctx => 
 		jb_ui.Comp({ template: '<div></div>', css: '{ margin: 6px 0; border-bottom: 1px solid #EBEBEB}'},ctx)
 })
@@ -204,6 +202,4 @@ jb.component('group.menu-keyboard-selection', {
         'tabIndex' : '0',
       }
     })
-})
-
 })

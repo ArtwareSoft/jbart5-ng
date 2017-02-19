@@ -23,16 +23,14 @@ jb.component('studio.open-new-control-dialog', {
   }
 })
 
-jb.component('studio.open-new-tgp-dialog', {
-  type: 'action', 
+jb.component('studio.select-PT', {
+  type: 'control', 
   params: [
     { id: 'type', as: 'string' }, 
     { id: 'title', as: 'string' }, 
-    { id: 'onOK', type: 'action', dynamic: true }
+    { id: 'onSelect', type: 'action', dynamic: true }
   ], 
-  impl :{$: 'openDialog', 
-    style :{$: 'dialog.studio-floating' }, 
-    content :{$: 'group', 
+  impl :{$: 'group', 
       title: 'itemlist-with-find', 
       style :{$: 'layout.vertical', spacing: 3 }, 
       controls: [
@@ -51,7 +49,7 @@ jb.component('studio.open-new-tgp-dialog', {
           controls: [
             {$: 'button', 
               title: '%%', 
-              action: [{$: 'closeContainingPopup' }, { $call: 'onOK' }], 
+              action: [{$: 'closeContainingPopup' }, { $call: 'onSelect' }], 
               style :{$: 'button.md-flat-no-background' }, 
               features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
             }
@@ -66,7 +64,19 @@ jb.component('studio.open-new-tgp-dialog', {
         }
       ], 
       features: [{$: 'css.margin', top: '10', left: '20' }]
-    }, 
+    }
+})
+
+jb.component('studio.open-new-tgp-dialog', {
+  type: 'action', 
+  params: [
+    { id: 'type', as: 'string' }, 
+    { id: 'title', as: 'string' }, 
+    { id: 'onOK', type: 'action', dynamic: true }
+  ], 
+  impl :{$: 'openDialog', 
+    style :{$: 'dialog.studio-floating' }, 
+    content :{$: 'studio.select-PT', type: '%$type%', onSelect: {$call: 'onOK'}} , 
     title: '%$title%', 
     modal: true, 
     features: [

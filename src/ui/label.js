@@ -1,7 +1,5 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.component('label', {
-    type: "control",
+    type: 'control', category: 'control:100',
     params: [
         { id: 'title', essential: true, defaultValue: 'hello', dynamic: true },
         { id: 'style', type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
@@ -77,7 +75,3 @@ jb.component('label.h4', {
         features :{$: 'label.bind-title' }
     }
 });
-
-
-
-})

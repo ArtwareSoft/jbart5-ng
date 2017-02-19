@@ -1,11 +1,9 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('picklist.style');
 jb.type('picklist.options');
 jb.type('picklist.promote');
 
 jb.component('picklist', {
-  type: 'control',
+  type: 'control', category: 'field:80',
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'databind', as: 'ref'},
@@ -117,5 +115,3 @@ jb.component('picklist.promote',{
   impl: (context,groups,options) => 
     ({ groups: groups, options: options})
 });
-
-})

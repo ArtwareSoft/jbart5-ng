@@ -1,9 +1,7 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('image.style');
 
 jb.component('image',{
-	type: 'control',
+	type: 'control', category: 'control:50',
 	params: [
 		{ id: 'url', as: 'string', dynamic:true },
 		{ id: 'imageWidth', as: 'number' },
@@ -34,6 +32,4 @@ jb.component('image.default', {
 			               <img [style.width]="imageWidth" [style.height]="imageHeight" src="{{url}}">
 			           </div>`,
 		}
-})
-
 })

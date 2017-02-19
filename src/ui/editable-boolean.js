@@ -1,10 +1,8 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('editable-boolean.style');
 jb.type('editable-boolean.yes-no-settings');
 
 jb.component('editable-boolean',{
-  type: 'control',
+  type: 'control', category: 'field:20',
   params: [
     { id: 'databind', as: 'ref'},
     { id: 'style', type: 'editable-boolean.style', defaultValue: { $: 'editable-boolean.checkbox' }, dynamic: true },
@@ -26,7 +24,4 @@ jb.component('editable-boolean',{
   		}
   	});
   }
-})
-
-
 })

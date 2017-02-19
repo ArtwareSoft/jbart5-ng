@@ -1,9 +1,7 @@
-jbLoadModules(['jb-core','jb-ui','jb-ui/jb-rx']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'], jb_rx = loadedModules['jb-ui/jb-rx'];
-
 jb.type('group.style');
 
-jb.component('group',{
-  type: 'control',
+jb.component('group', {
+  type: 'control', category: 'group:100',
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'style', type: 'group.style', defaultValue: { $: 'group.section' }, essential: true , dynamic: true },
@@ -126,6 +124,4 @@ jb.component('control', {
     ],
     impl: ctx => 
         jb_ui.ctrl(ctx)
-})
-
 })

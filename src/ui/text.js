@@ -1,9 +1,7 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.type('text.style');
 
 jb.component('text', {
-    type: 'control',
+    type: 'control', category: 'control:40',
     params: [
         { id: 'text', essential: true, dynamic: true },
         { id: 'style', type: 'text.style', defaultValue: { $: 'text.multi-line' }, dynamic: true },
@@ -71,6 +69,4 @@ jb.component('rich-text.html-in-section', {
                     %$text%
                 </section>`,
     }
-})
-
 })
