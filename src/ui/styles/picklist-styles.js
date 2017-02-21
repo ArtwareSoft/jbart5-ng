@@ -28,13 +28,13 @@ jb.component('picklist.from-itemlist', {
       defaultValue :{$: 'itemlist.selection', databind: {$: 'picklist.selected' } }
     },
   ],
-  impl :{ $: 'style-by-control', __innerImplementation: true,
+  impl :{$: 'style-by-control', __innerImplementation: true,
     modelVar: 'picklistModel',
     control :{$: 'itemlist', 
-      items: {$call : '%$picklistModel/options%' },
-      style: {$call : '%$style%'},
-      controls: {$call : '%$control%'},
-      features: {$call: '%$features%' }
+      items: '%$picklistModel/options%',
+      style :{$call: 'style' },
+      controls :{$call : 'control'},
+      features :{$call: 'features' }
     }
   }
 })

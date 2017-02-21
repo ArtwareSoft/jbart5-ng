@@ -385,6 +385,8 @@ function jb_initJstypes() {
       return isNaN(num) ? null : num;
     },
     'array': function(value) {
+      if (typeof value == 'function' && value.profile)
+        value = value();
       if (Array.isArray(value)) return value;
       if (value == null) return [];
       return [value];

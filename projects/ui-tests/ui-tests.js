@@ -803,3 +803,21 @@ jb.component('ui-test.style-by-control', {
   },
 })
 
+jb.component('ui-test.picklist-from-itemlist', {
+  impl :{$: 'ng2-ui-test',  
+    control :{$: 'picklist', 
+      style :{$: 'picklist.from-itemlist' } ,
+      databind: '%$person/city%', 
+      options :{$: 'picklist.optionsByComma', 
+             options: 'Springfield,New York,Tel Aviv,London' 
+      },
+      features: [
+        {$: 'css.width', width: '150', selector: '!.mdl-button' }, 
+        {$: 'css', css: '{text-align: left}' }
+      ]
+
+    },
+  expectedHtmlResult: { $: 'contains', text: ['Springfield', 'New York'] },
+  },
+})
+
