@@ -1,5 +1,3 @@
-import {jb} from 'jb-core';
-
 jb.component('property-sheet.titles-above', {
   type: 'group.style',
   params: [

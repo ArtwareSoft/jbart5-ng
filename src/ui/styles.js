@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core','jb-ui']).then(loadedModules => { var jb = loadedModules['jb-core'].jb, jb_ui = loadedModules['jb-ui'];
-
 jb.component('customStyle', {
 	typePattern: /.*-style/,
 	params: [
@@ -25,6 +23,16 @@ jb.component('customStyle', {
 	}
 })
 
+jb.component('style-by-control', {
+	typePattern: /.*-style/,
+	params: [
+		{ id: 'control', type: 'control', essential: true, dynamic: true },
+		{ id: 'modelVar', as: 'string', essential: true }
+	],
+	impl: (ctx,control,modelVar) =>
+		control(ctx.setVars( jb.obj(modelVar,ctx.vars.$model)))
+})
+
 jb.component('custom-control', {
 	type: 'control',
 	params: [
@@ -46,6 +54,4 @@ jb.component('custom-control', {
 			providers: ctx.profile.providers,
 		},options),ctx)
 	}
-})
-
 })

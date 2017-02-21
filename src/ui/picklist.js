@@ -70,9 +70,7 @@ jb.component('picklist.optionsByComma',{
   ],
   impl: function(context,options,allowEmptyValue) {
     var emptyValue = allowEmptyValue ? [{code:'',value:''}] : [];
-    return emptyValue.concat((options||'').split(',').map(function(code) { 
-      return { code: code, text: code }
-    }))
+    return emptyValue.concat((options||'').split(',').map(code=> ({ code: code, text: code })));
   }
 });
 
@@ -84,7 +82,7 @@ jb.component('picklist.options',{
   ],
   impl: function(context,options,allowEmptyValue) {
     var emptyValue = allowEmptyValue ? [{code:'',value:''}] : [];
-    return emptyValue.concat(options.map(function(code) { return { code: code, text: code } } ));
+    return emptyValue.concat(options.map(code=> ({ code: code, text: code })));
   }
 })
 

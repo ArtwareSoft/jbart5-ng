@@ -237,6 +237,8 @@ class jbComponent {
 export function ctrl(context) {
 	var ctx = context.setVars({ $model: context.params });
 	var styleOptions = defaultStyle(ctx);
+	if (styleOptions && styleOptions.methodHandler) // style by control
+		return styleOptions;
 	return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
 
 	function defaultStyle(ctx) {

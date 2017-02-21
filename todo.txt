@@ -1,23 +1,31 @@
+itemlist - one control.
+
+3. Contorl Search - don't remember last search
+4. Control Search - add X for editbox
+5. Control Search - join two scroll bars into one
+6. Control Search - auto focus on search box
+6. Control Search - highlight search pattern on reasults
+6. Feature/Control Search - add categories at the left side
+6. New Project
+7. When dragging one of studio dialogs - do not activate angular check
+8. inteliscript - use up/down keys on context menu
+9. inteliscript - when selecting a new property - close context menu and focus on property
+In teliscript - right click on mouse should open context menu
+10. Actions - simple actions should be handled without inteliscript
+11. Select on tree should change properties window
+13. Enable saving sample data
+
+studio:
+- fast find - use down arrow keboard to go the first item
+
 
 build the jbart.io site like https://material.angular.io/
 
-itemlist heading + search for create new control
-
-take out ViewEncapsulation
-
-edit/save resources
-
 animation in expand/collapse
-
-button
-=====
-add ripple aspect for button
-
 
 studio
 ======
 delete page
-array inside propertysheet is always features. http://localhost:8081/project/studio/studio-helper/insert-control/studio-helper.insert-control~controls~2
 component references
 jb editor
 	go up
@@ -26,31 +34,14 @@ jb editor
 	$object
 
 
-tests
-======
-run all projects tests
-add path tests accorading to path_tests.txt
+edit/save resources
+resources: support this format:
+jbart.resources.list = [
+  {task:'feed the fish', completed:true},
+  {task:'ask Shai can we meet tomorrow', completed:false}
+];
 
 
-probe
-======
-use full path
-tests
-issues with pipeline comp sugar
 
 
-Material Demo
-=================
-
-API Summary - parse and add
-example:
-### API Summary
-
-Properties:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `color` | `"primary"|"accent"|"warn"` | The color palette of the button
-| `disabled` | boolean | Whether or not the button is disabled
-| `disableRipple` | boolean | Whether the ripple effect when the button is clicked should be disabled
 

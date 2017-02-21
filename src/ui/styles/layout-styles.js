@@ -1,6 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-
 jb.component('layout.vertical', {
   type: 'group.style',
   params: [

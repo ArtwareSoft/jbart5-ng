@@ -1,7 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_rx from 'jb-ui/jb-rx';
-import * as jb_ui from 'jb-ui';
-
 jb.component('editable-text.codemirror', {
 	type: 'editable-text.style',
 	params: [
@@ -82,8 +78,8 @@ jb.component('editable-text.codemirror', {
 })
 
 function enableFullScreen(editor,width,height) {
-	var escText = "<span>Press ESC or F11 to exit full screen</span>",
-	var fullScreenBtnHtml = '<div><img title="Full Screen (F11)" src="http://png-1.findicons.com/files/icons/1150/tango/22/view_fullscreen.png"/></div>',
+	var escText = "<span>Press ESC or F11 to exit full screen</span>";
+	var fullScreenBtnHtml = '<div><img title="Full Screen (F11)" src="http://png-1.findicons.com/files/icons/1150/tango/22/view_fullscreen.png"/></div>';
 	var lineNumbers = true;
 	var css = `
 		.jb-codemirror-escCss { cursor:default; text-align: center; width: 100%; position:absolute; top:0px; left:0px; font-family: arial; font-size: 11px; color: #a00; padding: 2px 5px 3px; } 

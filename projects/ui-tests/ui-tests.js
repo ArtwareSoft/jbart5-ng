@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
-
 jb.resource('ui-tests','people',[
   { "name": "Homer Simpson" ,age: 42 , male: true},
   { "name": "Marge Simpson" ,age: 38 , male: false},
@@ -787,8 +785,21 @@ jb.component('ui-test.markdown', {
 | Monday  | pasta   | $6    |
 | Tuesday | chicken | $8    |    ` },
     expectedHtmlResult: { $: 'contains', text: 'table' }
-},
+  },
 })
 
-
+jb.component('ui-test.style-by-control', {
+  impl :{$: 'ng2-ui-test',  
+    control :{$: 'label', 
+        title: 'Hello World',
+        style :{$: 'style-by-control', 
+          modelVar: 'labelModel',
+          control :{$: 'button', 
+            title: '%$labelModel/title%2',
+          }
+        }
+    },
+    expectedHtmlResult: { $: 'contains', text: 'Hello World2' }
+  },
 })
+

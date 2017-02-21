@@ -1,5 +1,3 @@
-import {jb} from 'jb-core';
-
 jb.component('editable-boolean.checkbox', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 

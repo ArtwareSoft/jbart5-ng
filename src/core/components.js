@@ -77,7 +77,7 @@ jb_component('pipe', { // synched pipeline
 	impl: (ctx,items) => jb_pipe(ctx,items,'$pipe')
 })
 
-jb_component('run',{
+jb_component('run', {
  	type: '*',
  	params: [
  		{ id: 'profile', as: 'single'},
@@ -87,7 +87,19 @@ jb_component('run',{
  	}
 });
 
-jb_component('list',{
+jb_component('apply', {
+	description: 'run a function',
+ 	type: '*',
+ 	params: [
+ 		{ id: 'func', as: 'single'},
+ 	],
+ 	impl: (ctx,func) => {
+ 		if (typeof func == 'function')
+ 	  		return func(ctx);
+ 	}
+});
+
+jb_component('list', {
 	type: "data",
 	params: [
 		{ id: 'items', type: "data[]", as: 'array', composite: true }
@@ -104,7 +116,7 @@ jb_component('list',{
 	}
 });
 
-jb_component('firstSucceeding',{
+jb_component('firstSucceeding', {
 	type: "data",
 	params: [
 		{ id: 'items', type: "data[]", as: 'array' }
@@ -116,7 +128,7 @@ jb_component('firstSucceeding',{
 	}
 });
 
-jb_component('objectProperties',{
+jb_component('objectProperties', {
 	type: "data",
 	params: [
 		{ id: 'object', defaultValue: '%%', as: 'single' }

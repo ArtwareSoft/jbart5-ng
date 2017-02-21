@@ -1,5 +1,3 @@
-import {jb} from 'jb-core';
-
 jb.component('picklist.native', {
   type: 'picklist.style',
   impl :{$: 'customStyle', 
@@ -16,6 +14,28 @@ select::-webkit-input-placeholder { color: #999; }
 select::-ms-expand { border: 0; background-color: transparent; }
 select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
     `
+  }
+})
+
+jb.component('picklist.from-itemlist', {
+  type: 'picklist.style',
+  params: [
+    { id: 'style', type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+    { id: 'control', type: 'control', dynamic: true, 
+      defaultValue :{$: 'label', title: '%text%', style: {$: 'label.mdl-ripple-effect' } }
+    },
+    { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true,
+      defaultValue :{$: 'itemlist.selection', databind: {$: 'picklist.selected' } }
+    },
+  ],
+  impl :{ $: 'style-by-control', __innerImplementation: true,
+    modelVar: 'picklistModel',
+    control :{$: 'itemlist', 
+      items: {$call : '%$picklistModel/options%' },
+      style: {$call : '%$style%'},
+      controls: {$call : '%$control%'},
+      features: {$call: '%$features%' }
+    }
   }
 })
 
@@ -40,5 +60,3 @@ select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
     `
   }
 })
-
-

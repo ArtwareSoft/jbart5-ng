@@ -31,40 +31,49 @@ jb.component('studio.select-PT', {
     { id: 'onSelect', type: 'action', dynamic: true }
   ], 
   impl :{$: 'group', 
-      title: 'itemlist-with-find', 
-      style :{$: 'layout.vertical', spacing: 3 }, 
-      controls: [
-        {$: 'editable-text', 
-          title: 'search', 
-          databind: '%$globals/ctrl_pattern%', 
-          style :{$: 'editable-text.md-input' }
-        }, 
-        {$: 'itemlist-with-groups', 
-          items :{
-            $pipeline: [
-              {$: 'studio.PTs-of-type', type: '%$type%' }, 
-              {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-            ]
-          }, 
-          controls: [
-            {$: 'button', 
-              title: '%%', 
-              action: [{$: 'closeContainingPopup' }, { $call: 'onSelect' }], 
-              style :{$: 'button.md-flat-no-background' }, 
-              features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
+    title: 'itemlist-with-find', 
+    style :{$: 'layout.vertical', spacing: 3 }, 
+    controls: [
+      {$: 'editable-text', 
+        title: 'search', 
+        databind: '%$globals/ctrl_pattern%', 
+        style :{$: 'editable-text.md-input' }
+      }, 
+      {$: 'group', 
+        title: 'categories and items', 
+        style :{$: 'layout.horizontal', spacing: 3 }, 
+        controls: [
+          {$: 'picklist', 
+            options :{$: 'picklist.optionsByComma', options: 'a,b,c' }, 
+            style :{$: 'picklist.from-itemlist', 
+              style :{$: 'itemlist.ul-li' }
             }
-          ], 
-          groupBy :{$: 'itemlist-heading.group-by' }, 
-          headingCtrl :{$: 'label', 
-            title: '%title%', 
-            style :{$: 'label.h4' }, 
-            features: [{$: 'css.margin', top: '10' }]
           }, 
-          features :{$: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
-        }
-      ], 
-      features: [{$: 'css.margin', top: '10', left: '20' }]
-    }
+          {$: 'itemlist', 
+            title: 'items', 
+            items :{
+              $pipeline: [
+                {$: 'studio.PTs-of-type', type: '%$type%' }, 
+                {$: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+              ]
+            }, 
+            controls: [
+              {$: 'button', 
+                title: '%%', 
+                action: [{$: 'closeContainingPopup' }, { $call: 'onSelect' }], 
+                style :{$: 'button.md-flat-no-background' }, 
+                features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
+              }
+            ], 
+            watchItems: true, 
+            itemVariable: 'item', 
+            features :{$: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
+          }
+        ]
+      }
+    ], 
+    features: [{$: 'css.margin', top: '10', left: '20' }]
+  }
 })
 
 jb.component('studio.open-new-tgp-dialog', {

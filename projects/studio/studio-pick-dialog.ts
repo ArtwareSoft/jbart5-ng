@@ -86,6 +86,7 @@ jb.component('dialog-feature.studio-pick', {
 		      				(jbart.previewWindow || {}).document, 'keyup'));
 
 		  mouseMoveEm
+		  	.debounceTime(50)
 		  	.takeUntil(
 		  		keyUpEm.filter(e=>
 		  			e.keyCode == 27)
@@ -95,7 +96,7 @@ jb.component('dialog-feature.studio-pick', {
 		  			ctx.vars.$dialog.close({OK:false});	
 		  	})
 		  	.map(e=>
-		  		eventToProfileElem(e,_window))
+		  		eventToProfileElemWithRandomSelection(e,_window))
 		  	.filter(x=> x && x.length > 0)
 		  	.do(profElem=> {
 		  		ctx.vars.pickSelection.ctx = _window.jbart.ctxDictionary[profElem.attr('jb-ctx')];
@@ -119,13 +120,18 @@ function pathFromElem(_window,profElem) {
 	//profElem.attr('jb-path');
 }
 
-function eventToProfileElem(e,_window) {
+function eventToProfileElemWithRandomSelection(e,_window) {
 	var $el = $(_window.document.elementFromPoint(e.pageX - $(_window).scrollLeft(), e.pageY - $(_window).scrollTop()));
 	if (!$el[0]) return;
-	return $($el.get().concat($el.parents().get()))
+	var results = Array.from($($el.get().concat($el.parents().get()))
 		.filter((i,e) => 
-			$(e).attr('jb-ctx') )
-		.first()
+			$(e).attr('jb-ctx') ));
+	if (results.length == 0) return results;
+	var first_result = $(results[0]);
+	results = results.filter(elem=>
+		$(elem).outerWidth() == first_result.outerWidth() && $(elem).outerHeight() == first_result.outerHeight());
+	// randomally pick overlapping results
+	return $(results[Math.floor(Math.random()*results.length)]);
 }
 
 function showBox(cmp,_profElem,_window,previewOffset) {
@@ -149,19 +155,7 @@ function showBox(cmp,_profElem,_window,previewOffset) {
 	// Array.from(profElem.parents())
 	// 	.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
 
-	var same_size_parents = Array.from(_profElem.parents())
-		.map(el=>$(el))
-		.filter(el => 
-			el.attr('jb-ctx') )
-		.map(el=>
-			el.children().first())
-		.filter(el=>
-			profElem.outerWidth() >= el.outerWidth() && profElem.outerHeight() >= el.outerHeight())
-		.map(el=>
-			model.shortTitle(pathFromElem(_window,el))		
-		)
-		.join(', ')
-	$el.find('.title .text').text(cmp.title+same_size_parents);
+	$el.find('.title .text').text(cmp.title);
 
 	cmp.titleBelow = top - $titleText.outerHeight() -6 < $(_window).scrollTop();
 	cmp.titleTop = cmp.titleBelow ? cmp.top + cmp.height : cmp.top - $titleText.outerHeight() -6;

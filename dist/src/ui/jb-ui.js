@@ -34,6 +34,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     function ctrl(context) {
         var ctx = context.setVars({ $model: context.params });
         var styleOptions = defaultStyle(ctx);
+        if (styleOptions && styleOptions.methodHandler)
+            return styleOptions;
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
         function defaultStyle(ctx) {
             var profile = context.profile;

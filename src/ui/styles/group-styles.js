@@ -1,6 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-
 jb.component('group.div', {
   type: 'group.style',
   impl :{$: 'customStyle',

@@ -130,10 +130,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                 { $: 'css.class', class: 'jb-control-tree studio-control-tree' },
                                 { $: 'tree.selection',
                                     databind: '%$globals/profile_path%',
-                                    onSelection: { $: 'studio.highlight-in-preview',
-                                        path: { $: 'studio.currentProfilePath' }
-                                    },
-                                    onDoubleClick: [
+                                    onSelection: [
                                         { $: 'studio.open-properties' },
                                         { $: 'studio.highlight-in-preview',
                                             path: { $: 'studio.currentProfilePath' }

@@ -373,7 +373,7 @@ function jb_initJstypes() {
     'string': function(value) {
       if (Array.isArray(value)) value = value[0];
       if (value == null) return '';
-      value = jb_val(value);
+      value = jb_val(value,true);
       if (typeof(value) == 'undefined') return '';
       return '' + value;
     },
@@ -381,7 +381,7 @@ function jb_initJstypes() {
       if (Array.isArray(value)) value = value[0];
       if (value == null || value == undefined) return null;	// 0 is not null
       value = jb_val(value);
-      var num = Number(value);
+      var num = Number(value,true);
       return isNaN(num) ? null : num;
     },
     'array': function(value) {
@@ -391,12 +391,12 @@ function jb_initJstypes() {
     },
     'boolean': function(value) {
       if (Array.isArray(value)) value = value[0];
-      return jb_val(value) ? true : false;
+      return jb_val(value,true) ? true : false;
     },
     'single': function(value) {
       if (Array.isArray(value)) return value[0];
       if (!value) return value;
-      value = jb_val(value);
+      value = jb_val(value,true);
       return value;
     },
     'ref': function(value) {

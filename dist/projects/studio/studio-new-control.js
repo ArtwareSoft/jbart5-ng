@@ -48,28 +48,37 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             databind: '%$globals/ctrl_pattern%',
                             style: { $: 'editable-text.md-input' }
                         },
-                        { $: 'itemlist-with-groups',
-                            items: {
-                                $pipeline: [
-                                    { $: 'studio.PTs-of-type', type: '%$type%' },
-                                    { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
-                                ]
-                            },
+                        { $: 'group',
+                            title: 'categories and items',
+                            style: { $: 'layout.horizontal', spacing: 3 },
                             controls: [
-                                { $: 'button',
-                                    title: '%%',
-                                    action: [{ $: 'closeContainingPopup' }, { $call: 'onSelect' }],
-                                    style: { $: 'button.md-flat-no-background' },
-                                    features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
+                                { $: 'picklist',
+                                    options: { $: 'picklist.optionsByComma', options: 'a,b,c' },
+                                    style: { $: 'picklist.from-itemlist',
+                                        style: { $: 'itemlist.ul-li' }
+                                    }
+                                },
+                                { $: 'itemlist',
+                                    title: 'items',
+                                    items: {
+                                        $pipeline: [
+                                            { $: 'studio.PTs-of-type', type: '%$type%' },
+                                            { $: 'search-filter', pattern: '%$globals/ctrl_pattern%' }
+                                        ]
+                                    },
+                                    controls: [
+                                        { $: 'button',
+                                            title: '%%',
+                                            action: [{ $: 'closeContainingPopup' }, { $call: 'onSelect' }],
+                                            style: { $: 'button.md-flat-no-background' },
+                                            features: { $: 'css', css: '!button { text-align: left; width: 250px }' }
+                                        }
+                                    ],
+                                    watchItems: true,
+                                    itemVariable: 'item',
+                                    features: { $: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
                                 }
-                            ],
-                            groupBy: { $: 'itemlist-heading.group-by' },
-                            headingCtrl: { $: 'label',
-                                title: '%title%',
-                                style: { $: 'label.h4' },
-                                features: [{ $: 'css.margin', top: '10' }]
-                            },
-                            features: { $: 'css.height', height: '400', overflow: 'scroll', minMax: '' }
+                            ]
                         }
                     ],
                     features: [{ $: 'css.margin', top: '10', left: '20' }]

@@ -41,7 +41,7 @@ jb.component('studio.property-primitive', {
           {$: 'itemlist.studio-suggestions-options' }, 
           {$: 'itemlist.selection', 
             databind: '%$suggestionCtx/selected%', 
-            onDoubleClick :{$ 'studio.paste-suggestion'}, 
+            onDoubleClick :{$: 'studio.paste-suggestion'}, 
             autoSelectFirst: true
           }, 
           {$: 'hidden', showCondition: '%$suggestionCtx/show%' }, 

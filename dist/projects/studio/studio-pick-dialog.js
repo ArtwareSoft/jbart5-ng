@@ -11,15 +11,22 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         }
         //profElem.attr('jb-path');
     }
-    function eventToProfileElem(e, _window) {
+    function eventToProfileElemWithRandomSelection(e, _window) {
         var $el = $(_window.document.elementFromPoint(e.pageX - $(_window).scrollLeft(), e.pageY - $(_window).scrollTop()));
         if (!$el[0])
             return;
-        return $($el.get().concat($el.parents().get()))
+        var results = Array.from($($el.get().concat($el.parents().get()))
             .filter(function (i, e) {
             return $(e).attr('jb-ctx');
-        })
-            .first();
+        }));
+        if (results.length == 0)
+            return results;
+        var first_result = $(results[0]);
+        results = results.filter(function (elem) {
+            return $(elem).outerWidth() == first_result.outerWidth() && $(elem).outerHeight() == first_result.outerHeight();
+        });
+        // randomally pick overlapping results
+        return $(results[Math.floor(Math.random() * results.length)]);
     }
     function showBox(cmp, _profElem, _window, previewOffset) {
         var profElem = _profElem.children().first();
@@ -38,22 +45,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
         //	console.log('selected',profElem.outerWidth(),profElem.outerHeight());
         // Array.from(profElem.parents())
         // 	.forEach(el=>console.log('parent',$(el).outerWidth(),$(el).outerHeight()))	
-        var same_size_parents = Array.from(_profElem.parents())
-            .map(function (el) { return $(el); })
-            .filter(function (el) {
-            return el.attr('jb-ctx');
-        })
-            .map(function (el) {
-            return el.children().first();
-        })
-            .filter(function (el) {
-            return profElem.outerWidth() >= el.outerWidth() && profElem.outerHeight() >= el.outerHeight();
-        })
-            .map(function (el) {
-            return studio_tgp_model_1.model.shortTitle(pathFromElem(_window, el));
-        })
-            .join(', ');
-        $el.find('.title .text').text(cmp.title + same_size_parents);
+        $el.find('.title .text').text(cmp.title);
         cmp.titleBelow = top - $titleText.outerHeight() - 6 < $(_window).scrollTop();
         cmp.titleTop = cmp.titleBelow ? cmp.top + cmp.height : cmp.top - $titleText.outerHeight() - 6;
         cmp.titleLeft = cmp.left + (cmp.width - $titleText.outerWidth()) / 2;
@@ -122,6 +114,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                             var keyUpEm = jb_rx.Observable.fromEvent(document, 'keyup')
                                 .merge(jb_rx.Observable.fromEvent((jbart.previewWindow || {}).document, 'keyup'));
                             mouseMoveEm
+                                .debounceTime(50)
                                 .takeUntil(keyUpEm.filter(function (e) {
                                 return e.keyCode == 27;
                             })
@@ -131,7 +124,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                                     ctx.vars.$dialog.close({ OK: false });
                             })
                                 .map(function (e) {
-                                return eventToProfileElem(e, _window);
+                                return eventToProfileElemWithRandomSelection(e, _window);
                             })
                                 .filter(function (x) { return x && x.length > 0; })
                                 .do(function (profElem) {
