@@ -145,34 +145,36 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model'], funct
                     { id: 'path', as: 'string' }
                 ],
                 impl: function (ctx, path) {
-                    var _window = jbart.previewWindow || window;
-                    if (!_window)
-                        return;
-                    var elems = Array.from(_window.document.querySelectorAll('[jb-ctx]'))
-                        .filter(function (e) {
-                        return _window.jbart.ctxDictionary[e.getAttribute('jb-ctx')].path == path;
-                    });
-                    if (elems.length == 0)
-                        elems = Array.from(document.querySelectorAll('[jb-ctx]'))
+                    ctx.vars.ngZone.runOutsideAngular(function () {
+                        var _window = jbart.previewWindow || window;
+                        if (!_window)
+                            return;
+                        var elems = Array.from(_window.document.querySelectorAll('[jb-ctx]'))
                             .filter(function (e) {
-                            return jbart.ctxDictionary[e.getAttribute('jb-ctx')].path == path;
+                            return _window.jbart.ctxDictionary[e.getAttribute('jb-ctx')].path == path;
                         });
-                    var boxes = [];
-                    //		$('.jbstudio_highlight_in_preview').remove();
-                    elems.map(function (el) { return $(el).children().first(); })
-                        .forEach(function ($el) {
-                        var $box = $('<div class="jbstudio_highlight_in_preview"/>');
-                        $box.css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue', opacity: '1', zIndex: 5000 }); // cannot assume css class in preview window
-                        var offset = $el.offset();
-                        $box.css('left', offset.left).css('top', offset.top).width($el.outerWidth()).height($el.outerHeight());
-                        if ($box.width() == $(_window.document.body).width())
-                            $box.width($box.width() - 10);
-                        boxes.push($box[0]);
-                    });
-                    $(_window.document.body).append($(boxes));
-                    $(boxes).css({ opacity: 0.5 }).
-                        fadeTo(1500, 0, function () {
-                        $(boxes).remove();
+                        if (elems.length == 0)
+                            elems = Array.from(document.querySelectorAll('[jb-ctx]'))
+                                .filter(function (e) {
+                                return jbart.ctxDictionary[e.getAttribute('jb-ctx')].path == path;
+                            });
+                        var boxes = [];
+                        //		$('.jbstudio_highlight_in_preview').remove();
+                        elems.map(function (el) { return $(el).children().first(); })
+                            .forEach(function ($el) {
+                            var $box = $('<div class="jbstudio_highlight_in_preview"/>');
+                            $box.css({ position: 'absolute', background: 'rgb(193, 224, 228)', border: '1px solid blue', opacity: '1', zIndex: 5000 }); // cannot assume css class in preview window
+                            var offset = $el.offset();
+                            $box.css('left', offset.left).css('top', offset.top).width($el.outerWidth()).height($el.outerHeight());
+                            if ($box.width() == $(_window.document.body).width())
+                                $box.width($box.width() - 10);
+                            boxes.push($box[0]);
+                        });
+                        $(_window.document.body).append($(boxes));
+                        $(boxes).css({ opacity: 0.5 }).
+                            fadeTo(1500, 0, function () {
+                            $(boxes).remove();
+                        });
                     });
                 }
             });

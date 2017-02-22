@@ -125,10 +125,10 @@ class jbComponent {
 	createComp() {
 	    if (!this.annotations.selector)	this.annotations.selector = 'jb-comp';
 
-	    var Cmp = function(elementRef, changeDetection, renderer) { this.elementRef = elementRef; this.changeDt =  changeDetection; this.renderer = renderer }
+	    var Cmp = function(elementRef, ngZone, changeDetection, renderer) { this.elementRef = elementRef; this.ngZone = ngZone; this.changeDt =  changeDetection; this.renderer = renderer }
 		Cmp = Reflect.decorate([
 			Component(this.annotations),
-			Reflect.metadata('design:paramtypes', [ElementRef, ChangeDetectorRef, Renderer])
+			Reflect.metadata('design:paramtypes', [ElementRef, NgZone, ChangeDetectorRef, Renderer])
 		], Cmp);
 		injectLifeCycleMethods(Cmp);
 		return Cmp;
@@ -257,47 +257,55 @@ export function Comp(options,ctx) {
 
 export function injectLifeCycleMethods(Cmp) {
 	Cmp.prototype.ngOnInit = function() {
-		try {
-			if (this.methodHandler.jbObservableFuncs.length) {
-				this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
-				this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
-			}
-    		this.refreshCtx = (ctx2) => {
-				this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
-	    			this.ctx = extendCtx(ctx2,this);
-	    		})
-	    		return this.ctx;
-	    	}
-	    	this.refreshCtx(this.ctx);
-			this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
-			this.methodHandler.jbInitFuncs.forEach(init=> init(this));
-	    } catch(e) { jb.logException(e,'') }
+	  	this.ngZone.runOutsideAngular(() => {
+			try {
+				if (this.methodHandler.jbObservableFuncs.length) {
+					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
+					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
+				}
+	    		this.refreshCtx = (ctx2) => {
+					this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
+		    			this.ctx = extendCtx(ctx2,this);
+		    		})
+		    		return this.ctx;
+		    	}
+		    	this.refreshCtx(this.ctx);
+				this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
+				this.methodHandler.jbInitFuncs.forEach(init=> init(this));
+		    } catch(e) { jb.logException(e,'') }
+		 })
 	}
 	Cmp.prototype.ngAfterViewInit = function() {
-		this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
-		if (this.jbEmitter) {
-			this.jbEmitter.next('after-init');
-			jb_native_delay(1).then(()=>{ 
-				if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
-					this.jbEmitter.next('after-init-children');
-					if (this.readyCounter == null)
-						this.jbEmitter.next('ready');
-				}
-			})
-		}
+    	this.ngZone.runOutsideAngular(() => {
+			this.methodHandler.jbAfterViewInitFuncs.forEach(init=> init(this));
+			if (this.jbEmitter) {
+				this.jbEmitter.next('after-init');
+				jb_native_delay(1).then(()=>{ 
+					if (this.jbEmitter && !this.jbEmitter.hasCompleted) {
+						this.jbEmitter.next('after-init-children');
+						if (this.readyCounter == null)
+							this.jbEmitter.next('ready');
+					}
+				})
+			}
+		})
 	}
 
 	Cmp.prototype.ngDoCheck = function() {
-		this.methodHandler.jbCheckFuncs.forEach(f=> 
-			f(this));
-		this.refreshModel && this.refreshModel();
-		this.jbEmitter && this.jbEmitter.next('check');
+    	this.ngZone.runOutsideAngular(() => {
+			this.methodHandler.jbCheckFuncs.forEach(f=> 
+				f(this));
+			this.refreshModel && this.refreshModel();
+			this.jbEmitter && this.jbEmitter.next('check');
+		})
 	}
 	Cmp.prototype.ngOnDestroy = function() {
-		this.methodHandler.jbDestroyFuncs.forEach(f=> 
-			f(this));
-		this.jbEmitter && this.jbEmitter.next('destroy');
-		this.jbEmitter && this.jbEmitter.complete();
+    	this.ngZone.runOutsideAngular(() => {
+			this.methodHandler.jbDestroyFuncs.forEach(f=> 
+				f(this));
+			this.jbEmitter && this.jbEmitter.next('destroy');
+			this.jbEmitter && this.jbEmitter.complete();
+		})
 	}
 
 	// Cmp.prototype.jbWait = function () {
@@ -343,15 +351,17 @@ export class jbComp {
   	if (!comp) return;
   	this._comp = comp.comp || comp;
   	this.view.clear();
-  	[this._comp]
-  		.filter(comp=>comp.compile)
-  		.forEach(comp=>{
-//  			jb.logError('draw');
-	  		var componentFactory = comp.compile(this.compiler);
-		   	var cmp_ref = this.view.createComponent(componentFactory);
-		   	comp.registerMethods && comp.registerMethods(cmp_ref);
-//			this.ngZone.run(()=>{});
-	 	})
+  	this.ngZone.runOutsideAngular(() => {
+	  	[this._comp]
+	  		.filter(comp=>comp.compile)
+	  		.forEach(comp=>{
+	//  			jb.logError('draw');
+		  		var componentFactory = comp.compile(this.compiler);
+			   	var cmp_ref = this.view.createComponent(componentFactory);
+			   	comp.registerMethods && comp.registerMethods(cmp_ref);
+	//			this.ngZone.run(()=>{});
+		 	})
+  	})
   }
 
   destroyNotifier = new jb_rx.Subject();

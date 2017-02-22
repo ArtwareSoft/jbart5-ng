@@ -217,7 +217,7 @@ function jbLoadModules(modules) {
   return new Promise(resolve=>
     modules
     .map(m=>
-      m.match(/^projects\/.*js$/) ? m.replace('projects/','projects_js') : m)
+      m.match(/^projects\/.*js$/) ? m.replace('projects/','projects_js/') : m)
     .map(x=>{
       System.import(x).then(res=>{
           //console.log(x+ ' loaded successfuly');

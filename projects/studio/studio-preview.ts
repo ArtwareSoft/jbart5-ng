@@ -22,6 +22,7 @@ var modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
 
 
 function studioAutoRefreshComp(jbComp) {
+  jbComp.ngZone.runOutsideAngular(() => {
     modifiedCtrlsEm
       .flatMap(e=> {
         var comp = jbComp._comp;
@@ -49,9 +50,11 @@ function studioAutoRefreshComp(jbComp) {
             studioActivityEm.next(previewRefreshCounter++); // refresh preview
          }
       })
+    })
 }
 
 function studioAutoRefreshWidget(widget) {
+  widget.ngZone.runOutsideAngular(() => {
     var counterChange = studioActivityEm.map(x=>previewRefreshCounter).distinctUntilChanged();
 
     var compIdEm = studioActivityEm
@@ -64,6 +67,7 @@ function studioAutoRefreshWidget(widget) {
             jb_logException(e))
       .subscribe(()=>
           widget.draw())
+    })
 }
 
 function renderWidget(ctx) {

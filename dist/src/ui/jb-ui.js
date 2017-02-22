@@ -53,54 +53,62 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     function injectLifeCycleMethods(Cmp) {
         Cmp.prototype.ngOnInit = function () {
             var _this = this;
-            try {
-                if (this.methodHandler.jbObservableFuncs.length) {
-                    this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
-                    this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
+            this.ngZone.runOutsideAngular(function () {
+                try {
+                    if (_this.methodHandler.jbObservableFuncs.length) {
+                        _this.jbEmitter = _this.jbEmitter || new jb_rx.Subject();
+                        _this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
+                    }
+                    _this.refreshCtx = function (ctx2) {
+                        _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
+                            _this.ctx = extendCtx(ctx2, _this);
+                        });
+                        return _this.ctx;
+                    };
+                    _this.refreshCtx(_this.ctx);
+                    _this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
+                    _this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
                 }
-                this.refreshCtx = function (ctx2) {
-                    _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
-                        _this.ctx = extendCtx(ctx2, _this);
-                    });
-                    return _this.ctx;
-                };
-                this.refreshCtx(this.ctx);
-                this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
-                this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
-            }
-            catch (e) {
-                jb_core_1.jb.logException(e, '');
-            }
+                catch (e) {
+                    jb_core_1.jb.logException(e, '');
+                }
+            });
         };
         Cmp.prototype.ngAfterViewInit = function () {
             var _this = this;
-            this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
-            if (this.jbEmitter) {
-                this.jbEmitter.next('after-init');
-                jb_native_delay(1).then(function () {
-                    if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
-                        _this.jbEmitter.next('after-init-children');
-                        if (_this.readyCounter == null)
-                            _this.jbEmitter.next('ready');
-                    }
-                });
-            }
+            this.ngZone.runOutsideAngular(function () {
+                _this.methodHandler.jbAfterViewInitFuncs.forEach(function (init) { return init(_this); });
+                if (_this.jbEmitter) {
+                    _this.jbEmitter.next('after-init');
+                    jb_native_delay(1).then(function () {
+                        if (_this.jbEmitter && !_this.jbEmitter.hasCompleted) {
+                            _this.jbEmitter.next('after-init-children');
+                            if (_this.readyCounter == null)
+                                _this.jbEmitter.next('ready');
+                        }
+                    });
+                }
+            });
         };
         Cmp.prototype.ngDoCheck = function () {
             var _this = this;
-            this.methodHandler.jbCheckFuncs.forEach(function (f) {
-                return f(_this);
+            this.ngZone.runOutsideAngular(function () {
+                _this.methodHandler.jbCheckFuncs.forEach(function (f) {
+                    return f(_this);
+                });
+                _this.refreshModel && _this.refreshModel();
+                _this.jbEmitter && _this.jbEmitter.next('check');
             });
-            this.refreshModel && this.refreshModel();
-            this.jbEmitter && this.jbEmitter.next('check');
         };
         Cmp.prototype.ngOnDestroy = function () {
             var _this = this;
-            this.methodHandler.jbDestroyFuncs.forEach(function (f) {
-                return f(_this);
+            this.ngZone.runOutsideAngular(function () {
+                _this.methodHandler.jbDestroyFuncs.forEach(function (f) {
+                    return f(_this);
+                });
+                _this.jbEmitter && _this.jbEmitter.next('destroy');
+                _this.jbEmitter && _this.jbEmitter.complete();
             });
-            this.jbEmitter && this.jbEmitter.next('destroy');
-            this.jbEmitter && this.jbEmitter.complete();
         };
         // Cmp.prototype.jbWait = function () {
         // 	this.readyCounter = (this.readyCounter || 0)+1;
@@ -283,10 +291,10 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 jbComponent.prototype.createComp = function () {
                     if (!this.annotations.selector)
                         this.annotations.selector = 'jb-comp';
-                    var Cmp = function (elementRef, changeDetection, renderer) { this.elementRef = elementRef; this.changeDt = changeDetection; this.renderer = renderer; };
+                    var Cmp = function (elementRef, ngZone, changeDetection, renderer) { this.elementRef = elementRef; this.ngZone = ngZone; this.changeDt = changeDetection; this.renderer = renderer; };
                     Cmp = Reflect.decorate([
                         core_1.Component(this.annotations),
-                        Reflect.metadata('design:paramtypes', [core_1.ElementRef, core_1.ChangeDetectorRef, core_1.Renderer])
+                        Reflect.metadata('design:paramtypes', [core_1.ElementRef, core_1.NgZone, core_1.ChangeDetectorRef, core_1.Renderer])
                     ], Cmp);
                     injectLifeCycleMethods(Cmp);
                     return Cmp;
@@ -426,14 +434,16 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         return;
                     this._comp = comp.comp || comp;
                     this.view.clear();
-                    [this._comp]
-                        .filter(function (comp) { return comp.compile; })
-                        .forEach(function (comp) {
-                        //  			jb.logError('draw');
-                        var componentFactory = comp.compile(_this.compiler);
-                        var cmp_ref = _this.view.createComponent(componentFactory);
-                        comp.registerMethods && comp.registerMethods(cmp_ref);
-                        //			this.ngZone.run(()=>{});
+                    this.ngZone.runOutsideAngular(function () {
+                        [_this._comp]
+                            .filter(function (comp) { return comp.compile; })
+                            .forEach(function (comp) {
+                            //  			jb.logError('draw');
+                            var componentFactory = comp.compile(_this.compiler);
+                            var cmp_ref = _this.view.createComponent(componentFactory);
+                            comp.registerMethods && comp.registerMethods(cmp_ref);
+                            //			this.ngZone.run(()=>{});
+                        });
                     });
                 };
                 jbComp.prototype.ngOnDestroy = function () {

@@ -45,9 +45,6 @@ jb.component('studio.select-PT', {
         controls: [
           {$: 'picklist', 
             options :{$: 'picklist.optionsByComma', options: 'a,b,c' }, 
-            style :{$: 'picklist.from-itemlist', 
-              style :{$: 'itemlist.ul-li' }
-            }
           }, 
           {$: 'itemlist', 
             title: 'items', 

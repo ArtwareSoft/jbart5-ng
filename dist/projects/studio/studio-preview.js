@@ -13,48 +13,52 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
     var jb_core_1, studio_tgp_model_1, studio_path_1, platform_browser_1, core_1, studio_utils_1;
     var previewRefreshCounter, modifiedCtrlsEm;
     function studioAutoRefreshComp(jbComp) {
-        modifiedCtrlsEm
-            .flatMap(function (e) {
-            var comp = jbComp._comp;
-            if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-                //            jb_native_delay(100).then(() => {// highlight on delay
-                var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
-                elemToHighlight.addClass('jb-highlight-comp-changed');
-                //            });
-                if (studio_path_1.profileFromPath) {
-                    var prof = studio_path_1.profileFromPath(e.path);
-                    var ctxToRun = comp.ctx.ctx({ profile: prof, comp: e.path, path: '' });
-                    var comp = ctxToRun.runItself();
-                    return [comp];
+        jbComp.ngZone.runOutsideAngular(function () {
+            modifiedCtrlsEm
+                .flatMap(function (e) {
+                var comp = jbComp._comp;
+                if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
+                    //            jb_native_delay(100).then(() => {// highlight on delay
+                    var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
+                    elemToHighlight.addClass('jb-highlight-comp-changed');
+                    //            });
+                    if (studio_path_1.profileFromPath) {
+                        var prof = studio_path_1.profileFromPath(e.path);
+                        var ctxToRun = comp.ctx.ctx({ profile: prof, comp: e.path, path: '' });
+                        var comp = ctxToRun.runItself();
+                        return [comp];
+                    }
                 }
-            }
-            return [];
-        })
-            .catch(function (e) {
-            return jb_logException(e);
-        })
-            .takeUntil(jbComp.destroyNotifier.toPromise())
-            .subscribe(function (comp) {
-            if (comp != jbComp._comp) {
-                jbComp.draw(comp);
-                studio_utils_1.studioActivityEm.next((exports_1("previewRefreshCounter", ++previewRefreshCounter) - 1)); // refresh preview
-            }
+                return [];
+            })
+                .catch(function (e) {
+                return jb_logException(e);
+            })
+                .takeUntil(jbComp.destroyNotifier.toPromise())
+                .subscribe(function (comp) {
+                if (comp != jbComp._comp) {
+                    jbComp.draw(comp);
+                    studio_utils_1.studioActivityEm.next((exports_1("previewRefreshCounter", ++previewRefreshCounter) - 1)); // refresh preview
+                }
+            });
         });
     }
     function studioAutoRefreshWidget(widget) {
-        var counterChange = studio_utils_1.studioActivityEm.map(function (x) { return previewRefreshCounter; }).distinctUntilChanged();
-        var compIdEm = studio_utils_1.studioActivityEm
-            .startWith(1)
-            .map(function () {
-            return widget.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
-        })
-            .distinctUntilChanged()
-            .merge(counterChange)
-            .catch(function (e) {
-            return jb_logException(e);
-        })
-            .subscribe(function () {
-            return widget.draw();
+        widget.ngZone.runOutsideAngular(function () {
+            var counterChange = studio_utils_1.studioActivityEm.map(function (x) { return previewRefreshCounter; }).distinctUntilChanged();
+            var compIdEm = studio_utils_1.studioActivityEm
+                .startWith(1)
+                .map(function () {
+                return widget.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
+            })
+                .distinctUntilChanged()
+                .merge(counterChange)
+                .catch(function (e) {
+                return jb_logException(e);
+            })
+                .subscribe(function () {
+                return widget.draw();
+            });
         });
     }
     function renderWidget(ctx) {

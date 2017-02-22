@@ -168,6 +168,7 @@ jb.component('studio.highlight-in-preview',{
 		{ id: 'path', as: 'string' }
 	],
 	impl: (ctx,path) => {
+     ctx.vars.ngZone.runOutsideAngular(() => {
 		var _window = jbart.previewWindow || window;
 		if (!_window) return;
 		var elems = Array.from(_window.document.querySelectorAll('[jb-ctx]'))
@@ -200,5 +201,6 @@ jb.component('studio.highlight-in-preview',{
 			fadeTo(1500,0,function() {
 				$(boxes).remove();
 			});
-	}
+  	})
+  }
 })
