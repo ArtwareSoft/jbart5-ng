@@ -20,6 +20,12 @@ jb.component('field.databind', {
   }}
 })
 
+jb.component('field.data', {
+  type: 'data',
+  impl: ctx =>
+    ctx.vars.$model.databind
+})
+
 jb.component('field.default', {
   type: 'feature',
   params: [

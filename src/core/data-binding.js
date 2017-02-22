@@ -15,6 +15,10 @@ function jb_writeToResource(resource,val,ctx) {
     ctx.resources[resource] = val;
 }
 
+function jb_isRef(value) {
+  return value && (value.$jb_parent || value.$jb_val);
+}
+
 function jb_objectProperty(_object,property,jstype,lastInExpression) {
   var object = jb_val(_object);
   if (!object) return null;
@@ -23,8 +27,12 @@ function jb_objectProperty(_object,property,jstype,lastInExpression) {
   if (lastInExpression) {
     if (jstype == 'string' || jstype == 'boolean' || jstype == 'number')
       return jbart.jstypes[jstype](object[property]); // no need for valueByRef
-    if (jstype == 'ref')
-      return { $jb_parent: object, $jb_property: property };
+    if (jstype == 'ref') {
+      if (jb_isRef(object[property]))
+        return object[property];
+      else
+        return { $jb_parent: object, $jb_property: property };
+    }
   }
   return object[property];
 }

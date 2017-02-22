@@ -17,27 +17,52 @@ select[disabled], select[readonly] { background-color: #eeeeee; opacity: 1; }
   }
 })
 
-jb.component('picklist.from-itemlist', {
+jb.component('picklist.selection-list', {
   type: 'picklist.style',
   params: [
-    { id: 'style', type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
-    { id: 'control', type: 'control', dynamic: true, 
-      defaultValue :{$: 'label', title: '%text%', style: {$: 'label.mdl-ripple-effect' } }
-    },
-    { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true,
-      defaultValue :{$: 'itemlist.selection', databind: {$: 'picklist.selected' } }
-    },
+    { id: 'width', as : 'number' },
   ],
   impl :{$: 'style-by-control', __innerImplementation: true,
     modelVar: 'picklistModel',
     control :{$: 'itemlist', 
       items: '%$picklistModel/options%',
-      style :{$call: 'style' },
-      controls :{$call : 'control'},
-      features :{$call: 'features' }
+      style :{ $: 'itemlist.ul-li' },
+      controls :{$: 'label', 
+        title: '%text%', 
+        style :{$: 'label.mdl-ripple-effect' }, 
+        features: [
+          {$: 'css.width', width: '%$width%' }, 
+          {$: 'css', css: '{text-align: left}' }
+        ]
+      },
+      features :{$: 'itemlist.selection', 
+        onSelection :{$: 'writeValue', value: '%code%', to: '%$picklistModel/databind%' } 
+      }
     }
   }
 })
+
+// jb.component('picklist.from-itemlist', {
+//   type: 'picklist.style',
+//   params: [
+//     { id: 'style', type: 'itemlist.style', dynamic: true , defaultValue: { $: 'itemlist.ul-li' } },
+//     { id: 'control', type: 'control', dynamic: true, 
+//       defaultValue :{$: 'label', title: '%text%', style: {$: 'label.mdl-ripple-effect' } }
+//     },
+//     { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true,
+//       defaultValue :{$: 'itemlist.selection', databind: {$: 'picklist.selected' } }
+//     },
+//   ],
+//   impl :{$: 'style-by-control', __innerImplementation: true,
+//     modelVar: 'picklistModel',
+//     control :{$: 'itemlist', 
+//       items: '%$picklistModel/options%',
+//       style :{$call: 'style' },
+//       controls :{$call : 'control'},
+//       features :{$call: 'features' }
+//     }
+//   }
+// })
 
 jb.component('picklist.groups', {
   type: 'picklist.style',
