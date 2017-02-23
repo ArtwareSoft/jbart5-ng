@@ -1,7 +1,7 @@
 jb.type('editable-text.style');
 
 jb.component('editable-text', {
-  type: 'control', category: 'field:100',
+  type: 'control', category: 'input:100',
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'databind', as: 'ref'},

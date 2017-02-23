@@ -1,5 +1,3 @@
-jbLoadModules(['jb-core']).then(loadedModules => { var jb = loadedModules['jb-core'].jb;
-
 jb.component('studio-tree-test.cmp1', {
   impl :{$: 'list', items: ['a.1', 'b.2'] }, 
 })
@@ -103,4 +101,3 @@ jb.component('studio-tree-test.actions-sugar2b', {
 	}
 })
 
-})

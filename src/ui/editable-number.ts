@@ -4,7 +4,7 @@ import * as jb_ui from 'jb-ui/jb-ui';
 jb.type('editable-number.style');
 
 jb.component('editable-number', {
-  type: 'control', category: 'field:30',
+  type: 'control', category: 'input:30',
   params: [
     { id: 'databind', as: 'ref'},
     { id: 'title', as: 'string' , dynamic: true },

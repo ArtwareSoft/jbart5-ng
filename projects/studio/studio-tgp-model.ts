@@ -508,3 +508,5 @@ export class TgpModel {
 }
 
 export var model = new TgpModel('');
+if (typeof window != 'undefined') 
+	window.jbStudioModel = model;

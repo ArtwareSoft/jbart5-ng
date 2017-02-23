@@ -1,12 +1,12 @@
-import {jb} from 'jb-core';
-import {model} from './studio-tgp-model';
+jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => { 
+	var model = loadedModules['studio/studio-tgp-model'].model;
 
-jb.component('studio.short-title',{
+jb.component('studio.short-title', {
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.shortTitle(path)
 })
 
-jb.component('studio.val',{
+jb.component('studio.val', {
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => 
 		model.val(path)
@@ -33,6 +33,40 @@ jb.component('studio.PTs-of-type', {
   ],
   impl: (context,_type) => 
       model.PTsOfType(_type)
+})
+
+jb.component('studio.categories-of-type', {
+  params: [ 
+  	{ id: 'type', as: 'string', essential: true },
+  ],
+  impl: (context,_type,marks,allCategory) => {
+  	var comps = (jbart.previewjbart || jbart).comps;
+  	var pts = model.PTsOfType(_type);
+  	var categories = [].concat.apply([],pts.map(pt=>
+  		(comps[pt].category||'').split(',').map(c=>c.split(':')[0])
+  			.concat(pt.indexOf('.') != -1 ? pt.split('.')[0] : [])
+  			.filter(x=>x)))
+  			.filter(jb_unique(x=>x))
+  			.map(c=>({
+  				name: c,
+  				pts: ptsOfCategory(c)
+  			}));
+  	return categories.concat({name: 'all', pts: pts });
+
+  	function ptsOfCategory(category) {
+      var pts_with_marks = pts.filter(pt=>
+      		pt.split('.')[0] == category || 
+      		(comps[pt].category||'').split(',').map(x=>x.split(':')[0]).indexOf(category) == 0)
+      	.map(pt=>({
+	      	pt: pt,
+	      	mark: (comps[pt].category||'').split(',')
+	      		.filter(c=>c.indexOf(category) == 0)
+	      		.map(c=>Number(c.split(':')[1] || 50))[0]
+	      }));
+	  pts_with_marks.sort((c1,c2)=>c2.mark-c1.mark);
+	  return pts_with_marks.map(pt=>pt.pt)
+  	}
+  }
 })
 
 jb.component('studio.short-title', {
@@ -181,11 +215,16 @@ jb.component('studio.add-array-item',{
 		model.modify(model.addArrayItem, path, { toAdd: toAdd },context,true)
 })
 
-
 jb.component('studio.delete',{
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => model.modify(model._delete,path,{},context,true)
+})
+
+jb.component('studio.make-local',{
+	type: 'action',
+	params: [ {id: 'path', as: 'string' } ],
+	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context,true)
 })
 
 jb.component('studio.make-local',{
@@ -227,4 +266,4 @@ jb.component('studio.components-statistics',{
 
 
 
-
+})

@@ -3,7 +3,7 @@ jb.type('picklist.options');
 jb.type('picklist.promote');
 
 jb.component('picklist', {
-  type: 'control', category: 'field:80',
+  type: 'control', category: 'input:80',
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'databind', as: 'ref'},
@@ -104,6 +104,27 @@ jb.component('picklist.coded-options',{
   }
 })
 
+jb.component('picklist.sorted-options',{
+  type: 'picklist.options',
+  params: [ 
+    { id: 'options', type: 'picklist.options', dynamic: true, essential: true, composite: true },
+    { id: 'marks', as: 'string', description: 'e.g input:80,group:90. 0 mark means hidden' },
+  ],
+  impl: (ctx,optionsFunc,marks) => {
+    var options = optionsFunc() || [];
+    marks.split(',').forEach(mark=> { 
+        var parts = mark.split(':');
+        var option = options.filter(opt=>opt.code == parts[0])[0];
+        if (option)
+          option.mark = Number(parts[1] || 50);
+    });
+    options = options.filter(op=>op.mark != 0);
+    options.sort((o1,o2)=>(o2.mark || 50) - (o1.mark || 50));
+    return options;
+  }
+})
+
+
 jb.component('picklist.promote',{
   type: 'picklist.promote',
   params: [ 
@@ -113,3 +134,16 @@ jb.component('picklist.promote',{
   impl: (context,groups,options) => 
     ({ groups: groups, options: options})
 });
+
+
+jb.component('picklist.selected', {
+  type: 'data',
+  params: [
+    { id: 'recalcEm', as: 'observable'}
+  ],
+  impl: ctx => ({
+    $jb_val: val => {
+
+    }
+  })
+})

@@ -2,7 +2,7 @@ jb.type('editable-boolean.style');
 jb.type('editable-boolean.yes-no-settings');
 
 jb.component('editable-boolean',{
-  type: 'control', category: 'field:20',
+  type: 'control', category: 'input:20',
   params: [
     { id: 'databind', as: 'ref'},
     { id: 'style', type: 'editable-boolean.style', defaultValue: { $: 'editable-boolean.checkbox' }, dynamic: true },

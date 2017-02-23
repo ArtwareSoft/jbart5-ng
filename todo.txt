@@ -1,7 +1,7 @@
 itemlist - one control.
 
 3. Contorl Search - don't remember last search
-4. Control Search - add X for editbox
+4. Control Search - add X for editbox - as in chrome debuger
 5. Control Search - join two scroll bars into one
 6. Control Search - auto focus on search box
 6. Control Search - highlight search pattern on reasults

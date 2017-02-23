@@ -509,16 +509,6 @@ jb.component('studio.tgp-path-options',{
 			.concat(model.PTsOfPath(path).map(op=> ({ code: op, text: op})))
 })
 
-jb.component('studio.tgp-type-options',{
-	type: 'picklist.options',
-	params: [ 
-		{ id: 'type', as: 'string'} 
-	],
-	impl: (context,type) => 
-			model.PTsOfType(type).map(op=>({ code: op, text: op}))
-})
-
-
 jb.component('studio.refresh-options-watch', {
   type: 'feature',
   impl :{$: 'picklist.dynamic-options', 

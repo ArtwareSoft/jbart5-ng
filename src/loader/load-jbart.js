@@ -129,10 +129,10 @@ jb_modules =
 'testing/ui-testers-ctrls',
 ];
 
-jb_studio_modules = ['tgp-model','model-components','path','utils','main','preview','menu','toolbar','tests','popups'
+jb_studio_modules = ['tgp-model','model-components.js','path','utils','main','preview','menu','toolbar','tests','popups'
 ,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
-  .map(x=>'studio/studio-' + x)
+  .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 
 jb_system_config = {
     paths: {
@@ -143,7 +143,7 @@ jb_system_config = {
       'ui/*.js': { format: 'global', scriptLoad: true }, 
       'src/ui/*.js': { format: 'global', scriptLoad: true }, 
       '/src/ui/*.js': { format: 'global', scriptLoad: true }, 
-      'projects_js/*/*.js': { format: 'global', scriptLoad: true }, 
+      'projects_js/studio/*.js': { format: 'global', scriptLoad: true }, 
       'testing/*.js': { format: 'global', scriptLoad: true }, 
       // 'src/**': { scriptLoad: true }, 
       // 'ui/**': { scriptLoad: true }, 
@@ -218,6 +218,7 @@ function jbLoadModules(modules) {
     modules
     .map(m=>
       m.match(/^projects\/.*js$/) ? m.replace('projects/','projects_js/') : m)
+//    .filter(m=>console.log(m),true)
     .map(x=>{
       System.import(x).then(res=>{
           //console.log(x+ ' loaded successfuly');

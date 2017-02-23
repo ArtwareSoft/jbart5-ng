@@ -424,9 +424,11 @@ function jb_isProfOfType(prof,type) {
 }
 
 // usage: .filter( jb_unique(x=>x.id) )
+// simple case: [1,2,3,3].filter((x,index,self)=>self.indexOf(x) === index)
 function jb_unique(mapFunc) { 
   function onlyUnique(value, index, self) { 
       return self.map(mapFunc).indexOf(mapFunc(value)) === index;
   }
   return onlyUnique;
 }
+

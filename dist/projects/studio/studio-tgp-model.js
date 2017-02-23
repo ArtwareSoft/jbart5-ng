@@ -482,6 +482,8 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
             }());
             exports_1("TgpModel", TgpModel);
             exports_1("model", model = new TgpModel(''));
+            if (typeof window != 'undefined')
+                window.jbStudioModel = model;
         }
     }
 });

@@ -493,15 +493,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         .concat(studio_tgp_model_1.model.PTsOfPath(path).map(function (op) { return ({ code: op, text: op }); }));
                 }
             });
-            jb_core_1.jb.component('studio.tgp-type-options', {
-                type: 'picklist.options',
-                params: [
-                    { id: 'type', as: 'string' }
-                ],
-                impl: function (context, type) {
-                    return studio_tgp_model_1.model.PTsOfType(type).map(function (op) { return ({ code: op, text: op }); });
-                }
-            });
             jb_core_1.jb.component('studio.refresh-options-watch', {
                 type: 'feature',
                 impl: { $: 'picklist.dynamic-options',

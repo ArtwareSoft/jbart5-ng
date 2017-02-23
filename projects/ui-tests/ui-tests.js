@@ -681,6 +681,20 @@ jb.component('ui-test.picklist', {
 },
 })
 
+jb.component('ui-test.picklist-sort', {
+   impl :{$: 'data-test', 
+    calculate: {$pipeline: [ 
+        { $: 'picklist.sorted-options' , 
+          options: {$: 'picklist.optionsByComma', options: 'a,b,c,d' },
+          marks: 'c:100,d:50,b:0,a:20'
+        }, 
+        '%text%', 
+        {$: 'join'} 
+      ]},
+    expectedResult :{$: 'contains', text: 'c,d,a' }
+  },
+})
+
 jb.component('ui-test.picklist-groups', {
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group', controls: 
