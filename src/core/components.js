@@ -838,6 +838,18 @@ jb_component('extractSuffix',{
 	}
 });
 
+jb_component('editable-primitive', {
+  type: 'data',
+  params: {
+    type: { type: 'data', as: 'string', options: 'string,number,boolean', defaultValue: 'string' },
+    initialValue: { type: 'data', as: 'string' }
+  },
+  impl: (ctx,_type,initialValue) => {
+    var res = { data: jbart.jstypes[_type](initialValue)};
+    return { $jb_parent: res, $jb_property: 'data' }
+  }
+})
+
 jb_component('onNextTimer',{
 	type: 'action',
 	params: [

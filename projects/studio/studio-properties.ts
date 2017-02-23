@@ -482,7 +482,7 @@ jb.component('studio.property-array', {
       }, 
       {$: 'button', 
         title: 'new feature', 
-        action :{$: 'studio.open-new-tgp-dialog', 
+        action :{$: 'studio.open-new-feature-dialog', 
           type: 'feature', 
           title: 'new feature',
           onOK: {$: 'studio.add-array-item', 

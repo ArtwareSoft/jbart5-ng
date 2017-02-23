@@ -92,6 +92,8 @@ function jb_run(context,parentParam,settings) {
 }
 
 function jb_compParams(comp) {
+  if (!comp || !comp.params) 
+    return [];
   return Array.isArray(comp.params) ? comp.params : jb_entries(comp.params).map(x=>jb_extend(x[1],jb_obj('id',x[0])));
 }
 

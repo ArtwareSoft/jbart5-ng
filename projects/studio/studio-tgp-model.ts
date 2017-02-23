@@ -76,12 +76,12 @@ export class TgpModel {
 
 			return [res_path];
 		} else if (comp) {
-			var composite = (comp.params || [])
+			var composite = jb_compParams(comp)
 				.filter(p=>
 					p.composite)
 				.map(p=>flattenArray(p.id));
 
-			return (composite[0] || []).concat((comp.params || [])
+			return (composite[0] || []).concat(jb_compParams(comp)
 					.filter(p=>!p.composite)
 					.map(p=> ({ path: path + '~' + p.id, param: p}))
 					.filter(e=>profileFromPath(e.path) != null || e.param.essential)
@@ -106,7 +106,7 @@ export class TgpModel {
 		var comp = getComp(jb.compName(val||{}));
 		if (comp) {
 			var existing = this.jbEditorSubNodes(path);
-			return (comp.params || [])
+			return jb_compParams(comp)
 					.map(p=> path + '~' + p.id)
 					.filter(p=> existing.indexOf(p) == -1)
 		}
@@ -296,8 +296,8 @@ export class TgpModel {
 		jb.writeValue(profileRefFromPath(path),result);
 	}
 	wrap(path,args) {
-		var compDef = getComp(args.compName);
-		var firstParam = ((compDef || {}).params || [])[0];
+		var comp = getComp(args.compName);
+		var firstParam = jb_compParams(comp)[0];
 		if (firstParam) {
 			var result = jb.extend({ $: args.compName }, jb.obj(firstParam.id, [profileFromPath(path)]));
 			jb.writeValue(profileRefFromPath(path),result);
@@ -341,7 +341,7 @@ export class TgpModel {
 		if (!compName || !comp) return;
 		var result = { $: compName };
 		var existing = profileFromPath(path);
-		(comp.params || []).forEach(p=>{
+		jb_compParams(comp).forEach(p=>{
 			if (p.composite)
 				result[p.id] = [];
 			if (existing && existing[p.id])
@@ -360,7 +360,7 @@ export class TgpModel {
 		if (!compName || !comp) return;
 		var result = { $: compName };
 		// copy default values
-		(comp.params || []).forEach(p=>{
+		jb_compParams(comp).forEach(p=>{
 			if (p.defaultValue || p.defaultTValue)
 				result[p.id] = JSON.parse(JSON.stringify(p.defaultValue || p.defaultTValue))
 		})
@@ -383,7 +383,7 @@ export class TgpModel {
 
 		var profile = profileFromPath(path);
 		// inject conditional param values
-		(comp.params||[]).forEach(p=>{ 
+		jb_compParams(comp).forEach(p=>{ 
 				var pUsage = '%$'+p.id+'%';
 				var pVal = '' + (profile[p.id] || p.defaultValue || '');
 				res = res.replace(new RegExp('{\\?(.*?)\\?}','g'),(match,condition_exp)=>{ // conditional exp
@@ -393,7 +393,7 @@ export class TgpModel {
 					});
 		});
 		// inject param values 
-		(comp.params||[]).forEach(p=>{ 
+		jb_compParams(comp).forEach(p=>{ 
 				var pVal = '' + (profile[p.id] || p.defaultValue || ''); // only primitives
 				res = res.replace(new RegExp(`%\\$${p.id}%`,'g') , pVal);
 		});
@@ -417,8 +417,8 @@ export class TgpModel {
 		if (!isNaN(Number(path.split('~').pop()))) // array elements
 			path = parentPath(path);
 		var parent_prof = profileFromPath(parentPath(path),true);
-		var compDef = parent_prof && getComp(jb.compName(parent_prof));
-		var params = (compDef || {}).params || [];
+		var comp = parent_prof && getComp(jb.compName(parent_prof));
+		var params = jb_compParams(comp);
 		var paramName = path.split('~').pop();
 		return params.filter(p=>p.id==paramName)[0] || {};
 	}
@@ -451,13 +451,13 @@ export class TgpModel {
 	controlParams(path) {
 		var prof = profileFromPath(path,true);
 		if (!prof) return [];
-		var params = (getComp(jb.compName(prof)) || {}).params || [];
+		var params = jb_compParams(getComp(jb.compName(prof)));
 		return params.filter(p=>(p.type||'').indexOf('control')!=-1).map(p=>p.id)
 	}
 	nonControlParams(path) {
 		var prof = profileFromPath(path);
 		if (!prof) return [];
-		var params = (getComp(jb.compName(prof)) || {}).params || [];
+		var params = jb_compParams(getComp(jb.compName(prof)));
 		return params.filter(p=>
 				(p.type||'').indexOf('control')==-1)
 			.map(p=>p.id)

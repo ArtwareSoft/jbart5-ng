@@ -182,9 +182,9 @@ export class suggestions {
         .filter( jb_unique(x=>x.toPaste) )
         .filter(x=> x.toPaste != this.tail)
         .filter(x=>
-          this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(this.tail) != -1)
+          this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(this.tail.toLowerCase()) != -1)
     if (this.tail)
-      this.options.sort((x,y)=> (y.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(this.tail) == 0 ? 1 : 0));
+      this.options.sort((x,y)=> (y.toPaste.toLowerCase().indexOf(this.tail.toLowerCase()) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(this.tail.toLowerCase()) == 0 ? 1 : 0));
 
     this.key = this.options.map(o=>o.toPaste).join(',');
     return this;

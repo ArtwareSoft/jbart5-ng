@@ -29,7 +29,7 @@ function jb_prettyPrintWithPositions(profile,colWidth,tabSize,initialPath) {
 
     var comp_name = jb_compName(obj);
     if (comp_name) { // tgp obj - sort by params def
-      var params = ((jbart.comps[comp_name] || {}).params || []).map(p=>p.id);
+      var params = jb_compParams(jbart.comps[comp_name]).map(p=>p.id);
       props.sort((p1,p2)=>params.indexOf(p1) - params.indexOf(p2));
     }
     if (props.indexOf('$') > 0) { // make the $ first

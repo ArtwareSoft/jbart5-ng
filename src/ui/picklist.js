@@ -77,7 +77,7 @@ jb.component('picklist.optionsByComma',{
 jb.component('picklist.options',{
   type: 'picklist.options',
   params: [ 
-    { id: 'options', as: 'array', essential: true},
+    { id: 'options', type: 'data', as: 'array', essential: true},
     { id: 'allowEmptyValue', type: 'boolean' },
   ],
   impl: function(context,options,allowEmptyValue) {

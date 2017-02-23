@@ -100,3 +100,14 @@ jb.component('studio.comp-source',{
 		compAsStr(comp.split('~')[0])
 })
 
+jb.component('studio.onNextModifiedPath', {
+	type: 'action',
+	params: [
+		{ id: 'action', type: 'action', dynamic: true, essential: true }
+	],
+	impl: (ctx,action) =>  
+		modifyOperationsEm.take(1)
+            .subscribe(e =>
+            	action(ctx.setVars({ modifiedPath: e.args.modifiedPath }))
+            )
+})

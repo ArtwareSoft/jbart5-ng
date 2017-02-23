@@ -176,8 +176,8 @@ jb.component('feature.emitter',{
 jb.component('var',{
   type: 'feature',
   params: [
-    { id: 'name', as: 'string'},
-    { id: 'value', dynamic: true },
+    { id: 'name', as: 'string', essential: true },
+    { id: 'value', dynamic: true, essential: true },
   ],
   impl: (context,name,value) => 
     jb.extend({}, name && {

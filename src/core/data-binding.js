@@ -48,3 +48,4 @@ function jb_val(val,applyFunction) {
 function jb_handledObject(object) {
   return object
 }
+

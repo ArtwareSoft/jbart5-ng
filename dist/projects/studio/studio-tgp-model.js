@@ -81,12 +81,12 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return [res_path];
                     }
                     else if (comp) {
-                        var composite = (comp.params || [])
+                        var composite = jb_compParams(comp)
                             .filter(function (p) {
                             return p.composite;
                         })
                             .map(function (p) { return flattenArray(p.id); });
-                        return (composite[0] || []).concat((comp.params || [])
+                        return (composite[0] || []).concat(jb_compParams(comp)
                             .filter(function (p) { return !p.composite; })
                             .map(function (p) { return ({ path: path + '~' + p.id, param: p }); })
                             .filter(function (e) { return studio_path_1.profileFromPath(e.path) != null || e.param.essential; })
@@ -107,7 +107,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var comp = studio_utils_1.getComp(jb_core_1.jb.compName(val || {}));
                     if (comp) {
                         var existing = this.jbEditorSubNodes(path);
-                        return (comp.params || [])
+                        return jb_compParams(comp)
                             .map(function (p) { return path + '~' + p.id; })
                             .filter(function (p) { return existing.indexOf(p) == -1; });
                     }
@@ -277,8 +277,8 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
                 };
                 TgpModel.prototype.wrap = function (path, args) {
-                    var compDef = studio_utils_1.getComp(args.compName);
-                    var firstParam = ((compDef || {}).params || [])[0];
+                    var comp = studio_utils_1.getComp(args.compName);
+                    var firstParam = jb_compParams(comp)[0];
                     if (firstParam) {
                         var result = jb_core_1.jb.extend({ $: args.compName }, jb_core_1.jb.obj(firstParam.id, [studio_path_1.profileFromPath(path)]));
                         jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
@@ -319,7 +319,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return;
                     var result = { $: compName };
                     var existing = studio_path_1.profileFromPath(path);
-                    (comp.params || []).forEach(function (p) {
+                    jb_compParams(comp).forEach(function (p) {
                         if (p.composite)
                             result[p.id] = [];
                         if (existing && existing[p.id])
@@ -338,7 +338,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         return;
                     var result = { $: compName };
                     // copy default values
-                    (comp.params || []).forEach(function (p) {
+                    jb_compParams(comp).forEach(function (p) {
                         if (p.defaultValue || p.defaultTValue)
                             result[p.id] = JSON.parse(JSON.stringify(p.defaultValue || p.defaultTValue));
                     });
@@ -360,7 +360,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var res = JSON.stringify(comp.impl, function (key, val) { return typeof val === 'function' ? '' + val : val; }, 4);
                     var profile = studio_path_1.profileFromPath(path);
                     // inject conditional param values
-                    (comp.params || []).forEach(function (p) {
+                    jb_compParams(comp).forEach(function (p) {
                         var pUsage = '%$' + p.id + '%';
                         var pVal = '' + (profile[p.id] || p.defaultValue || '');
                         res = res.replace(new RegExp('{\\?(.*?)\\?}', 'g'), function (match, condition_exp) {
@@ -370,7 +370,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         });
                     });
                     // inject param values 
-                    (comp.params || []).forEach(function (p) {
+                    jb_compParams(comp).forEach(function (p) {
                         var pVal = '' + (profile[p.id] || p.defaultValue || ''); // only primitives
                         res = res.replace(new RegExp("%\\$" + p.id + "%", 'g'), pVal);
                     });
@@ -390,8 +390,8 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     if (!isNaN(Number(path.split('~').pop())))
                         path = studio_path_1.parentPath(path);
                     var parent_prof = studio_path_1.profileFromPath(studio_path_1.parentPath(path), true);
-                    var compDef = parent_prof && studio_utils_1.getComp(jb_core_1.jb.compName(parent_prof));
-                    var params = (compDef || {}).params || [];
+                    var comp = parent_prof && studio_utils_1.getComp(jb_core_1.jb.compName(parent_prof));
+                    var params = jb_compParams(comp);
                     var paramName = path.split('~').pop();
                     return params.filter(function (p) { return p.id == paramName; })[0] || {};
                 };
@@ -427,14 +427,14 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var prof = studio_path_1.profileFromPath(path, true);
                     if (!prof)
                         return [];
-                    var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params || [];
+                    var params = jb_compParams(studio_utils_1.getComp(jb_core_1.jb.compName(prof)));
                     return params.filter(function (p) { return (p.type || '').indexOf('control') != -1; }).map(function (p) { return p.id; });
                 };
                 TgpModel.prototype.nonControlParams = function (path) {
                     var prof = studio_path_1.profileFromPath(path);
                     if (!prof)
                         return [];
-                    var params = (studio_utils_1.getComp(jb_core_1.jb.compName(prof)) || {}).params || [];
+                    var params = jb_compParams(studio_utils_1.getComp(jb_core_1.jb.compName(prof)));
                     return params.filter(function (p) {
                         return (p.type || '').indexOf('control') == -1;
                     })

@@ -94,7 +94,7 @@ jbCtx.prototype = {
   extendVars: function(ctx2,data2) { 
     if (ctx2 == null && data2 == null)
       return this;
-    return new jbCtx(this,{ vars: ctx2.vars, data: (data2 == null) ? ctx2.data : data2 })
+    return new jbCtx(this,{ vars: ctx2 ? ctx2.vars : null, data: (data2 == null) ? ctx2.data : data2 })
   },
   runItself: function(parentParam,settings) { return jb_run(this,parentParam,settings) },
 }

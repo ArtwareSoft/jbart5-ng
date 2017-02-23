@@ -34,8 +34,10 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     function ctrl(context) {
         var ctx = context.setVars({ $model: context.params });
         var styleOptions = defaultStyle(ctx);
-        if (styleOptions && styleOptions.methodHandler)
+        if (styleOptions && styleOptions.methodHandler) {
+            styleOptions.forceCtx = ctx;
             return styleOptions;
+        }
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
         function defaultStyle(ctx) {
             var profile = context.profile;
@@ -59,13 +61,13 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         _this.jbEmitter = _this.jbEmitter || new jb_rx.Subject();
                         _this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
                     }
-                    _this.refreshCtx = function (ctx2) {
+                    _this.refreshCtx = function (_) {
                         _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
-                            _this.ctx = extendCtx(ctx2, _this);
+                            _this.ctx = extendCtx(_this.ctx, _this);
                         });
                         return _this.ctx;
                     };
-                    _this.refreshCtx(_this.ctx);
+                    _this.refreshCtx();
                     _this.methodHandler.jbBeforeInitFuncs.forEach(function (init) { return init(_this); });
                     _this.methodHandler.jbInitFuncs.forEach(function (init) { return init(_this); });
                 }
@@ -258,9 +260,10 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     var elem = cmp_ref._hostElement.nativeElement;
                     while (ctx.profile.__innerImplementation)
                         ctx = ctx.componentContext._parent;
-                    elem.setAttribute('jb-ctx', ctx.id);
+                    var attachedCtx = this.forceCtx || ctx;
+                    elem.setAttribute('jb-ctx', attachedCtx.id);
                     garbageCollectCtxDictionary();
-                    jbart.ctxDictionary[ctx.id] = ctx;
+                    jbart.ctxDictionary[attachedCtx.id] = attachedCtx;
                     if (this.cssFixes.length > 0) {
                         var ngAtt = Array.from(elem.attributes).map(function (x) { return x.name; })
                             .filter(function (x) { return x.match(/_ng/); })[0];

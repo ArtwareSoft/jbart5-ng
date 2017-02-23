@@ -130,7 +130,7 @@ jb_modules =
 ];
 
 jb_studio_modules = ['tgp-model','model-components.js','path','utils','main','preview','menu','toolbar','tests','popups'
-,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control','testers'
+,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control.js','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
   .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 

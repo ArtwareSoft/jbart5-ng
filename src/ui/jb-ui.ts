@@ -90,9 +90,10 @@ class jbComponent {
 	  	var elem = cmp_ref._hostElement.nativeElement;
 	  	while (ctx.profile.__innerImplementation)
 	  		ctx = ctx.componentContext._parent;
-	  	elem.setAttribute('jb-ctx',ctx.id);
+	  	var attachedCtx = this.forceCtx || ctx;
+	  	elem.setAttribute('jb-ctx',attachedCtx.id);
 		garbageCollectCtxDictionary();
-		jbart.ctxDictionary[ctx.id] = ctx;
+		jbart.ctxDictionary[attachedCtx.id] = attachedCtx;
 
 		if (this.cssFixes.length > 0) {
 		  	var ngAtt = Array.from(elem.attributes).map(x=>x.name)
@@ -160,7 +161,8 @@ class jbComponent {
 		if (options.destroy) this.methodHandler.jbDestroyFuncs.push(options.destroy);
 		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
 //		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
-		if (options.extendCtx) this.methodHandler.extendCtxFuncs.push(options.extendCtx);
+		if (options.extendCtx) 
+			this.methodHandler.extendCtxFuncs.push(options.extendCtx);
 		if (options.extendComp) jb.extend(this,options.extendComp);
 
 	   	if (options.css)
@@ -237,8 +239,10 @@ class jbComponent {
 export function ctrl(context) {
 	var ctx = context.setVars({ $model: context.params });
 	var styleOptions = defaultStyle(ctx);
-	if (styleOptions && styleOptions.methodHandler) // style by control
+	if (styleOptions && styleOptions.methodHandler)  {// style by control
+		styleOptions.forceCtx = ctx;
 		return styleOptions;
+	}
 	return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
 
 	function defaultStyle(ctx) {
@@ -263,13 +267,13 @@ export function injectLifeCycleMethods(Cmp) {
 					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
 					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
 				}
-	    		this.refreshCtx = (ctx2) => {
+	    		this.refreshCtx = _ => {
 					this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
-		    			this.ctx = extendCtx(ctx2,this);
+		    			this.ctx = extendCtx(this.ctx,this);
 		    		})
 		    		return this.ctx;
 		    	}
-		    	this.refreshCtx(this.ctx);
+		    	this.refreshCtx();
 				this.methodHandler.jbBeforeInitFuncs.forEach(init=> init(this));
 				this.methodHandler.jbInitFuncs.forEach(init=> init(this));
 		    } catch(e) { jb.logException(e,'') }

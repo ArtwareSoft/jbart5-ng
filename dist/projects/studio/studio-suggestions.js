@@ -193,10 +193,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         .filter(jb_unique(function (x) { return x.toPaste; }))
                         .filter(function (x) { return x.toPaste != _this.tail; })
                         .filter(function (x) {
-                        return _this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(_this.tail) != -1;
+                        return _this.tail == '' || typeof x.toPaste != 'string' || (x.description + x.toPaste).toLowerCase().indexOf(_this.tail.toLowerCase()) != -1;
                     });
                     if (this.tail)
-                        this.options.sort(function (x, y) { return (y.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(_this.tail) == 0 ? 1 : 0); });
+                        this.options.sort(function (x, y) { return (y.toPaste.toLowerCase().indexOf(_this.tail.toLowerCase()) == 0 ? 1 : 0) - (x.toPaste.toLowerCase().indexOf(_this.tail.toLowerCase()) == 0 ? 1 : 0); });
                     this.key = this.options.map(function (o) { return o.toPaste; }).join(',');
                     return this;
                 };

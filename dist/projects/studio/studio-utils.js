@@ -106,6 +106,18 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     return compAsStr(comp.split('~')[0]);
                 }
             });
+            jb_core_1.jb.component('studio.onNextModifiedPath', {
+                type: 'action',
+                params: [
+                    { id: 'action', type: 'action', dynamic: true, essential: true }
+                ],
+                impl: function (ctx, action) {
+                    return modifyOperationsEm.take(1)
+                        .subscribe(function (e) {
+                        return action(ctx.setVars({ modifiedPath: e.args.modifiedPath }));
+                    });
+                }
+            });
         }
     }
 });
