@@ -49,7 +49,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
             var compIdEm = studio_utils_1.studioActivityEm
                 .startWith(1)
                 .map(function () {
-                return widget.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page;
+                return widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main');
             })
                 .distinctUntilChanged()
                 .merge(counterChange)
@@ -181,7 +181,9 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
             jb_core_1.jb.component('studio.waitForPreviewIframe', {
                 type: 'action',
                 impl: function (ctx) {
-                    return jb_waitFor(function () { return jbart.previewjbart; });
+                    return jb_waitFor(function () {
+                        return jbart.previewjbart;
+                    });
                 }
             });
             jb_core_1.jb.component('studio.refresh-preview', {

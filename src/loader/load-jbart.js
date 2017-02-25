@@ -47,8 +47,8 @@ var css_files_to_load = [
 ];
 
 if (typeof window != 'undefined' && !window.jbPackaged) {
-  if (window.parent.jbart1) {
-    ['jQuery','$','jbart','System','SystemJS','CodeMirror','Reflect','dragula','history'].forEach(x=>
+  if (window.parent != window && window.parent.jbart1) {
+    ['jQuery','$','jbart1','System','SystemJS','CodeMirror','Reflect','dragula','history'].forEach(x=>
         window[x] = window.parent[x])
   } else {
     window.jbart = {comps: {}, classes: {}};
@@ -130,7 +130,7 @@ jb_modules =
 ];
 
 jb_studio_modules = ['tgp-model','model-components.js','path','utils','main','preview','menu','toolbar','tests','popups'
-,'tree','properties','properties-menu','pick-dialog','save','probe','edit-source','new-control.js','testers'
+,'tree','properties','properties-menu','pick.js','save','probe','edit-source','new-control.js','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
   .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 

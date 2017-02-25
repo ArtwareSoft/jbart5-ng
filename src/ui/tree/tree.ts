@@ -210,13 +210,15 @@ jb.component('tree.keyboard-selection', {
 					!e.ctrlKey && !e.altKey);
 
 				tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {
+			        jb_logPerformance('focus','tree.keyboard-selection regain focus');
 					cmp.elementRef.nativeElement.focus(); 
 					return false;
 				});
 
 				if (context.params.autoFocus)
-					setTimeout(() => 
-						cmp.elementRef.nativeElement.focus(), 1);
+					setTimeout(() => {
+				        jb_logPerformance('focus','tree.keyboard-selection init autofocus');
+						cmp.elementRef.nativeElement.focus() }, 1);
 
 				keyDownNoAlts
 					.filter(e=> e.keyCode == 13)

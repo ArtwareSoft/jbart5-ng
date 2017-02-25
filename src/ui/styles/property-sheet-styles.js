@@ -129,6 +129,7 @@ jb.component('property-sheet.style-on-focus', {
                 jb.delay(1).then(()=> {
                   $(cmp.elementRef.nativeElement).find('input,select,textarea')
                     .bind('focus',handleFocus);
+                  jb_logPerformance('focus','property-sheet.style-on-focus');
                   property.find('input,select,textarea').focus(); // no infinite loop
                 })
             };

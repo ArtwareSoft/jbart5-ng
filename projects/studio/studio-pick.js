@@ -1,7 +1,5 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-import * as jb_rx from 'jb-ui/jb-rx';
-import {model} from './studio-tgp-model';
+jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => { 
+  var model = loadedModules['studio/studio-tgp-model'].model;
 
 jb.component('studio.pick', {
 	type: 'action',
@@ -72,6 +70,7 @@ jb.component('dialog-feature.studio-pick', {
 	],
 	impl: ctx =>
 	({
+	  disableChangeDetection: true,
       init: cmp=> {
 		  var _window = ctx.params.from == 'preview' ? jbart.previewWindow : window;
 		  var previewOffset = ctx.params.from == 'preview' ? $('#jb-preview').offset().top : 0;
@@ -96,12 +95,13 @@ jb.component('dialog-feature.studio-pick', {
 		  			ctx.vars.$dialog.close({OK:false});	
 		  	})
 		  	.map(e=>
-		  		eventToProfileElemWithRandomSelection(e,_window))
+		  		eventToProfile(e,_window))
 		  	.filter(x=> x && x.length > 0)
 		  	.do(profElem=> {
 		  		ctx.vars.pickSelection.ctx = _window.jbart.ctxDictionary[profElem.attr('jb-ctx')];
 		  		showBox(cmp,profElem,_window,previewOffset);
-		  		jb_ui.apply(ctx);
+	            cmp.changeDt.markForCheck();
+	            cmp.changeDt.detectChanges();
 		  	})
 		  	.last()
 		  	.subscribe(x=> {
@@ -120,18 +120,22 @@ function pathFromElem(_window,profElem) {
 	//profElem.attr('jb-path');
 }
 
-function eventToProfileElemWithRandomSelection(e,_window) {
-	var $el = $(_window.document.elementFromPoint(e.pageX - $(_window).scrollLeft(), e.pageY - $(_window).scrollTop()));
+function eventToProfile(e,_window) {
+	var mousePos = { 
+		x: e.pageX - $(_window).scrollLeft(), y: e.pageY - $(_window).scrollTop()
+	};
+	var $el = $(_window.document.elementFromPoint(mousePos.x, mousePos.y));
 	if (!$el[0]) return;
 	var results = Array.from($($el.get().concat($el.parents().get()))
 		.filter((i,e) => 
 			$(e).attr('jb-ctx') ));
-	if (results.length == 0) return results;
-	var first_result = $(results[0]);
-	results = results.filter(elem=>
-		$(elem).outerWidth() == first_result.outerWidth() && $(elem).outerHeight() == first_result.outerHeight());
-	// randomally pick overlapping results
-	return $(results[Math.floor(Math.random()*results.length)]);
+	if (results.length == 0) return [];
+	// promote parents if the mouse is near the edge
+	var first_result = results.shift(); // shift also removes first item from results!
+	var orderedResults = results.filter(elem=>{
+		return mousePos.y - $(elem).offset().top < 5 || mousePos.x - $(elem).offset().left < 5;
+	}).concat([first_result]);
+	return $(orderedResults[0]);
 }
 
 function showBox(cmp,_profElem,_window,previewOffset) {
@@ -203,4 +207,7 @@ jb.component('studio.highlight-in-preview',{
 			});
   	})
   }
+})
+
+
 })

@@ -42,7 +42,7 @@ jb.component('group.data', {
                 jb.val(data_ref())) 
               .distinctUntilChanged(jb_compareArrays)
               .map(()=> {
-                  var ctx2 = cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx;
+                  var ctx2 = cmp.refreshCtx ? cmp.refreshCtx() : cmp.ctx;
                   return context.vars.$model.controls(ctx2)
               })
 
@@ -74,7 +74,7 @@ jb.component('group.watch', {
                 .filter(x=>x != null)
                 .distinctUntilChanged(jb_compareArrays)
                 .map(val=> {
-                    var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+                    var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx() : cmp.ctx);
                     return context.vars.$model.controls(ctx2)
                 })
             )

@@ -71,7 +71,8 @@ jb.component('studio.main-menu', {
         controls: [
           {$: 'pulldown.menu-item', title: 'Field' }, 
           {$: 'pulldown.menu-item', title: 'Control' }, 
-          {$: 'pulldown.menu-item', title: 'Group' }
+          {$: 'pulldown.menu-item', title: 'Group' }, 
+          {$: 'pulldown.menu-item-group', title: 'input' }
         ]
       }, 
       {$: 'pulldown.topMenuItem', 

@@ -222,7 +222,7 @@ jb.component('group.studio-watch-path', {
                 .map(()=> jb.val(path_ref))
                 .distinctUntilChanged()
                 .map(val=> {
-                    var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+                    var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx() : cmp.ctx);
                     return context.vars.$model.controls(ctx2)
                 })
             )

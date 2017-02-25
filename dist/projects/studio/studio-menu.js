@@ -78,7 +78,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             controls: [
                                 { $: 'pulldown.menu-item', title: 'Field' },
                                 { $: 'pulldown.menu-item', title: 'Control' },
-                                { $: 'pulldown.menu-item', title: 'Group' }
+                                { $: 'pulldown.menu-item', title: 'Group' },
+                                { $: 'pulldown.menu-item-group', title: 'input' }
                             ]
                         },
                         { $: 'pulldown.topMenuItem',

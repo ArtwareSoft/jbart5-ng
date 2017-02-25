@@ -26,7 +26,6 @@ jb.component('group', {
               .subscribe(comps=> {
                   var _ctrls = [];
                   cmp.jb_disposable && cmp.jb_disposable.forEach(d=>d());
-                  jb.logPerformance('group-change');
                   comps.forEach((comp,i)=>{
                     // if (!comp || comp.invisible)
                     //   return;
@@ -37,6 +36,7 @@ jb.component('group', {
                     _ctrls.push({ title: comp.jb_title ? comp.jb_title() : '' , comp: comp } );
                   })
                   cmp.ctrls = _ctrls;
+                  jb_ui.apply(context);
                 })
             }
       },

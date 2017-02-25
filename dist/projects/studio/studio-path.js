@@ -222,7 +222,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
                             .map(function () { return jb_core_1.jb.val(path_ref); })
                             .distinctUntilChanged()
                             .map(function (val) {
-                            var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx);
+                            var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx() : cmp.ctx);
                             return context.vars.$model.controls(ctx2);
                         }));
                     },

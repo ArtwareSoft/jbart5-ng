@@ -164,6 +164,7 @@ jb.component('group.menu-keyboard-selection', {
 
         if (ctx.params.autoFocus)
             setTimeout(()=> {
+              jb_logPerformance('focus','menu-keyboard-selection init autoFocus');
               cmp.elementRef.nativeElement.focus();
               $(cmp.elementRef.nativeElement).find('>*').first()
               	.addClass('selected')

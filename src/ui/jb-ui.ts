@@ -11,6 +11,7 @@ enableProdMode();
 //jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
+    jb.logPerformance('apply',ctx.profile.$);
 	return jb.delay(1).then(() =>
 			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
 }
@@ -407,7 +408,7 @@ export class jBartWidget {
 	}
 
 	ngDoCheck() {
-		console.log('checking widget ' + this.compId)
+        jb_logPerformance('check','checking widget ' + this.compId);
 	}
 
 	draw() {

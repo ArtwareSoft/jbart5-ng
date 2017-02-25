@@ -46,7 +46,7 @@ jb.component('itemlist.init', {
               .map(items=> {
                   if (context.vars.itemlistCntr)
                     context.vars.itemlistCntr.items = items;
-                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx(cmp.ctx) : cmp.ctx).setData(items);
+                  var ctx2 = (cmp.refreshCtx ? cmp.refreshCtx() : cmp.ctx).setData(items);
                   var ctx3 = itemsArrayVariable ? ctx2.setVars(jb.obj(itemsArrayVariable,items)) : ctx2;
                   var ctrls = context.vars.$model.controls(ctx3);
                   return ctrls;
@@ -98,7 +98,7 @@ jb.component('itemlist.selection', {
             .map(()=> 
               jb.val(ctx.params.databind))
             .filter(x=>
-              x != cmp.selected);
+              x && x != cmp.selected);
 //            .distinctUntilChanged();
 
         var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
@@ -150,9 +150,11 @@ jb.component('itemlist.keyboard-selection', {
           .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
 
         if (context.params.autoFocus)
-            setTimeout(()=> 
-              cmp.elementRef.nativeElement.focus(),1);
-
+            setTimeout(()=> {
+              jb_logPerformance('focus','itemlist.keyboard-selection init autoFocus');
+              cmp.elementRef.nativeElement.focus();
+            },1 );
+    
         cmp.keydown.filter(e=>
               e.keyCode == 38 || e.keyCode == 40)
             .map(event => {
@@ -161,7 +163,8 @@ jb.component('itemlist.keyboard-selection', {
               var items = cmp.items;
               return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
         }).subscribe(x=>
-          cmp.selected = x)
+          cmp.selected = x
+        )
       },
       host: {
         '(keydown)': 'keydownSrc.next($event)',

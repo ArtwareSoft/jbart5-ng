@@ -60,7 +60,7 @@ function studioAutoRefreshWidget(widget) {
     var compIdEm = studioActivityEm
       .startWith(1)
       .map(()=>
-          widget.compId = jbart.studioGlobals.project + '.' + jbart.studioGlobals.page)
+          widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main'))
       .distinctUntilChanged()
       .merge(counterChange)
       .catch(e =>
@@ -152,7 +152,8 @@ jb.component('studio.setPreviewSize', {
 jb.component('studio.waitForPreviewIframe',{
 	type:'action',
 	impl: ctx =>
-    jb_waitFor(()=> jbart.previewjbart)
+    jb_waitFor(()=> 
+      jbart.previewjbart)
 })
 
 jb.component('studio.refresh-preview', {

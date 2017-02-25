@@ -229,12 +229,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                             return !e.ctrlKey && !e.altKey;
                         });
                         tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
+                            jb_logPerformance('focus', 'tree.keyboard-selection regain focus');
                             cmp.elementRef.nativeElement.focus();
                             return false;
                         });
                         if (context.params.autoFocus)
                             setTimeout(function () {
-                                return cmp.elementRef.nativeElement.focus();
+                                jb_logPerformance('focus', 'tree.keyboard-selection init autofocus');
+                                cmp.elementRef.nativeElement.focus();
                             }, 1);
                         keyDownNoAlts
                             .filter(function (e) { return e.keyCode == 13; })

@@ -206,8 +206,10 @@ jb.component('dialog-feature.autoFocusOnFirstInput', {
 	type: 'dialog-feature',
 	impl: context => ({ 
 			afterViewInit: cmp =>
-				jb.delay(1).then(()=>
-					context.vars.$dialog.$el.find('input,textarea,select').first().focus())
+				jb.delay(1).then(()=> {
+					jb_logPerformance('focus','autoFocusOnFirstInput');
+					context.vars.$dialog.$el.find('input,textarea,select').first().focus() 
+				})
 	})
 })
 
@@ -309,11 +311,9 @@ jb.component('dialog-feature.dragTitle', {
 });
 
 
-class jbDialogs {
-	constructor() {
-	 	this.dialogs = []
-	}
-	addDialog(dialog,context) {
+jbart.jb_dialogs = {
+ 	dialogs: [],
+	addDialog: function(dialog,context) {
 		var self = this;
 		dialog.context = context;
 		this.dialogs.forEach(d=>
@@ -340,11 +340,10 @@ class jbDialogs {
 				$('.modal-overlay').first().remove();
 			jb_ui.apply(context);
 		}
-	}
-	closeAll() {
+	},
+	closeAll: function() {
 		this.dialogs.forEach(d=>
 			d.close());
 	}
 }
 
-jbart.jb_dialogs = new jbDialogs;

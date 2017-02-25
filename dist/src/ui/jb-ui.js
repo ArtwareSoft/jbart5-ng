@@ -14,6 +14,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, jbCompModule, jBartWidgetModule;
     //jbart.zones = jbart.zones || {}
     function apply(ctx) {
+        jb_core_1.jb.logPerformance('apply', ctx.profile.$);
         return jb_core_1.jb.delay(1).then(function () {
             return ctx.vars.ngZone && ctx.vars.ngZone.run(function () { });
         });
@@ -497,7 +498,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         });
                 };
                 jBartWidget.prototype.ngDoCheck = function () {
-                    console.log('checking widget ' + this.compId);
+                    jb_logPerformance('check', 'checking widget ' + this.compId);
                 };
                 jBartWidget.prototype.draw = function () {
                     try {

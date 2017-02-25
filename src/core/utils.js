@@ -118,8 +118,9 @@ function jb_logError(errorStr,errorObj,ctx) {
 }
 
 function jb_logPerformance(type,text) {
-  jb_path(jbart,['logPerf',type],(jb_path(jbart,['logPerf',type]) || 0) +1);
-//  console.log(type,text||'',jb_path(jbart,['logPerf',type]))
+  var types = ['focus','apply','check'];
+  if (type != 'focus') return;
+  console.log(type,text||'');
 }
 
 function jb_logException(e,errorStr) {

@@ -81,7 +81,7 @@ jb.component('studio.select-control', {
                 items: '%$picklistModel/options%', 
                 controls :{$: 'label', 
                   title: '%text%', 
-                  style :{$: 'label.mdl-ripple-effect' }, 
+                  style :{$: 'label.mdl-button' }, 
                   features: [
                     {$: 'css.width', width: '120' }, 
                     {$: 'css', css: '{text-align: left}' }
@@ -97,7 +97,7 @@ jb.component('studio.select-control', {
                     }, 
                     cssForSelected: 'background: #bbb'
                   }, 
-                  {$: 'itemlist.keyboard-selection' }
+                  {$: 'itemlist.keyboard-selection', autoFocus: true }
                 ]
               }, 
               modelVar: 'picklistModel'
@@ -119,7 +119,11 @@ jb.component('studio.select-control', {
               {$: 'button', 
                 title: '%%', 
                 action: [{$: 'closeContainingPopup' }, { $call: 'onSelect' }], 
-                style :{$: 'button.md-flat-no-background' }, 
+                style :{$: 'customStyle', 
+                  template: '<button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="clicked()">{{title}}</button>', 
+                  css: 'button { text-transform: none }', 
+                  features :{$: 'mdl-style.init-dynamic', query: '.mdl-js-button' }
+                }, 
                 features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
               }
             ], 
