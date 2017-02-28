@@ -110,8 +110,9 @@ jb.component('dialog-feature.nearLauncherLocation', {
 	params: [
 		{ id: 'offsetLeft', as: 'number', defaultValue: 0 },
 		{ id: 'offsetTop', as: 'number' , defaultValue: 0 },
+		{ id: 'rightSide', as: 'boolean' },
 	],
-	impl: function(context,offsetLeft,offsetTop) {
+	impl: function(context,offsetLeft,offsetTop,rightSide) {
 		return {
 			afterViewInit: function(cmp) {
 				if (!context.vars.$launchingElement)
@@ -119,6 +120,7 @@ jb.component('dialog-feature.nearLauncherLocation', {
 				var $control = context.vars.$launchingElement.$el;
 				var pos = $control.offset();
 				var $jbDialog = $(cmp.elementRef.nativeElement).findIncludeSelf('.jb-dialog');
+				offsetLeft += rightSide ? $control.outerWidth() : 0;
 				var fixedPosition = fixDialogOverflow($control,$jbDialog,offsetLeft,offsetTop);
 				if (fixedPosition)
 					$jbDialog.css('left', `${fixedPosition.left}px`)
@@ -168,7 +170,10 @@ jb.component('dialog-feature.onClose', {
 
 jb.component('dialog-feature.closeWhenClickingOutside', {
 	type: 'dialog-feature',
-	impl: function(context) { 
+	params: [
+		{ id: 'delay', as: 'number', defaultValue: 100 }
+	],
+	impl: function(context,delay) { 
 		var dialog = context.vars.$dialog;
 		jb.delay(10).then(() =>  { // delay - close older before    		
 			var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
@@ -179,6 +184,7 @@ jb.component('dialog-feature.closeWhenClickingOutside', {
    					 		.takeUntil(dialog.em.filter(e => e.type == 'close'));
 
 		 	clickoutEm.take(1)
+		  		.delay(delay)
 		  		.subscribe(()=>
 		  			dialog.close())
   		})

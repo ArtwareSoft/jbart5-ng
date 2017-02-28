@@ -841,7 +841,19 @@ jb.component('menu-test.main-menu-options', {
         {$: 'menu.menu', title: 'File',
           options: [
             {$: 'menu.action', title: 'New' },
-            {$: 'menu.action', title: 'Open' }
+            {$: 'menu.action', title: 'Open' },
+            {$: 'menu.menu', title: 'Bookmarks',
+              options: [
+                  {$: 'menu.action', title: 'Google' },
+                  {$: 'menu.action', title: 'Facebook' }
+              ]
+            },
+            {$: 'menu.menu', title: 'Friends',
+              options: [
+                  {$: 'menu.action', title: 'Dave' },
+                  {$: 'menu.action', title: 'Dan' }
+              ]
+            }
           ]
         },
         {$: 'menu.menu', title: 'Edit',
@@ -849,7 +861,7 @@ jb.component('menu-test.main-menu-options', {
             {$: 'menu.action', title: 'Copy' },
             {$: 'menu.action', title: 'Paste' }
           ]
-        }
+        },
       ]
    }
 })
