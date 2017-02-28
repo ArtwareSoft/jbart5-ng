@@ -7,7 +7,7 @@ jb.component('mdl-style.init-dynamic', {
   ],
   impl: (ctx,query) => 
     ({
-      init: cmp =>
+      init: cmp => 
         ctx.vars.ngZone.runOutsideAngular(() => {
       	 cmp.elementRef.nativeElement.querySelectorAll(query).forEach(el=>
       	 	componentHandler.upgradeElement(el)) }),
@@ -16,6 +16,24 @@ jb.component('mdl-style.init-dynamic', {
       	 	componentHandler.downgradeElements(el))
     })
 })
+
+jb.component('mdl.ripple-effect', { 
+  type: 'feature',
+  impl: ctx => ({ 
+        templateModifier: 
+          template => 
+            template.replace(/<\/([^>]*)>$/,'<span class="mdl-ripple"></span></$1>'),
+        css: '{ position: relative; overflow:hidden }',
+        init: cmp => 
+          ctx.vars.ngZone.runOutsideAngular(() => {
+            cmp.elementRef.nativeElement.classList.add('mdl-js-ripple-effect');
+            componentHandler.upgradeElement(cmp.elementRef.nativeElement);
+          }),
+        destroy: cmp => 
+          componentHandler.downgradeElements(cmp.elementRef.nativeElement)
+   }),
+})
+
 
 // ****** button styles
 

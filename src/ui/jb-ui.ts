@@ -223,8 +223,10 @@ class jbComponent {
 		if (annotations.template) {
 			if (typeof annotations.template != 'string') debugger;
 			annotations.template = annotations.template.trim();
-			jb.entries(options.templateModifier)
-				.forEach(mod=>
+			if (typeof options.templateModifier == 'function')
+				annotations.template = options.templateModifier(annotations.template)
+			else if (typeof options.templateModifier == 'object')
+				jb.entries(options.templateModifier).forEach(mod=>
 					annotations.template = annotations.template.replace('#'+mod[0],'#'+mod[0]+ ' ' +mod[1]));
 		}
 

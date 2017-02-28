@@ -16,7 +16,6 @@ jb.component('openDialog', {
 			id: id, 
 			onOK: context.params.onOK, 
 			modal: modal, 
-			$: $('div'), 
 			em: new jb_rx.Subject(),
 		};
 //		dialog.em.subscribe(e=>console.log(e.type));
@@ -37,6 +36,7 @@ jb.component('openDialog', {
 			},
 		});
 		jbart.jb_dialogs.addDialog(dialog,ctx);
+		return dialog;
 	}
 })
 
@@ -339,6 +339,9 @@ jbart.jb_dialogs = {
 			if (dialog.modal)
 				$('.modal-overlay').first().remove();
 			jb_ui.apply(context);
+		},
+		dialog.closed = function() {
+			self.dialogs.indexOf(dialog) == -1
 		}
 	},
 	closeAll: function() {

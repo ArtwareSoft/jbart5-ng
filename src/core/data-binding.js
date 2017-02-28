@@ -37,11 +37,11 @@ function jb_objectProperty(_object,property,jstype,lastInExpression) {
   return object[property];
 }
 
-function jb_val(val,applyFunction) {
+function jb_val(val) {
   if (val == null) return val;
   if (val.$jb_val) return val.$jb_val();
-  if (applyFunction && typeof val == 'function' && val.profile)
-    return val();
+  // if (applyFunction && typeof val == 'function' && val.profile)
+  //   return val();
   return (val.$jb_parent) ? val.$jb_parent[val.$jb_property] : val;
 }
 

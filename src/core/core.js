@@ -296,6 +296,8 @@ function jb_evalExpressionPart(expressionPart,context,jstype) {
       item = jb_map(item,function(inner) {
         return typeof inner === "object" ? jb_objectProperty(inner,part,jstype,i == parts.length -1) : inner;
       });
+    else if (typeof item === 'object' && typeof item[part] === 'function' && item[part].profile)
+      item = item[part](context);
     else if (typeof item === 'object')
       item = item && jb_objectProperty(item,part,jstype,i == parts.length -1);
     else if (index && Array.isArray(item)) 

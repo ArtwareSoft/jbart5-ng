@@ -393,10 +393,12 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         if (typeof annotations.template != 'string')
                             debugger;
                         annotations.template = annotations.template.trim();
-                        jb_core_1.jb.entries(options.templateModifier)
-                            .forEach(function (mod) {
-                            return annotations.template = annotations.template.replace('#' + mod[0], '#' + mod[0] + ' ' + mod[1]);
-                        });
+                        if (typeof options.templateModifier == 'function')
+                            annotations.template = options.templateModifier(annotations.template);
+                        else if (typeof options.templateModifier == 'object')
+                            jb_core_1.jb.entries(options.templateModifier).forEach(function (mod) {
+                                return annotations.template = annotations.template.replace('#' + mod[0], '#' + mod[0] + ' ' + mod[1]);
+                            });
                     }
                     if (options.wrapWithngIf)
                         annotations.template = "<template [ngIf]=\"jbIf()\">" + annotations.template + "</template>";

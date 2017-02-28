@@ -24,7 +24,7 @@ jb.component('studio.open-tree-menu', {
     { id: 'path', as: 'string' }
   ], 
   impl :{$: 'openDialog', 
-    style :{$: 'pulldownPopup.contextMenuPopup' }, 
+    style :{$: 'pulldown-popup.context-menu-popup' }, 
     content :{$: 'group', 
       controls: [
         {$: 'pulldown.menu-item', 

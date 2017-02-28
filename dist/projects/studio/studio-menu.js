@@ -13,7 +13,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'group',
                     style: { $: 'layout.horizontal', spacing: 3 },
                     controls: [
-                        { $: 'pulldown.topMenuItem',
+                        { $: 'pulldown.top-menu-item',
                             title: 'File',
                             controls: [
                                 { $: 'pulldown.menu-item',
@@ -43,7 +43,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 }
                             ]
                         },
-                        { $: 'pulldown.topMenuItem',
+                        { $: 'pulldown.top-menu-item',
                             title: 'View',
                             controls: [
                                 { $: 'pulldown.menu-item',
@@ -73,7 +73,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 }
                             ]
                         },
-                        { $: 'pulldown.topMenuItem',
+                        { $: 'pulldown.top-menu-item',
                             title: 'Insert',
                             controls: [
                                 { $: 'pulldown.menu-item', title: 'Field' },
@@ -82,7 +82,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 { $: 'pulldown.menu-item-group', title: 'input' }
                             ]
                         },
-                        { $: 'pulldown.topMenuItem',
+                        { $: 'pulldown.top-menu-item',
                             title: 'Data',
                             controls: [
                                 { $: 'dynamic-controls',
@@ -108,7 +108,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                 }
                             ]
                         },
-                        { $: 'pulldown.topMenuItem',
+                        { $: 'pulldown.top-menu-item',
                             title: 'Tests',
                             controls: [
                                 { $: 'dynamic-controls',

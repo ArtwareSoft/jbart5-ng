@@ -150,7 +150,7 @@ padding: 10px 10px 10px 27px; color: #6D6E71; min-height: 12px; border-bottom: 1
     display: block;  background: #fff;  border: none; text-align: left;
 }
 .pulldown-top-menu-item:hover { background: #eee; }
-.pulldown-top-menu-item.dialog-open { border: 1px solid rgba(0,0,0,0.2); border-bottom: none; background: #fff; }
+.pulldown-top-menu-item.dialog-open { border: 1px solid rgba(0,0,0,0.2); border-bottom: none; background: #eee;}
 
 .pulldown-menu-separator { margin: 6px 0; border-bottom: 1px solid #EBEBEB;}
 

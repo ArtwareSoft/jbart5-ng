@@ -746,7 +746,7 @@ picklist :{$: 'ng2-ui-test',
 // },
 
 // 'popup-menu' :{$: 'ng2-ui-test', 
-//   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
+//   control :{$: 'pulldown.top-menu-item', title: 'File', open: true,
 //       controls: 
 //       [
 //         { $: 'pulldown.menu-item', title: 'Open ...'} ,

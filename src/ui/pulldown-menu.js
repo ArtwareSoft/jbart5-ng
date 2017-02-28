@@ -31,7 +31,7 @@ jb.component('pulldown.menu-item', {
 	        cmp.title = title();
 	        cmp.icon = icon;
 	        cmp.shortcut = shortcut;
-	        cmp.clicked = jb_ui.wrapWithLauchingElement(() => {
+	        cmp.clicked = jb_ui.wrapWithLauchingElement( _ => {
 	        	context.vars.$dialog && context.vars.$dialog.close(); // close dialog
 	        	context.params.action();
 	        } , context, cmp.elementRef);
@@ -70,11 +70,11 @@ jb.component('pulldown-menu-item.default', {
 	}
 })
 
-jb.component('pulldown.topMenuItem', {
+jb.component('pulldown.top-menu-item', {
 	type: 'control',
 	params: [
 		{ id: 'title', dynamic: true, as: 'string' },
-		{ id: 'style', type: 'pulldownTopMenuItem.style', dynamic: true, defaultValue: { $: 'pulldownTopMenuItem.default' } },
+		{ id: 'style', type: 'pulldown-top-item.style', dynamic: true, defaultValue: { $: 'pulldown-top-item.default' } },
 		{ id: 'controls', type: 'control[]', dynamic: true, flattenArray: true },
 		{ id: 'open', type: 'boolean'},
 	],
@@ -84,7 +84,7 @@ jb.component('pulldown.topMenuItem', {
 				popupWidth: ctx.vars.$launchingElement.$el.outerWidth()
 			}).run({
 				$: 'openDialog', 
-				style :{$: 'pulldownPopup.mainMenuPopup' }, 
+				style :{$: 'pulldown-popup.main-menu-popup' }, 
 				content :{$: 'group', 
 					controls: ctx => 
 						context.params.controls(ctx) 
@@ -108,16 +108,55 @@ jb.component('pulldown.topMenuItem', {
 	}
 })
 
-jb.type('pulldownTopMenuItem.style');
+jb.component('pulldown.inner-menu', {
+	type: 'control',
+	params: [
+		{ id: 'title', dynamic: true, as: 'string' },
+		{ id: 'style', type: 'pulldown-inner-menu.style', dynamic: true, defaultValue: { $: 'pulldown-inner-menu.default' } },
+		{ id: 'controls', type: 'control[]', dynamic: true, flattenArray: true },
+	],
+	impl: function(context) { 
+		var openPopup = function(ctx,cmp) {
+			cmp.innerPopup = ctx.setVars({
+				popupWidth: ctx.vars.$launchingElement.$el.outerWidth()
+			}).run({
+				$: 'openDialog', 
+				style :{$: 'pulldown-popup.context-menu-popup' }, 
+				content :{$: 'group', 
+					controls: ctx => 
+						context.params.controls(ctx) 
+				}
+			})
+		}
 
-jb.component('pulldownTopMenuItem.default',{
-	type: 'pulldownTopMenuItem.style',
+		return jb_ui.ctrl(context).jbExtend({
+			init: function(cmp) {
+				cmp.title = context.params.title();
+				cmp.openPopup = jb_ui.wrapWithLauchingElement(openPopup, context, cmp.elementRef); 
+				cmp.closePopup = _ => {
+					this.innerPopup && this.innerPopup.close();
+				} 
+			}
+		},context)
+	}
+})
+
+
+jb.component('pulldown-top-item.default', {
+	type: 'pulldown-top-item.style',
 	impl :{$: 'customStyle',
 			template: '<button class="pulldown-top-menu-item" (mouseEnter)="mouseEnter()" (click)="openPopup()">{{title}}</button>',
 	}
 })
 
-jb.component('pulldownPopup.mainMenuPopup',{
+jb.component('pulldown-inner-menu.default', {
+	type: 'pulldown-inner-menu.style',
+	impl :{$: 'customStyle',
+			template: '<button class="pulldown-top-menu-item" (mouseEnter)="openPopup()" (mouseLeave)="closePopup()">{{title}}</button>',
+	}
+})
+
+jb.component('pulldown-popup.main-menu-popup',{
 	type: 'dialog.style',
 	impl :{$: 'customStyle',
 			template: `<div class="jb-dialog jb-popup pulldown-mainmenu-popup">
@@ -135,7 +174,7 @@ jb.component('pulldownPopup.mainMenuPopup',{
 	}
 })
 
-jb.component('pulldownPopup.contextMenuPopup',{
+jb.component('pulldown-popup.context-menu-popup',{
 	type: 'dialog.style',
 	impl :{$: 'customStyle',
 			template: '<div class="jb-dialog jb-popup pulldown-mainmenu-popup"><div *jbComp="contentComp"></div></div>',

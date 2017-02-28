@@ -732,7 +732,7 @@ jb.component('ui-test.picklist-groups', {
 
 // jb.component('popup-menu', {
 // //   impl :{$: 'ng2-ui-test', 
-//   control :{$: 'pulldown.topMenuItem', title: 'File', open: true,
+//   control :{$: 'pulldown.top-menu-item', title: 'File', open: true,
 //       controls: 
 //       [
 //         { $: 'pulldown.menu-item', title: 'Open ...'} ,
@@ -834,3 +834,44 @@ jb.component('ui-test.picklist-as-itemlist', {
   },
 })
 
+jb.component('menu-test.main-menu-options', {
+  type: 'menu.option',
+  impl :{$: 'menu.options-group', 
+      options: [
+        {$: 'menu.menu', title: 'File',
+          options: [
+            {$: 'menu.action', title: 'New' },
+            {$: 'menu.action', title: 'Open' }
+          ]
+        },
+        {$: 'menu.menu', title: 'Edit',
+          options: [
+            {$: 'menu.action', title: 'Copy' },
+            {$: 'menu.action', title: 'Paste' }
+          ]
+        }
+      ]
+   }
+})
+
+jb.component('menu-test.pulldown', {
+  impl :{$: 'ng2-ui-test',  
+    control :{$: 'menu.menu',
+      style :{$: 'menu.pulldown'},
+      title: 'main', 
+      options :{$: 'menu-test.main-menu-options'}
+    },
+    expectedHtmlResult :{$: 'contains', text: ['File', 'Menu'] },
+  },
+})
+
+jb.component('menu-test.popup', {
+  impl :{$: 'ng2-ui-test',  
+    control :{$: 'menu.menu',
+      style :{$: 'menu.pulldown'},
+      title: 'main', 
+      options :{$: 'menu-test.main-menu-options'}
+    },
+    expectedHtmlResult :{$: 'contains', text: ['File', 'Menu'] },
+  },
+})

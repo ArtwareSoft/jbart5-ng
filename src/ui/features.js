@@ -95,6 +95,14 @@ jb.component('feature.if', {
   })
 })
 
+jb.component('features', {
+  type: 'feature',
+  params: [
+    { id: 'features', type: 'feature[]', flattenArray: true, dynamic: true },
+  ],
+  impl: (ctx,features) => 
+    features()
+})
 
 
 jb.component('feature.init', {

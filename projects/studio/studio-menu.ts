@@ -6,7 +6,7 @@ jb.component('studio.main-menu', {
   impl :{$: 'group', 
     style :{$: 'layout.horizontal', spacing: 3 }, 
     controls: [
-      {$: 'pulldown.topMenuItem', 
+      {$: 'pulldown.top-menu-item', 
         title: 'File', 
         controls: [
           {$: 'pulldown.menu-item', 
@@ -36,7 +36,7 @@ jb.component('studio.main-menu', {
           }
         ]
       }, 
-      {$: 'pulldown.topMenuItem', 
+      {$: 'pulldown.top-menu-item', 
         title: 'View', 
         controls: [
           {$: 'pulldown.menu-item', 
@@ -66,7 +66,7 @@ jb.component('studio.main-menu', {
           }
         ]
       }, 
-      {$: 'pulldown.topMenuItem', 
+      {$: 'pulldown.top-menu-item', 
         title: 'Insert', 
         controls: [
           {$: 'pulldown.menu-item', title: 'Field' }, 
@@ -75,7 +75,7 @@ jb.component('studio.main-menu', {
           {$: 'pulldown.menu-item-group', title: 'input' }
         ]
       }, 
-      {$: 'pulldown.topMenuItem', 
+      {$: 'pulldown.top-menu-item', 
         title: 'Data', 
         controls: [
           {$: 'dynamic-controls', 
@@ -101,7 +101,7 @@ jb.component('studio.main-menu', {
           }
         ]
       }, 
-      {$: 'pulldown.topMenuItem', 
+      {$: 'pulldown.top-menu-item', 
         title: 'Tests', 
         controls: [
           {$: 'dynamic-controls', 

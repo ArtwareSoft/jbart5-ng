@@ -133,7 +133,7 @@ box-sizing: border-box;
 /* jbstudio-top-menu-item */
 .jbstudio-top-menu-item { cursor: pointer; font-size: 13px; padding: 5px 7px; color: #000; border: 1px solid transparent; -webkit-user-select: none;}
 .jbstudio-top-menu-item:hover { background: #eee; }
-.jbstudio-top-menu-item.dialog-open { border: 1px solid rgba(0,0,0,0.2); border-bottom: none; background: #fff; }
+.jbstudio-top-menu-item.dialog-open { border: 1px solid rgba(0,0,0,0.2); border-bottom: none; background: #eee;}
 
 /* jb-studio-menu-separator */
 .jb-studio-menu-separator { margin: 6px 0; border-bottom: 1px solid #EBEBEB;}

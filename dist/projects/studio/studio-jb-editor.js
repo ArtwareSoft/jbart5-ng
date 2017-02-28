@@ -225,7 +225,7 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                     { id: 'path', as: 'string' }
                 ],
                 impl: { $: 'openDialog',
-                    style: { $: 'pulldownPopup.contextMenuPopup' },
+                    style: { $: 'pulldown-popup.context-menu-popup' },
                     content: { $: 'studio.jb-editor-menu', path: '%$path%' },
                     features: { $: 'css.margin', top: '17', left: '31' }
                 }

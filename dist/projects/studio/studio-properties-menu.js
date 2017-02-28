@@ -59,7 +59,7 @@ jb.component('studio.open-property-menu', {
         $vars: {
             compName: { $: 'studio.comp-name', path: '%$path%' }
         },
-        style: { $: 'pulldownPopup.contextMenuPopup' },
+        style: { $: 'pulldown-popup.context-menu-popup' },
         content: { $: 'group',
             controls: [
                 { $: 'pulldown.menu-item',

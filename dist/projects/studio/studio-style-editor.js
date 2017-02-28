@@ -35,7 +35,7 @@ System.register(['jb-core', './studio-tgp-model'], function(exports_1, context_1
                     { id: 'path', as: 'string' }
                 ],
                 impl: { $: 'openDialog',
-                    style: { $: 'pulldownPopup.contextMenuPopup' },
+                    style: { $: 'pulldown-popup.context-menu-popup' },
                     content: { $: 'group',
                         controls: [
                             { $: 'pulldown.menu-item',
