@@ -175,6 +175,7 @@ jb.component('dialog-feature.closeWhenClickingOutside', {
 	],
 	impl: function(context,delay) { 
 		var dialog = context.vars.$dialog;
+		dialog.isPopup = true;
 		jb.delay(10).then(() =>  { // delay - close older before    		
 			var clickoutEm = jb_rx.Observable.fromEvent(document, 'mousedown')
 			      			.merge(jb_rx.Observable.fromEvent(
@@ -188,24 +189,14 @@ jb.component('dialog-feature.closeWhenClickingOutside', {
 		  		.subscribe(()=>
 		  			dialog.close())
   		})
-
-
-		// function clickOutHandler(e) {
-		// 	if ($(e.target).closest(dialog.$el[0]).length == 0)
-		// 		dialog.close();
-		// }
-		// jb.delay(10).then( function() { // delay - close older before
-		// 	window.onmousedown = clickOutHandler;
-		// 	if (jbart.previewWindow)
-		// 		jbart.previewWindow.onmousedown = clickOutHandler;
-		// })
-		// dialog.filter(x=>x.type == 'close').
-		// 	subscribe(() =>{
-		// 		window.onmousedown = null;
-		// 		if (jbart.previewWindow) 
-		// 			jbart.previewWindow.onmousedown = null;
-		// 	})
 	}
+})
+
+jb.component('dialog.close-all-popups', {
+	type: 'action',
+	impl: ctx =>
+		jbart.jb_dialogs.dialogs.filter(d=>d.isPopup)
+  			.forEach(d=>d.close())
 })
 
 jb.component('dialog-feature.autoFocusOnFirstInput', {

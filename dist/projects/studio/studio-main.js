@@ -68,7 +68,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             controls: [
                                 { $: 'button',
                                     title: 'new page',
-                                    action: { $: 'studio.openNewPage' },
+                                    action: { $: 'studio.open-new-page' },
                                     style: { $: 'button.mdl-icon-12', icon: 'add' },
                                     features: { $: 'css', css: 'button {margin-top: 2px}' }
                                 },

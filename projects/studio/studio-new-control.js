@@ -3,6 +3,7 @@ jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => {
 
 
 jb.component('studio.open-new-control-dialog', {
+  type: 'action',
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating' }, 
     content :{$: 'studio.select-control', 
@@ -153,9 +154,10 @@ jb.component('studio.select-control', {
 })
 
 jb.component('studio.open-new-feature-dialog', {
+  type: 'action',
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating' }, 
-    content :{$: 'studio.select-control', 
+    content :{$: 'studio.select-feature', 
       onSelect: [
       {$: 'studio.onNextModifiedPath', 
         action: [
@@ -201,7 +203,7 @@ jb.component('studio.select-feature', {
             databind: '%$SelectedCategory%', 
             options :{$: 'picklist.sorted-options', 
               options :{$: 'picklist.coded-options', 
-                options :{$: 'studio.categories-of-type', type: 'control' }, 
+                options :{$: 'studio.categories-of-type', type: 'feature' }, 
                 code: '%name%', 
                 text: '%name%'
               }, 
@@ -276,7 +278,7 @@ jb.component('studio.select-feature', {
       {$: 'css.margin', top: '10', left: '20' }, 
       {$: 'var', 
         name: 'SelectedCategory', 
-        value :{$: 'editable-primitive', type: 'string', initialValue: 'control' }
+        value :{$: 'editable-primitive', type: 'string', initialValue: 'css' }
       }, 
       {$: 'var', 
         name: 'SearchPattern', 
@@ -284,7 +286,7 @@ jb.component('studio.select-feature', {
       }, 
       {$: 'var', 
         name: 'Categories', 
-        value :{$: 'studio.categories-of-type', type: 'control' }
+        value :{$: 'studio.categories-of-type', type: 'feature' }
       }
     ]
   }
@@ -300,7 +302,7 @@ jb.component('studio.openModifiedPath', {
           ]}
 })
 
-jb.component('studio.openNewPage', {
+jb.component('studio.open-new-page', {
   type: 'action', 
   impl :{$: 'openDialog', 
     modal: true, 
@@ -333,6 +335,43 @@ jb.component('studio.openNewPage', {
         ctx.run({ $: 'writeValue', to: '%$globals/profile_path%', value: id });
     }
   }
+})
+
+jb.component('studio.insert-comp-option', {
+  params: [ 
+    { id: 'title', as: 'string' },
+    { id: 'comp', as: 'string' },
+  ],
+  impl :{$: 'menu.action', title: '%$title%', 
+    action:{$: 'studio.insert-comp', comp: '%$comp%' }
+  }
+})
+
+jb.component('studio.insert-control-menu', {
+  impl :{$: 'menu.menu', title: 'Insert',
+          options: [
+          {$: 'menu.menu', title: 'Control', options: [
+              {$: 'studio.insert-comp-option', title:'Label', comp: 'label'},
+              {$: 'studio.insert-comp-option', title:'Button', comp: 'button'},
+            ]
+          },
+          {$: 'menu.menu', title: 'Input', options: [ 
+              {$: 'studio.insert-comp-option', title:'Editable Text', comp: 'editable-text'},
+              {$: 'studio.insert-comp-option', title:'Editable Number', comp: 'editable-number'},
+              {$: 'studio.insert-comp-option', title:'Editable Boolean', comp: 'editable-boolean'},
+            ]
+          }, 
+          {$: 'menu.menu', title: 'Group', options: [ 
+              {$: 'studio.insert-comp-option', title:'Group', comp: 'group'},
+              {$: 'studio.insert-comp-option', title:'Itemlist', comp: 'itemlist'},
+            ]
+          }, 
+          {$: 'menu.action', 
+              title: 'More...', 
+              action :{$: 'studio.open-new-control-dialog' }
+          }
+          ]
+        },
 })
 
 

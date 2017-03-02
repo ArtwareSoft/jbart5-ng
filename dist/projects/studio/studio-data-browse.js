@@ -71,6 +71,29 @@ System.register(['jb-core'], function(exports_1, context_1) {
                     },
                 }
             });
+            jb_core_1.jb.component('studio.data-resource-menu', {
+                type: 'menu.option',
+                impl: { $: 'menu.menu', title: 'Data',
+                    options: [
+                        { $: 'dynamic-controls',
+                            controlItems: function (ctx) {
+                                var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
+                                return Object.getOwnPropertyNames(res)
+                                    .filter(function (x) { return x != 'window'; });
+                            },
+                            genericControl: { $: 'menu.action',
+                                title: '%$controlItem%',
+                                action: { $: 'studio.open-resource',
+                                    id: '%$controlItem%',
+                                    resource: function (ctx) {
+                                        return jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources', ctx.exp('%$controlItem%')]);
+                                    },
+                                }
+                            }
+                        }
+                    ]
+                }
+            });
         }
     }
 });

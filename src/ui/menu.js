@@ -69,6 +69,8 @@ jb.component('menu.action', {
 		        cmp.icon = model.icon;
 		        cmp.shortcut = model.shortcut;
 		        cmp.action = jb_ui.wrapWithLauchingElement( _ => {
+        			jbart.jb_dialogs.dialogs.filter(d=>d.isPopup)
+			  			.forEach(d=>d.close());
 		        	model.action(cmp.ctx);
 		        }, ctx, cmp.elementRef);
 		      }
@@ -273,46 +275,6 @@ jb.component('group.menu-keyboard-selection', {
       }
     })
 })
-
-
-// jb.component('menu.context-menu', {
-// 	type: 'menu.style',
-//   	impl :{$: 'style-by-control', __innerImplementation: true,
-//   		$vars: {
-//   			popupMenuId: '%$popupMenuId%-menu'
-//   		},
-//     	modelVar: 'menuModel',
-//     	control :{$: 'context-menu.inner-menu', title: '%$menuModel/title%',
-//     		openPopup: {$: 'openDialog',
-// 				style :{$: 'menu.context-menu-popup' }, 
-//     			content:{$: 'group',
-// 		    		controls: '%$menuModel/options%'
-// 				} 
-//     		}
-// 		}
-// 	}
-// })
-
-// jb.component('context-menu.inner-menu', {
-//   type: 'control', category: 'context-menu:0',
-//   params: [
-//     { id: 'title', as: 'string', dynamic: true, essential: true, defaultTValue: 'click me' },
-//     { id: 'openPopup', type: 'action', essential: true, dynamic: true },
-//     { id: 'style', type: 'popup-menu.style', defaultValue :{$: 'popup-menu.context-menu' }, dynamic: true },
-//   ],
-// 	impl: ctx => 
-//     	jb_ui.ctrl(ctx).jbExtend({
-// 			init: cmp => {
-// 				cmp.mouseEnter = _ => {
-// 					if ($('.context-menu-popup')[0]) 
-// 						ctx.vars.$model.openPopup()
-// 				}
-// 				cmp.openPopup = _ =>
-// 					ctx.vars.$model.openPopup();
-// 			}			
-//     	})
-// })
-
 
 jb.component('menu.separator', {
 	type: 'menu-option', 

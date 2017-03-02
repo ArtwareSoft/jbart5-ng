@@ -873,17 +873,17 @@ jb.component('menu-test.pulldown', {
       title: 'main', 
       options :{$: 'menu-test.main-menu-options'}
     },
-    expectedHtmlResult :{$: 'contains', text: ['File', 'Menu'] },
+    expectedHtmlResult :{$: 'contains', text: ['File', 'Edit'] },
   },
 })
 
 jb.component('menu-test.popup', {
   impl :{$: 'ng2-ui-test',  
     control :{$: 'menu.menu',
-      style :{$: 'menu.pulldown'},
+      style :{$: 'menu.popup-thumb'},
       title: 'main', 
       options :{$: 'menu-test.main-menu-options'}
     },
-    expectedHtmlResult :{$: 'contains', text: ['File', 'Menu'] },
+    expectedHtmlResult :{$: 'contains', text: 'main' },
   },
 })

@@ -132,8 +132,11 @@ function eventToProfile(e,_window) {
 	if (results.length == 0) return [];
 	// promote parents if the mouse is near the edge
 	var first_result = results.shift(); // shift also removes first item from results!
+	var edgeY = Math.floor($(first_result).children().first().height() / 10);
+	var edgeX = Math.floor($(first_result).children().first().width() / 10);
+
 	var orderedResults = results.filter(elem=>{
-		return mousePos.y - $(elem).offset().top < 5 || mousePos.x - $(elem).offset().left < 5;
+		return Math.abs(mousePos.y - $(elem).children().first().offset().top) < edgeY || Math.abs(mousePos.x - $(elem).children().first().offset().left) < edgeX;
 	}).concat([first_result]);
 	return $(orderedResults[0]);
 }

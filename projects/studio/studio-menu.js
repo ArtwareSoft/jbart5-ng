@@ -1,7 +1,71 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-
 jb.component('studio.main-menu', {
+  type: 'menu.option', 
+  impl :{$: 'menu.menu', 
+    title: 'main', 
+    options: [
+      {$: 'menu.menu', 
+        title: 'File', 
+        options: [
+          {$: 'menu.action', 
+            title: 'New Project', 
+            action :{$: 'studio.save-components' }, 
+            icon: 'new'
+          }, 
+          {$: 'menu.action', 
+            title: 'Open Project ...', 
+            action :{$: 'studio.open-project' }
+          }, 
+          {$: 'menu.action', 
+            title: 'Save', 
+            action :{$: 'studio.save-components' }, 
+            icon: 'save', 
+            shortcut: 'Ctrl+S'
+          }, 
+          {$: 'menu.action', 
+            title: 'Force Save', 
+            action :{$: 'studio.save-components', force: true }, 
+            icon: 'save'
+          }, 
+          {$: 'menu.action', 
+            title: 'Source ...', 
+            action :{$: 'studio.open-source-dialog' }
+          }
+        ]
+      }, 
+      {$: 'menu.menu', 
+        title: 'View', 
+        options: [
+          {$: 'menu.action', 
+            title: 'Refresh Preview', 
+            action :{$: 'studio.refresh-preview' }
+          }, 
+          {$: 'menu.action', 
+            title: 'Redraw Studio', 
+            action :{$: 'studio.redraw-studio' }
+          }, 
+          {$: 'menu.action', 
+            title: 'Edit source', 
+            action :{$: 'studio.editSource' }
+          }, 
+          {$: 'menu.action', 
+            title: 'Outline', 
+            action :{$: 'studio.open-control-tree' }
+          }, 
+          {$: 'menu.action', 
+            title: 'jbEditor', 
+            action :{$: 'studio.openjbEditor' }
+          }
+        ]
+      }, 
+      {$: 'studio.insert-control-menu' }, 
+      {$: 'studio.data-resource-menu' }
+    ], 
+    style :{$: 'menu.pulldown' }, 
+    features :{$: 'css.margin', top: '3' }
+  }
+})
+
+jb.component('studio.main-menu-old', {
   type: 'control', 
   impl :{$: 'group', 
     style :{$: 'layout.horizontal', spacing: 3 }, 
@@ -69,10 +133,6 @@ jb.component('studio.main-menu', {
       {$: 'pulldown.top-menu-item', 
         title: 'Insert', 
         controls: [
-          {$: 'pulldown.menu-item', title: 'Field' }, 
-          {$: 'pulldown.menu-item', title: 'Control' }, 
-          {$: 'pulldown.menu-item', title: 'Group' }, 
-          {$: 'pulldown.menu-item-group', title: 'input' }
         ]
       }, 
       {$: 'pulldown.top-menu-item', 
@@ -80,9 +140,9 @@ jb.component('studio.main-menu', {
         controls: [
           {$: 'dynamic-controls', 
             controlItems: function (ctx) {
-                                        var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
-                                        return Object.getOwnPropertyNames(res)
-                                            .filter(function (x) { return x != 'window'; });
+              var res = jb_path(jbart, ['previewWindow', 'jbart_widgets', ctx.exp('%$globals/project%'), 'resources']);
+              return Object.getOwnPropertyNames(res)
+                  .filter(function (x) { return x != 'window'; });
                                     }, 
             genericControl :{$: 'pulldown.menu-item', 
               title: '%$controlItem%', 

@@ -37,7 +37,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         var styleOptions = defaultStyle(ctx);
         if (styleOptions && styleOptions.methodHandler) {
             styleOptions.forceCtx = ctx;
-            return styleOptions;
+            return styleOptions.jbCtrl(ctx);
         }
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
         function defaultStyle(ctx) {

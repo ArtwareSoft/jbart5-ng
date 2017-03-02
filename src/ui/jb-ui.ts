@@ -244,7 +244,7 @@ export function ctrl(context) {
 	var styleOptions = defaultStyle(ctx);
 	if (styleOptions && styleOptions.methodHandler)  {// style by control
 		styleOptions.forceCtx = ctx;
-		return styleOptions;
+		return styleOptions.jbCtrl(ctx);
 	}
 	return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
 

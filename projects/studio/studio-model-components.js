@@ -131,7 +131,7 @@ jb.component('studio.more-params',{
 })
 
 
-jb.component('studio.comp-name-ref',{
+jb.component('studio.comp-name-ref', {
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (context,path) => { return {
 			$jb_val: function(value) {
@@ -147,7 +147,7 @@ jb.component('studio.comp-name-ref',{
 jb.component('studio.insert-comp',{
 	type: 'action',
 	params: [ 
-		{ id: 'path', as: 'string' },
+		{ id: 'path', as: 'string', defaultValue :{$: 'studio.currentProfilePath' }  },
 		{ id: 'comp', as: 'string' },
 	],
 	impl: (context,path,comp) => 
