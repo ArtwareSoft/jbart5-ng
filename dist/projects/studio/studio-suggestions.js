@@ -37,7 +37,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
                                 { $: 'studio.property-toolbar-feature', path: '%$path%' },
-                                { $: 'feature.debounce', debounceTime: '500' }
+                                { $: 'field.debounce-databind', debounceTime: '500' }
                             ]
                         },
                         { $: 'itemlist-with-groups',
@@ -257,7 +257,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 return CompOption;
             }());
             jb_core_1.jb.component('group.studio-suggestions', {
-                type: 'feature',
+                type: 'feature', category: 'group:0',
                 params: [
                     { id: 'path', as: 'string' },
                     { id: 'closeFloatingInput', type: 'action', dynamic: true },

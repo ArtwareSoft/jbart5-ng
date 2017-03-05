@@ -34,7 +34,7 @@ jb.component('group.expandable', {
 })
 
 jb.component('group.init-expandable', {
-  type: 'feature',
+  type: 'feature', category: 'group:0',
   impl: ctx => ({
         init: cmp => {
             cmp.show = true;
@@ -74,7 +74,7 @@ jb.component('group.accordion', {
 })
 
 jb.component('group.init-accordion', {
-  type: 'feature',
+  type: 'feature', category: 'group:0',
   impl: ctx => ({
     init: cmp => {
       cmp.expand_title = ctrl => 

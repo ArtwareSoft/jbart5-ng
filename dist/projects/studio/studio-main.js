@@ -103,7 +103,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     for: { $: 'studio.waitForPreviewIframe' },
                                     loadingControl: { $label: '...' }
                                 },
-                                { $: 'feature.afterLoad',
+                                { $: 'feature.after-load',
                                     action: {
                                         $runActions: [
                                             { $: 'studio.waitForPreviewIframe' },

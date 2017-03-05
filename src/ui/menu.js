@@ -222,7 +222,7 @@ jb.component('menu.context-menu-popup',{
 
 
 jb.component('group.menu-keyboard-selection', {
-  type: 'feature',
+  type: 'feature', category: 'group:0,menu:90',
   params: [
     { id: 'autoFocus', type: 'boolean' }
   ],

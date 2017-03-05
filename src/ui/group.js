@@ -45,8 +45,9 @@ jb.component('group', {
   }
 })
 
-jb.component('group.dynamic-sub-titles', {
-  type: 'feature',
+jb.component('group.dynamic-titles', {
+  type: 'feature', category: 'group:30',
+  description: 'dynamic titles for sub controls',
   impl: ctx => ({
     doCheck: cmp => 
       (cmp.ctrls || []).forEach(ctrl=>
@@ -70,7 +71,7 @@ jb.component('dynamic-controls', {
 })
 
 jb.component('group.init-group', {
-  type: 'feature',
+  type: 'feature', category: 'group:0',
   impl: ctx => ({
     init: cmp => cmp.initGroup()
   })

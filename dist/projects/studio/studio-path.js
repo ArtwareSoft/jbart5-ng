@@ -207,7 +207,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
                 }
             });
             jb_core_1.jb.component('group.studio-watch-path', {
-                type: 'feature',
+                type: 'feature', category: 'group:0',
                 params: [
                     { id: 'path', essential: true, as: 'ref' },
                 ],

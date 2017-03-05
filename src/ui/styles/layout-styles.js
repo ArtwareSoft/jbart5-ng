@@ -57,7 +57,7 @@ jb.component('flex-layout-container.align-main-axis', {
 })
 
 
-jb.component('flex-layout-item.grow', {
+jb.component('flex-item.grow', {
     type: 'feature',
     params: [
       { id: 'factor', as: 'number', defaultValue: '1' }
@@ -67,7 +67,7 @@ jb.component('flex-layout-item.grow', {
     })
 })
 
-jb.component('flex-layout-item.basis', {
+jb.component('flex-item.basis', {
     type: 'feature',
     params: [
       { id: 'factor', as: 'number', defaultValue: '1' }
@@ -77,7 +77,7 @@ jb.component('flex-layout-item.basis', {
     })
 })
 
-jb.component('flex-layout-item.align-self', {
+jb.component('flex-item.align-self', {
     type: 'feature',
     params: [
       { id: 'align', as: 'string', options: 'auto,flex-start,flex-end,center,baseline,stretch', defaultValue: 'auto' }

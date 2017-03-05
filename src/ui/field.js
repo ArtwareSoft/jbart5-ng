@@ -20,6 +20,28 @@ jb.component('field.databind', {
   }}
 })
 
+jb.component('field.debounce-databind', {
+  type: 'feature',
+  description: 'debounce input content writing to databind',
+  params: [
+    { id: 'debounceTime', as: 'number', defaultValue: 500 },
+  ],
+  impl: (ctx,debounceTime) =>
+    ({
+      init: cmp => {
+          cmp.inputEvents = cmp.inputEvents || new jb_rx.Subject();
+          cmp.inputEvents.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+            .distinctUntilChanged()
+            .debounceTime(debounceTime)
+            .subscribe(val=>
+              jb.writeValue(ctx.vars.$model.databind,val)
+          )
+      },
+      observable: () => {},
+    })
+})
+
+
 jb.component('field.data', {
   type: 'data',
   impl: ctx =>

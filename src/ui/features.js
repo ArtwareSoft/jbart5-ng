@@ -1,5 +1,5 @@
 jb.component('group.wait', {
-  type: 'feature',
+  type: 'feature', category: 'group:70',
   params: [ 
     { id: 'for', essential: true, dynamic: true },
     { id: 'loadingControl', type: 'control', defaultValue: { $:'label', title: 'loading ...'} , dynamic: true },
@@ -26,7 +26,7 @@ jb.component('group.wait', {
 
 // bind data and watch the data to refresh the control
 jb.component('group.data', {
-  type: 'feature',
+  type: 'feature', category: 'group:100',
   params: [
     { id: 'data', essential: true, dynamic: true, as: 'ref' },
     { id: 'itemVariable', as: 'string' },
@@ -60,7 +60,7 @@ jb.component('group.data', {
 })
 
 jb.component('group.watch', {
-  type: 'feature',
+  type: 'feature', category: 'group:80',
   params: [
     { id: 'data', essential: true, dynamic: true },
   ],
@@ -130,14 +130,8 @@ jb.component('feature.ng-attach-object', {
     }})
 })
 
-jb.component('feature.disableChangeDetection', {
-  type: 'feature',
-  impl: (ctx) => ({
-      disableChangeDetection: true })
-})
-
 jb.component('feature.onEnter', {
-  type: 'feature',
+  type: 'feature', category: 'feature:60',
   params: [
     { id: 'action', type: 'action[]', essential: true, dynamic: true }
   ],
@@ -159,7 +153,7 @@ jb.component('feature.onEnter', {
   })
 })
 
-jb.component('feature.afterLoad', {
+jb.component('feature.after-load', {
   type: 'feature',
   params: [
     { id: 'action', type: 'action[]', essential: true, dynamic: true }
@@ -182,7 +176,7 @@ jb.component('feature.emitter',{
 })
 
 jb.component('var',{
-  type: 'feature',
+  type: 'feature', category: 'feature:90',
   params: [
     { id: 'name', as: 'string', essential: true },
     { id: 'value', dynamic: true, essential: true },
@@ -195,7 +189,7 @@ jb.component('var',{
 })
 
 jb.component('hidden', {
-  type: 'feature',
+  type: 'feature', category: 'feature:85',
   params: [
     { id: 'showCondition', type: 'boolean', essential: true, dynamic: true },
   ],
@@ -210,7 +204,7 @@ jb.component('hidden', {
 })
 
 jb.component('field.style-on-focus', {
-  type: 'feature',
+  type: 'feature', category: 'feature:0',
   params: [
     { id: 'style', type: 'style', essential: true, dynamic: true },
   ],
@@ -218,27 +212,6 @@ jb.component('field.style-on-focus', {
     extendComp: { jb_styleOnFocus: ctx.profile.style }
   })
 })
-
-jb.component('feature.debounce', {
-  type: 'feature',
-  params: [
-    { id: 'debounceTime', as: 'number', defaultValue: 500 },
-  ],
-  impl: (ctx,debounceTime) =>
-    ({
-      init: cmp => {
-          cmp.inputEvents = cmp.inputEvents || new jb_rx.Subject();
-          cmp.inputEvents.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
-            .distinctUntilChanged()
-            .debounceTime(debounceTime)
-            .subscribe(val=>
-              jb.writeValue(ctx.vars.$model.databind,val)
-          )
-      },
-      observable: () => {},
-    })
-})
-
 
 jb.component('feature.keyboard-shortcut', {
   type: 'feature',

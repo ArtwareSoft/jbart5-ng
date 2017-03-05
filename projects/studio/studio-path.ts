@@ -206,7 +206,7 @@ jb.component('studio.fix-to-closest-path', {
 })
 
 jb.component('group.studio-watch-path', {
-  type: 'feature',
+  type: 'feature', category: 'group:0',
   params: [
     { id: 'path', essential: true, as: 'ref' },
   ],

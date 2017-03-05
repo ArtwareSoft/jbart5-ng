@@ -1,6 +1,7 @@
 
 jb.component('group.itemlist-filter-container', {
   description: 'itemlist container to support filtering',
+  category: 'itemlist:20,group:0',
   type: 'feature',
   impl: context => ({
         extendCtx: (ctx,cmp) =>

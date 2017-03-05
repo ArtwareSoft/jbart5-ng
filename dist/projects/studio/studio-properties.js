@@ -107,7 +107,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         }
                     ],
                     features: [
-                        { $: 'group.dynamic-sub-titles' },
+                        { $: 'group.dynamic-titles' },
                         { $: 'hidden',
                             showCondition: { $: 'studio.has-param', path: '%$path%', param: 'features' }
                         }

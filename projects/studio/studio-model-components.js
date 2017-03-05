@@ -62,7 +62,13 @@ jb.component('studio.categories-of-type', {
 	      	mark: (comps[pt].category||'').split(',')
 	      		.filter(c=>c.indexOf(category) == 0)
 	      		.map(c=>Number(c.split(':')[1] || 50))[0]
-	      }));
+	      }))
+      	.map(x=> {
+      		if (x.mark == null)
+      			x.mark = 50;
+      		return x;
+      	})
+      	.filter(x=>x.mark != 0);
 	  pts_with_marks.sort((c1,c2)=>c2.mark-c1.mark);
 	  return pts_with_marks.map(pt=>pt.pt)
   	}

@@ -101,7 +101,7 @@ jb.component('studio.all', {
             for :{$: 'studio.waitForPreviewIframe' }, 
             loadingControl :{ $label: '...' }
           }, 
-          {$: 'feature.afterLoad', 
+          {$: 'feature.after-load', 
             action :{
               $runActions: [
                 {$: 'studio.waitForPreviewIframe' }, 

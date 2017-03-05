@@ -99,7 +99,7 @@ jb.component('studio.properties', {
       }
     ], 
     features: [
-      {$: 'group.dynamic-sub-titles' }, 
+      {$: 'group.dynamic-titles' }, 
       {$: 'hidden', 
         showCondition :{$: 'studio.has-param', path: '%$path%', param: 'features' }
       }

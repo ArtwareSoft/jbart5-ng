@@ -1,18 +1,37 @@
+unify the 3:
+itemlist
+	item
+	selection
+menu
+	menu-option - ctrl, action
+	separator
+
+picklist
+	options - code, text
+
+problem:
+menu option is ctrl and options
+
+solution1:
+menu option is an object with Comp
+
+ideas:
+1. picklist option can contain: code, text, icon, action, customized_comp
+2. menu options are picklist options
+
+
+
 itemlist - one control.
 
-3. Contorl Search - don't remember last search
 4. Control Search - add X for editbox - as in chrome debuger
-5. Control Search - join two scroll bars into one
-6. Control Search - auto focus on search box
 6. Control Search - highlight search pattern on reasults
-6. Feature/Control Search - add categories at the left side
 6. New Project
 7. When dragging one of studio dialogs - do not activate angular check
 8. inteliscript - use up/down keys on context menu
 9. inteliscript - when selecting a new property - close context menu and focus on property
+10. inteliscript - select $if, then then and else
 In teliscript - right click on mouse should open context menu
 10. Actions - simple actions should be handled without inteliscript
-11. Select on tree should change properties window
 13. Enable saving sample data
 
 studio:

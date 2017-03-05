@@ -17,7 +17,7 @@ jb.component('studio.property-primitive', {
         features: [
           {$: 'studio.undo-support', path: '%$path%' }, 
           {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
-          {$: 'feature.debounce', debounceTime: '500' }
+          {$: 'field.debounce-databind', debounceTime: '500' }
         ]
       }, 
       {$: 'itemlist-with-groups', 
@@ -100,7 +100,6 @@ jb.component('studio.jb-floating-input', {
           {$: 'tree.regain-focus' }
         ]
       },
-//      {$: 'feature.disableChangeDetection' },
     ]
   }
 })
@@ -237,7 +236,7 @@ class CompOption {
 
 
 jb.component('group.studio-suggestions', {
-  type: 'feature', 
+  type: 'feature', category: 'group:0',
   params: [
     { id: 'path', as: 'string' },
     { id: 'closeFloatingInput', type: 'action', dynamic:true },

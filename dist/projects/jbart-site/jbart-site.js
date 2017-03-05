@@ -33,7 +33,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     action: { $: 'goto-url', url: 'https://github.com/ArtwareSoft/jbart5-ng' },
                                     style: { $: 'button.md-raised' },
                                     features: [
-                                        { $: 'flex-layout-item.align-self', align: 'center' },
+                                        { $: 'flex-item.align-self', align: 'center' },
                                         { $: 'css', css: '{ margin-right: 15px }' },
                                         { $: 'responsive.not-for-phone' }
                                     ]
@@ -43,7 +43,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                                     action: { $: 'goto-url', url: 'https://www.npmjs.com/package/jbart5-ng2' },
                                     style: { $: 'button.md-raised' },
                                     features: [
-                                        { $: 'flex-layout-item.align-self', align: 'center' },
+                                        { $: 'flex-item.align-self', align: 'center' },
                                         { $: 'css', css: '{ margin-right: 15px }' },
                                         { $: 'responsive.not-for-phone' }
                                     ]

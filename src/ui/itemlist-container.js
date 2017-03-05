@@ -1,6 +1,6 @@
 jb.component('group.itemlist-writable-container', {
   description: 'itemlist writable container to support addition, deletion and selection',
-  type: 'feature',
+  type: 'feature', category: 'itemlist:20,group:0',
   params: [
     { id: 'id', as: 'string' },
     { id: 'defaultItem', as: 'single' },
@@ -41,7 +41,7 @@ jb.component('group.itemlist-writable-container', {
 })
 
 jb.component('group.itemlist-selected', {
-  type: 'feature',
+  type: 'feature',   category: 'itemlist:20,group:0',
   impl: { $list : [ 	
   			{$: 'group.data', data : {$: 'itemlist-container.selected'}},
   			{$: 'hidden', showCondition: {$notEmpty: {$: 'itemlist-container.selected' } } }

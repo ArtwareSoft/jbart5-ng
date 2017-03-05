@@ -212,14 +212,17 @@ jb.component('studio.select-feature', {
                   {$: 'list', 
                     items: [
                       'css:100', 
-                      'itemlist:95', 
+                      'feature:95', 
                       'group:90', 
+                      'tabs:0,label:0,picklist:0,mdl:0,studio:0,text:0,menu:0,flex-layout-container:0,mdl-style:0', 
+                      'mdl-style:0'
                     ]
                   }, 
                   {$: 'join', separator: ',' }
                 ]
               }
             }, 
+            promote :{$: 'picklist.promote' }, 
             style :{$: 'style-by-control', 
               control :{$: 'itemlist', 
                 items: '%$picklistModel/options%', 
@@ -253,7 +256,14 @@ jb.component('studio.select-feature', {
               $pipeline: [
                 '%$Categories%', 
                 {$: 'filter', 
-                  filter :{$: 'equals', item1: '%name%', item2: '%$SelectedCategory%' }
+                  filter :{
+                    $if: '%$SearchPattern% != ""', 
+                    then :{$: 'equals', item1: '%name%', item2: 'all' }, 
+                    else :{$: 'equals', 
+                      item1: '%name%', 
+                      item2: '%$SelectedCategory%'
+                    }
+                  }
                 }, 
                 '%pts%', 
                 {$: 'search-filter', pattern: '%$SearchPattern%' }
@@ -268,8 +278,7 @@ jb.component('studio.select-feature', {
               }
             ], 
             watchItems: true, 
-            itemVariable: 'item', 
-            features :{$: 'css.height', height: '300', overflow: 'auto', minMax: '' }
+            itemVariable: 'item'
           }
         ]
       }
