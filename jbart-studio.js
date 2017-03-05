@@ -144,7 +144,7 @@ extend(op_post_handlers, {
           }
           try { 
             var current = ('' + fs.readFileSync(srcPath));
-            var toStore =  current + '\n\n' + toStore;
+            var toStore =  current + '\n\n' + clientReq.toSave;
             var cleanNL = toStore.replace(/\r/g,'');
             if (_iswin)
               cleanNL = cleanNL.replace(/\n/g,'\r\n');

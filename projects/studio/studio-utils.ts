@@ -4,7 +4,7 @@ import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 export var modifyOperationsEm = new jb_rx.Subject();
-export var studioActivityEm = new jb_rx.Subject();
+//export var studioActivityEm = new jb_rx.Subject();
 export var pathChangesEm = new jb_rx.Subject();
 
 
@@ -106,7 +106,7 @@ jb.component('studio.onNextModifiedPath', {
 		{ id: 'action', type: 'action', dynamic: true, essential: true }
 	],
 	impl: (ctx,action) =>  
-		modifyOperationsEm.take(1)
+		modifyOperationsEm.take(1).delay(1)
             .subscribe(e =>
             	action(ctx.setVars({ modifiedPath: e.args.modifiedPath }))
             )

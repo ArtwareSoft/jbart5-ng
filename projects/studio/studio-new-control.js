@@ -17,7 +17,7 @@ jb.component('studio.open-new-control-dialog', {
       {$: 'studio.insert-comp', 
         path :{$: 'studio.currentProfilePath' }, 
         comp: '%%'
-      }
+      },
     ] 
     } , 
     title: 'new control', 
@@ -343,7 +343,10 @@ jb.component('studio.insert-comp-option', {
     { id: 'comp', as: 'string' },
   ],
   impl :{$: 'menu.action', title: '%$title%', 
-    action:{$: 'studio.insert-comp', comp: '%$comp%' }
+    action: [
+      {$: 'studio.insert-comp', comp: '%$comp%' },
+//      {$: 'studio.refresh-preview' }
+    ]
   }
 })
 

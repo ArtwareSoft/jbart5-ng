@@ -344,7 +344,7 @@ export class jbComp {
   constructor(private compiler :Compiler, private ngZone: NgZone, private view: ViewContainerRef, private elementRef: ElementRef, private renderer: Renderer) {}
 
   ngOnInit() {
-  	jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
+//  	jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
   }
 
   // ngDoCheck() {

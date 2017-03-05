@@ -4,70 +4,28 @@ import {model} from './studio-tgp-model';
 import {profileFromPath} from './studio-path';
 
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { NgModule, Component, ElementRef } from '@angular/core';
-import {modifyOperationsEm,studioActivityEm} from './studio-utils';
+import { NgModule, Component, ElementRef, NgZone } from '@angular/core';
+import {modifyOperationsEm} from './studio-utils';
 
-export var previewRefreshCounter = 0;
+var previewRefreshCounter = 0;
 
-var modifiedCtrlsEm = modifyOperationsEm.flatMap(x=>{
-    var path_parts = x.path.split('~');
-    var sub_paths = path_parts.map((e,i)=>
-      path_parts.slice(0,i+1).join('~')).reverse();
-    var firstCtrl = sub_paths
-      .filter(p=>
-        model.isCompNameOfType(jb.compName(profileFromPath(p)),'control'))
-      [0];
-     return firstCtrl ? [{ path: firstCtrl, ngPath: x.ngPath}] : [];
-})
-
-
-function studioAutoRefreshComp(jbComp) {
-  jbComp.ngZone.runOutsideAngular(() => {
-    modifiedCtrlsEm
-      .flatMap(e=> {
-        var comp = jbComp._comp;
-        if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-//            jb_native_delay(100).then(() => {// highlight on delay
-               var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
-               elemToHighlight.addClass('jb-highlight-comp-changed')
-//            });
-
-            if (profileFromPath) {
-              var prof = profileFromPath(e.path);
-              var ctxToRun = comp.ctx.ctx({profile: prof, comp: e.path,path:''});
-              var comp = ctxToRun.runItself();
-              return [comp];
-            }
-          }
-          return [];
-      })
-      .catch(e =>
-            jb_logException(e))
-      .takeUntil(jbComp.destroyNotifier.toPromise())
-      .subscribe(comp=> {
-          if (comp != jbComp._comp) {
-            jbComp.draw(comp);
-            studioActivityEm.next(previewRefreshCounter++); // refresh preview
-         }
-      })
-    })
-}
+//         if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
+// //            jb_native_delay(100).then(() => {// highlight on delay
+//                var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
+//                elemToHighlight.addClass('jb-highlight-comp-changed')
+// //            });
 
 function studioAutoRefreshWidget(widget) {
   widget.ngZone.runOutsideAngular(() => {
-    var counterChange = studioActivityEm.map(x=>previewRefreshCounter).distinctUntilChanged();
-
-    var compIdEm = studioActivityEm
-      .startWith(1)
-      .map(()=>
-          widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main'))
-      .distinctUntilChanged()
-      .merge(counterChange)
-      .catch(e =>
-            jb_logException(e))
-      .subscribe(()=>
+    var counterOrPageChange = jbart.studioNgZone.onStable
+      .map(x=>{
+        widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main');
+        return widget.compId + ';' + previewRefreshCounter
+      }).distinctUntilChanged();
+        
+    modifyOperationsEm.merge(counterOrPageChange).subscribe(()=>
           widget.draw())
-    })
+  })
 }
 
 function renderWidget(ctx) {
@@ -78,7 +36,7 @@ function renderWidget(ctx) {
   })
   class previewIframe { 
       url: SafeResourceUrl;
-      constructor(private sanitizer: DomSanitizer, private elementRef: ElementRef) {}
+      constructor(private sanitizer: DomSanitizer, private elementRef: ElementRef, private ngZone: NgZone) {}
       ngOnInit() {
         var cmp = this;
         cmp.project = ctx.exp('%$globals/project%');
@@ -90,7 +48,8 @@ function renderWidget(ctx) {
           var w = iframe.contentWindow;
           jbart.studioGlobals = w.jbart.studioGlobals = ctx.exp('%$globals%');
           w.jbart.studioWindow = window;
-          w.jbart.studioAutoRefreshComp = studioAutoRefreshComp;
+          jbart.studioNgZone = cmp.ngZone;
+//          w.jbart.studioAutoRefreshComp = studioAutoRefreshComp;
           w.jbart.studioAutoRefreshWidget = studioAutoRefreshWidget;
 
           jbart.previewWindow = w;
@@ -158,6 +117,6 @@ jb.component('studio.waitForPreviewIframe',{
 
 jb.component('studio.refresh-preview', {
   type: 'action',
-  impl: () =>
-    studioActivityEm.next(previewRefreshCounter++)
+  impl: _ =>
+    previewRefreshCounter++
 })

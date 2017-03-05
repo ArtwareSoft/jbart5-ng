@@ -1,4 +1,4 @@
-System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/platform-browser', '@angular/core', './studio-utils'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/platform-browser', '@angular/core', './studio-utils'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,62 +10,31 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, studio_tgp_model_1, studio_path_1, platform_browser_1, core_1, studio_utils_1;
-    var previewRefreshCounter, modifiedCtrlsEm;
-    function studioAutoRefreshComp(jbComp) {
-        jbComp.ngZone.runOutsideAngular(function () {
-            modifiedCtrlsEm
-                .flatMap(function (e) {
-                var comp = jbComp._comp;
-                if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-                    //            jb_native_delay(100).then(() => {// highlight on delay
-                    var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
-                    elemToHighlight.addClass('jb-highlight-comp-changed');
-                    //            });
-                    if (studio_path_1.profileFromPath) {
-                        var prof = studio_path_1.profileFromPath(e.path);
-                        var ctxToRun = comp.ctx.ctx({ profile: prof, comp: e.path, path: '' });
-                        var comp = ctxToRun.runItself();
-                        return [comp];
-                    }
-                }
-                return [];
-            })
-                .catch(function (e) {
-                return jb_logException(e);
-            })
-                .takeUntil(jbComp.destroyNotifier.toPromise())
-                .subscribe(function (comp) {
-                if (comp != jbComp._comp) {
-                    jbComp.draw(comp);
-                    studio_utils_1.studioActivityEm.next((exports_1("previewRefreshCounter", ++previewRefreshCounter) - 1)); // refresh preview
-                }
-            });
-        });
-    }
+    var jb_core_1, platform_browser_1, core_1, studio_utils_1;
+    var previewRefreshCounter;
+    //         if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
+    // //            jb_native_delay(100).then(() => {// highlight on delay
+    //                var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
+    //                elemToHighlight.addClass('jb-highlight-comp-changed')
+    // //            });
     function studioAutoRefreshWidget(widget) {
         widget.ngZone.runOutsideAngular(function () {
-            var counterChange = studio_utils_1.studioActivityEm.map(function (x) { return previewRefreshCounter; }).distinctUntilChanged();
-            var compIdEm = studio_utils_1.studioActivityEm
-                .startWith(1)
-                .map(function () {
-                return widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main');
-            })
-                .distinctUntilChanged()
-                .merge(counterChange)
-                .catch(function (e) {
-                return jb_logException(e);
-            })
-                .subscribe(function () {
+            var counterOrPageChange = jbart.studioNgZone.onStable
+                .map(function (x) {
+                widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main');
+                return widget.compId + ';' + previewRefreshCounter;
+            }).distinctUntilChanged();
+            studio_utils_1.modifyOperationsEm.merge(counterOrPageChange).subscribe(function () {
                 return widget.draw();
             });
         });
     }
     function renderWidget(ctx) {
         var previewIframe = (function () {
-            function previewIframe(sanitizer, elementRef) {
+            function previewIframe(sanitizer, elementRef, ngZone) {
                 this.sanitizer = sanitizer;
                 this.elementRef = elementRef;
+                this.ngZone = ngZone;
             }
             previewIframe.prototype.ngOnInit = function () {
                 var cmp = this;
@@ -79,7 +48,8 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
                     var w = iframe.contentWindow;
                     jbart.studioGlobals = w.jbart.studioGlobals = ctx.exp('%$globals%');
                     w.jbart.studioWindow = window;
-                    w.jbart.studioAutoRefreshComp = studioAutoRefreshComp;
+                    jbart.studioNgZone = cmp.ngZone;
+                    //          w.jbart.studioAutoRefreshComp = studioAutoRefreshComp;
                     w.jbart.studioAutoRefreshWidget = studioAutoRefreshWidget;
                     jbart.previewWindow = w;
                     jbart.previewjbart = w.jbart;
@@ -103,7 +73,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
                     selector: 'preview_iframe',
                     template: "<iframe sandbox=\"allow-same-origin allow-forms allow-scripts\" style=\"box-shadow:  2px 2px 6px 1px gray; margin-left: 2px; margin-top: 2px\"\n        seamless=\"\" id=\"jb-preview\" frameborder=\"0\" [src]=\"project_url\"></iframe>",
                 }), 
-                __metadata('design:paramtypes', [platform_browser_1.DomSanitizer, core_1.ElementRef])
+                __metadata('design:paramtypes', [platform_browser_1.DomSanitizer, core_1.ElementRef, core_1.NgZone])
             ], previewIframe);
             return previewIframe;
         }());
@@ -133,12 +103,6 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
             function (jb_core_1_1) {
                 jb_core_1 = jb_core_1_1;
             },
-            function (studio_tgp_model_1_1) {
-                studio_tgp_model_1 = studio_tgp_model_1_1;
-            },
-            function (studio_path_1_1) {
-                studio_path_1 = studio_path_1_1;
-            },
             function (platform_browser_1_1) {
                 platform_browser_1 = platform_browser_1_1;
             },
@@ -149,18 +113,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
                 studio_utils_1 = studio_utils_1_1;
             }],
         execute: function() {
-            exports_1("previewRefreshCounter", previewRefreshCounter = 0);
-            modifiedCtrlsEm = studio_utils_1.modifyOperationsEm.flatMap(function (x) {
-                var path_parts = x.path.split('~');
-                var sub_paths = path_parts.map(function (e, i) {
-                    return path_parts.slice(0, i + 1).join('~');
-                }).reverse();
-                var firstCtrl = sub_paths
-                    .filter(function (p) {
-                    return studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(studio_path_1.profileFromPath(p)), 'control');
-                })[0];
-                return firstCtrl ? [{ path: firstCtrl, ngPath: x.ngPath }] : [];
-            });
+            previewRefreshCounter = 0;
             jb_core_1.jb.component('studio.renderWidget', {
                 type: 'control',
                 impl: function (ctx) { return renderWidget(ctx); }
@@ -188,8 +141,8 @@ System.register(['jb-core', './studio-tgp-model', './studio-path', '@angular/pla
             });
             jb_core_1.jb.component('studio.refresh-preview', {
                 type: 'action',
-                impl: function () {
-                    return studio_utils_1.studioActivityEm.next((exports_1("previewRefreshCounter", ++previewRefreshCounter) - 1));
+                impl: function (_) {
+                    return previewRefreshCounter++;
                 }
             });
         }

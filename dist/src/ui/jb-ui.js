@@ -426,7 +426,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     configurable: true
                 });
                 jbComp.prototype.ngOnInit = function () {
-                    jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
+                    //  	jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
                 };
                 // ngDoCheck() {
                 // 	if (this.jbComp != this.oldComp) {

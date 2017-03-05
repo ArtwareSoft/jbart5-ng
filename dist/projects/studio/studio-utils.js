@@ -2,7 +2,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var jb_core_1, jb_rx;
-    var modifyOperationsEm, studioActivityEm, pathChangesEm;
+    var modifyOperationsEm, pathChangesEm;
     function notifyModification(path, before, ctx, ngPath) {
         var comp = path.split('~')[0];
         modifyOperationsEm.next({ comp: comp, before: before, after: compAsStr(comp), path: path, ctx: ctx, jbart: findjBartToLook(path), ngPath: ngPath });
@@ -60,7 +60,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
             }],
         execute: function() {
             exports_1("modifyOperationsEm", modifyOperationsEm = new jb_rx.Subject());
-            exports_1("studioActivityEm", studioActivityEm = new jb_rx.Subject());
+            //export var studioActivityEm = new jb_rx.Subject();
             exports_1("pathChangesEm", pathChangesEm = new jb_rx.Subject());
             // ********* Components ************
             jb_core_1.jb.component('studio.message', {
@@ -112,7 +112,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     { id: 'action', type: 'action', dynamic: true, essential: true }
                 ],
                 impl: function (ctx, action) {
-                    return modifyOperationsEm.take(1)
+                    return modifyOperationsEm.take(1).delay(1)
                         .subscribe(function (e) {
                         return action(ctx.setVars({ modifiedPath: e.args.modifiedPath }));
                     });

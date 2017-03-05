@@ -228,6 +228,11 @@ jb.component('studio-helper.select-control', {
 })
 
 
-
-
-undefined
+jb.component('studio-helper.select-feature', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'select-feature', 
+    style :{$: 'layout.horizontal', spacing: '53' }, 
+    controls: [{$: 'studio.select-feature' }]
+  }
+})

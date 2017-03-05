@@ -71,7 +71,8 @@ jb.component('menu.action', {
 		        cmp.action = jb_ui.wrapWithLauchingElement( _ => {
         			jbart.jb_dialogs.dialogs.filter(d=>d.isPopup)
 			  			.forEach(d=>d.close());
-		        	model.action(cmp.ctx);
+			  		jb.delay(50).then(_=>
+		        		model.action(cmp.ctx));
 		        }, ctx, cmp.elementRef);
 		      }
 		  })
