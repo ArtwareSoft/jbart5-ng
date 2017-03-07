@@ -131,8 +131,8 @@ jb_modules =
 'testing/ui-testers-ctrls',
 ];
 
-jb_studio_modules = ['tgp-model','model-components.js','path','utils','main','preview','menu.js','toolbar','tests','popups'
-,'tree','properties','properties-menu','pick.js','save','probe','edit-source','new-control.js','testers'
+jb_studio_modules = ['tgp-model','model-components.js','path','utils','main.js','preview','menu.js','toolbar','tests','popups'
+,'tree','properties.js','properties-menu.js','pick.js','save','probe','edit-source','new-control.js','testers'
 ,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
   .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 

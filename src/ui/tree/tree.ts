@@ -11,19 +11,11 @@ jb.type('tree.style');
 declare var $: any;
 declare var dragula: any;
 
-export interface jbTree {
-	el: any,
-	// injected by TreeSelection feature
-	selectedNode() : any,
-	triggerOnSelected(string),
-	moveSelection(number), 
-}
-
 // part of ul-li
 @Component({
 	selector: 'node_line',
-	template: `<div class="treenode-line" [ngClass]="{collapsed: !tree.expanded[path]}">
-				<button class="treenode-expandbox" (click)="flip()" [ngClass]="{nochildren: !model.isArray(path)}">
+	template: `<div class="treenode-line" [class.collapsed]="!tree.expanded[path]">
+				<button class="treenode-expandbox" (click)="flip()" [class.nochildren]="!model.isArray(path)">
 					<div class="frame"></div><div class="line-lr"></div><div class="line-tb"></div>
 				</button>
 				<i class="material-icons">{{icon}}</i>
@@ -56,7 +48,7 @@ class TreeNodeLine {
 	template: `<node_line [tree]="tree" [path]="path"></node_line>
 		<ul *ngIf="tree.expanded[path]" class="treenode-children">
 		  <li *ngFor="let childPath of tree.nodeModel.children(path)" class="treenode-li">
-			<jb_node [tree]="tree" [path]="childPath" class="treenode" [ngClass]="{selected: tree.selected == childPath}"></jb_node>
+			<jb_node [tree]="tree" [path]="childPath" class="treenode" [class.selected]="tree.selected == childPath"></jb_node>
 		  </li>
 		</ul>`,
 	directives: [TreeNodeLine,TreeNode]
@@ -86,6 +78,12 @@ class TreeNode {
 })
 class jbTreeModule { }
 
+var emptyModel = {
+	isArray: _ => false,
+	children: _ => [],
+	title: _ => '',
+	rootPath: ''
+}
  //********************* jBart Components
 
 jb.component('tree', {
@@ -102,9 +100,17 @@ jb.component('tree', {
 		var tree = { nodeModel: nodeModel };
 		var ctx = context.setVars({$tree: tree});
 		return jb_ui.ctrl(ctx).jbExtend({
-			host: { 'class': 'jb-tree' }, // define host element to keep the wrapper
+			host: { '[class]': 'jb-tree' }, // define host element to keep the wrapper
 			beforeInit: function(cmp) {
 				cmp.tree = jb.extend(tree,{
+					redraw: _ => { // needed after dragula that changes the DOM
+						var model = tree.nodeModel;
+						tree.nodeModel = emptyModel;
+			            cmp.changeDt.markForCheck();cmp.changeDt.detectChanges();
+
+						tree.nodeModel = model;
+			            cmp.changeDt.markForCheck();cmp.changeDt.detectChanges();
+					},
 					expanded: jb.obj(tree.nodeModel.rootPath, true),
 					el: cmp.elementRef.nativeElement,
 					elemToPath: el => $(el).closest('.treenode').attr('path'),
@@ -118,7 +124,7 @@ jb.component('tree', {
 jb.component('tree.ul-li', {
 	type: 'tree.style',
 	impl :{$:'customStyle',
-		template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
+		template: '<jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [class.selected]="tree.selected == tree.nodeModel.rootPath"></jb_node>',
 //		directives: ['TreeNode', 'TreeNodeLine'],
 		imports: [jbTreeModule]
 	}
@@ -324,9 +330,13 @@ jb.component('tree.onMouseRight', {
 jb.component('tree.drag-and-drop', {
   type: 'feature',
   params: [
+	  { id: 'afterDrop', type: 'action', dynamic: true, essential: true },
   ],
   impl: function(context) {
   	return {
+		host: {
+        	'(keydown)': 'keydownSrc.next($event)',
+        },
   		init: function(cmp) {
   			var tree = cmp.tree;
 			var drake = tree.drake = dragula([], {
@@ -348,13 +358,36 @@ jb.component('tree.drag-and-drop', {
 	            var index =  sibling ? $(sibling).index() : -1;
 				var path = tree.elemToPath(target);
 				tree.nodeModel.modify(tree.nodeModel.move, 
-					path, { dragged: dropElm.dragged.path, index: index },context)
-				dropElm.dragged = null;
-
+					path, { dragged: dropElm.dragged.path, index: index },context);
 				// refresh the nodes on the tree - to avoid bugs
 				tree.expanded[tree.nodeModel.rootPath] = false;
-				jb.delay(1).then(()=>tree.expanded[tree.nodeModel.rootPath] = true)
+				jb.delay(1).then(()=> {
+					tree.expanded[tree.nodeModel.rootPath] = true;
+					context.params.afterDrop(context.setData({ dragged: dropElm.dragged.path, index: index }));
+					var newSelection = dropElm.dragged.path.split('~').slice(0,-1).concat([''+index]).join('~');
+					tree.selectionEmitter.next(newSelection);
+					dropElm.dragged = null;
+					tree.redraw();
+				})
 	        });
+
+	        // ctrl up and down
+	        cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+	        cmp.keydown = cmp.keydown || cmp.keydownSrc
+	          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
+			cmp.keydown.filter(e=> 
+				e.ctrlKey && (e.keyCode == 38 || e.keyCode == 40))
+				.subscribe(e=> {
+					var diff = e.keyCode == 40 ? 1 : -1;
+					var selectedIndex = Number(tree.selected.split('~').pop());
+					if (isNaN(selectedIndex)) return;
+					var no_of_siblings = $($('.treenode.selected').parents('.treenode-children')[0]).children().length;
+					var index = (selectedIndex + diff+ no_of_siblings) % no_of_siblings;
+					var path = tree.selected.split('~').slice(0,-1).join('~');
+					tree.nodeModel.modify(tree.nodeModel.move, path, { dragged: tree.selected, index: index },context);
+					tree.selectionEmitter.next(path+'~'+index);
+			})
   		},
   		doCheck: function(cmp) {
   			var tree = cmp.tree;

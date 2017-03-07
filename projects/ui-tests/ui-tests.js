@@ -245,7 +245,7 @@ jb.component('ui-test.tree', {
 jb.component('ui-test.tree-DD', {
   impl :{$: 'ng2-ui-test',  
   control :{$: 'tree',
-    nodeModel :{$: 'tree.json-read-only', 
+    nodeModel :{$: 'tree.json', 
       object: '%$personWithChildren%', rootPath: 'Homer' 
     },
     features: [

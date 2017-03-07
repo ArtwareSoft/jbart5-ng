@@ -11,7 +11,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var jb_core_1, jb_ui, jb_rx, ui_utils, common_1, core_1;
-    var TreeNodeLine, TreeNode, jbTreeModule;
+    var TreeNodeLine, TreeNode, jbTreeModule, emptyModel;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -62,7 +62,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                 TreeNodeLine = __decorate([
                     core_1.Component({
                         selector: 'node_line',
-                        template: "<div class=\"treenode-line\" [ngClass]=\"{collapsed: !tree.expanded[path]}\">\n\t\t\t\t<button class=\"treenode-expandbox\" (click)=\"flip()\" [ngClass]=\"{nochildren: !model.isArray(path)}\">\n\t\t\t\t\t<div class=\"frame\"></div><div class=\"line-lr\"></div><div class=\"line-tb\"></div>\n\t\t\t\t</button>\n\t\t\t\t<i class=\"material-icons\">{{icon}}</i>\n\t\t\t\t<span class=\"treenode-label\" [innerHTML]=\"title\"></span>\n\t\t\t  </div>",
+                        template: "<div class=\"treenode-line\" [class.collapsed]=\"!tree.expanded[path]\">\n\t\t\t\t<button class=\"treenode-expandbox\" (click)=\"flip()\" [class.nochildren]=\"!model.isArray(path)\">\n\t\t\t\t\t<div class=\"frame\"></div><div class=\"line-lr\"></div><div class=\"line-tb\"></div>\n\t\t\t\t</button>\n\t\t\t\t<i class=\"material-icons\">{{icon}}</i>\n\t\t\t\t<span class=\"treenode-label\" [innerHTML]=\"title\"></span>\n\t\t\t  </div>",
                         styles: ["i {font-size: 16px; margin-left: -4px; padding-right:2px }"]
                     }), 
                     __metadata('design:paramtypes', [])
@@ -96,7 +96,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                 TreeNode = __decorate([
                     core_1.Component({
                         selector: 'jb_node',
-                        template: "<node_line [tree]=\"tree\" [path]=\"path\"></node_line>\n\t\t<ul *ngIf=\"tree.expanded[path]\" class=\"treenode-children\">\n\t\t  <li *ngFor=\"let childPath of tree.nodeModel.children(path)\" class=\"treenode-li\">\n\t\t\t<jb_node [tree]=\"tree\" [path]=\"childPath\" class=\"treenode\" [ngClass]=\"{selected: tree.selected == childPath}\"></jb_node>\n\t\t  </li>\n\t\t</ul>",
+                        template: "<node_line [tree]=\"tree\" [path]=\"path\"></node_line>\n\t\t<ul *ngIf=\"tree.expanded[path]\" class=\"treenode-children\">\n\t\t  <li *ngFor=\"let childPath of tree.nodeModel.children(path)\" class=\"treenode-li\">\n\t\t\t<jb_node [tree]=\"tree\" [path]=\"childPath\" class=\"treenode\" [class.selected]=\"tree.selected == childPath\"></jb_node>\n\t\t  </li>\n\t\t</ul>",
                         directives: [TreeNodeLine, TreeNode]
                     }), 
                     __metadata('design:paramtypes', [core_1.ElementRef])
@@ -116,6 +116,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                 ], jbTreeModule);
                 return jbTreeModule;
             }());
+            emptyModel = {
+                isArray: function (_) { return false; },
+                children: function (_) { return []; },
+                title: function (_) { return ''; },
+                rootPath: ''
+            };
             //********************* jBart Components
             jb_core_1.jb.component('tree', {
                 type: 'control',
@@ -131,9 +137,18 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                     var tree = { nodeModel: nodeModel };
                     var ctx = context.setVars({ $tree: tree });
                     return jb_ui.ctrl(ctx).jbExtend({
-                        host: { 'class': 'jb-tree' },
+                        host: { '[class]': 'jb-tree' },
                         beforeInit: function (cmp) {
                             cmp.tree = jb_core_1.jb.extend(tree, {
+                                redraw: function (_) {
+                                    var model = tree.nodeModel;
+                                    tree.nodeModel = emptyModel;
+                                    cmp.changeDt.markForCheck();
+                                    cmp.changeDt.detectChanges();
+                                    tree.nodeModel = model;
+                                    cmp.changeDt.markForCheck();
+                                    cmp.changeDt.detectChanges();
+                                },
                                 expanded: jb_core_1.jb.obj(tree.nodeModel.rootPath, true),
                                 el: cmp.elementRef.nativeElement,
                                 elemToPath: function (el) { return $(el).closest('.treenode').attr('path'); },
@@ -146,7 +161,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
             jb_core_1.jb.component('tree.ul-li', {
                 type: 'tree.style',
                 impl: { $: 'customStyle',
-                    template: '<span><jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [ngClass]="{selected: tree.selected == tree.nodeModel.rootPath}"></jb_node></span>',
+                    template: '<jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [class.selected]="tree.selected == tree.nodeModel.rootPath"></jb_node>',
                     //		directives: ['TreeNode', 'TreeNodeLine'],
                     imports: [jbTreeModule]
                 }
@@ -339,9 +354,14 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
             });
             jb_core_1.jb.component('tree.drag-and-drop', {
                 type: 'feature',
-                params: [],
+                params: [
+                    { id: 'afterDrop', type: 'action', dynamic: true, essential: true },
+                ],
                 impl: function (context) {
                     return {
+                        host: {
+                            '(keydown)': 'keydownSrc.next($event)',
+                        },
                         init: function (cmp) {
                             var tree = cmp.tree;
                             var drake = tree.drake = dragula([], {
@@ -362,10 +382,34 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                                 var index = sibling ? $(sibling).index() : -1;
                                 var path = tree.elemToPath(target);
                                 tree.nodeModel.modify(tree.nodeModel.move, path, { dragged: dropElm.dragged.path, index: index }, context);
-                                dropElm.dragged = null;
                                 // refresh the nodes on the tree - to avoid bugs
                                 tree.expanded[tree.nodeModel.rootPath] = false;
-                                jb_core_1.jb.delay(1).then(function () { return tree.expanded[tree.nodeModel.rootPath] = true; });
+                                jb_core_1.jb.delay(1).then(function () {
+                                    tree.expanded[tree.nodeModel.rootPath] = true;
+                                    context.params.afterDrop(context.setData({ dragged: dropElm.dragged.path, index: index }));
+                                    var newSelection = dropElm.dragged.path.split('~').slice(0, -1).concat(['' + index]).join('~');
+                                    tree.selectionEmitter.next(newSelection);
+                                    dropElm.dragged = null;
+                                    tree.redraw();
+                                });
+                            });
+                            // ctrl up and down
+                            cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+                            cmp.keydown = cmp.keydown || cmp.keydownSrc
+                                .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
+                            cmp.keydown.filter(function (e) {
+                                return e.ctrlKey && (e.keyCode == 38 || e.keyCode == 40);
+                            })
+                                .subscribe(function (e) {
+                                var diff = e.keyCode == 40 ? 1 : -1;
+                                var selectedIndex = Number(tree.selected.split('~').pop());
+                                if (isNaN(selectedIndex))
+                                    return;
+                                var no_of_siblings = $($('.treenode.selected').parents('.treenode-children')[0]).children().length;
+                                var index = (selectedIndex + diff + no_of_siblings) % no_of_siblings;
+                                var path = tree.selected.split('~').slice(0, -1).join('~');
+                                tree.nodeModel.modify(tree.nodeModel.move, path, { dragged: tree.selected, index: index }, context);
+                                tree.selectionEmitter.next(path + '~' + index);
                             });
                         },
                         doCheck: function (cmp) {

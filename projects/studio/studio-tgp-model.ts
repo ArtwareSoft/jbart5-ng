@@ -136,6 +136,7 @@ export class TgpModel {
 	}
 
 	title(path, collapsed) {
+		if (path == '') return '';
 		collapsed = collapsed || !this.isArray(path);
 		var val = profileFromPath(path);
 		if (path.indexOf('~') == -1)
@@ -261,8 +262,10 @@ export class TgpModel {
 
 	move(path,args) { // drag & drop
 		var dragged = profileFromPath(args.dragged);
-		var arr = this.getOrCreateArray(path);
-		if (arr) {
+		var arr = profileFromPath(path);
+		if (!Array.isArray(arr))
+			arr = this.getOrCreateArray(path);
+		if (Array.isArray(arr)) {
 			var ctrlParam = this.controlParam(path);
 			this._delete(args.dragged,{noFixer: true});
 			var index = (args.index == -1) ? arr.length : args.index;

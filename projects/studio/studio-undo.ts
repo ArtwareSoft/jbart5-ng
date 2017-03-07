@@ -1,6 +1,6 @@
 import {jb} from 'jb-core';
 import * as jb_ui from 'jb-ui';
-import {modifyOperationsEm} from './studio-utils';
+import {modifyOperationsEm,compAsStrFromPath,notifyModification} from './studio-utils';
 import {pathFixer} from './studio-path';
 
 class Undo {
@@ -60,6 +60,38 @@ jb.component('studio.paste', {
 	params: [ {id: 'path', as: 'string' } ],
 	impl: (ctx,path) => 
 		undo.paste(ctx,path)
+})
+
+jb.component('studio.undo-support', {
+  type: 'feature',
+  params: [
+    { id: 'path', essential: true, as: 'string' },
+  ],
+  impl: (ctx,path) => 
+  	({
+  		// saving state on focus and setting the change on blur
+  		init: cmp => {
+  			var before = compAsStrFromPath(path);
+  			if (cmp.codeMirror) {
+  				cmp.codeMirror.on('focus',()=>
+  					before = compAsStrFromPath(path)
+  				);
+  				cmp.codeMirror.on('blur',()=>{
+  					if (before != compAsStrFromPath(path))
+						notifyModification(path,before,ctx)
+  				});
+  			} else {
+  			$(cmp.elementRef.nativeElement).findIncludeSelf('input')
+  				.focus(e=> {
+  					before = compAsStrFromPath(path)
+  				})
+  				.blur(e=> {
+  					if (before != compAsStrFromPath(path))
+						notifyModification(path,before,ctx)
+  				})
+  			}
+  		}
+  })
 })
 
 

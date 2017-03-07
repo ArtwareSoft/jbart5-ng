@@ -88,6 +88,39 @@ System.register(['jb-core', 'jb-ui', './studio-utils', './studio-path'], functio
                     return undo.paste(ctx, path);
                 }
             });
+            jb_core_1.jb.component('studio.undo-support', {
+                type: 'feature',
+                params: [
+                    { id: 'path', essential: true, as: 'string' },
+                ],
+                impl: function (ctx, path) {
+                    return ({
+                        // saving state on focus and setting the change on blur
+                        init: function (cmp) {
+                            var before = studio_utils_1.compAsStrFromPath(path);
+                            if (cmp.codeMirror) {
+                                cmp.codeMirror.on('focus', function () {
+                                    return before = studio_utils_1.compAsStrFromPath(path);
+                                });
+                                cmp.codeMirror.on('blur', function () {
+                                    if (before != studio_utils_1.compAsStrFromPath(path))
+                                        studio_utils_1.notifyModification(path, before, ctx);
+                                });
+                            }
+                            else {
+                                $(cmp.elementRef.nativeElement).findIncludeSelf('input')
+                                    .focus(function (e) {
+                                    before = studio_utils_1.compAsStrFromPath(path);
+                                })
+                                    .blur(function (e) {
+                                    if (before != studio_utils_1.compAsStrFromPath(path))
+                                        studio_utils_1.notifyModification(path, before, ctx);
+                                });
+                            }
+                        }
+                    });
+                }
+            });
         }
     }
 });

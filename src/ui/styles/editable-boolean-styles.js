@@ -2,7 +2,7 @@ jb.component('editable-boolean.checkbox', {
   type: 'editable-boolean.style',
   impl :{$: 'customStyle', 
       features :{$: 'field.databind' },
-      template: `<div><input type="checkbox" [ngModel]="jbModel()" (change)="jbModel($event.target.checked)" (keyup)="jbModel($event.target.checked,'keyup')"></div>`,
+      template: `<input type="checkbox" [ngModel]="jbModel()" (change)="jbModel($event.target.checked)" (keyup)="jbModel($event.target.checked,'keyup')">`,
 	}
 })
 

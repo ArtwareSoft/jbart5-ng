@@ -8,6 +8,7 @@ jb.component('hello-world.main', {
         style :{$: 'button.mdl-icon', size: 20, icon: 'build' }
       }, 
       {$: 'editable-boolean', 
+        databind: '%$globals/a%', 
         style :{$: 'editable-boolean.checkbox' }, 
         textForTrue: 'yes', 
         textForFalse: 'no'

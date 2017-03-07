@@ -1,7 +1,5 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-import {model} from './studio-tgp-model';
-import {compAsStrFromPath,modifyOperationsEm,notifyModification,pathChangesEm} from './studio-utils';
+jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => { 
+  var model = loadedModules['studio/studio-tgp-model'].model;
 
 
 jb.component('studio.open-properties', {
@@ -312,7 +310,7 @@ jb.component('studio.property-tgp', {
               {$: 'css', 
                 css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
               }, 
-              {$: 'studio.refresh-options-watch'}
+              {$: 'studio.dynamic-options-watch-new-comp'}
             ]
           }
         ], 
@@ -373,10 +371,7 @@ jb.component('studio.property-custom-style', {
             {$: 'css', 
               css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
             },
-            { $: 'picklist.dynamic-options', 
-              recalcEm: ctx => 
-                modifyOperationsEm.filter(e=>e.newComp)
-            }
+            {$: 'studio.dynamic-options-watch-new-comp'}
          ],
     }
   }
@@ -509,65 +504,6 @@ jb.component('studio.tgp-path-options',{
 			.concat(model.PTsOfPath(path).map(op=> ({ code: op, text: op})))
 })
 
-jb.component('studio.refresh-options-watch', {
-  type: 'feature',
-  impl :{$: 'picklist.dynamic-options', 
-        recalcEm: () => 
-          modifyOperationsEm.filter(e => 
-            e.newComp)
-  }
+
+
 })
-
-jb.component('studio.undo-support', {
-  type: 'feature',
-  params: [
-    { id: 'path', essential: true, as: 'string' },
-  ],
-  impl: (ctx,path) => 
-  	({
-  		// saving state on focus and setting the change on blur
-  		init: cmp => {
-  			var before = compAsStrFromPath(path);
-  			if (cmp.codeMirror) {
-  				cmp.codeMirror.on('focus',()=>
-  					before = compAsStrFromPath(path)
-  				);
-  				cmp.codeMirror.on('blur',()=>{
-  					if (before != compAsStrFromPath(path))
-						notifyModification(path,before,ctx)
-  				});
-  			} else {
-  			$(cmp.elementRef.nativeElement).findIncludeSelf('input')
-  				.focus(e=> {
-  					before = compAsStrFromPath(path)
-  				})
-  				.blur(e=> {
-  					if (before != compAsStrFromPath(path))
-						notifyModification(path,before,ctx)
-  				})
-  			}
-  		}
-  })
-})
-
-jb.component('studio.bindto-modifyOperations', {
-  type: 'feature',
-  params: [
-    { id: 'path', essential: true, as: 'string' },
-    { id: 'data', as: 'ref' }
-  ],
-  impl: (context, path,data_ref) => ({
-      init: cmp =>  
-        modifyOperationsEm
-          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
-          .filter(e=>
-            e.path == path)
-          .subscribe(e=>
-              jb.writeValue(data_ref,true)
-          ),
-      observable: () => {} // to create jbEmitter
-    })
-})
-
-
-

@@ -111,3 +111,33 @@ jb.component('studio.onNextModifiedPath', {
             	action(ctx.setVars({ modifiedPath: e.args.modifiedPath }))
             )
 })
+
+jb.component('studio.bindto-modifyOperations', {
+  type: 'feature',
+  params: [
+    { id: 'path', essential: true, as: 'string' },
+    { id: 'data', as: 'ref' }
+  ],
+  impl: (context, path,data_ref) => ({
+      init: cmp =>  
+        modifyOperationsEm
+          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+          .filter(e=>
+            e.path == path)
+          .subscribe(e=>
+              jb.writeValue(data_ref,true)
+          ),
+      observable: () => {} // to create jbEmitter
+    })
+})
+
+jb.component('studio.dynamic-options-watch-new-comp', {
+  type: 'feature',
+  impl :{$: 'picklist.dynamic-options', 
+        recalcEm: () => 
+          modifyOperationsEm.filter(e => 
+            e.newComp)
+  }
+})
+
+

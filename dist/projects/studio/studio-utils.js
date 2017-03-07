@@ -118,6 +118,36 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     });
                 }
             });
+            jb_core_1.jb.component('studio.bindto-modifyOperations', {
+                type: 'feature',
+                params: [
+                    { id: 'path', essential: true, as: 'string' },
+                    { id: 'data', as: 'ref' }
+                ],
+                impl: function (context, path, data_ref) { return ({
+                    init: function (cmp) {
+                        return modifyOperationsEm
+                            .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .filter(function (e) {
+                            return e.path == path;
+                        })
+                            .subscribe(function (e) {
+                            return jb_core_1.jb.writeValue(data_ref, true);
+                        });
+                    },
+                    observable: function () { } // to create jbEmitter
+                }); }
+            });
+            jb_core_1.jb.component('studio.dynamic-options-watch-new-comp', {
+                type: 'feature',
+                impl: { $: 'picklist.dynamic-options',
+                    recalcEm: function () {
+                        return modifyOperationsEm.filter(function (e) {
+                            return e.newComp;
+                        });
+                    }
+                }
+            });
         }
     }
 });

@@ -133,6 +133,8 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     return prop + (Array.isArray(val) ? " (" + val.length + ")" : '');
                 };
                 TgpModel.prototype.title = function (path, collapsed) {
+                    if (path == '')
+                        return '';
                     collapsed = collapsed || !this.isArray(path);
                     var val = studio_path_1.profileFromPath(path);
                     if (path.indexOf('~') == -1)
@@ -246,8 +248,10 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 // modify operations - must have same interface: path,args
                 TgpModel.prototype.move = function (path, args) {
                     var dragged = studio_path_1.profileFromPath(args.dragged);
-                    var arr = this.getOrCreateArray(path);
-                    if (arr) {
+                    var arr = studio_path_1.profileFromPath(path);
+                    if (!Array.isArray(arr))
+                        arr = this.getOrCreateArray(path);
+                    if (Array.isArray(arr)) {
                         var ctrlParam = this.controlParam(path);
                         this._delete(args.dragged, { noFixer: true });
                         var index = (args.index == -1) ? arr.length : args.index;

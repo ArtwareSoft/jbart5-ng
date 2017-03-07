@@ -1,6 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-
 jb.component('studio.all', {
   type: 'control', 
   impl :{$: 'group', 
