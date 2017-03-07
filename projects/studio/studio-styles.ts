@@ -5,7 +5,8 @@ jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
       features :{$: 'field.databind' },
-      template: `<div><input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></div>`,
+      template: `<input>`,
+      // [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"
 	  css: `
 input { display: block; width: 146px; height: 19px; padding-left: 2px;
 	font-size: 12px; color: #555555; background-color: #fff; 
@@ -17,7 +18,7 @@ input:focus { border-color: #66afe9; outline: 0;
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
 input::placeholder { color: #999; opacity: 1; }
 input[disabled], input[readonly] { background-color: #eeeeee; opacity: 1; }
-	  	input.focused {width: 300px; transition: width: 1s}`
+input.focused {width: 300px; transition: width: 1s}`
 	}
 })
 

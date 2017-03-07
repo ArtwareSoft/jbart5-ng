@@ -3,6 +3,7 @@ import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {model} from './studio-tgp-model';
 import {getComp} from './studio-utils';
+import {stop_prop} from 'jb-ui/jb-ui-utils'
 
 jb.component('studio.property-primitive', {
   type: 'control', 
@@ -17,10 +18,12 @@ jb.component('studio.property-primitive', {
         features: [
           {$: 'studio.undo-support', path: '%$path%' }, 
           {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
-          {$: 'field.debounce-databind', debounceTime: '500' }
+          {$: 'field.debounce-databind', debounceTime: '500' },
+          // {$: 'feature.dont-generate-change-detection-events' },
+          // {$: 'feature.disable-change-detection' },
         ]
       }, 
-      {$: 'itemlist-with-groups', 
+      {$: 'itemlist', 
         items: '%$suggestionCtx/options%', 
         controls :{$: 'group', 
           style :{$: 'layout.flex', align: 'space-between', direction: 'row' }, 
@@ -57,7 +60,7 @@ jb.component('studio.property-primitive', {
     ], 
     features: [
       {$: 'group.studio-suggestions', path: '%$path%', expressionOnly: true }, 
-      {$: 'studio.property-toolbar-feature', path: '%$path%' }
+      {$: 'studio.property-toolbar-feature', path: '%$path%' },
     ]
   }
 })
@@ -73,7 +76,8 @@ jb.component('studio.jb-floating-input', {
         style :{$: 'editable-text.md-input', width: '400' }, 
         features: [
           {$: 'studio.undo-support', path: '%$path%' }, 
-          {$: 'css.padding', left: '4', right: '4' }
+          {$: 'css.padding', left: '4', right: '4' },
+          {$: 'feature.dont-generate-change-detection-events' },
         ]
       }, 
       {$: 'itemlist-with-groups', 
@@ -139,16 +143,6 @@ export class suggestions {
   suggestionsRelevant() {
     return (this.inputVal.indexOf('=') == 0 && !this.expressionOnly)
       || ['%','%$','/','.'].indexOf(this.tailSymbol) != -1  
-  }
-
-  adjustPopupPlace(cmp,options) {
-    // var temp = $('<span></span>').css('font',$(this.input).css('font')).css('width','100%')
-    //   .css('z-index','-1000').text($(this.input).val().substr(0,this.pos)).appendTo('body');
-    // var offset = temp.width();
-    // temp.remove();
-    // var dialogEl = $(cmp.elementRef.nativeElement).parents('.jb-dialog');
-    // dialogEl.css('margin-left', `${offset}px`)
-    //   .css('display', options.length ? 'block' : 'none');
   }
 
   extendWithOptions(probeCtx,path) {
@@ -259,11 +253,13 @@ jb.component('group.studio-suggestions', {
         cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
           .takeUntil(inputClosed);
         suggestionCtx.keyEm = cmp.keyEm;
-        suggestionCtx.closeAndWriteValue = () =>{
+        suggestionCtx.closeAndWriteValue = _ =>{
           ctx.params.closeFloatingInput();
           var option = input.value.indexOf('=') == 0 ? new CompOption(input.value.substr(1)) : new ValueOption();
           option.writeValue(cmp.ctx);
-        }
+        };
+        suggestionCtx.refresh = _ =>
+          cmp.changeDt.detectChanges();
 
         cmp.keyEm.filter(e=> e.keyCode == 13)
             .subscribe(e=>{
@@ -277,7 +273,7 @@ jb.component('group.studio-suggestions', {
             })
 
         suggestionCtx.suggestionEm = cmp.keyEm
-          .filter(e=> e.keyCode != 38 && e.keyCode != 40)
+          .filter(e=> e.keyCode != 38 && e.keyCode != 40 && e.key != 'Shift')
           .delay(1) // we use keydown - let the input fill itself
           .debounceTime(20) // solves timing of closing the floating input
           .filter(e=>
@@ -299,6 +295,7 @@ jb.component('group.studio-suggestions', {
             console.log(2,e))
           .distinctUntilChanged((e1,e2)=>
             e1.key == e2.key)
+          .do(e=>jb_logPerformance('suggestions',e))
           .catch(e=>
             console.log(3,e))
 
@@ -307,7 +304,7 @@ jb.component('group.studio-suggestions', {
             return [cmp.probeResult];
           var _probe = jb_rx.Observable.fromPromise(ctx.run({$: 'studio.probe', path: ctx.params.path }));
           _probe.subscribe(res=>
-            cmp.probeResult = res)
+            cmp.probeResult = res);
           // do not wait more than 500 mSec
           return _probe.race(jb_rx.Observable.of({finalResult: [ctx] }).delay(500))
             .catch(e=>
@@ -325,7 +322,6 @@ jb.component('itemlist.studio-suggestions-options', {
     ({
       afterViewInit: function(cmp) {
         var suggestionCtx = ctx.vars.suggestionCtx;
-//        cmp.changeDt.detach();
 
         jb.delay(1,ctx).then(()=>{// ctx.vars.ngZone.runOutsideAngular(() => {
           var keyEm = suggestionCtx.keyEm;
@@ -348,10 +344,11 @@ jb.component('itemlist.studio-suggestions-options', {
                   e.keyCode == 38 || e.keyCode == 40)
               .subscribe(e=>{
                   var diff = e.keyCode == 40 ? 1 : -1;
-                  var items = cmp.items; //.filter(item=>!item.heading);
-                  suggestionCtx.selected = items[(items.indexOf(suggestionCtx.selected) + diff + items.length) % items.length] || suggestionCtx.selected;
-                  // cmp.changeDt.markForCheck();
-                  // cmp.changeDt.detectChanges();
+                  var items = cmp.items; //.filter(item=>!item.heing);
+                  var newIndex = (items.indexOf(suggestionCtx.selected) + diff + items.length) % items.length;
+                  cmp.selected = suggestionCtx.selected = items[newIndex];
+                  jb_logPerformance('suggestions',newIndex,suggestionCtx.selected);
+                  suggestionCtx.refresh();
                   e.preventDefault();
               })
 
@@ -359,9 +356,8 @@ jb.component('itemlist.studio-suggestions-options', {
               suggestionCtx.show = e.options.length > 0;
               suggestionCtx.options = e.options;
               suggestionCtx.selected = e.options[0];
-              cmp.changeDt.markForCheck();
-              cmp.changeDt.detectChanges();
-            })
+              suggestionCtx.refresh();
+           })
         })
       },
   })

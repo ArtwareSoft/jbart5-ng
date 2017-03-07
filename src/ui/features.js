@@ -203,6 +203,23 @@ jb.component('hidden', {
   }
 })
 
+jb.component('feature.disable-change-detection', {
+  type: 'feature',
+  impl: _ => ({
+    disableChangeDetection: true,
+  })
+})
+
+jb.component('feature.dont-generate-change-detection-events', {
+  type: 'feature',
+  impl: ({
+    beforeInit: cmp => 
+      jb_native_delay(1).then(_=>
+        cmp.changeDt.detach())
+  })
+})
+
+
 jb.component('field.style-on-focus', {
   type: 'feature', category: 'feature:0',
   params: [

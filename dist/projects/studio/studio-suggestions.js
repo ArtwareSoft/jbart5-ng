@@ -37,10 +37,10 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
                                 { $: 'studio.property-toolbar-feature', path: '%$path%' },
-                                { $: 'field.debounce-databind', debounceTime: '500' }
+                                { $: 'field.debounce-databind', debounceTime: '500' },
                             ]
                         },
-                        { $: 'itemlist-with-groups',
+                        { $: 'itemlist',
                             items: '%$suggestionCtx/options%',
                             controls: { $: 'group',
                                 style: { $: 'layout.flex', align: 'space-between', direction: 'row' },
@@ -77,7 +77,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                     ],
                     features: [
                         { $: 'group.studio-suggestions', path: '%$path%', expressionOnly: true },
-                        { $: 'studio.property-toolbar-feature', path: '%$path%' }
+                        { $: 'studio.property-toolbar-feature', path: '%$path%' },
                     ]
                 }
             });
@@ -92,7 +92,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             style: { $: 'editable-text.md-input', width: '400' },
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
-                                { $: 'css.padding', left: '4', right: '4' }
+                                { $: 'css.padding', left: '4', right: '4' },
+                                { $: 'feature.dont-generate-change-detection-events' },
                             ]
                         },
                         { $: 'itemlist-with-groups',
@@ -154,15 +155,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 suggestions.prototype.suggestionsRelevant = function () {
                     return (this.inputVal.indexOf('=') == 0 && !this.expressionOnly)
                         || ['%', '%$', '/', '.'].indexOf(this.tailSymbol) != -1;
-                };
-                suggestions.prototype.adjustPopupPlace = function (cmp, options) {
-                    // var temp = $('<span></span>').css('font',$(this.input).css('font')).css('width','100%')
-                    //   .css('z-index','-1000').text($(this.input).val().substr(0,this.pos)).appendTo('body');
-                    // var offset = temp.width();
-                    // temp.remove();
-                    // var dialogEl = $(cmp.elementRef.nativeElement).parents('.jb-dialog');
-                    // dialogEl.css('margin-left', `${offset}px`)
-                    //   .css('display', options.length ? 'block' : 'none');
                 };
                 suggestions.prototype.extendWithOptions = function (probeCtx, path) {
                     var _this = this;
@@ -279,10 +271,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                             cmp.keyEm = jb_rx.Observable.fromEvent(input, 'keydown')
                                 .takeUntil(inputClosed);
                             suggestionCtx.keyEm = cmp.keyEm;
-                            suggestionCtx.closeAndWriteValue = function () {
+                            suggestionCtx.closeAndWriteValue = function (_) {
                                 ctx.params.closeFloatingInput();
                                 var option = input.value.indexOf('=') == 0 ? new CompOption(input.value.substr(1)) : new ValueOption();
                                 option.writeValue(cmp.ctx);
+                            };
+                            suggestionCtx.refresh = function (_) {
+                                return cmp.changeDt.detectChanges();
                             };
                             cmp.keyEm.filter(function (e) { return e.keyCode == 13; })
                                 .subscribe(function (e) {
@@ -294,7 +289,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 ctx.params.closeFloatingInput();
                             });
                             suggestionCtx.suggestionEm = cmp.keyEm
-                                .filter(function (e) { return e.keyCode != 38 && e.keyCode != 40; })
+                                .filter(function (e) { return e.keyCode != 38 && e.keyCode != 40 && e.key != 'Shift'; })
                                 .delay(1) // we use keydown - let the input fill itself
                                 .debounceTime(20) // solves timing of closing the floating input
                                 .filter(function (e) {
@@ -322,6 +317,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 .distinctUntilChanged(function (e1, e2) {
                                 return e1.key == e2.key;
                             })
+                                .do(function (e) { return jb_logPerformance('suggestions', e); })
                                 .catch(function (e) {
                                 return console.log(3, e);
                             });
@@ -349,7 +345,6 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                     return ({
                         afterViewInit: function (cmp) {
                             var suggestionCtx = ctx.vars.suggestionCtx;
-                            //        cmp.changeDt.detach();
                             jb_core_1.jb.delay(1, ctx).then(function () {
                                 var keyEm = suggestionCtx.keyEm;
                                 keyEm.filter(function (e) {
@@ -372,18 +367,18 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                                 })
                                     .subscribe(function (e) {
                                     var diff = e.keyCode == 40 ? 1 : -1;
-                                    var items = cmp.items; //.filter(item=>!item.heading);
-                                    suggestionCtx.selected = items[(items.indexOf(suggestionCtx.selected) + diff + items.length) % items.length] || suggestionCtx.selected;
-                                    // cmp.changeDt.markForCheck();
-                                    // cmp.changeDt.detectChanges();
+                                    var items = cmp.items; //.filter(item=>!item.heing);
+                                    var newIndex = (items.indexOf(suggestionCtx.selected) + diff + items.length) % items.length;
+                                    cmp.selected = suggestionCtx.selected = items[newIndex];
+                                    jb_logPerformance('suggestions', newIndex, suggestionCtx.selected);
+                                    suggestionCtx.refresh();
                                     e.preventDefault();
                                 });
                                 suggestionCtx.suggestionEm.subscribe(function (e) {
                                     suggestionCtx.show = e.options.length > 0;
                                     suggestionCtx.options = e.options;
                                     suggestionCtx.selected = e.options[0];
-                                    cmp.changeDt.markForCheck();
-                                    cmp.changeDt.detectChanges();
+                                    suggestionCtx.refresh();
                                 });
                             });
                         },

@@ -145,7 +145,7 @@ padding: 10px 10px 10px 27px; color: #6D6E71; min-height: 12px; border-bottom: 1
   margin-right: 2px; vertical-align: top; background-position: 0px -16px;} /* fix background position to get other icons */
 
 .jb-control-tree .treenode-expandbox { border: none; background: none; position: relative; width:9px; height:9px; padding: 0; vertical-align: top;  
-    margin-top: 3px;  margin-right: 3px;  cursor: pointer;}
+    margin-top: 3px;  margin-right: 5px;  cursor: pointer;}
 .jb-control-tree .treenode-expandbox div { position: absolute; }
 .jb-control-tree .treenode-expandbox:focus { outline: none; }
 .jb-control-tree .treenode-expandbox .frame { background: #F8FFF9; border-radius: 3px; border: 1px solid #91B193; top: 0px; left: 0px; right: 0px; bottom: 0px; }

@@ -40,6 +40,14 @@ jb.component('field.debounce-databind', {
       observable: () => {},
     })
 })
+jb.component('feature.dont-generate-change-detection-events', {
+  type: 'feature',
+  impl: ({
+    init: cmp =>
+      cmp.changeDt.detach()
+  })
+})
+
 
 
 jb.component('field.data', {
