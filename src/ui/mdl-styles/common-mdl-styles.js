@@ -19,6 +19,7 @@ jb.component('mdl-style.init-dynamic', {
 
 jb.component('mdl.ripple-effect', { 
   type: 'feature',
+  description: 'add ripple effect to buttons',
   impl: ctx => ({ 
         templateModifier: 
           template => 
@@ -36,18 +37,6 @@ jb.component('mdl.ripple-effect', {
 
 
 // ****** button styles
-
-jb.component('button.mdl-flat', {
-  type: 'button.style',
-  params: [
-  	{id: 'rippleEffect', as: 'boolean'}
-  ],
-  impl :{$: 'customStyle', 
-      template: '<button class="mdl-button mdl-js-button" (click)="clicked()">{{title}}</button>',
-      features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
-      host: { '[class.mdl-js-ripple-effect]': 'true' },
-  }
-})
 
 jb.component('button.mdl-flat-ripple', {
   type: 'button.style',
@@ -85,6 +74,14 @@ jb.component('button.mdl-icon-12', {
   }
 })
 
+jb.component('button.mdl-allow-html', {
+  type: 'button.style',
+  description: 'used for search pattern highlight',
+  impl :{$: 'customStyle',
+      template: '<button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="clicked()" [innerHtml]="title"></button>',
+      features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
+  }
+})
 
 // ****** label styles
 

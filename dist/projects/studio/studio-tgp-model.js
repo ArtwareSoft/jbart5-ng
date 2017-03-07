@@ -352,6 +352,21 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                         args.modifiedPath = [group_path, this.controlParam(group_path), arr.length - 1].join('~');
                     }
                 };
+                TgpModel.prototype.addArrayItem = function (path, args) {
+                    var val = studio_path_1.profileFromPath(path);
+                    var toAdd = args.toAdd || { $: '' };
+                    if (Array.isArray(val)) {
+                        val.push(toAdd);
+                        return { newPath: path + '~' + (val.length - 1) };
+                    }
+                    else if (!val) {
+                        jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), toAdd);
+                    }
+                    else {
+                        jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), [val].concat(toAdd));
+                        return { newPath: path + '~1' };
+                    }
+                };
                 TgpModel.prototype.makeLocal = function (path) {
                     var compName = this.compName(path);
                     var comp = compName && studio_utils_1.getComp(compName);
@@ -450,21 +465,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     if (!Array.isArray(val[prop]))
                         val[prop] = [val[prop]];
                     return val[prop];
-                };
-                TgpModel.prototype.addArrayItem = function (path, args) {
-                    var val = studio_path_1.profileFromPath(path);
-                    var toAdd = args.toAdd || { $: '' };
-                    if (Array.isArray(val)) {
-                        val.push(toAdd);
-                        return { newPath: path + '~' + (val.length - 1) };
-                    }
-                    else if (!val) {
-                        jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), toAdd);
-                    }
-                    else {
-                        jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), [val].concat(toAdd));
-                        return { newPath: path + '~1' };
-                    }
                 };
                 TgpModel.prototype.propName = function (path) {
                     if (!isNaN(Number(path.split('~').pop())))

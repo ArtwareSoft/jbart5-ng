@@ -154,23 +154,27 @@ jb.component('studio.select-control', {
 })
 
 jb.component('studio.open-new-feature-dialog', {
-  type: 'action',
+  type: 'action', 
+  params: [{ id: 'onSelect', type: 'action', dynamic: true }], 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating' }, 
     content :{$: 'studio.select-feature', 
-      onSelect: [
-      {$: 'studio.onNextModifiedPath', 
-        action: [
-          {$: 'studio.openModifiedPath' }, 
-          {$: 'studio.refresh-preview' }
-        ]
-      }, 
-      {$: 'studio.insert-comp', 
-        path :{$: 'studio.currentProfilePath' }, 
-        comp: '%%'
-      }
-    ] 
-    } , 
+      onSelect1: [
+        {$: 'studio.onNextModifiedPath', 
+          action: [
+            {$: 'studio.openModifiedPath' }, 
+            {$: 'studio.refresh-preview' }
+          ]
+        }, 
+        {$: 'studio.add-array-item', 
+          path :{ $pipeline: [{$: 'studio.currentProfilePath' }, '%%~features'] }, 
+          toAdd :{
+            $object :{$: '%%' }
+          }
+        }
+      ], 
+      onSelect :{ $call: 'onSelect' }
+    }, 
     title: 'new feature', 
     modal: true, 
     features: [
@@ -231,7 +235,9 @@ jb.component('studio.select-feature', {
                   style :{$: 'label.mdl-ripple-effect' }, 
                   features: [
                     {$: 'css.width', width: '120' }, 
-                    {$: 'css', css: '{text-align: left}' }
+                    {$: 'css', 
+                      css: '{text-align: left; text-transform: none}'
+                    }
                   ]
                 }, 
                 style :{$: 'itemlist.ul-li' }, 
@@ -271,10 +277,16 @@ jb.component('studio.select-feature', {
             }, 
             controls: [
               {$: 'button', 
-                title: '%%', 
+                title :{$: 'highlight', 
+                  base: '%%', 
+                  highlight: '%$SearchPattern%', 
+                  cssClass: 'highlight'
+                }, 
                 action: [{$: 'closeContainingPopup' }, { $call: 'onSelect' }], 
-                style :{$: 'button.md-flat-no-background' }, 
-                features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
+                style :{$: 'button.mdl-allow-html' }, 
+                features :{$: 'css', 
+                  css: '!button { text-align: left; width: 250px; text-transform: none }'
+                }
               }
             ], 
             watchItems: true, 
@@ -352,10 +364,7 @@ jb.component('studio.insert-comp-option', {
     { id: 'comp', as: 'string' },
   ],
   impl :{$: 'menu.action', title: '%$title%', 
-    action: [
-      {$: 'studio.insert-comp', comp: '%$comp%' },
-//      {$: 'studio.refresh-preview' }
-    ]
+    action :{$: 'studio.insert-comp', comp: '%$comp%' },
   }
 })
 

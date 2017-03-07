@@ -47,9 +47,10 @@ jb.component('editable-text.codemirror', {
 						return;
 					}
 					cmp.codeMirror = editor;
+					cmp.lastEdit = new Date().getTime();
 					$(editor.getWrapperElement()).css('box-shadow', 'none');
 					jb_rx.refObservable(data_ref,cmp)
-						.filter(x => 
+						.filter(x => new Date().getTime() - cmp.lastEdit > 500 &&
 							x != editor.getValue())
 						.subscribe(x=>
 							editor.setValue(x||''));
@@ -67,9 +68,10 @@ jb.component('editable-text.codemirror', {
 							jb_ui.apply(context)
 						})
 
-					editor.on('change', () => 
-						editorTextChange.next(editor.getValue())
-					);
+					editor.on('change', () => {
+						cmp.lastEdit = new Date().getTime();
+						return editorTextChange.next(editor.getValue())
+					});
 				})
 			},
 		    observable: () => {} 

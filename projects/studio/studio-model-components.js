@@ -215,7 +215,7 @@ jb.component('studio.add-array-item',{
 	type: 'action',
 	params: [ 
 		{id: 'path', as: 'string' },
-		{id: 'toAdd' }
+		{id: 'toAdd', as: 'single' }
 	],
 	impl: (context,path,toAdd) => 
 		model.modify(model.addArrayItem, path, { toAdd: toAdd },context,true)

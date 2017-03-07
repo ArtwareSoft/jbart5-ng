@@ -485,7 +485,7 @@ jb.component('studio.property-array', {
         action :{$: 'studio.open-new-feature-dialog', 
           type: 'feature', 
           title: 'new feature',
-          onOK: {$: 'studio.add-array-item', 
+          onSelect: {$: 'studio.add-array-item', 
             path: '%$path%',
             toAdd: {$object : {$: '%%'} }
           }

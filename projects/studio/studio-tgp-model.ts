@@ -375,6 +375,21 @@ export class TgpModel {
 		}
 	}
 
+	addArrayItem(path,args) {
+		var val = profileFromPath(path);
+		var toAdd = args.toAdd || {$:''};
+		if (Array.isArray(val)) {
+			val.push(toAdd);
+			return { newPath: path + '~' + (val.length-1) }
+		}
+		else if (!val) {
+			jb.writeValue(profileRefFromPath(path),toAdd);
+		} else {
+			jb.writeValue(profileRefFromPath(path),[val].concat(toAdd));
+			return { newPath: path + '~1' }
+		}
+	}
+
 	makeLocal(path) {
 		var compName = this.compName(path);
 		var comp = compName && getComp(compName);
@@ -473,21 +488,6 @@ export class TgpModel {
 		if (!Array.isArray(val[prop]))
 			val[prop] = [val[prop]];
 		return val[prop];
-	}
-
-	addArrayItem(path,args) {
-		var val = profileFromPath(path);
-		var toAdd = args.toAdd || {$:''};
-		if (Array.isArray(val)) {
-			val.push(toAdd);
-			return { newPath: path + '~' + (val.length-1) }
-		}
-		else if (!val) {
-			jb.writeValue(profileRefFromPath(path),toAdd);
-		} else {
-			jb.writeValue(profileRefFromPath(path),[val].concat(toAdd));
-			return { newPath: path + '~1' }
-		}
 	}
 
 	propName(path) {

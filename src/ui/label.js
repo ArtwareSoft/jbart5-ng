@@ -75,3 +75,18 @@ jb.component('label.h4', {
         features :{$: 'label.bind-title' }
     }
 });
+
+jb.component('highlight', {
+  type: 'data',
+  params: [
+    { id: 'base', as: 'string', dynamic: true },
+    { id: 'highlight', as: 'string', dynamic: true },
+    { id: 'cssClass', as: 'string', defaultValue: 'highlight'},
+  ],
+  impl: (ctx,base,highlightF,cssClass) => ({
+        $jb_val: _ => {
+            var highlight = highlightF();
+            return highlight ? base().replace(highlight,`<span class="${cssClass}">${highlight}</span>`) : base()
+        }
+    })
+})

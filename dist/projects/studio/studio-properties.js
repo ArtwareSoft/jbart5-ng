@@ -471,7 +471,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                             action: { $: 'studio.open-new-feature-dialog',
                                 type: 'feature',
                                 title: 'new feature',
-                                onOK: { $: 'studio.add-array-item',
+                                onSelect: { $: 'studio.add-array-item',
                                     path: '%$path%',
                                     toAdd: { $object: { $: '%%' } }
                                 }
