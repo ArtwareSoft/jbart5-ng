@@ -5,7 +5,7 @@ jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
       features :{$: 'field.databind' },
-      template: `<input>`,
+      template: `<input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')">`,
       // [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"
 	  css: `
 input { display: block; width: 146px; height: 19px; padding-left: 2px;

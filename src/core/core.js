@@ -62,7 +62,7 @@ function jb_run(context,parentParam,settings) {
         }
 
         if (profile.$log)
-          jbart.comps.log.impl(context.setData(context.run(profile.$log)));
+          console.log(context.run(profile.$log));
 
         if (profile.$trace) console.log('trace: ' + context.path, jb_compName(profile),context,out,run);
           

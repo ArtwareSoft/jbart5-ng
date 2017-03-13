@@ -220,21 +220,21 @@ jb.component('studio.open-jb-editor-menu', {
   params: [
     { id: 'path', as: 'string' }
   ], 
-  impl :{$: 'openDialog', 
-    style :{$: 'pulldown-popup.context-menu-popup' }, 
-    content :{$: 'studio.jb-editor-menu', path: '%$path%' } ,
-    features :{$: 'css.margin', top: '17', left: '31' }
+  impl :{$: 'menu.open-context-menu', 
+    menu :{$: 'studio.jb-editor-menu', path: '%$path%' } ,
+//    features :{$: 'css.margin', top: '17', left: '31' }
   }
 })
 
 jb.component('studio.jb-editor-menu', {
-  type: 'control', 
+  type: 'menu.option', 
   params: [{ id: 'path', as: 'string' }], 
-  impl :{$: 'group', 
-    controls: [
+  impl :{$: 'menu.menu', 
+    style :{$: 'menu.context-menu' },
+    options: [
       {$: 'dynamic-controls', 
         controlItems :{$: 'studio.more-params', path: '%$path%' }, 
-        genericControl :{$: 'pulldown.menu-item', 
+        genericControl :{$: 'menu.action', 
           title :{
             $pipeline: [
               '%$controlItem%', 
@@ -250,16 +250,12 @@ jb.component('studio.jb-editor-menu', {
                 to: '%$globals/jb_editor_selection%', 
                 value: '%$nextPath%'
               }, 
-              {$: 'studio.open-jb-editor-menu', path: '%$nextPath%' }
             ]
           }
         }
       }, 
-      {$: 'divider', 
-        style :{$: 'divider.br' }, 
-        title: 'divider'
-      }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.separator' }, 
+      {$: 'menu.action', 
         $vars: {
           compName :{$: 'studio.comp-name', path: '%$path%' }
         }, 
@@ -268,8 +264,8 @@ jb.component('studio.jb-editor-menu', {
         features :{$: 'hidden', showCondition: '%$compName%' }
       }, 
       {$: 'studio.goto-sublime', path: '%$path%' }, 
-      {$: 'pulldown.menu-item-separator' }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.separator' }, 
+      {$: 'menu.action', 
         title: 'Delete', 
         icon: 'delete', 
         shortcut: 'Delete', 
@@ -278,25 +274,25 @@ jb.component('studio.jb-editor-menu', {
           {$: 'studio.delete', path: '%$path%' }
         ]
       }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.action', 
         title: 'Copy', 
         icon: 'copy', 
         shortcut: 'Ctrl+C', 
         action :{$: 'studio.copy', path: '%$path%' }
       }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.action', 
         title: 'Paste', 
         icon: 'paste', 
         shortcut: 'Ctrl+V', 
         action :{$: 'studio.paste', path: '%$path%' }
       }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.action', 
         title: 'Undo', 
         icon: 'undo', 
         shortcut: 'Ctrl+Z', 
         action :{$: 'studio.undo' }
       }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.action', 
         title: 'Redo', 
         icon: 'redo', 
         shortcut: 'Ctrl+Y', 
@@ -306,22 +302,22 @@ jb.component('studio.jb-editor-menu', {
         style :{$: 'divider.br' }, 
         title: 'divider'
       }, 
-      {$: 'pulldown.studio-wrap-with', 
+      {$: 'menu.studio-wrap-with', 
         path: '%$path%', 
         type: 'data', 
         components :{$: 'list', items: ['pipeline', 'list', 'firstSucceeding'] }
       }, 
-      {$: 'pulldown.studio-wrap-with', 
+      {$: 'menu.studio-wrap-with', 
         path: '%$path%', 
         type: 'boolean', 
         components :{$: 'list', items: ['and', 'or', 'not'] }
       }, 
-      {$: 'pulldown.studio-wrap-with', 
+      {$: 'menu.studio-wrap-with', 
         path: '%$path%', 
         type: 'action', 
         components :{$: 'list', items: ['runActions', 'runActionOnItems'] }
       }, 
-      {$: 'pulldown.menu-item', 
+      {$: 'menu.action', 
         title: 'Add property', 
         action :{$: 'openDialog', 
           id: 'add property', 
@@ -352,8 +348,8 @@ jb.component('studio.jb-editor-menu', {
   }
 })
 
-jb.component('pulldown.studio-wrap-with', {
-  type: 'control', 
+jb.component('menu.studio-wrap-with', {
+  type: 'menu.option', 
   params: [
     { id: 'path', as: 'string'},
     { id: 'type', as: 'string' },
@@ -365,7 +361,7 @@ jb.component('pulldown.studio-wrap-with', {
               then: '%$components%', 
               else: [] 
             },
-            genericControl :{$: 'pulldown.menu-item', 
+            genericControl :{$: 'menu.action', 
               title: 'Wrap with %$controlItem%',
               action : [
                 {$: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' },

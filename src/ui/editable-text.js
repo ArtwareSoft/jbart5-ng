@@ -17,7 +17,7 @@ jb.component('editable-text.input', {
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
       features :{$: 'field.databind' },
-      template: `<div><input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')"></div>`,
+      template: `<input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')">`,
     css: 'input {height: 16px}'
   }
 })

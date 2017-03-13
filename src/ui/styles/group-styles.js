@@ -6,6 +6,18 @@ jb.component('group.div', {
   }
 })
 
+jb.component('group.ul-li', {
+  type: 'group.style',
+  impl :{$: 'customStyle',
+    template: `<ul class="jb-itemlist">
+      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading" #jbItem>
+        <div *jbComp="ctrl.comp"></div>
+      </li>
+      </ul>`,
+    css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
+  },
+})
+
 jb.component('group.expandable', {
   type: 'group.style',
   impl :{$: 'customStyle', 

@@ -188,7 +188,7 @@ jb.component('pulldown-popup.context-menu-popup',{
 	}
 })
 
-jb.component('group.menu-keyboard-selection', {
+jb.component('group.menu-keyboard-selection-old', {
   type: 'feature',
   params: [
     { id: 'autoFocus', type: 'boolean' }
@@ -205,9 +205,9 @@ jb.component('group.menu-keyboard-selection', {
             setTimeout(()=> {
               jb_logPerformance('focus','menu-keyboard-selection init autoFocus');
               cmp.elementRef.nativeElement.focus();
-              $(cmp.elementRef.nativeElement).find('>*').first()
+              $(cmp.elementRef.nativeElement).find('.jb-group>*').first()
               	.addClass('selected')
-              	.find('>*').addClass('selected'); // adding selected class at the inner componenet level
+              	.find('.jb-group>*').addClass('selected'); // adding selected class at the inner componenet level
             })
         cmp.keydown
         	.filter(e=>e.keyCode == 13)
@@ -229,7 +229,7 @@ jb.component('group.menu-keyboard-selection', {
             .subscribe(e => {
               e.stopPropagation();
               var diff = event.keyCode == 40 ? 1 : -1;
-              var elems = $(cmp.elementRef.nativeElement).find('>*');
+              var elems = $(cmp.elementRef.nativeElement).find('.jb-group>*');
               var selected = $(cmp.elementRef.nativeElement).find('>.selected');
               var newSelected = elems[selected.index()+diff] || selected;
               $(cmp.elementRef.nativeElement).find('>*,>*>*').removeClass('selected');

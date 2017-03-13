@@ -9,19 +9,8 @@ jb.component('itemlist', {
     { id: 'itemVariable', as: 'string', defaultValue: 'item' },
     { id: 'features', type: 'feature[]', dynamic: true, flattenArray: true },
   ],
-  impl :{$: 'group', __innerImplementation: true,
-    title: '%$title%',
-    style :{$call: 'style'},
-    controls :{$: 'dynamic-controls', 
-      controlItems : '%$items_array%',
-      genericControl :{$call: 'controls'},
-      itemVariable: '%$itemVariable%'
-    },
-    features :[
-      {$call: 'features'},
-      {$: 'itemlist.init', items: {$call: 'items'}, watch: '%$watchItems%', itemsArrayVariable: 'items_array' }, 
-    ]
-  }
+  impl: ctx => 
+    jb_ui.ctrl(ctx)
 })
 
 jb.component('itemlist.init', {
@@ -76,7 +65,7 @@ jb.component('itemlist.selection', {
     { id: 'onSelection', type: 'action', dynamic: true },
     { id: 'onDoubleClick', type: 'action', dynamic: true },
     { id: 'autoSelectFirst', type: 'boolean'},
-    { id: 'cssForSelected', as: 'string', defaultValue: 'background: #bbb; color: #fff'},
+    { id: 'cssForSelected', as: 'string', defaultValue: 'background: #bbb !important; color: #fff !important' },
     { id: 'cssForActive', as: 'string', defaultValue1: 'background: #337AB7; color: #fff'},
   ],
   impl: ctx => ({
@@ -203,14 +192,27 @@ jb.component('itemlist.drag-and-drop', {
 })
 
 jb.component('itemlist.ul-li', {
+  impl :{$:'itemlist.use-group-style', groupStyle :{$: 'group.ul-li' }}
+})
+
+jb.component('itemlist.use-group-style', {
   type: 'itemlist.style',
-  impl :{$: 'customStyle',
-    features :{$: 'group.init-group'},
-    template: `<div><ul class="jb-itemlist">
-      <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading" #jbItem>
-        <div *jbComp="ctrl.comp"></div>
-      </li>
-      </ul></div>`,
-    css: 'ul, li { list-style: none; padding: 0; margin: 0;}'
+  params: [
+    { id: 'groupStyle', type: 'group.style', dynamic: true },
+  ],
+  impl :{$: 'style-by-control', __innerImplementation: true,
+    modelVar: 'itemlistModel',
+    control: {$: 'group', 
+      features : [
+        {$: 'group.init-group'},
+        {$: 'itemlist.init', items: '%$itemlistModel/items%', watch: '%$itemlistModel/watchItems%', itemsArrayVariable: 'items_array' },
+      ], 
+      style :{$call :'groupStyle'},
+      controls :{$: 'dynamic-controls', 
+        controlItems : '%$items_array%',
+        genericControl: '%$itemlistModel/controls%',
+        itemVariable: '%$itemlistModel/itemVariable%',
+      },
+    }
   }
 })
