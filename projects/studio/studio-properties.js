@@ -4,22 +4,32 @@ jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => {
 
 jb.component('studio.open-properties', {
   type: 'action', 
+  params: [{ id: 'focus', as: 'boolean' }], 
   impl :{$: 'openDialog', 
-    title: { $pipeline: [
-      {$: 'object', 
-        title :{$: 'studio.short-title', 
-          path :{$: 'studio.currentProfilePath' }
-        }, 
-        comp :{$: 'studio.comp-name', 
-          path :{$: 'studio.currentProfilePath' }
-        }
-      }, 
-      'Properties of %comp% %title%'
-    ]}, 
     style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '492' }, 
     content :{$: 'studio.properties', 
       path :{$: 'studio.currentProfilePath' }
     }, 
+    title :{
+      $pipeline: [
+        {$: 'object', 
+          title :{$: 'studio.short-title', 
+            path :{$: 'studio.currentProfilePath' }
+          }, 
+          comp :{$: 'studio.comp-name', 
+            path :{$: 'studio.currentProfilePath' }
+          }
+        }, 
+        'Properties of %comp% %title%'
+      ]
+    }, 
+    features : [ 
+      {$if : '%$focus%', then:{$: 'dialog-feature.autoFocusOnFirstInput' } },
+      {$: 'dialog-feature.keyboard-shortcut', 
+        shortcut: 'Ctrl+Left', 
+        action:{$: 'studio.open-control-tree'} 
+      },
+    ]
   }
 })
 
@@ -98,7 +108,7 @@ jb.component('studio.properties', {
       {$: 'group.dynamic-titles' }, 
       {$: 'group.studio-watch-path', path: '%$path%' },
       {$: 'hidden', 
-        showCondition :{$: 'studio.has-param', path: '%$path%', param: 'features' }
+        showCondition :{$: 'studio.has-param', path: '%$path%', param: 'features', remark: 'not a control' }
       }
     ]
   }

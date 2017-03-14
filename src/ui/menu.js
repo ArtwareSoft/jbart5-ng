@@ -77,6 +77,8 @@ jb.component('menu.action', {
 	            if (key == 'Delete') keyCode = 46;
 	            if (key.match(/\+[Uu]p$/)) keyCode = 38;
 	            if (key.match(/\+[Dd]own$/)) keyCode = 40;
+	            if (key.match(/\+Right$/)) keyCode = 39;
+	            if (key.match(/\+Left$/)) keyCode = 37;
 
 	            if (key.match(/^[Cc]trl/) && !e.ctrlKey) return;
 	            if (key.match(/^[Aa]lt/) && !e.altKey) return;

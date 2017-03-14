@@ -30,7 +30,7 @@ jb.component('studio.toolbar', {
         title: 'Select', 
         action :{$: 'studio.pickAndOpen' }, 
         style :{$: 'button.mdl-icon', 
-          features :{$: 'css', css: '{transform: scaleX(-1)}'}, 
+          features :{$: 'css', css: '{transform: scaleX(-1)}' }, 
           icon: 'call_made'
         }
       }, 
@@ -56,7 +56,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'Properties', 
-        action :{$: 'studio.open-properties' }, 
+        action :{$: 'studio.open-properties', focus: 'true' }, 
         style :{$: 'button.mdl-icon', icon: 'storage' }
       }, 
       {$: 'button', 
@@ -72,8 +72,7 @@ jb.component('studio.toolbar', {
       {$: 'button', 
         title: 'insert control', 
         action :{$: 'studio.open-new-control-dialog' }, 
-        style :{$: 'button.mdl-icon', icon: 'add' }, 
-        
+        style :{$: 'button.mdl-icon', icon: 'add' }
       }, 
       {$: 'button', 
         title: 'responsive-phone', 

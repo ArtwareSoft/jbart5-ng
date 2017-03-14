@@ -105,6 +105,77 @@ function fixDialogOverflow($control,$dialog,offsetLeft,offsetTop) {
 		return { top: top || $control.offset().top , left: left || $control.offset().left}
 }
 
+jb.component('dialog-feature.keyboard-shortcut', {
+  type: 'dialog-feature',
+  params: [
+    { id: 'shortcut', as: 'string', description: 'Ctrl+C or Alt+V' },
+    { id: 'action', type: 'action', dynamic: true },
+  ],
+  impl: (ctx,key,action) => ({
+      init: cmp=> {
+		var dialog = ctx.vars.$dialog;
+		dialog.applyShortcut = e=> {
+			var key = ctx.params.shortcut;
+			if (!key) return;
+			if (key.indexOf('-') > 0)
+				key = key.replace(/-/,'+');
+            var keyCode = key.split('+').pop().charCodeAt(0);
+            if (key == 'Delete') keyCode = 46;
+            if (key.match(/\+[Uu]p$/)) keyCode = 38;
+            if (key.match(/\+[Dd]own$/)) keyCode = 40;
+            if (key.match(/\+Right$/)) keyCode = 39;
+            if (key.match(/\+Left$/)) keyCode = 37;
+
+            if (key.match(/^[Cc]trl/) && !e.ctrlKey) return;
+            if (key.match(/^[Aa]lt/) && !e.altKey) return;
+            if (e.keyCode == keyCode)
+                return ctx.params.action();
+		};
+
+	    jb_rx.Observable.fromEvent(dialog.$el[0], 'keydown')
+   	  		.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+			.filter(e=> e.keyCode != 17 && e.keyCode != 18) // ctrl ot alt alone
+   	  		.subscribe(e=>
+   	  			dialog.applyShortcut(e))
+
+	}})
+})
+
+      // observable: () => {},
+      // host: {
+      //       '(keydown)': 'keydownSrc.next($event)',
+      //       'tabIndex': '0',
+      //       '(mouseup)': 'getKeyboardFocus()',
+      // },
+
+        // cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
+        // cmp.keydown = cmp.keydown || cmp.keydownSrc
+        //       .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
+        // cmp.getKeyboardFocus = cmp.getKeyboardFocus || (_ => {
+        //   jb_logPerformance('focus','group.keyboard-shortcut');
+        //   cmp.elementRef.nativeElement.focus(); 
+        //   return false;
+        // });
+
+      //   cmp.keydown.subscribe(event=>{
+      //           var keyCode = key.split('+').pop().charCodeAt(0);
+      //           if (key == 'Delete') keyCode = 46;
+      //           if (key.match(/\+Up$/)) keyCode = 38;
+      //           if (key.match(/\+Down$/)) keyCode = 40;
+      //           if (key.match(/\+Right$/)) keyCode = 37;
+      //           if (key.match(/\+Left$/)) keyCode = 39;
+      //           if (key.match(/\+Tab$/)) keyCode = 9;
+
+      //           var helper = (key.match('([A-Za-z]*)+') || ['',''])[1];
+      //           if (helper == 'Ctrl' && !event.ctrlKey) return;
+      //           if (helper == 'Alt' && !event.altKey) return;
+      //           if (event.keyCode == keyCode)
+      //             action(ctx.setData(cmp.selected != null ? cmp.selected : ctx.data));
+      //   })
+      // }
+
+
 jb.component('dialog-feature.nearLauncherLocation', {
 	type: 'dialog-feature',
 	params: [

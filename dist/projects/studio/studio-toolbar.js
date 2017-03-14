@@ -62,7 +62,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'Properties',
-                            action: { $: 'studio.open-properties' },
+                            action: { $: 'studio.open-properties', focus: 'true' },
                             style: { $: 'button.mdl-icon', icon: 'storage' }
                         },
                         { $: 'button',
@@ -78,7 +78,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         { $: 'button',
                             title: 'insert control',
                             action: { $: 'studio.open-new-control-dialog' },
-                            style: { $: 'button.mdl-icon', icon: 'add' },
+                            style: { $: 'button.mdl-icon', icon: 'add' }
                         },
                         { $: 'button',
                             title: 'responsive-phone',

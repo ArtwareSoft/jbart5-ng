@@ -19,21 +19,39 @@ jb.component('material-demo.form', {
     controls: [
       {$: 'editable-text', 
         title: 'Company (disabled)', 
-        databind :{$: 'pipeline', items: ['%$person/company%'] }, 
-//        features :{$: 'feature.debounce', debounceTime: '30' }
+        databind :{$: 'pipeline', items: ['%$person/company%'] }
       }, 
       {$: 'group', 
-        title: 'Name', 
-        style :{$: 'layout.horizontal', spacing: '25' }, 
         controls: [
-          {$: 'editable-text', 
-            title: 'Long Last Name That Will Be Truncated', 
-            databind: '%$person/lastName%'
+          {$: 'group', 
+            title: 'Name', 
+            style :{$: 'layout.horizontal', spacing: '25' }, 
+            controls: [
+              {$: 'editable-text', 
+                title: 'Long Last Name That Will Be Truncated', 
+                databind: '%$person/lastName%'
+              }, 
+              {$: 'editable-text', 
+                title: 'First Name aa', 
+                databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
+                style :{$: 'editable-text.md-input' }
+              }
+            ]
           }, 
-          {$: 'editable-text', 
-            title: 'First Name aa', 
-            databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
-            style :{$: 'editable-text.md-input' }
+          {$: 'group', 
+            title: 'Name', 
+            style :{$: 'layout.horizontal', spacing: '25' }, 
+            controls: [
+              {$: 'editable-text', 
+                title: 'Long Last Name That Will Be Truncated', 
+                databind: '%$person/lastName%'
+              }, 
+              {$: 'editable-text', 
+                title: 'First Name aa', 
+                databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
+                style :{$: 'editable-text.md-input' }
+              }
+            ]
           }
         ]
       }, 
@@ -42,7 +60,10 @@ jb.component('material-demo.form', {
         style :{$: 'layout.vertical' }, 
         controls: [
           {$: 'editable-text', title: 'Address', databind: '%$person/address%' }, 
-          {$: 'editable-text', title: 'Address2', databind: '%$person/address2%' }
+          {$: 'editable-text', 
+            title: 'Address2', 
+            databind: '%$person/address2%'
+          }
         ]
       }, 
       {$: 'group', 

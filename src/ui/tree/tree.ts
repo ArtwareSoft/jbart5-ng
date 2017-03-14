@@ -259,7 +259,7 @@ jb.component('tree.keyboard-selection', {
 				}
 				// menu shortcuts
 				cmp.keydown.filter(e=> e.ctrlKey || e.altKey || e.keyCode == 46) // also Delete
-					.filter(e=> e.keyCode != 17 && e.keyCode != 18) // ctrl ot alt only
+					.filter(e=> e.keyCode != 17 && e.keyCode != 18) // ctrl ot alt alone
 					.subscribe(e => {
 						var menu = context.params.applyMenuShortcuts(context.setData(tree.selected));
 						menu && menu.applyShortcut && menu.applyShortcut(e);
@@ -274,46 +274,6 @@ jb.component('tree.regain-focus', {
 		ctx.vars.$tree && ctx.vars.$tree.regainFocus && ctx.vars.$tree.regainFocus()
 })
 
-jb.component('tree.keyboard-shortcut', {
-	type: 'feature',
-	params: [
-		{ id: 'key', as: 'string', description: 'Ctrl+C or Alt+V' },
-		{ id: 'action', type: 'action', dynamic: true },
-	],
-	impl: (context,key,action) => ({
-			observable: () => {},
-			host: {
-        		'(keydown)': 'keydownSrc.next($event)',
-				'tabIndex': '0',
-		        '(mouseup)': 'getKeyboardFocus()',
-			},
-			init: cmp=> {
-				var tree = cmp.tree;
-		        cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
-		        cmp.keydown = cmp.keydown || cmp.keydownSrc
-		          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
-
-				cmp.getKeyboardFocus = cmp.getKeyboardFocus || _ => { 
-			        jb_logPerformance('focus','tree.keyboard-shortcut');
-					cmp.elementRef.nativeElement.focus(); 
-					return false
-				};
-
-				cmp.keydown.subscribe(event=>{
-	              var keyCode = key.split('+').pop().charCodeAt(0);
-	              if (key == 'Delete') keyCode = 46;
-	              if (key.match(/\+Up$/)) keyCode = 38;
-	              if (key.match(/\+Down$/)) keyCode = 40;
-
-	              var helper = (key.match('([A-Za-z]*)+') || ['',''])[1];
-	              if (helper == 'Ctrl' && !event.ctrlKey) return
-	              if (helper == 'Alt' && !event.altKey) return
-	              if (event.keyCode == keyCode)
-	                action(context.setData(tree.selected));
-				})
-			}
-		})
-})
 
 jb.component('tree.onMouseRight', {
   type: 'feature',
