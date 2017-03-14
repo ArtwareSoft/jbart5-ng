@@ -22,16 +22,11 @@ export function profileRefFromPath(path) {
 			if (typeof value == 'undefined') 
 				return profileFromPath(this.path);
 
-			// if (profileFromPath(parentPath(this.path)) == profileFromPath(this.path)) // flatten one-item array
-			// 	var actual_path = parentPath(this.path);
-			// else
-			// 	var actual_path = this.path;
-			
 			var parent = profileFromPath(parentPath(this.path));
 			parent[this.path.split('~').pop()] = value;
 		}
 	}
-	pathChangesEm.subscribe(fixer => ref.path = fixer.fix(ref.path))
+	//pathChangesEm.subscribe(fixer => ref.path = fixer.fix(ref.path))
 	return ref;
 }
 
@@ -216,7 +211,7 @@ jb.component('group.studio-watch-path', {
               .merge(cmp.jbEmitter
                 .filter(x => x == 'check')
                 .merge(
-                  pathChangesEm.map(fixer=>
+                  pathChangesEm.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') ).do(fixer=>
                     jb.writeValue(path_ref,fixer.fix(jb.val(path_ref))))
                 )
                 .map(()=> jb.val(path_ref))

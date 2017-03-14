@@ -81,7 +81,6 @@ jb.component('studio.properties', {
           }, 
           genericControl :{$: 'studio.property-field', path: '%$controlItem%' }
         }, 
-        features :{$: 'group.studio-watch-path', path: '%$path%' }
       }, 
       {$: 'group', 
         remark: 'features', 
@@ -93,11 +92,11 @@ jb.component('studio.properties', {
           ]
         }, 
         controls :{$: 'studio.property-array', path: '%$path%~features' }, 
-        features: [{$: 'group.studio-watch-path', path: '%$path%' }]
       }
     ], 
     features: [
       {$: 'group.dynamic-titles' }, 
+      {$: 'group.studio-watch-path', path: '%$path%' },
       {$: 'hidden', 
         showCondition :{$: 'studio.has-param', path: '%$path%', param: 'features' }
       }

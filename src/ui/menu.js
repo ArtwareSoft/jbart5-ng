@@ -5,7 +5,14 @@ jb.component('menu.menu', {
 		{ id: 'title', as: 'string', dynamic: true, essential: true },
 		{ id: 'options', type: 'menu.option[]', dynamic: true, flattenArray: true, essential: true },
 	],
-	impl: ctx => ({ options: ctx.params.options, title: ctx.params.title(), ctx: ctx })
+	impl: ctx => ({ 
+		options: ctx.params.options, 
+		title: ctx.params.title(), 
+		applyShortcut: function(e) {
+			this.options().forEach(o=>o.applyShortcut && o.applyShortcut(e))
+		},
+		ctx: ctx 
+	})
 })
 
 jb.component('menu.options-group', {
@@ -58,7 +65,26 @@ jb.component('menu.action', {
 		{ id: 'showCondition', as: 'boolean', defaultValue: true }
 	],
 	impl: ctx => 
-		ctx.params.showCondition ? ({ leaf : ctx.params, title: ctx.params.title(), ctx: ctx }) : null
+		ctx.params.showCondition ? ({ 
+			leaf : ctx.params, 
+			title: ctx.params.title(), 
+			applyShortcut: e=> {
+				var key = ctx.params.shortcut;
+				if (!key) return;
+				if (key.indexOf('-') > 0)
+					key = key.replace(/-/,'+');
+	            var keyCode = key.split('+').pop().charCodeAt(0);
+	            if (key == 'Delete') keyCode = 46;
+	            if (key.match(/\+[Uu]p$/)) keyCode = 38;
+	            if (key.match(/\+[Dd]own$/)) keyCode = 40;
+
+	            if (key.match(/^[Cc]trl/) && !e.ctrlKey) return;
+	            if (key.match(/^[Aa]lt/) && !e.altKey) return;
+	            if (e.keyCode == keyCode)
+	                return ctx.params.action();
+			},
+			ctx: ctx 
+		}) : null
 })
 
 // ********* actions / controls ************
@@ -111,10 +137,7 @@ jb.component('menu-style.pulldown', {
 	    	style :{$:'itemlist.use-group-style', groupStyle :{$call: 'layout' }},
     		items: '%$menuModel/options%',
 			controls :{$: 'menu.control', menu: '%$item%', style :{$: 'menu-style.popup-thumb'} },
-    		features: [
-    			{$: 'itemlist.selection'},
-    			{$: 'menu.keyboard-support' }
-    		],
+    		features :{$: 'menu.selection'},
 		}
 	}
 })
@@ -133,10 +156,7 @@ jb.component('menu-style.context-menu', {
 	    	watchItems: false,
     		items: '%$menuModel/options%',
 			controls :{$: 'menu.control', menu: '%$item%', style :{$: 'menu-style.apply-multi-level'} },
-    		features: [
-    			{$: 'itemlist.selection', autoSelectFirst: true},
-    			{$: 'menu.keyboard-support' }
-    		],
+    		features :{$: 'menu.selection', autoSelectFirst: true},
 		}
 	}
 })
@@ -244,8 +264,11 @@ jb.component('menu-style.apply-multi-level', {
   	}
 })
 
-jb.component('menu.keyboard-support', {
+jb.component('menu.selection', {
   type: 'feature',
+  params: [
+    { id: 'autoSelectFirst', type: 'boolean'},
+  ],
   impl: ctx => ({
      init: function(cmp) {
      	// putting the emitter at the top-menu only and listen at all sub menus
@@ -255,12 +278,9 @@ jb.component('menu.keyboard-support', {
 	        ctx.vars.topMenu.keydown = cmp.keydownSrc
 	          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
         // auto focus
-        	ctx.vars.topMenu.regainFocus = _ =>
-        		cmp.elementRef.nativeElement.focus();	
-
             setTimeout(()=> {
               jb_logPerformance('focus','menu.keyboard init autoFocus');
-              ctx.vars.topMenu.regainFocus();
+              cmp.elementRef.nativeElement.focus();
             },1 );
       	};
 
@@ -279,7 +299,7 @@ jb.component('menu.keyboard-support', {
               	return items[(selectedIndex + diff + items.length) % items.length];
 	        }).subscribe(x=>{
 	        	if (x)
-	        		cmp.selected = ctx.vars.topMenu.selected = x;
+	        		cmp.select(x);
 	        })
 	    keydown.filter(e=>e.keyCode == 27) // close all popups
     	    .subscribe(_=>{
@@ -289,11 +309,17 @@ jb.component('menu.keyboard-support', {
 		  			cmp.ctx.vars.topMenu.popups = [];
 		  			cmp.ctx.run({$:'tree.regain-focus'});
 	    	})
+	    cmp.select = item =>
+	    	cmp.selected = ctx.vars.topMenu.selected = item;
       },
       afterViewInit: cmp => {
-      	if (cmp.selected)
-      		ctx.vars.topMenu.selected = cmp.selected;
+        if (ctx.params.autoSelectFirst && cmp.items[0])
+            cmp.select(cmp.items[0]);
       },
+	  templateModifier: {
+	      jbItem: `[class.selected]="selected == ctrl.comp.ctx.data" (mouseenter)="select(ctrl.comp.ctx.data)"`
+	  },
+	  css: '.jb-item.selected { background: #bbb !important; color: #fff !important }',
       host: {
         '(keydown)': 'keydownSrc.next($event)',
         'tabIndex' : '0'
@@ -313,7 +339,6 @@ jb.component('menu-style.option-line', {
 			  span { padding-top: 3px }
 	          .title { display: block; text-align: left; } 
 			  .shortcut { margin-left: auto; text-align: right; padding-right: 15px }
-			  .line:hover { background: #eee; }
 			`,
         features: [
         	{$: 'mdl.ripple-effect'},
@@ -330,7 +355,6 @@ jb.component('menu.option-as-icon24', {
 	  		</div>`,
 		css: `.line { display: flex; cursor: pointer; height: 24px}
 			  i { width: 24px; padding-left: 3px; padding-top: 3px; font-size:16px; }
-			  .line:hover { background: #eee; }
 			`
 	}
 })
@@ -342,7 +366,6 @@ jb.component('menu-style.popup-as-option', {
 	  		<span class="title">{{title}}</span><i class="material-icons" (mouseenter)="openPopup($event)">play_arrow</i>
 	  		</div>`,
 		css: `.line { display: flex; cursor: pointer; font: 13px Arial; height: 24px}
-			  .line:hover { background: #eee; }
 			  i { width: 100%; text-align: right; font-size:16px; padding-right: 3px; padding-top: 3px; }
 	          .title { display: block; text-align: left; padding-top: 3px; padding-left: 26px;} 
 			`,

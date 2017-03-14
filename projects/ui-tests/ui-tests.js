@@ -838,7 +838,7 @@ jb.component('menu-test.menu1', {
         },
         {$:'menu.dynamic-options', 
           items: {$list: [1,2,3]} ,
-          genericOption :{$: 'menu.menu', title: 'dynamic-%%' },
+          genericOption :{$: 'menu.action', title: 'dynamic-%%' },
         }
       ]
    }
@@ -851,6 +851,15 @@ jb.component('menu-test.pulldown', {
       menu :{$: 'menu-test.menu1'},
     },
     expectedHtmlResult :{$: 'contains', text: ['File', 'Edit','dynamic-1','dynamic-3'] },
+  },
+})
+
+jb.component('menu-test.context-menu', {
+  impl :{$: 'ng2-ui-test',  
+    control: {$: 'menu.control',
+      menu :{$: 'menu-test.menu1'}
+    },
+    expectedHtmlResult :{$: 'contains', text: ['File', 'Edit'] },
   },
 })
 

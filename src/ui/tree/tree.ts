@@ -197,7 +197,8 @@ jb.component('tree.keyboard-selection', {
 		{ id: 'onKeyboardSelection', type: 'action', dynamic: true },
 		{ id: 'onEnter', type: 'action', dynamic: true },
 		{ id: 'onRightClickOfExpanded', type: 'action', dynamic: true },
-		{ id: 'autoFocus', type: 'boolean' }
+		{ id: 'autoFocus', type: 'boolean' },
+		{ id: 'applyMenuShortcuts', type: 'menu.option', dynamic: true },
 	],
 	impl: context => ({
 			observable: () => {},
@@ -256,6 +257,13 @@ jb.component('tree.keyboard-selection', {
 					jb_ui.wrapWithLauchingElement(action, 
 						context.setData(tree.selected), tree.el.querySelector('.treenode.selected'))()
 				}
+				// menu shortcuts
+				cmp.keydown.filter(e=> e.ctrlKey || e.altKey || e.keyCode == 46) // also Delete
+					.filter(e=> e.keyCode != 17 && e.keyCode != 18) // ctrl ot alt only
+					.subscribe(e => {
+						var menu = context.params.applyMenuShortcuts(context.setData(tree.selected));
+						menu && menu.applyShortcut && menu.applyShortcut(e);
+					})
 			}
 		})
 })
@@ -285,7 +293,11 @@ jb.component('tree.keyboard-shortcut', {
 		        cmp.keydown = cmp.keydown || cmp.keydownSrc
 		          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
 
-				cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {cmp.elementRef.nativeElement.focus(); return false});
+				cmp.getKeyboardFocus = cmp.getKeyboardFocus || _ => { 
+			        jb_logPerformance('focus','tree.keyboard-shortcut');
+					cmp.elementRef.nativeElement.focus(); 
+					return false
+				};
 
 				cmp.keydown.subscribe(event=>{
 	              var keyCode = key.split('+').pop().charCodeAt(0);

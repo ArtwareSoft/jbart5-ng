@@ -44,38 +44,11 @@ jb.component('studio.jb-editor', {
               path: '%$globals/jb_editor_selection%'
             }, 
             onRightClickOfExpanded :{$: 'studio.open-jb-editor-menu', path: '%%' }, 
-            autoFocus: true
+            autoFocus: true,
+            applyMenuShortcuts :{$: 'studio.jb-editor-menu', path: '%%' },
           }, 
           {$: 'tree.drag-and-drop' }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl+Up', 
-            action :{$: 'studio.move-in-array', path: '%%', moveUp: true }
-          }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl+Down', 
-            action :{$: 'studio.move-in-array', path: '%%', moveUp: false }
-          }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl+C', 
-            action :{$: 'studio.copy', path: '%%' }
-          }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl+V', 
-            action :{$: 'studio.paste', path: '%%' }
-          }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl+Z', 
-            action :{$: 'studio.undo', path: '%%' }
-          }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Ctrl+Y', 
-            action :{$: 'studio.redo', path: '%%' }
-          }, 
-          {$: 'tree.keyboard-shortcut', 
-            key: 'Delete', 
-            action :{$: 'studio.delete', path: '%%' }
-          }, 
-          {$: 'studio.control-tree.refreshPathChanges' }, 
+          {$: 'studio.control-tree.refresh-path-changes' }, 
           {$: 'css.width', width: '500', selector: 'jb-editor' }, 
           {$: 'feature.studio-auto-fix-path', 
             path: '%$globals/jb_editor_selection%'

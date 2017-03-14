@@ -22,15 +22,11 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
             $jb_val: function (value) {
                 if (typeof value == 'undefined')
                     return profileFromPath(this.path);
-                // if (profileFromPath(parentPath(this.path)) == profileFromPath(this.path)) // flatten one-item array
-                // 	var actual_path = parentPath(this.path);
-                // else
-                // 	var actual_path = this.path;
                 var parent = profileFromPath(parentPath(this.path));
                 parent[this.path.split('~').pop()] = value;
             }
         };
-        studio_utils_1.pathChangesEm.subscribe(function (fixer) { return ref.path = fixer.fix(ref.path); });
+        //pathChangesEm.subscribe(fixer => ref.path = fixer.fix(ref.path))
         return ref;
     }
     exports_1("profileRefFromPath", profileRefFromPath);
@@ -216,7 +212,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
                         cmp.jbWatchGroupChildrenEm = (cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
                             .merge(cmp.jbEmitter
                             .filter(function (x) { return x == 'check'; })
-                            .merge(studio_utils_1.pathChangesEm.map(function (fixer) {
+                            .merge(studio_utils_1.pathChangesEm.takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; })).do(function (fixer) {
                             return jb_core_1.jb.writeValue(path_ref, fixer.fix(jb_core_1.jb.val(path_ref)));
                         }))
                             .map(function () { return jb_core_1.jb.val(path_ref); })

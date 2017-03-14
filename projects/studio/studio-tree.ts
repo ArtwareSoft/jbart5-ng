@@ -152,14 +152,17 @@ jb.component('studio.control-tree', {
             key: 'Delete', 
             action :{$: 'studio.delete', path: '%%' }
           }, 
-          {$: 'studio.control-tree.refreshPathChanges' }, 
+          {$: 'studio.control-tree.refresh-path-changes' }, 
           {$: 'tree.onMouseRight', 
             action :{$: 'studio.open-tree-menu', path: '%%' }
           }
         ]
       }
     ], 
-    features :{$: 'css.padding', top: '10' }
+    features :[ 
+        {$: 'css.padding', top: '10' },
+        {$: 'group.studio-watch-path', path :{$: 'studio.currentProfilePath' } },
+    ]
   }
 })
 
@@ -173,18 +176,20 @@ jb.component('studio.control-tree.nodes', {
 })
 
 // after model modifications the paths of the selected and expanded nodes may change and the tree should fix it.
-jb.component('studio.control-tree.refreshPathChanges', {
+jb.component('studio.control-tree.refresh-path-changes', {
   type: 'feature',
-  impl: function(context) {
-    var tree = context.vars.$tree; 
-    if (jbart._refreshPathTreeObserver)
-    	jbart._refreshPathTreeObserver.unsubscribe();
-    jbart._refreshPathTreeObserver = pathChangesEm.subscribe(function(fixer) {
-    	var new_expanded = {};
-    	Object.getOwnPropertyNames(tree.expanded).filter(path=>tree.expanded[path])
-    		.forEach(path => new_expanded[fixer.fix(path)] = true)
-    	tree.expanded = new_expanded;
-    	tree.selected = fixer.fix(tree.selected);
-    })
-  }
+  impl: ctx => ({
+    init : cmp => {
+      var tree = ctx.vars.$tree; 
+      pathChangesEm.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+        .subscribe(fixer => {
+          var new_expanded = {};
+          jb_entries(tree.expanded)
+            .filter(e=>e[1])
+            .forEach(e => new_expanded[fixer.fix(e[0])] = true)
+          tree.expanded = new_expanded;
+          tree.selected = fixer.fix(tree.selected);
+        })
+    }
+  })
 })

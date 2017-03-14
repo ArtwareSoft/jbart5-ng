@@ -161,14 +161,17 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     key: 'Delete',
                                     action: { $: 'studio.delete', path: '%%' }
                                 },
-                                { $: 'studio.control-tree.refreshPathChanges' },
+                                { $: 'studio.control-tree.refresh-path-changes' },
                                 { $: 'tree.onMouseRight',
                                     action: { $: 'studio.open-tree-menu', path: '%%' }
                                 }
                             ]
                         }
                     ],
-                    features: { $: 'css.padding', top: '10' }
+                    features: [
+                        { $: 'css.padding', top: '10' },
+                        { $: 'group.studio-watch-path', path: { $: 'studio.currentProfilePath' } },
+                    ]
                 }
             });
             jb_core_1.jb.component('studio.control-tree.nodes', {
@@ -180,20 +183,22 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 }
             });
             // after model modifications the paths of the selected and expanded nodes may change and the tree should fix it.
-            jb_core_1.jb.component('studio.control-tree.refreshPathChanges', {
+            jb_core_1.jb.component('studio.control-tree.refresh-path-changes', {
                 type: 'feature',
-                impl: function (context) {
-                    var tree = context.vars.$tree;
-                    if (jbart._refreshPathTreeObserver)
-                        jbart._refreshPathTreeObserver.unsubscribe();
-                    jbart._refreshPathTreeObserver = studio_utils_1.pathChangesEm.subscribe(function (fixer) {
-                        var new_expanded = {};
-                        Object.getOwnPropertyNames(tree.expanded).filter(function (path) { return tree.expanded[path]; })
-                            .forEach(function (path) { return new_expanded[fixer.fix(path)] = true; });
-                        tree.expanded = new_expanded;
-                        tree.selected = fixer.fix(tree.selected);
-                    });
-                }
+                impl: function (ctx) { return ({
+                    init: function (cmp) {
+                        var tree = ctx.vars.$tree;
+                        studio_utils_1.pathChangesEm.takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }))
+                            .subscribe(function (fixer) {
+                            var new_expanded = {};
+                            jb_entries(tree.expanded)
+                                .filter(function (e) { return e[1]; })
+                                .forEach(function (e) { return new_expanded[fixer.fix(e[0])] = true; });
+                            tree.expanded = new_expanded;
+                            tree.selected = fixer.fix(tree.selected);
+                        });
+                    }
+                }); }
             });
         }
     }

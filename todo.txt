@@ -1,5 +1,7 @@
 jbeditor menus with keyboard
 
+suggestion popup cut inside the parent dialog
+
 unify the 3:
 itemlist
 	item

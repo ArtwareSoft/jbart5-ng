@@ -226,7 +226,8 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                     { id: 'onKeyboardSelection', type: 'action', dynamic: true },
                     { id: 'onEnter', type: 'action', dynamic: true },
                     { id: 'onRightClickOfExpanded', type: 'action', dynamic: true },
-                    { id: 'autoFocus', type: 'boolean' }
+                    { id: 'autoFocus', type: 'boolean' },
+                    { id: 'applyMenuShortcuts', type: 'menu.option', dynamic: true },
                 ],
                 impl: function (context) { return ({
                     observable: function () { },
@@ -282,6 +283,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                         function runActionInTreeContext(action) {
                             jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected), tree.el.querySelector('.treenode.selected'))();
                         }
+                        // menu shortcuts
+                        cmp.keydown.filter(function (e) { return e.ctrlKey || e.altKey || e.keyCode == 46; }) // also Delete
+                            .filter(function (e) { return e.keyCode != 17 && e.keyCode != 18; }) // ctrl ot alt only
+                            .subscribe(function (e) {
+                            var menu = context.params.applyMenuShortcuts(context.setData(tree.selected));
+                            menu && menu.applyShortcut && menu.applyShortcut(e);
+                        });
                     }
                 }); }
             });
@@ -309,7 +317,13 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                         cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
                         cmp.keydown = cmp.keydown || cmp.keydownSrc
                             .takeUntil(cmp.jbEmitter.filter(function (x) { return x == 'destroy'; }));
-                        cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () { cmp.elementRef.nativeElement.focus(); return false; });
+                        cmp.getKeyboardFocus = cmp.getKeyboardFocus || _;
+                        {
+                            jb_logPerformance('focus', 'tree.keyboard-shortcut');
+                            cmp.elementRef.nativeElement.focus();
+                            return false;
+                        }
+                        ;
                         cmp.keydown.subscribe(function (event) {
                             var keyCode = key.split('+').pop().charCodeAt(0);
                             if (key == 'Delete')

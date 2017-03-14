@@ -67,8 +67,7 @@ jb.component('group.watch', {
   impl: (context, data) => ({
       beforeInit: function(cmp) {
           cmp.jbWatchGroupChildrenEm = (cmp.jbWatchGroupChildrenEm || jb_rx.Observable.of())
-              .merge(cmp.jbEmitter
-                .filter(x => x == 'check')
+              .merge(cmp.jbEmitter.filter(x => x == 'check')
                 .map(()=> 
                   jb.val(data())) 
                 .filter(x=>x != null)
