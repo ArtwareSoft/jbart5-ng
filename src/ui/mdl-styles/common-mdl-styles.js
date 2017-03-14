@@ -38,6 +38,14 @@ jb.component('mdl.ripple-effect', {
 
 // ****** button styles
 
+jb.component('button.mdl-raised', {
+  type: 'button.style',
+  impl :{$: 'customStyle', 
+      template: '<button class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect" (click)="clicked()">{{title}}</button>',
+      features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
+  }
+})
+
 jb.component('button.mdl-flat-ripple', {
   type: 'button.style',
   impl :{$: 'customStyle', 

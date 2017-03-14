@@ -9,12 +9,6 @@ import {modifyOperationsEm} from './studio-utils';
 
 var previewRefreshCounter = 0;
 
-//         if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-// //            jb_native_delay(100).then(() => {// highlight on delay
-//                var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
-//                elemToHighlight.addClass('jb-highlight-comp-changed')
-// //            });
-
 function studioAutoRefreshWidget(widget) {
   widget.ngZone.runOutsideAngular(() => {
     var counterOrPageChange = jbart.studioNgZone.onStable

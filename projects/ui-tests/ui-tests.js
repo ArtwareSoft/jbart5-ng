@@ -717,32 +717,6 @@ jb.component('ui-test.picklist-groups', {
 },
 })
 
-// jb.component('dialog', {
-// //   impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
-//   control :{$: 'button', title: 'Open Dialog', $click: true,
-//       action :{$: 'openDialog', 
-//         title: 'Hello' , 
-//         content :{$: 'label', title: 'Hello Dialog' },      
-//         features :{$: 'dialog-feature.dragTitle', id: "dialog-test"}, 
-//       } 
-//   },
-//   expectedHtmlResult: { $: 'contains', text: ['Hello Dialog'], lookin: 'popups' },
-// },
-// })
-
-// jb.component('popup-menu', {
-// //   impl :{$: 'ng2-ui-test', 
-//   control :{$: 'pulldown.top-menu-item', title: 'File', open: true,
-//       controls: 
-//       [
-//         { $: 'pulldown.menu-item', title: 'Open ...'} ,
-//         { $: 'pulldown.menu-item', title: 'Save', spritePosition: '4,0'}
-//       ]
-//   },
-//   expectedHtmlResult: { $: 'contains', text: ['Open'], lookin: 'popups' },
-// },
-// })
-
 jb.component('ui-test.dynamic-controls', {
   impl :{$: 'ng2-ui-test', 
   control :{$: 'group',
@@ -853,7 +827,7 @@ jb.component('menu-test.menu1', {
                   {$: 'menu.action', title: 'Dave' },
                   {$: 'menu.action', title: 'Dan' }
               ]
-            }
+            },
           ]
         },
         {$: 'menu.menu', title: 'Edit',
@@ -862,6 +836,10 @@ jb.component('menu-test.menu1', {
             {$: 'menu.action', title: 'Paste' }
           ]
         },
+        {$:'menu.dynamic-options', 
+          items: {$list: [1,2,3]} ,
+          genericOption :{$: 'menu.menu', title: 'dynamic-%%' },
+        }
       ]
    }
 })
@@ -872,18 +850,7 @@ jb.component('menu-test.pulldown', {
       style :{$: 'menu-style.pulldown'},
       menu :{$: 'menu-test.menu1'},
     },
-    expectedHtmlResult :{$: 'contains', text: ['File', 'Edit'] },
-  },
-})
-
-jb.component('menu-test.context-menu', {
-  impl :{$: 'ng2-ui-test',  
-    control :{$: 'menu.menu',
-      style :{$: 'menu.context-menu'},
-      title: 'main', 
-      options :{$: 'menu-test.main-menu-options'}
-    },
-    expectedHtmlResult :{$: 'contains', text: ['File', 'Edit'] },
+    expectedHtmlResult :{$: 'contains', text: ['File', 'Edit','dynamic-1','dynamic-3'] },
   },
 })
 

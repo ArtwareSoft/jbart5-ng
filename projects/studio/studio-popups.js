@@ -1,7 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-import {model} from './studio-tgp-model';
-
 jb.component('studio.open-multiline-edit', {
 	type: 'action',
 	params: [

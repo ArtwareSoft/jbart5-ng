@@ -1,5 +1,3 @@
-import {jb} from 'jb-core';
-
 jb.component('dialog.studio-jb-editor-popup', {
   type: 'dialog.style',
   impl: {$: 'customStyle',

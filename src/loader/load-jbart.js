@@ -100,7 +100,6 @@ jb_modules =
 'ui/ui-common.js',
 'ui/image.js',
 'ui/menu.js',
-'ui/pulldown-menu.js',
 'ui/itemlog.js',
 'ui/tabs.js',
 'ui/sidenav.js',
@@ -131,9 +130,9 @@ jb_modules =
 'testing/ui-testers-ctrls',
 ];
 
-jb_studio_modules = ['tgp-model','model-components.js','path','utils','main.js','preview','menu.js','toolbar','tests','popups'
+jb_studio_modules = ['tgp-model','model-components.js','path','utils','main.js','preview','menu.js','toolbar','tests','popups.js'
 ,'tree','properties.js','properties-menu.js','pick.js','save','probe','edit-source','new-control.js','testers'
-,'undo','styles','style-editor','data-browse','open-project','jb-editor','jb-editor-styles','suggestions','context-viewer']
+,'undo','styles.js','style-editor.js','data-browse','open-project','jb-editor.js','jb-editor-styles.js','suggestions','context-viewer']
   .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 
 jb_system_config = {

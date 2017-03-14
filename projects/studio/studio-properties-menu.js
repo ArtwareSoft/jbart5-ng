@@ -58,48 +58,43 @@ jb.component('studio.open-property-menu', {
   params: [
     { id: 'path', as: 'string' }
   ], 
-  impl :{$: 'openDialog', 
+  impl :{$: 'menu.open-context-menu', 
     $vars: {
       compName :{$: 'studio.comp-name', path: '%$path%' }
     }, 
-    style :{$: 'pulldown-popup.context-menu-popup' }, 
-    content :{$: 'group', 
-      controls: [
-          {$: 'pulldown.menu-item', 
+    menu :{$: 'menu.menu',
+      options: [
+          {$: 'menu.action', 
             title: 'style editor', 
             action :{$: 'studio.open-style-editor', path: '%$path%' }, 
-            features :{$: 'hidden', 
-              showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
-            }
+            showCondition :{$: 'endsWith', endsWith: '~style', text: '%$path%' }
           },
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'multiline edit', 
-          features :{$: 'hidden', 
-            showCondition: {$: 'equals', 
+          showCondition: {$: 'equals', 
               item1: { $pipeline: [ {$: 'studio.param-def', path: '%$path%' }, '%as%']},
               item2: 'string'
-            }
           },
           action :{$: 'studio.open-multiline-edit', path: '%$path%' }
         }, 
 
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'Goto %$compName%', 
-          features :{$: 'hidden', showCondition: '%$compName%' }, 
+          showCondition: '%$compName%', 
           action :{$: 'studio.goto-path', path: '%$compName%' }
         }, 
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'Inteliscript editor', 
           icon: 'code', 
           action :{$: 'studio.open-jb-editor', path: '%$path%' }
         }, 
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'Javascript editor', 
           icon: 'code', 
           action :{$: 'studio.editSource', path: '%$path%' }
         }, 
         {$: 'studio.goto-sublime', path: '%$path%' },
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'Delete', 
           icon: 'delete', 
           shortcut: 'Delete', 

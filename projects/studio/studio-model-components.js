@@ -1,5 +1,6 @@
 jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => { 
 	var model = loadedModules['studio/studio-tgp-model'].model;
+	var TgpModel = loadedModules['studio/studio-tgp-model'].TgpModel;
 
 jb.component('studio.short-title', {
 	params: [ {id: 'path', as: 'string' } ],
@@ -270,6 +271,34 @@ jb.component('studio.components-statistics',{
 	}
 })
 
+jb.component('studio.jb-editor.nodes', {
+	type: 'tree.nodeModel',
+	params: [ {id: 'path', as: 'string' } ],
+	impl: (ctx,path) =>
+		  new TgpModel(path,'jb-editor')
+})
+
+jb.component('studio.profile-value-as-text', {
+  type: 'data',
+  params: [
+    { id: 'path', as: 'string' }
+  ],
+  impl: (context,path) => ({
+      $jb_val: function(value) {
+        if (typeof value == 'undefined') {
+          var val = model.val(path);
+          if (val == null)
+            return '';
+          if (typeof val == 'string')
+            return val;
+          if (model.compName(path))
+            return '=' + model.compName(path);
+        }
+        else if (value.indexOf('=') != 0)
+          model.modify(model.writeValue, path, { value: value },context);
+      }
+    })
+})
 
 
 })

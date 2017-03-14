@@ -1,8 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-import * as jb_rx from 'jb-ui/jb-rx';
-import {model,TgpModel} from './studio-tgp-model';
-import {findjBartToLook,pathChangesEm} from './studio-utils';
 
 jb.component('studio.open-jb-editor', {
   type: 'action', 
@@ -168,14 +163,6 @@ jb.component('studio.data-browse', {
     }
 })
 
-jb.component('studio.jb-editor.nodes', {
-	type: 'tree.nodeModel',
-	params: [ {id: 'path', as: 'string' } ],
-	impl: function(context,path) {
-		return new TgpModel(path,'jb-editor');
-	}
-})
-
 jb.component('studio.open-jb-edit-property', {
   type: 'action', 
   params: [
@@ -191,28 +178,6 @@ jb.component('studio.open-jb-edit-property', {
       }
     ]
   }
-})
-
-jb.component('studio.profile-value-as-text', {
-  type: 'data',
-  params: [
-    { id: 'path', as: 'string' }
-  ],
-  impl: (context,path) => ({
-      $jb_val: function(value) {
-        if (typeof value == 'undefined') {
-          var val = model.val(path);
-          if (val == null)
-            return '';
-          if (typeof val == 'string')
-            return val;
-          if (model.compName(path))
-            return '=' + model.compName(path);
-        }
-        else if (value.indexOf('=') != 0)
-          model.modify(model.writeValue, path, { value: value },context);
-      }
-    })
 })
 
 jb.component('studio.open-jb-editor-menu', {
@@ -232,76 +197,35 @@ jb.component('studio.jb-editor-menu', {
   impl :{$: 'menu.menu', 
     style :{$: 'menu.context-menu' },
     options: [
-      {$: 'dynamic-controls', 
-        controlItems :{$: 'studio.more-params', path: '%$path%' }, 
-        genericControl :{$: 'menu.action', 
-          title :{
-            $pipeline: [
-              '%$controlItem%', 
-              {$: 'suffix', separator: '~' }
-            ]
-          }, 
-          action :{$: 'runActions', 
-            $vars: { nextPath: '%$path%~%$controlItem%' }, 
-            actions: [
-              {$: 'studio.add-property', path: '%$controlItem%' }, 
-              {$: 'closeContainingPopup' }, 
-              {$: 'writeValue', 
-                to: '%$globals/jb_editor_selection%', 
-                value: '%$nextPath%'
-              }, 
-            ]
+      {$:'menu.end-with-separator',
+         options :{$:'menu.dynamic-options', endsWithSeparator: true,
+            items :{$: 'studio.more-params', path: '%$path%' } ,
+            genericOption :{$: 'menu.action', 
+            title :{$: 'suffix', separator: '~' },
+            action :{$: 'runActions', 
+              actions: [
+                {$: 'studio.add-property', path: '%%' }, 
+                {$: 'closeContainingPopup' }, 
+                {$: 'writeValue', 
+                  to: '%$globals/jb_editor_selection%', 
+                  value: '%$path%~%%'
+                }, 
+              ]
+            }
           }
         }
       }, 
-      {$: 'menu.separator' }, 
       {$: 'menu.action', 
         $vars: {
           compName :{$: 'studio.comp-name', path: '%$path%' }
         }, 
         title: 'Goto %$compName%', 
         action :{$: 'studio.open-jb-editor', path: '%$compName%' }, 
-        features :{$: 'hidden', showCondition: '%$compName%' }
+        showCondition: '%$compName%'
       }, 
-      {$: 'studio.goto-sublime', path: '%$path%' }, 
-      {$: 'menu.separator' }, 
-      {$: 'menu.action', 
-        title: 'Delete', 
-        icon: 'delete', 
-        shortcut: 'Delete', 
-        action: [
-          {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
-          {$: 'studio.delete', path: '%$path%' }
-        ]
-      }, 
-      {$: 'menu.action', 
-        title: 'Copy', 
-        icon: 'copy', 
-        shortcut: 'Ctrl+C', 
-        action :{$: 'studio.copy', path: '%$path%' }
-      }, 
-      {$: 'menu.action', 
-        title: 'Paste', 
-        icon: 'paste', 
-        shortcut: 'Ctrl+V', 
-        action :{$: 'studio.paste', path: '%$path%' }
-      }, 
-      {$: 'menu.action', 
-        title: 'Undo', 
-        icon: 'undo', 
-        shortcut: 'Ctrl+Z', 
-        action :{$: 'studio.undo' }
-      }, 
-      {$: 'menu.action', 
-        title: 'Redo', 
-        icon: 'redo', 
-        shortcut: 'Ctrl+Y', 
-        action :{$: 'studio.redo' }
-      }, 
-      {$: 'divider', 
-        style :{$: 'divider.br' }, 
-        title: 'divider'
-      }, 
+      {$:'menu.end-with-separator',
+        options: {$: 'studio.goto-sublime', path: '%$path%' }
+      },
       {$: 'menu.studio-wrap-with', 
         path: '%$path%', 
         type: 'data', 
@@ -339,10 +263,44 @@ jb.component('studio.jb-editor-menu', {
           onOK :{$: 'writeValue', 
             to :{$: 'studio.ref', path: '%$path%~%$dialogData/name%' }, 
             value: ''
-          }, 
+          },
           modal: 'true'
         }
-      }
+      },
+      {$: 'menu.separator' }, 
+      {$: 'menu.action', 
+        title: 'Delete', 
+        icon: 'delete', 
+        shortcut: 'Delete', 
+        action: [
+          {$: 'writeValue', to: '%$TgpTypeCtrl.expanded%', value: false }, 
+          {$: 'studio.delete', path: '%$path%' }
+        ]
+      }, 
+      {$: 'menu.action', 
+        title: 'Copy', 
+        icon: 'copy', 
+        shortcut: 'Ctrl+C', 
+        action :{$: 'studio.copy', path: '%$path%' }
+      }, 
+      {$: 'menu.action', 
+        title: 'Paste', 
+        icon: 'paste', 
+        shortcut: 'Ctrl+V', 
+        action :{$: 'studio.paste', path: '%$path%' }
+      }, 
+      {$: 'menu.action', 
+        title: 'Undo', 
+        icon: 'undo', 
+        shortcut: 'Ctrl+Z', 
+        action :{$: 'studio.undo' }
+      }, 
+      {$: 'menu.action', 
+        title: 'Redo', 
+        icon: 'redo', 
+        shortcut: 'Ctrl+Y', 
+        action :{$: 'studio.redo' }
+      }, 
     ], 
     features :{$: 'group.menu-keyboard-selection', autoFocus: true }
   }
@@ -355,20 +313,20 @@ jb.component('menu.studio-wrap-with', {
     { id: 'type', as: 'string' },
     { id: 'components', as: 'array' },
   ], 
-  impl :{$: 'dynamic-controls',
-            controlItems : { 
-              $if: {$: 'studio.is-of-type', path: '%$path%', type: '%$type%' }, 
-              then: '%$components%', 
-              else: [] 
-            },
-            genericControl :{$: 'menu.action', 
-              title: 'Wrap with %$controlItem%',
-              action : [
-                {$: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' },
-                {$:'studio.expand-and-select-first-child-in-jb-editor' }
-              ]
-        },
-      }
+  impl :{$: 'menu.dynamic-options',
+    items : { 
+          $if: {$: 'studio.is-of-type', path: '%$path%', type: '%$type%' }, 
+          then: '%$components%', 
+          else: {$list: [] }
+    },
+        genericOption :{$: 'menu.action', 
+          title: 'Wrap with %%',
+          action : [
+            {$: 'studio.wrap', path: '%$path%', compName: '%%' },
+            {$:'studio.expand-and-select-first-child-in-jb-editor' }
+          ]
+    },
+  }
 })
 
 jb.component('studio.expand-and-select-first-child-in-jb-editor', {

@@ -1,7 +1,7 @@
-System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, context_1) {
+System.register(['jb-core', 'jb-ui'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jb_core_1, jb_ui, studio_tgp_model_1;
+    var jb_core_1, jb_ui;
     return {
         setters:[
             function (jb_core_1_1) {
@@ -9,9 +9,6 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
             },
             function (jb_ui_1) {
                 jb_ui = jb_ui_1;
-            },
-            function (studio_tgp_model_1_1) {
-                studio_tgp_model_1 = studio_tgp_model_1_1;
             }],
         execute: function() {
             jb_core_1.jb.component('studio.open-jb-editor', {
@@ -175,13 +172,6 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                     },
                 }
             });
-            jb_core_1.jb.component('studio.jb-editor.nodes', {
-                type: 'tree.nodeModel',
-                params: [{ id: 'path', as: 'string' }],
-                impl: function (context, path) {
-                    return new studio_tgp_model_1.TgpModel(path, 'jb-editor');
-                }
-            });
             jb_core_1.jb.component('studio.open-jb-edit-property', {
                 type: 'action',
                 params: [
@@ -198,27 +188,6 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                     ]
                 }
             });
-            jb_core_1.jb.component('studio.profile-value-as-text', {
-                type: 'data',
-                params: [
-                    { id: 'path', as: 'string' }
-                ],
-                impl: function (context, path) { return ({
-                    $jb_val: function (value) {
-                        if (typeof value == 'undefined') {
-                            var val = studio_tgp_model_1.model.val(path);
-                            if (val == null)
-                                return '';
-                            if (typeof val == 'string')
-                                return val;
-                            if (studio_tgp_model_1.model.compName(path))
-                                return '=' + studio_tgp_model_1.model.compName(path);
-                        }
-                        else if (value.indexOf('=') != 0)
-                            studio_tgp_model_1.model.modify(studio_tgp_model_1.model.writeValue, path, { value: value }, context);
-                    }
-                }); }
-            });
             jb_core_1.jb.component('studio.open-jb-editor-menu', {
                 type: 'action',
                 params: [
@@ -234,23 +203,17 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                 impl: { $: 'menu.menu',
                     style: { $: 'menu.context-menu' },
                     options: [
-                        { $: 'dynamic-controls',
-                            controlItems: { $: 'studio.more-params', path: '%$path%' },
-                            genericControl: { $: 'menu.action',
-                                title: {
-                                    $pipeline: [
-                                        '%$controlItem%',
-                                        { $: 'suffix', separator: '~' }
-                                    ]
-                                },
+                        { $: 'menu.dynamic-options',
+                            items: { $: 'studio.more-params', path: '%$path%' },
+                            genericOption: { $: 'menu.action',
+                                title: { $: 'suffix', separator: '~' },
                                 action: { $: 'runActions',
-                                    $vars: { nextPath: '%$path%~%$controlItem%' },
                                     actions: [
-                                        { $: 'studio.add-property', path: '%$controlItem%' },
+                                        { $: 'studio.add-property', path: '%%' },
                                         { $: 'closeContainingPopup' },
                                         { $: 'writeValue',
                                             to: '%$globals/jb_editor_selection%',
-                                            value: '%$nextPath%'
+                                            value: '%$path%~%%'
                                         },
                                     ]
                                 }
@@ -263,7 +226,7 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                             },
                             title: 'Goto %$compName%',
                             action: { $: 'studio.open-jb-editor', path: '%$compName%' },
-                            features: { $: 'hidden', showCondition: '%$compName%' }
+                            showCondition: '%$compName%'
                         },
                         { $: 'studio.goto-sublime', path: '%$path%' },
                         { $: 'menu.separator' },
@@ -356,13 +319,13 @@ System.register(['jb-core', 'jb-ui', './studio-tgp-model'], function(exports_1, 
                     { id: 'type', as: 'string' },
                     { id: 'components', as: 'array' },
                 ],
-                impl: { $: 'dynamic-controls',
-                    controlItems: {
+                impl: { $: 'dynamic-options',
+                    items: {
                         $if: { $: 'studio.is-of-type', path: '%$path%', type: '%$type%' },
                         then: '%$components%',
-                        else: []
+                        else: { $list: [] }
                     },
-                    genericControl: { $: 'menu.action',
+                    genericOption: { $: 'menu.action',
                         title: 'Wrap with %$controlItem%',
                         action: [
                             { $: 'studio.wrap', path: '%$path%', compName: '%$controlItem%' },

@@ -447,7 +447,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     if (!prof)
                         return [];
                     var params = jb_compParams(studio_utils_1.getComp(jb_core_1.jb.compName(prof)));
-                    return params.filter(function (p) { return (p.type || '').indexOf('control') != -1; }).map(function (p) { return p.id; });
+                    return params.filter(function (p) { return (p.type || '').match(/control|options/); }).map(function (p) { return p.id; });
                 };
                 TgpModel.prototype.nonControlParams = function (path) {
                     var prof = studio_path_1.profileFromPath(path);

@@ -1,5 +1,5 @@
-import {jb} from 'jb-core';
-import {model} from './studio-tgp-model';
+jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => { 
+  var model = loadedModules['studio/studio-tgp-model'].model;
 
 jb.component('studio.open-style-editor', {
   type: 'action', 
@@ -25,11 +25,10 @@ jb.component('studio.open-style-menu', {
   params: [
     { id: 'path', as: 'string' }
   ], 
-  impl :{$: 'openDialog', 
-    style :{$: 'pulldown-popup.context-menu-popup' }, 
-    content :{$: 'group',
-      controls: [
-        {$: 'pulldown.menu-item', 
+  impl :{$: 'menu.open-context-menu', 
+    menu :{$: 'menu.menu',
+      options: [
+        {$: 'menu.action', 
           title: 'Clone as local style', 
           icon: 'build', 
           action : [
@@ -37,15 +36,15 @@ jb.component('studio.open-style-menu', {
             {$: 'studio.open-style-editor', path: '%$styleSource/innerPath%' },
             {$: 'studio.open-properties' },
           ], 
-          features :{$: 'hidden', showCondition: "%$styleSource/type% == 'global'" },
+          showCondition: "%$styleSource/type% == 'global'",
         },
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'Extract style as a reusable component', 
           icon: 'build', 
           action :{$: 'studio.open-make-global-style', path: '%$path%' }, 
-          features :{$: 'hidden', showCondition: "%$styleSource/type% == 'inner'" },
+          showCondition: "%$styleSource/type% == 'inner'",
         }, 
-        {$: 'pulldown.menu-item', 
+        {$: 'menu.action', 
           title: 'Format css', 
           action :{$: 'writeValue', 
             to :{$: 'studio.profile-as-text',  path: '%$styleSource/path%~css', stringOnly: true }, 
@@ -151,4 +150,7 @@ jb.component('studio.custom-style-make-local', {
     { id: 'css', as: 'string'},
   ],
   impl: {$: 'object', template: '%$template%', css: '%$css%' }
+})
+
+
 })

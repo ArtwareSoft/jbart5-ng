@@ -193,20 +193,6 @@ jb.component('studio-helper.group-with-label', {
   }
 })
 
-jb.component('studio-helper.menu-selection', {
-  type: 'control', 
-  impl: {$: 'group', 
-    title: 'menu selection', 
-    features :{$: 'group.menu-keyboard-selection', autoFocus: true }, 
-    controls :[
-        { $: 'pulldown.menu-item', title: '1', icon: 'code', action: ctx => 
-          ctx.resources.window.console.log(1) },
-        { $: 'pulldown.menu-item', title: '2', action: ctx => ctx.resources.window.console.log(2) },
-        { $: 'pulldown.menu-item', title: '3', icon: 'delete', action: ctx => ctx.resources.window.console.log(3) },
-    ]
-  },
-})
-
 jb.component('studio-helper.data-resources', {
   type: 'control', 
   impl :{$: 'group', 

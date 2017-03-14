@@ -470,7 +470,7 @@ export class TgpModel {
 		var prof = profileFromPath(path,true);
 		if (!prof) return [];
 		var params = jb_compParams(getComp(jb.compName(prof)));
-		return params.filter(p=>(p.type||'').indexOf('control')!=-1).map(p=>p.id)
+		return params.filter(p=>(p.type||'').match(/control|options/)).map(p=>p.id)
 	}
 	nonControlParams(path) {
 		var prof = profileFromPath(path);

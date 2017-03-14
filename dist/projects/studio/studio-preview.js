@@ -12,11 +12,6 @@ System.register(['jb-core', '@angular/platform-browser', '@angular/core', './stu
     };
     var jb_core_1, platform_browser_1, core_1, studio_utils_1;
     var previewRefreshCounter;
-    //         if (comp && [comp.callerPath, comp.ctx && comp.ctx.path].indexOf(e.path) != -1) {
-    // //            jb_native_delay(100).then(() => {// highlight on delay
-    //                var elemToHighlight = $(jbComp.elementRef.nativeElement.parentElement);
-    //                elemToHighlight.addClass('jb-highlight-comp-changed')
-    // //            });
     function studioAutoRefreshWidget(widget) {
         widget.ngZone.runOutsideAngular(function () {
             var counterOrPageChange = jbart.studioNgZone.onStable

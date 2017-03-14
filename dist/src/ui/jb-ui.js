@@ -36,7 +36,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         var ctx = context.setVars({ $model: context.params });
         var styleOptions = defaultStyle(ctx);
         if (styleOptions && styleOptions.methodHandler) {
-            styleOptions.forceCtx = ctx;
+            styleOptions.ctxForPick = ctx;
             return styleOptions.jbCtrl(ctx);
         }
         return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);
@@ -261,7 +261,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     var elem = cmp_ref._hostElement.nativeElement;
                     while (ctx.profile.__innerImplementation)
                         ctx = ctx.componentContext._parent;
-                    var attachedCtx = this.forceCtx || ctx;
+                    var attachedCtx = this.ctxForPick || ctx;
                     elem.setAttribute('jb-ctx', attachedCtx.id);
                     garbageCollectCtxDictionary();
                     jbart.ctxDictionary[attachedCtx.id] = attachedCtx;
@@ -337,7 +337,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         this.methodHandler.jbDestroyFuncs.push(options.destroy);
                     if (options.observable)
                         this.methodHandler.jbObservableFuncs.push(options.observable);
-                    //		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
+                    if (options.ctxForPick)
+                        this.ctxForPick = options.ctxForPick;
                     if (options.extendCtx)
                         this.methodHandler.extendCtxFuncs.push(options.extendCtx);
                     if (options.extendComp)

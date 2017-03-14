@@ -17,7 +17,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
             jb_core_1.jb.component('studio.open-control-tree', {
                 type: 'action',
                 impl: { $: 'openDialog',
-                    style: { $: 'dialog.studio-floating', id: 'studio-outline', width: 300 },
+                    style: { $: 'dialog.studio-floating', id: 'studio-outline', width: '350' },
                     content: { $: 'studio.control-tree' },
                     menu: { $: 'button',
                         title: ' ',
@@ -33,15 +33,14 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                 params: [
                     { id: 'path', as: 'string' }
                 ],
-                impl: { $: 'openDialog',
-                    style: { $: 'pulldown-popup.context-menu-popup' },
-                    content: { $: 'group',
-                        controls: [
-                            { $: 'pulldown.menu-item',
+                impl: { $: 'menu.open-context-menu',
+                    menu: { $: 'menu.menu',
+                        options: [
+                            { $: 'menu.action',
                                 title: 'Insert',
                                 action: { $: 'studio.open-new-control-dialog' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'Wrap with group',
                                 action: [
                                     { $: 'studio.wrap-with-group', path: '%$path%' },
@@ -56,34 +55,34 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     }
                                 ]
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'Duplicate',
                                 action: { $: 'studio.duplicate', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item-separator' },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.separator' },
+                            { $: 'menu.action',
                                 title: 'inteliscript editor',
                                 action: { $: 'studio.open-jb-editor', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'context viewer',
                                 action: { $: 'studio.open-context-viewer', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'javascript editor',
                                 action: { $: 'studio.editSource', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 $vars: {
                                     compName: { $: 'studio.comp-name', path: '%$path%' }
                                 },
                                 title: 'Goto %$compName%',
-                                features: { $: 'hidden', showCondition: '%$compName%' },
+                                showCondition: '%$compName%',
                                 action: { $: 'studio.goto-path', path: '%$compName%' }
                             },
                             { $: 'studio.goto-sublime', path: '%$path%' },
-                            { $: 'pulldown.menu-item-separator' },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.separator' },
+                            { $: 'menu.action',
                                 title: 'Delete',
                                 icon: 'delete',
                                 shortcut: 'Delete',
@@ -92,25 +91,25 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     { $: 'studio.delete', path: '%$path%' }
                                 ]
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'Copy',
                                 icon: 'copy',
                                 shortcut: 'Ctrl+C',
                                 action: { $: 'studio.copy', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'Paste',
                                 icon: 'paste',
                                 shortcut: 'Ctrl+V',
                                 action: { $: 'studio.paste', path: '%$path%' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'Undo',
                                 icon: 'undo',
                                 shortcut: 'Ctrl+Z',
                                 action: { $: 'studio.undo' }
                             },
-                            { $: 'pulldown.menu-item',
+                            { $: 'menu.action',
                                 title: 'Redo',
                                 icon: 'redo',
                                 shortcut: 'Ctrl+Y',

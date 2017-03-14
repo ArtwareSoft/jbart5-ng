@@ -1,6 +1,3 @@
-import {jb} from 'jb-core';
-import {MdSlideToggleModule} from '@angular/material';
-
 jb.component('editable-text.studio-primitive-text',{
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
@@ -46,26 +43,6 @@ jb.component('button.studio-script',{
         } 
 })
 
-
-
-jb.component('editable-boolean.studio-slide-toggle', {
-  type: 'editable-boolean.style',
-  impl :{$: 'customStyle', 
-      features :{$: 'field.databind' },
-      template: `<div><md-slide-toggle color="primary" class="studio-slide-toggle" [ngModel]="jbModel()" (change)="jbModel($event.target.value)" >{{text()}}</md-slide-toggle></div>`,
-      css: `
-      .studio-slide-toggle { margin: 0 !important; width: 153px; }
-  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-thumb {
-    background-color: #1f1f1f !important}
-  .studio-slide-toggle.md-primary.md-checked .md-slide-toggle-bar {
-    background-color: #858585 !important; opacity: 0.5 }
-  .studio-slide-toggle.md-primary.md-slide-toggle-focused .md-ink-ripple {
-    opacity: 1; background-color: #858585 !important; 
-    background-color-old: rgba(0, 150, 136, 0.26); }
-      `,
-      imports: MdSlideToggleModule
-  }
-})
 
 jb.component('picklist.studio-enum', {
   type: 'picklist.style',
@@ -121,7 +98,7 @@ jb.component('property-sheet.studio-properties', {
     css: `.property { margin-bottom: 5px; display: flex }
       .property:last-child { margin-bottom:0px }
       .input-and-toolbar { display: flex; }
-      .toolbar { height: 16px; margin-left: 10px; margin-top: -5px; }
+      .toolbar { height: 16px; margin-left: 10px; }
       .property>.property-title {
         min-width: 90px;
         width: 90px;

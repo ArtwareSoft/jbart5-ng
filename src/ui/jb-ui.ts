@@ -91,7 +91,7 @@ class jbComponent {
 	  	var elem = cmp_ref._hostElement.nativeElement;
 	  	while (ctx.profile.__innerImplementation)
 	  		ctx = ctx.componentContext._parent;
-	  	var attachedCtx = this.forceCtx || ctx;
+	  	var attachedCtx = this.ctxForPick || ctx;
 	  	elem.setAttribute('jb-ctx',attachedCtx.id);
 		garbageCollectCtxDictionary();
 		jbart.ctxDictionary[attachedCtx.id] = attachedCtx;
@@ -161,7 +161,7 @@ class jbComponent {
 		if (options.doCheck) this.methodHandler.jbCheckFuncs.push(options.doCheck);
 		if (options.destroy) this.methodHandler.jbDestroyFuncs.push(options.destroy);
 		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
-//		if (options.ctrlsEmFunc) this.methodHandler.ctrlsEmFunc=options.ctrlsEmFunc;
+		if (options.ctxForPick) this.ctxForPick=options.ctxForPick;
 		if (options.extendCtx) 
 			this.methodHandler.extendCtxFuncs.push(options.extendCtx);
 		if (options.extendComp) jb.extend(this,options.extendComp);
@@ -243,7 +243,7 @@ export function ctrl(context) {
 	var ctx = context.setVars({ $model: context.params });
 	var styleOptions = defaultStyle(ctx);
 	if (styleOptions && styleOptions.methodHandler)  {// style by control
-		styleOptions.forceCtx = ctx;
+		styleOptions.ctxForPick = ctx;
 		return styleOptions.jbCtrl(ctx);
 	}
 	return new jbComponent(ctx).jbExtend(styleOptions).jbCtrl(ctx);

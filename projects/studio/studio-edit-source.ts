@@ -60,19 +60,18 @@ jb.component('studio.string-property-ref', {
 })
 
 jb.component('studio.goto-sublime', {
-	type: 'control',
+	type: 'menu.option',
 	params: [
 		{ id: 'path', as: 'string'},
 	],
-    impl :{$: 'dynamic-controls', 
-        controlItems :{$: 'studio.goto-targets', path: '%$path%' }, 
-        genericControl :{$: 'pulldown.menu-item', 
+    impl :{$: 'menu.dynamic-options', 
+        items :{$: 'studio.goto-targets', path: '%$path%' }, 
+        genericOption :{$: 'menu.action', 
           title: { $pipeline: [
-            '%$controlItem%', 
             {$: 'split', separator: '~', part: 'first' },
-            'goto sublime: %%'
+            'Goto sublime: %%'
           ]}, 
-          action :{$: 'studio.open-sublime-editor', path: '%$controlItem%' } 
+          action :{$: 'studio.open-sublime-editor', path: '%%' } 
         }
       }, 
 }) 

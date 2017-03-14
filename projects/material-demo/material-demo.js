@@ -20,7 +20,7 @@ jb.component('material-demo.form', {
       {$: 'editable-text', 
         title: 'Company (disabled)', 
         databind :{$: 'pipeline', items: ['%$person/company%'] }, 
-        features :{$: 'feature.debounce', debounceTime: '30' }
+//        features :{$: 'feature.debounce', debounceTime: '30' }
       }, 
       {$: 'group', 
         title: 'Name', 

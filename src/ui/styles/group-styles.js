@@ -11,7 +11,7 @@ jb.component('group.ul-li', {
   impl :{$: 'customStyle',
     template: `<ul class="jb-itemlist">
       <li *ngFor="let ctrl of ctrls" class="jb-item" [class.heading]="ctrl.comp.ctx.data.heading" #jbItem>
-        <div *jbComp="ctrl.comp"></div>
+        <div *jbComp="ctrl"></div>
       </li>
       </ul>`,
     css: 'ul, li { list-style: none; padding: 0; margin: 0;}'

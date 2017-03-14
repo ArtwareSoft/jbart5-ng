@@ -36,7 +36,10 @@ jb.component('studio.all', {
               {$: 'group', 
                 style :{$: 'layout.flex', align: 'space-between' }, 
                 controls: [
-                  {$: 'studio.main-menu' }, 
+                  {$: 'menu.control', 
+                    menu :{$: 'studio.main-menu' }, 
+                    style :{$: 'menu-style.pulldown' }
+                  }, 
                   {$: 'studio.toolbar' }
                 ], 
                 features :{$: 'css.width', width: '1040' }
@@ -76,9 +79,7 @@ jb.component('studio.all', {
                     {$: 'writeValue', 
                       to: '%$globals/profile_path%', 
                       value: '{%$globals/project%}.{%$globals/page%}'
-                    }, 
-                    // {$: 'studio.open-properties' }, 
-                    // {$: 'studio.open-control-tree' }
+                    }
                   ]
                 }, 
                 autoSelectFirst: true
@@ -116,7 +117,7 @@ jb.component('studio.all', {
           params: ['project', 'page', 'profile_path'], 
           databind: '%$globals%', 
           base: 'studio', 
-          onUrlChange: {$: 'studio.refresh-preview' }
+          onUrlChange :{$: 'studio.refresh-preview' }
         }
       }
     ]
