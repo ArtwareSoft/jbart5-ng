@@ -88,6 +88,14 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                         },
                         { $: 'studio.goto-sublime', path: '%$path%' },
                         { $: 'menu.separator' },
+                        { $: 'menu.end-with-separator',
+                            options: { $: 'studio.goto-references', path: '%$path%',
+                                action: [
+                                    { $: 'writeValue', to: '%$globals/profile_path%', value: '%%' },
+                                    { $: 'studio.open-control-tree', selection: '%$path%' }
+                                ]
+                            }
+                        },
                         { $: 'menu.action',
                             title: 'Delete',
                             icon: 'delete',

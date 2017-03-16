@@ -241,6 +241,9 @@ jb.component('studio.jb-editor-menu', {
         }
       },
       {$: 'menu.separator' }, 
+      {$:'menu.end-with-separator',
+        options: {$: 'studio.goto-references', path: '%$path%' }
+      },
       {$: 'menu.action', 
         title: 'Delete', 
         icon: 'delete', 
@@ -302,6 +305,24 @@ jb.component('menu.studio-wrap-with', {
   }
 })
 
+jb.component('studio.goto-references', {
+  type: 'menu.option', 
+  params: [
+    { id: 'path', as: 'string'},
+    { id: 'action', type: 'action', dynamic: 'true', 
+      defaultValue :{$: 'studio.open-jb-editor', path: '%%', selection: '%$path%' } 
+    },
+  ], 
+  impl :{$: 'menu.dynamic-options',
+    items :{$: 'studio.references', path: '%$path%' }, 
+    genericOption :{$: 'menu.action', 
+          title: 'Goto ref %%',
+          action :{$call: 'action'}, 
+    },
+  }
+})
+
+
 jb.component('studio.expand-and-select-first-child-in-jb-editor', {
   type: 'action',
   impl: ctx => {
@@ -325,3 +346,4 @@ jb.component('studio.expand-and-select-first-child-in-jb-editor', {
     })
   }
 })
+

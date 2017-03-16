@@ -365,6 +365,15 @@ jb_component('contains',{
 	}
 })
 
+jb_component('not-contains',{
+	type: 'boolean',
+	params: [
+		{ id: 'text', type: 'data[]', as: 'array', essential: true },
+		{ id: 'allText', defaultValue: '%%', as:'array'}
+	],
+	impl :{$not: {$: 'contains', text: '%$text%', allText :'%$allText%'}} 
+})
+
 jb_component('startsWith',{
 	type: 'boolean',
 	params: [

@@ -1,6 +1,7 @@
-jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => { 
+jbLoadModules(['studio/studio-tgp-model','studio/studio-utils']).then(loadedModules => { 
 	var model = loadedModules['studio/studio-tgp-model'].model;
 	var TgpModel = loadedModules['studio/studio-tgp-model'].TgpModel;
+	var utils = loadedModules['studio/studio-utils'];
 
 jb.component('studio.short-title', {
 	params: [ {id: 'path', as: 'string' } ],
@@ -243,30 +244,50 @@ jb.component('studio.make-local',{
 jb.component('studio.components-statistics',{
 	type: 'data',
 	impl: ctx => {
-	  var refs = {};
-      Object.getOwnPropertyNames(jbart.comps).forEach(k=>
-      	refs[k] = { refs: calcRefs(jbart.comps[k].impl), by: [] }
+	  var refs = {}, comps = utils.jbart_base().comps;
+
+      Object.getOwnPropertyNames(comps).forEach(k=>
+      	refs[k] = { refs: calcRefs(comps[k].impl), by: [] }
       );
-      Object.getOwnPropertyNames(jbart.comps).forEach(k=>
+      Object.getOwnPropertyNames(comps).forEach(k=>
       	refs[k].refs.forEach(cross=>
       		refs[cross] && refs[cross].by.push(k))
       );
 
-      var cmps = Object.getOwnPropertyNames(jbart.comps)
-          .map(k=>jbart.comps[k])
+      var cmps = Object.getOwnPropertyNames(comps)
+          .map(k=>comps[k])
           .map(comp=>({
           	id: k,
           	refs: refs[k].refs,
           	referredBy: refs[k].by,
-          	type: jbart.comps[k].type,
-          	implType: typeof jbart.comps[k].impl,
-          	text: jb_prettyPrintComp(jbart.comps[k]),
-          	size: jb_prettyPrintComp(jbart.comps[k]).length
+          	type: comps[k].type,
+          	implType: typeof comps[k].impl,
+          	text: jb_prettyPrintComp(comps[k]),
+          	size: jb_prettyPrintComp(comps[k]).length
           }))
 
       function calcRefs(profile) {
       	return Object.getOwnPropertyNames(profile).reduce((res,prop)=>
       		res.concat(calcRefs,profile[prop]),[jb.compName(profile)])
+      }
+	}
+})
+
+jb.component('studio.references',{
+	type: 'data',
+	params: [ {id: 'path', as: 'string' } ],
+	impl: (ctx,path) => {
+	  if (path.indexOf('~') != -1) return [];
+
+      return jb_entries(utils.jbart_base().comps)
+      	.filter(e=>
+      		isRef(e[1].impl))
+      	.map(e=>e[0]).slice(0,10);
+
+      function isRef(profile) {
+      	if (profile && typeof profile == 'object')
+	      	return profile.$ == path || Object.getOwnPropertyNames(profile).reduce((res,prop)=>
+	      		res || isRef(profile[prop]),false)
       }
 	}
 })

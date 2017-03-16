@@ -6,7 +6,7 @@ jb.component('studio.open-properties', {
   type: 'action', 
   params: [{ id: 'focus', as: 'boolean' }], 
   impl :{$: 'openDialog', 
-    style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '492' }, 
+    style :{$: 'dialog.studio-floating', id: 'studio-properties', width: '500' }, 
     content :{$: 'studio.properties', 
       path :{$: 'studio.currentProfilePath' }
     }, 
@@ -23,12 +23,15 @@ jb.component('studio.open-properties', {
         'Properties of %comp% %title%'
       ]
     }, 
-    features : [ 
-      {$if : '%$focus%', then:{$: 'dialog-feature.autoFocusOnFirstInput' } },
+    features: [
+      {
+        $if: '%$focus%', 
+        then :{$: 'dialog-feature.autoFocusOnFirstInput' }
+      }, 
       {$: 'dialog-feature.keyboard-shortcut', 
         shortcut: 'Ctrl+Left', 
-        action:{$: 'studio.open-control-tree'} 
-      },
+        action :{$: 'studio.open-control-tree' }
+      }
     ]
   }
 })
@@ -397,7 +400,7 @@ jb.component('studio.property-tgp-in-array', {
     }, 
     controls: [
       {$: 'group', 
-        style :{$: 'layout.horizontal' }, 
+        style :{$: 'layout.flex', align: 'space-between' }, 
         controls: [
           {$: 'editable-boolean', 
             databind: '%$tgpCtrl/expanded%', 
@@ -407,33 +410,30 @@ jb.component('studio.property-tgp-in-array', {
                 path: '%$path%', 
                 data: '%$tgpCtrl/expanded%'
               }, 
-              {$: 'css', 
-                css: '{ position: absolute; margin-left: -20px; margin-top: 2px }'
-              }, 
-              {$: 'hidden', 
-                showCondition :{
-                  $notEmpty :{$: 'studio.non-control-children', path: '%$path%' }
-                }
-              }
+              {$: 'css.padding', top: '4' }
             ]
           }, 
-          {$: 'picklist', 
-            databind :{$: 'studio.comp-name-ref', path: '%$path%' }, 
-            options :{$: 'studio.tgp-path-options', path: '%$path%' }, 
-            style :{$: 'picklist.groups' }, 
-            features: [
-              {$: 'css', 
-                css: 'select { padding: 0 0; width: 150px; font-size: 12px; height: 23px;}'
-              }
-            ]
+          {$: 'label', 
+            title :{$: 'pipeline', 
+              items: [
+                {$: 'studio.comp-name', path: '%$path%' }, 
+                {$: 'suffix', separator: '.', text: '%%' }
+              ]
+            }, 
+            style :{$: 'label.p' }, 
+            features :{$: 'css.width', width: '100' }
           }, 
-          {$: 'studio.property-toolbar', path: '%$path%' }, 
           {$: 'label', 
             title :{$: 'studio.summary', path: '%$path%' }, 
-            style :{$: 'label.span' }
+            style :{$: 'label.p' }, 
+            features :{$: 'css.width', width: '335' }
+          }, 
+          {$: 'studio.property-toolbar', 
+            features :{$: 'css', css: '{ position: absolute; left: 20px }' }, 
+            path: '%$path%'
           }
         ], 
-        features: [{$: 'css', css: '{ position: relative; margin-left2: -80px }' }]
+        features: []
       }, 
       {$: 'group', 
         controls :{$: 'studio.properties-in-tgp', path: '%$path%' }, 
@@ -442,9 +442,7 @@ jb.component('studio.property-tgp-in-array', {
             data :{$: 'studio.comp-name', path: '%$path%' }
           }, 
           {$: 'feature.if', showCondition: '%$tgpCtrl.expanded%' }, 
-          {$: 'css', 
-            css: '{ margin-top: 9px; margin-left2: -100px; margin-bottom: 4px;}'
-          }
+          {$: 'css', css: '{  margin-left: 10px; margin-bottom: 4px;}' }
         ]
       }
     ], 
@@ -453,7 +451,7 @@ jb.component('studio.property-tgp-in-array', {
         path: '%$path%', 
         data: '%$tgpCtrl/expanded%'
       }, 
-      {$: 'css', css: '{ position: relative; margin-left: -80px }' }
+      {$: 'css.margin', left: '-100' }
     ]
   }
 })

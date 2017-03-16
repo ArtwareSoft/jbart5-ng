@@ -3,30 +3,31 @@ jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => {
 
 
 jb.component('studio.open-new-control-dialog', {
-  type: 'action',
+  type: 'action', 
   impl :{$: 'openDialog', 
     style :{$: 'dialog.studio-floating' }, 
     content :{$: 'studio.select-control', 
       onSelect: [
-      {$: 'studio.onNextModifiedPath', 
-        action: [
-          {$: 'studio.openModifiedPath' }, 
-          {$: 'studio.refresh-preview' }
-        ]
-      }, 
-      {$: 'studio.insert-comp', 
-        path :{$: 'studio.currentProfilePath' }, 
-        comp: '%%'
-      },
-    ] 
-    } , 
+        {$: 'studio.onNextModifiedPath', 
+          action: [
+            {$: 'studio.openModifiedPath' }, 
+            {$: 'studio.refresh-preview' }
+          ]
+        }, 
+        {$: 'studio.insert-comp', 
+          path :{$: 'studio.currentProfilePath' }, 
+          comp: '%%'
+        }
+      ]
+    }, 
     title: 'new control', 
     modal: true, 
     features: [
       {$: 'css.height', height: '420', overflow: 'hidden' }, 
       {$: 'css.width', width: '450', overflow: 'hidden' }, 
       {$: 'dialog-feature.dragTitle', id: 'new control' }, 
-      {$: 'dialog-feature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }
+      {$: 'dialog-feature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }, 
+      {$: 'group.auto-focus-on-first-input' }
     ]
   }
 })
@@ -96,6 +97,7 @@ jb.component('studio.select-control', {
                       to: '%$picklistModel/databind%', 
                       value: '%code%'
                     }, 
+                    autoSelectFirst: 'true', 
                     cssForSelected: 'background: #bbb'
                   }, 
                   {$: 'itemlist.keyboard-selection', autoFocus: true }
