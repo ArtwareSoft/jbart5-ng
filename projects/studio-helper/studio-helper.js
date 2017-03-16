@@ -87,7 +87,11 @@ jb.component('studio-helper-dummy.simple-label', {
   type: 'control', 
   impl :{$: 'label', 
     $vars : { check: 2},
-    title: 'hello' 
+    title: 'hello',
+    features : [
+      {$:'css', css:'{ color: red }'},
+      {$: 'css.padding', top: '20', left: '160' }
+    ]
   }
 })
 
@@ -220,5 +224,17 @@ jb.component('studio-helper.select-feature', {
     title: 'select-feature', 
     style :{$: 'layout.horizontal', spacing: '53' }, 
     controls: [{$: 'studio.select-feature' }]
+  }
+})
+
+jb.component('studio-helper.features', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'features', 
+    controls: [
+      {$: 'studio.property-array', 
+        path: 'studio-helper-dummy.simple-label~features'
+      }
+    ]
   }
 })

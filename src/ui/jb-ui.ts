@@ -63,8 +63,9 @@ class jbComponent {
 			var ret = compiler.compileModuleAndAllComponentsSync(dynamicModule);
 			this.factory = ret.componentFactories.find(x => x.componentType === comp);
 		} catch (e) {
-			if (!inError)
-				this.doCompile(compiler,this.nullComp(),true)
+			// if (!inError)
+			// 	this.doCompile(compiler,this.nullComp(),true)
+			compiler.clearCache();
 			jb.logError('ng compilation error',this, e);
 		}
 	}
@@ -117,13 +118,13 @@ class jbComponent {
 			host: jb.extend({},this.annotations.host || {}),
 		}));
 	}
-	nullComp() {
-	    var Cmp = function() {}
-		Cmp = Reflect.decorate([
-			Component({selector: 'jb-comp', template: '<div></div>'}),
-		], Cmp);
-		return Cmp;
-	}
+	// nullComp() {
+	//     var Cmp = function() {}
+	// 	Cmp = Reflect.decorate([
+	// 		Component({selector: 'dummy', template: '<div></div>'}),
+	// 	], Cmp);
+	// 	return Cmp;
+	// }
 	createComp() {
 	    if (!this.annotations.selector)	this.annotations.selector = 'jb-comp';
 
@@ -343,29 +344,23 @@ export class jbComp {
 
   constructor(private compiler :Compiler, private ngZone: NgZone, private view: ViewContainerRef, private elementRef: ElementRef, private renderer: Renderer) {}
 
-  ngOnInit() {
-//  	jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
-  }
-
-  // ngDoCheck() {
-  // 	if (this.jbComp != this.oldComp) {
-  // 		this.oldComp = this.jbComp;
-  // 		this.draw(this.jbComp);
-  // 	}
-  // }
-
   draw(comp) {
   	if (!comp) return;
-  	this._comp = comp.comp || comp;
+  	this._comp = comp;
+  	if (!this._comp.methodHandler && comp.comp && comp.comp.methodHandler)
+  		this._comp = comp.comp;
   	this.view.clear();
   	this.ngZone.runOutsideAngular(() => {
 	  	[this._comp]
 	  		.filter(comp=>comp.compile)
 	  		.forEach(comp=>{
-	//  			jb.logError('draw');
+				try {
 		  		var componentFactory = comp.compile(this.compiler);
-			   	var cmp_ref = this.view.createComponent(componentFactory);
-			   	comp.registerMethods && comp.registerMethods(cmp_ref);
+		  		if (componentFactory)
+			   		comp.registerMethods && comp.registerMethods(this.view.createComponent(componentFactory));
+			   	} catch (e) {
+			   		jb.logException('compilation/init error',e)
+			   	}
 	//			this.ngZone.run(()=>{});
 		 	})
   	})
@@ -496,7 +491,7 @@ function garbageCollectCtxDictionary() {
 class jbCompModule { }
 
 @NgModule({
-  imports:      [ jbCompModule, CommonModule, FormsModule, HttpModule, BrowserModule ],
+  imports:      [ jbCompModule, CommonModule, BrowserModule ], // FormsModule, HttpModule, 
   declarations: [ jBartWidget ],
   bootstrap:    [ jBartWidget ]
 })

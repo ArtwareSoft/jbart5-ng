@@ -244,7 +244,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 };
                 CompOption.prototype.writeValue = function (ctx) {
                     ctx.run({ $: 'writeValue', to: { $: 'studio.comp-name-ref', path: '%$suggestionCtx.path%' }, value: this.toPaste });
-                    ctx.run({ $: 'studio.expand-and-select-first-child-in-jb-editor' });
+                    //      ctx.run({$:'studio.expand-and-select-first-child-in-jb-editor' });
                 };
                 return CompOption;
             }());

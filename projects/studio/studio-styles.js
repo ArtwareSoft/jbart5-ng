@@ -286,7 +286,7 @@ i { color: #; cursor: pointer }
 `, 
       features : [ 
         {$: 'group.init-group' },
-        {$: 'group.init-accordion' },
+        {$: 'group.init-accordion', keyboardSupport: true, autoFocus: true },
       ]
   }
 })

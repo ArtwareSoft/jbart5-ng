@@ -82,6 +82,19 @@ jb.component('group.watch', {
   })
 })
 
+jb.component('group.auto-focus-on-first-input', {
+  type: 'feature',
+  impl: context => ({ 
+      afterViewInit: cmp =>
+        jb.delay(1).then(()=> {
+          jb_logPerformance('focus','auto-focus-on-first-input');
+          $(cmp.elementRef.nativeElement).find('input,textarea,select')
+            .filter(function(x) { return $(this).attr('type') != 'checkbox'})
+            .first().focus() 
+        })
+  })
+})
+
 jb.component('feature.if', {
   type: 'feature',
   params: [

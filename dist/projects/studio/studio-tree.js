@@ -149,30 +149,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                                     autoFocus: true,
                                 },
                                 { $: 'tree.drag-and-drop' },
-                                // {$: 'tree.keyboard-shortcut', 
-                                //   key: 'Ctrl+Right', 
-                                //   action :{$: 'studio.open-properties', path: '%%' }
-                                // }, 
-                                // {$: 'tree.keyboard-shortcut', 
-                                //   key: 'Ctrl+V', 
-                                //   action :{$: 'studio.paste', path: '%%' }
-                                // }, 
-                                // {$: 'tree.keyboard-shortcut', 
-                                //   key: 'Ctrl+Z', 
-                                //   action :{$: 'studio.undo', path: '%%' }
-                                // }, 
-                                // {$: 'tree.keyboard-shortcut', 
-                                //   key: 'Ctrl+Y', 
-                                //   action :{$: 'studio.redo', path: '%%' }
-                                // }, 
-                                // {$: 'tree.keyboard-shortcut', 
-                                //   key: 'Delete', 
-                                //   action :{$: 'studio.delete', path: '%%' }
-                                // }, 
                                 { $: 'studio.control-tree.refresh-path-changes' },
-                                { $: 'tree.onMouseRight',
-                                    action: { $: 'studio.open-tree-menu', path: '%%' }
-                                }
                             ]
                         }
                     ],

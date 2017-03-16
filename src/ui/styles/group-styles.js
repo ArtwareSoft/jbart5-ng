@@ -87,13 +87,45 @@ jb.component('group.accordion', {
 
 jb.component('group.init-accordion', {
   type: 'feature', category: 'group:0',
+  params: [
+    { id: 'keyboardSupport', as: 'boolean' },
+    { id: 'autoFocus', as: 'boolean' }
+  ],
   impl: ctx => ({
     init: cmp => {
       cmp.expand_title = ctrl => 
         ctrl.show ? 'collapse' : 'expand';
-      cmp.toggle = newCtrl => 
+
+      cmp.toggle = newCtrl => {
         cmp.ctrls.forEach(ctrl=>
-          ctrl.show = ctrl == newCtrl ? !ctrl.show : false)
+          ctrl.show = (ctrl == newCtrl ? !ctrl.show : false));
+        cmp.autoFocus();
+      }
+
+      cmp.next = diff => {
+        var new_index = (cmp.ctrls.findIndex(ctrl=>ctrl.show) + diff + cmp.ctrls.length) % cmp.ctrls.length;
+        cmp.ctrls.forEach((ctrl,i)=>
+          ctrl.show = (i == new_index))
+        cmp.autoFocus();
+      };
+
+      cmp.autoFocus = _ =>
+        jb.delay(100).then(()=> {
+          jb_logPerformance('focus','group.accordion');
+          if (ctx.params.autoFocus)
+            $(cmp.elementRef.nativeElement).find('input,textarea,select')
+              .filter(function(x) { return $(this).attr('type') != 'checkbox'})
+//              .first().focus() 
+        })
+
+
+      if (ctx.params.keyboardSupport) {
+        jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
+            .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+        .filter(e=> e.keyCode == 33 || e.keyCode == 34) // pageUp/Down
+            .subscribe(e=>
+              cmp.next(e.keyCode == 33 ? -1 : 1))
+      }
     },
     afterViewInit: cmp => {
       if (cmp.ctrls && cmp.ctrls[0])

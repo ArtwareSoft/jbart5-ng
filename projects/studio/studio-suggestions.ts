@@ -3,7 +3,6 @@ import * as jb_ui from 'jb-ui';
 import * as jb_rx from 'jb-ui/jb-rx';
 import {model} from './studio-tgp-model';
 import {getComp} from './studio-utils';
-import {stop_prop} from 'jb-ui/jb-ui-utils'
 
 jb.component('studio.property-primitive', {
   type: 'control', 
@@ -19,8 +18,6 @@ jb.component('studio.property-primitive', {
           {$: 'studio.undo-support', path: '%$path%' }, 
           {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
           {$: 'field.debounce-databind', debounceTime: '500' },
-          // {$: 'feature.dont-generate-change-detection-events' },
-          // {$: 'feature.disable-change-detection' },
         ]
       }, 
       {$: 'itemlist', 
@@ -224,7 +221,7 @@ class CompOption {
     }
     writeValue(ctx) {
       ctx.run({$:'writeValue', to: {$: 'studio.comp-name-ref', path: '%$suggestionCtx.path%' }, value: this.toPaste });
-      ctx.run({$:'studio.expand-and-select-first-child-in-jb-editor' });
+//      ctx.run({$:'studio.expand-and-select-first-child-in-jb-editor' });
     }
 }
 

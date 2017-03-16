@@ -78,7 +78,8 @@ jb.component('studio.properties', {
           ]
         }, 
         style :{$: 'property-sheet.studio-properties' }, 
-        controls :{$: 'dynamic-controls', 
+        controls : [
+          {$: 'dynamic-controls', 
           controlItems :{
             $pipeline: [
               {$: 'studio.non-control-children', path: '%$path%' }, 
@@ -90,7 +91,7 @@ jb.component('studio.properties', {
             ]
           }, 
           genericControl :{$: 'studio.property-field', path: '%$controlItem%' }
-        }, 
+        }], 
       }, 
       {$: 'group', 
         remark: 'features', 

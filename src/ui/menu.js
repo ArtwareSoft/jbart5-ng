@@ -67,6 +67,7 @@ jb.component('menu.action', {
 	impl: ctx => 
 		ctx.params.showCondition ? ({ 
 			leaf : ctx.params, 
+			action: _ => ctx.params.action(ctx.setVars({topMenu:null})), // clean topMenu from context after the action
 			title: ctx.params.title(), 
 			applyShortcut: e=> {
 				var key = ctx.params.shortcut;
@@ -232,7 +233,7 @@ jb.component('menu.init-menu-option', {
 				jbart.jb_dialogs.dialogs.filter(d=>d.isPopup)
 		  			.forEach(d=>d.close());
 		  		jb.delay(50).then(_=>
-	        		leafParams.action());
+	        		ctx.vars.menuModel.action())
 	        }, ctx, cmp.elementRef);
 
 			if (ctx.vars.topMenu && ctx.vars.topMenu.keydown) {

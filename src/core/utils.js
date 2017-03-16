@@ -119,7 +119,7 @@ function jb_logError(errorStr,errorObj,ctx) {
 
 function jb_logPerformance(type,text) {
   var types = ['focus','apply','check','suggestions'];
-  if (type != 'suggestions') return;
+  if (type != 'focus') return;
   console.log(type, text == null ? '' : text);
 }
 

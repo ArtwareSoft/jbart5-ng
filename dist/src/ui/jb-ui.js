@@ -1,4 +1,4 @@
-System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angular/common', '@angular/http', '@angular/forms', 'jb-ui/jb-rx'], function(exports_1, context_1) {
+System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angular/common', '@angular/forms', 'jb-ui/jb-rx'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var jb_core_1, core_1, platform_browser_1, common_1, http_1, forms_1, jb_rx;
+    var jb_core_1, core_1, platform_browser_1, common_1, forms_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, jbCompModule, jBartWidgetModule;
     //jbart.zones = jbart.zones || {}
     function apply(ctx) {
@@ -188,9 +188,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
             function (common_1_1) {
                 common_1 = common_1_1;
             },
-            function (http_1_1) {
-                http_1 = http_1_1;
-            },
             function (forms_1_1) {
                 forms_1 = forms_1_1;
             },
@@ -234,8 +231,9 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         this.factory = ret.componentFactories.find(function (x) { return x.componentType === comp; });
                     }
                     catch (e) {
-                        if (!inError)
-                            this.doCompile(compiler, this.nullComp(), true);
+                        // if (!inError)
+                        // 	this.doCompile(compiler,this.nullComp(),true)
+                        compiler.clearCache();
                         jb_core_1.jb.logError('ng compilation error', this, e);
                     }
                 };
@@ -285,13 +283,13 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         host: jb_core_1.jb.extend({}, this.annotations.host || {}),
                     }));
                 };
-                jbComponent.prototype.nullComp = function () {
-                    var Cmp = function () { };
-                    Cmp = Reflect.decorate([
-                        core_1.Component({ selector: 'jb-comp', template: '<div></div>' }),
-                    ], Cmp);
-                    return Cmp;
-                };
+                // nullComp() {
+                //     var Cmp = function() {}
+                // 	Cmp = Reflect.decorate([
+                // 		Component({selector: 'dummy', template: '<div></div>'}),
+                // 	], Cmp);
+                // 	return Cmp;
+                // }
                 jbComponent.prototype.createComp = function () {
                     if (!this.annotations.selector)
                         this.annotations.selector = 'jb-comp';
@@ -426,29 +424,26 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     enumerable: true,
                     configurable: true
                 });
-                jbComp.prototype.ngOnInit = function () {
-                    //  	jbart.studioAutoRefreshComp && jbart.studioAutoRefreshComp(this);
-                };
-                // ngDoCheck() {
-                // 	if (this.jbComp != this.oldComp) {
-                // 		this.oldComp = this.jbComp;
-                // 		this.draw(this.jbComp);
-                // 	}
-                // }
                 jbComp.prototype.draw = function (comp) {
                     var _this = this;
                     if (!comp)
                         return;
-                    this._comp = comp.comp || comp;
+                    this._comp = comp;
+                    if (!this._comp.methodHandler && comp.comp && comp.comp.methodHandler)
+                        this._comp = comp.comp;
                     this.view.clear();
                     this.ngZone.runOutsideAngular(function () {
                         [_this._comp]
                             .filter(function (comp) { return comp.compile; })
                             .forEach(function (comp) {
-                            //  			jb.logError('draw');
-                            var componentFactory = comp.compile(_this.compiler);
-                            var cmp_ref = _this.view.createComponent(componentFactory);
-                            comp.registerMethods && comp.registerMethods(cmp_ref);
+                            try {
+                                var componentFactory = comp.compile(_this.compiler);
+                                if (componentFactory)
+                                    comp.registerMethods && comp.registerMethods(_this.view.createComponent(componentFactory));
+                            }
+                            catch (e) {
+                                jb_core_1.jb.logException('compilation/init error', e);
+                            }
                             //			this.ngZone.run(()=>{});
                         });
                     });
@@ -558,7 +553,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 }
                 jBartWidgetModule = __decorate([
                     core_1.NgModule({
-                        imports: [jbCompModule, common_1.CommonModule, forms_1.FormsModule, http_1.HttpModule, platform_browser_1.BrowserModule],
+                        imports: [jbCompModule, common_1.CommonModule, platform_browser_1.BrowserModule],
                         declarations: [jBartWidget],
                         bootstrap: [jBartWidget]
                     }), 
