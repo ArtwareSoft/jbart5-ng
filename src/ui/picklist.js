@@ -34,7 +34,7 @@ jb.component('picklist', {
         }
         cmp.recalcOptions();
       },
-     observable: () => {} // to create jbEmitter
+     jbEmitter: true,
     },ctx);
   }
 })
@@ -51,7 +51,7 @@ jb.component('picklist.dynamic-options', {
     { id: 'recalcEm', as: 'observable'}
   ],
   impl: (ctx,recalcEm) => ({
-    observable: () => {},
+    jbEmitter: true,
     init: cmp => 
       recalcEm && recalcEm
         .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )

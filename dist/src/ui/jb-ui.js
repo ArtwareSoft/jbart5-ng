@@ -12,7 +12,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
     };
     var jb_core_1, core_1, platform_browser_1, common_1, forms_1, jb_rx;
     var factory_hash, cssFixes_hash, jbComponent, jbComp, jBartWidget, jbCompModule, jBartWidgetModule;
-    //jbart.zones = jbart.zones || {}
     function apply(ctx) {
         jb_core_1.jb.logPerformance('apply', ctx.profile.$);
         return jb_core_1.jb.delay(1).then(function () {
@@ -20,18 +19,15 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         });
     }
     exports_1("apply", apply);
-    function delayOutsideAngular(ctx, func) {
-        jb_core_1.jb.delay(1, ctx).then(func);
+    function focus(elem, logTxt) {
+        if (jbart.lastStudioActivity && new Date().getTime() - jbart.lastStudioActivity < 1000)
+            return;
+        jb_core_1.jb.logPerformance('focus', logTxt);
+        jb_native_delay(1).then(function (_) {
+            return elem.focus();
+        });
     }
-    exports_1("delayOutsideAngular", delayOutsideAngular);
-    function applyPreview(ctx) {
-        var _win = jbart.previewWindow || window;
-        _win.setTimeout(function () { }, 1);
-        //    jb.delay(1).then(()=>
-        // 	jb.entries(_win.jbart.zones).forEach(x=>x[1].run(()=>{}))
-        // )
-    }
-    exports_1("applyPreview", applyPreview);
+    exports_1("focus", focus);
     function ctrl(context) {
         var ctx = context.setVars({ $model: context.params });
         var styleOptions = defaultStyle(ctx);
@@ -58,10 +54,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
             var _this = this;
             this.ngZone.runOutsideAngular(function () {
                 try {
-                    if (_this.methodHandler.jbObservableFuncs.length) {
+                    if (_this.methodHandler.createjbEmitter)
                         _this.jbEmitter = _this.jbEmitter || new jb_rx.Subject();
-                        _this.methodHandler.jbObservableFuncs.forEach(function (observable) { return observable(_this.jbEmitter, _this); });
-                    }
                     _this.refreshCtx = function (_) {
                         _this.methodHandler.extendCtxFuncs.forEach(function (extendCtx) {
                             _this.ctx = extendCtx(_this.ctx, _this);
@@ -201,7 +195,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 function jbComponent(ctx) {
                     this.ctx = ctx;
                     this.annotations = {};
-                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbDestroyFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
+                    this.methodHandler = { jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [], jbCheckFuncs: [], jbDestroyFuncs: [], extendCtxFuncs: [] };
                     this.cssFixes = [];
                     this.jb_profile = ctx.profile;
                     var title = jb_tosingle(jb_core_1.jb.val(this.ctx.params.title)) || (function () { return ''; });
@@ -333,8 +327,8 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         this.methodHandler.jbCheckFuncs.push(options.doCheck);
                     if (options.destroy)
                         this.methodHandler.jbDestroyFuncs.push(options.destroy);
-                    if (options.observable)
-                        this.methodHandler.jbObservableFuncs.push(options.observable);
+                    if (options.jbEmitter)
+                        this.methodHandler.createjbEmitter = true;
                     if (options.ctxForPick)
                         this.ctxForPick = options.ctxForPick;
                     if (options.extendCtx)
@@ -492,6 +486,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     var _this = this;
                     if (this.isPreview)
                         jb_waitFor(function () { return jbart.studioAutoRefreshWidget; }).then(function () {
+                            jbart.lastStudioActivity = new Date().getTime();
                             jbart.studioAutoRefreshWidget(_this);
                         });
                 };

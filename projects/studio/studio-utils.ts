@@ -127,7 +127,7 @@ jb.component('studio.bindto-modifyOperations', {
           .subscribe(e=>
               jb.writeValue(data_ref,true)
           ),
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
     })
 })
 

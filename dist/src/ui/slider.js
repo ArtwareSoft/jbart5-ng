@@ -37,7 +37,7 @@ System.register(['jb-core/jb', 'jb-ui', 'jb-ui/jb-ui-utils', 'jb-ui/jb-rx'], fun
                             cmp.slider.setThumbPosition();
                         }; }
                     },
-                    observable: function () { } // to create jbEmitter
+                    jbEmitter: true,
                 }
             });
             Slider = (function () {

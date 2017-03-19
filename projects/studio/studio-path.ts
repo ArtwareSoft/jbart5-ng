@@ -222,7 +222,7 @@ jb.component('group.studio-watch-path', {
                 })
             )
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
     })
 })
 
@@ -240,6 +240,6 @@ jb.component('feature.studio-auto-fix-path', {
                 jb.writeValue(path_ref,fixer.fix(jb.val(path_ref)))
             )
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
     })
 })

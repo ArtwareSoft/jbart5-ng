@@ -1,7 +1,7 @@
 jb.component('label', {
     type: 'control', category: 'control:100',
     params: [
-        { id: 'title', essential: true, defaultValue: 'my label', dynamic: true },
+        { id: 'title', as: 'string', essential: true, defaultValue: 'my label', dynamic: true },
         { id: 'style', type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },
         { id: 'features', type: 'feature[]', dynamic: true },
     ],
@@ -85,8 +85,8 @@ jb.component('highlight', {
   ],
   impl: (ctx,base,highlightF,cssClass) => ({
         $jb_val: _ => {
-            var highlight = highlightF();
-            return highlight ? base().replace(highlight,`<span class="${cssClass}">${highlight}</span>`) : base()
+            var highlight = ctx.params.highlight();
+            return highlight ? base().replace(new RegExp(highlight,'ig'),`<span class="${cssClass}">${highlight}</span>`) : base()
         }
     })
 })

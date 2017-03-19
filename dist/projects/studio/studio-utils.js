@@ -135,7 +135,7 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                             return jb_core_1.jb.writeValue(data_ref, true);
                         });
                     },
-                    observable: function () { } // to create jbEmitter
+                    jbEmitter: true,
                 }); }
             });
             jb_core_1.jb.component('studio.dynamic-options-watch-new-comp', {

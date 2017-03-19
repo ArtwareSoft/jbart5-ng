@@ -141,41 +141,6 @@ jb.component('dialog-feature.keyboard-shortcut', {
 	}})
 })
 
-      // observable: () => {},
-      // host: {
-      //       '(keydown)': 'keydownSrc.next($event)',
-      //       'tabIndex': '0',
-      //       '(mouseup)': 'getKeyboardFocus()',
-      // },
-
-        // cmp.keydownSrc = cmp.keydownSrc || new jb_rx.Subject();
-        // cmp.keydown = cmp.keydown || cmp.keydownSrc
-        //       .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
-
-        // cmp.getKeyboardFocus = cmp.getKeyboardFocus || (_ => {
-        //   jb_logPerformance('focus','group.keyboard-shortcut');
-        //   cmp.elementRef.nativeElement.focus(); 
-        //   return false;
-        // });
-
-      //   cmp.keydown.subscribe(event=>{
-      //           var keyCode = key.split('+').pop().charCodeAt(0);
-      //           if (key == 'Delete') keyCode = 46;
-      //           if (key.match(/\+Up$/)) keyCode = 38;
-      //           if (key.match(/\+Down$/)) keyCode = 40;
-      //           if (key.match(/\+Right$/)) keyCode = 37;
-      //           if (key.match(/\+Left$/)) keyCode = 39;
-      //           if (key.match(/\+Tab$/)) keyCode = 9;
-
-      //           var helper = (key.match('([A-Za-z]*)+') || ['',''])[1];
-      //           if (helper == 'Ctrl' && !event.ctrlKey) return;
-      //           if (helper == 'Alt' && !event.altKey) return;
-      //           if (event.keyCode == keyCode)
-      //             action(ctx.setData(cmp.selected != null ? cmp.selected : ctx.data));
-      //   })
-      // }
-
-
 jb.component('dialog-feature.nearLauncherLocation', {
 	type: 'dialog-feature',
 	params: [
@@ -273,11 +238,8 @@ jb.component('dialog.close-all-popups', {
 jb.component('dialog-feature.autoFocusOnFirstInput', {
 	type: 'dialog-feature',
 	impl: context => ({ 
-			afterViewInit: cmp =>
-				jb.delay(1).then(()=> {
-					jb_logPerformance('focus','autoFocusOnFirstInput');
-					context.vars.$dialog.$el.find('input,textarea,select').first().focus() 
-				})
+		afterViewInit: cmp =>
+			jb_ui.focus(context.vars.$dialog.$el.find('input,textarea,select').first(), 'autoFocusOnFirstInput')
 	})
 })
 
@@ -332,7 +294,7 @@ jb.component('dialog-feature.dragTitle', {
 		var dialog = context.vars.$dialog;
 		return {
 		       css: '.dialog-title { cursor: pointer }',
-	           observable: () => {}, // create jbEmitter
+	           jbEmitter: true,
 		       init: function(cmp) {
 		       	  var titleElem = cmp.elementRef.nativeElement.querySelector('.dialog-title');
 		       	  cmp.mousedownEm = jb_rx.Observable.fromEvent(titleElem, 'mousedown')

@@ -74,7 +74,7 @@ jb.component('editable-text.codemirror', {
 					});
 				})
 			},
-		    observable: () => {} 
+		    jbEmitter: true,
 		}
 	}
 })
@@ -137,7 +137,7 @@ function enableFullScreen(editor,width,height) {
 			});
 			jEditorElem.append(jEsc);
 			jEditorElem[0].jEsc = jEsc;
-			editor.focus();
+			jb_ui.focus(editor,'code mirror');
 		}
 	}
 
@@ -166,7 +166,7 @@ jb.component('text.codemirror', {
         return {
             template: '<textarea></textarea>',
             cssClass: 'jb-codemirror',
-            observable: () => {},
+            jbEmitter: true,
             init: function(cmp) {
                 mode = mode || 'javascript';
                 cm_settings = { 

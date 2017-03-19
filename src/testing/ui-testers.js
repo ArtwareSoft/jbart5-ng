@@ -14,8 +14,9 @@ jb_component('ng2-ui-test', {
 			ctx.run({$:'openDialog', content: ctx.profile.control, 
 			  features: ctx2 => ({
 					disableChangeDetection: ctx.params.disableChangeDetection,
-					observable: (observable,cmp) =>
-						observable.filter(e=>
+					jbEmitter: true,
+					init: cmp =>
+						cmp.jbEmitter.filter(e=>
 							e == 'ready' || e == 'destroy')
 						.catch(e=>{ 
 							resolve({ id: ctx.vars.testID, success:false }) })

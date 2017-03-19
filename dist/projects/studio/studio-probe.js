@@ -11,9 +11,9 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                 id: 'test-control',
                 em: new jb_rx.Subject(),
                 comp: ctx.runItself().jbExtend({
-                    observable: function (cmp_obs, cmp) {
-                        return cmp_obs
-                            .filter(function (e) {
+                    jbEmitter: true,
+                    init: function (cmp) {
+                        return cmp.jbEmitter.filter(function (e) {
                             return e == 'ready' || e == 'destroy';
                         })
                             .take(1)

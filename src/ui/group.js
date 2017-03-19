@@ -40,7 +40,7 @@ jb.component('group', {
                 })
             }
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
     })
   }
 })

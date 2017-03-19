@@ -50,7 +50,7 @@ jb.component('editable-number.slider', {
 				cmp.slider.setThumbPosition();
 			}
 		},
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
 	}
 })
 

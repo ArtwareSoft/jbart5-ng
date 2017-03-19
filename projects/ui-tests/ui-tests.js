@@ -442,56 +442,6 @@ jb.component('ui-test.editable-text-with-jb-val', {
 },
 })
 
-jb.component('ui-test.property-sheet.growing', {
-  impl :{$: 'ng2-ui-test',  
-  control :{$: 'group',
-          style :{$: 'property-sheet.growing'},
-          controls: [
-              { $: 'editable-text', 
-                title: 'name', 
-                databind: '%$person/name%',
-                features :{$: 'field.toolbar', 
-                  toolbar :{$: 'button',
-                      title: 'more',
-                      style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
-                    }
-                }
-              },
-              { $: 'editable-text', title: 'age', databind: '%$person/age%' },
-          ]
-  },
-  expectedHtmlResult: { $: 'contains', text: ['name'] },
-},
-})
-
-jb.component('ui-test.property-sheet.style-on-focus', {
-  impl :{$: 'ng2-ui-test',  
-  control :{$: 'group',
-          style :{$: 'property-sheet.style-on-focus'},
-          controls: [
-              { $: 'editable-text', 
-                title: 'name', 
-                databind: '%$person/name%',
-                features : [
-                  {$: 'field.toolbar', 
-                    toolbar :{$: 'button',
-                        title: 'more',
-                        style :{$: 'button.mdl-icon-12', icon: 'more_vert' }, 
-                      }
-                  },
-                  {$: 'field.style-on-focus', 
-                    style :{$: 'editable-text.codemirror', mode: 'javascript', css: '{margin-left: 30px; z-index: 200; position: relative; width: 300px; height: 200px }'}
-                  },
-                ]
-              },
-              { $: 'editable-text', title: 'age', databind: '%$person/age%' },
-          ]
-  },
-  expectedHtmlResult: { $: 'contains', text: ['name'] },
-},
-
-})
-
 jb.component('ui-test.property-sheet.titles-above', {
   impl :{$: 'ng2-ui-test',  
   control :{$: 'group',

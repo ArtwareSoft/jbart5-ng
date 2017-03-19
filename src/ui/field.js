@@ -37,7 +37,7 @@ jb.component('field.debounce-databind', {
               jb.writeValue(ctx.vars.$model.databind,val)
           )
       },
-      observable: () => {},
+      jbEmitter: true,
     })
 })
 
@@ -66,6 +66,7 @@ jb.component('field.subscribe', {
     { id: 'includeFirst', type: 'boolean', as: 'boolean'},
   ],
   impl: (context,action,includeFirst) => ({
+    jbEmitter: true,
     init: cmp => {
       var data_ref = context.vars.$model && context.vars.$model.databind;
       if (!data_ref) return;
@@ -78,19 +79,6 @@ jb.component('field.subscribe', {
     }
   })
 })
-
-jb.component('field.onChange', {
-  type: 'feature',
-  params: [
-    { id: 'action', type: 'action[]', essential: true, dynamic: true }
-  ],
-  impl: ctx => ({ 
-    init: cmp =>
-      cmp.onChange = () => 
-        ctx.params.action(cmp.ctx)
-  })
-})
-
 
 jb.component('field.toolbar', {
   type: 'feature',

@@ -96,7 +96,6 @@ jb_modules =
 'ui/itemlist.js',
 'ui/itemlist-container.js',
 'ui/itemlist-with-groups.js',
-'ui/itemlist-filter.js',
 'ui/ui-common.js',
 'ui/image.js',
 'ui/menu.js',

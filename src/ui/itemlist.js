@@ -43,7 +43,7 @@ jb.component('itemlist.init', {
 
           cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
   }}
 })
 
@@ -121,7 +121,7 @@ jb.component('itemlist.selection', {
     css: '.jb-item.selected { ' + ctx.params.cssForSelected + ' }',
 //    .jb-item.active:not(.heading) {  ${ctx.params.cssForActive} }
 //    `,
-    observable: () => {} // create jbEmitter
+    jbEmitter: true,
   })
 })
 
@@ -131,18 +131,17 @@ jb.component('itemlist.keyboard-selection', {
     { id: 'onKeyboardSelection', type: 'action', dynamic: true },
     { id: 'autoFocus', type: 'boolean' }
   ],
-  impl: function(context) {
-    return {
+  impl: ctx => ({
       init: function(cmp) {
-        cmp.keydownSrc = new jb_rx.Subject();
-        cmp.keydown = cmp.keydownSrc
-          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+        cmp.keydown = (ctx.vars.itemlistCntr && ctx.vars.itemlistCntr.keydown);
+        if (!cmp.keydown) {
+          cmp.elementRef.nativeElement.setAttribute(tabIndex,'0');
+          cmp.keydown = jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
+              .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );          
 
-        if (context.params.autoFocus)
-            setTimeout(()=> {
-              jb_logPerformance('focus','itemlist.keyboard-selection init autoFocus');
-              cmp.elementRef.nativeElement.focus();
-            },1 );
+          if (ctx.params.autoFocus)
+            jb_ui.focus(cmp.elementRef.nativeElement,'itemlist.keyboard-selection init autoFocus')
+        }
     
         cmp.keydown.filter(e=>
               e.keyCode == 38 || e.keyCode == 40)
@@ -155,12 +154,7 @@ jb.component('itemlist.keyboard-selection', {
           cmp.selected = x
         )
       },
-      host: {
-        '(keydown)': 'keydownSrc.next($event)',
-        'tabIndex' : '0'
-      }
-    }
-  }
+    })
 })
 
 jb.component('itemlist.drag-and-drop', {
@@ -187,6 +181,23 @@ jb.component('itemlist.drag-and-drop', {
               cmp.items.splice($(sibling).index()-1,0,dropElm.dragged.obj)
             dropElm.dragged = null;
         });
+
+
+        cmp.elementRef.nativeElement.setAttribute(tabIndex,'0');
+        cmp.keydown = cmp.keydown || jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
+            .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+
+        // ctrl + Up/Down
+        cmp.keydown.filter(e=> 
+          e.ctrlKey && (e.keyCode == 38 || e.keyCode == 40))
+          .subscribe(e=> {
+            var diff = e.keyCode == 40 ? 1 : -1;
+            var selectedIndex = cmp.items.indexOf(cmp.selected);
+            if (selectedIndex == -1) return;
+            var index = (selectedIndex + diff+ cmp.items.length) % cmp.items.length;
+            arr.splice(index,0,arr.splice(selectedIndex,1)[0]);
+        })
+
       }
     })
 })

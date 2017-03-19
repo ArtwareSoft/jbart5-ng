@@ -222,7 +222,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
                             return context.vars.$model.controls(ctx2);
                         }));
                     },
-                    observable: function () { } // to create jbEmitter
+                    jbEmitter: true,
                 }); }
             });
             jb_core_1.jb.component('feature.studio-auto-fix-path', {
@@ -239,7 +239,7 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-utils'], function(exports_1
                                 return jb_core_1.jb.writeValue(path_ref, fixer.fix(jb_core_1.jb.val(path_ref)));
                             });
                         },
-                        observable: function () { } // to create jbEmitter
+                        jbEmitter: true,
                     });
                 }
             });

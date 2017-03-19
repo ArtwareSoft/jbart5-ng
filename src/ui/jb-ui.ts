@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import * as jb_rx from 'jb-ui/jb-rx';
 
 enableProdMode();
-//jbart.zones = jbart.zones || {}
 
 export function apply(ctx) {
     jb.logPerformance('apply',ctx.profile.$);
@@ -16,16 +15,12 @@ export function apply(ctx) {
 			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
 }
 
-export function delayOutsideAngular(ctx,func) {
-	jb.delay(1,ctx).then(func);
-}
-
-export function applyPreview(ctx) {
-    var _win = jbart.previewWindow || window;
-    _win.setTimeout(()=>{},1);
- //    jb.delay(1).then(()=>
-	// 	jb.entries(_win.jbart.zones).forEach(x=>x[1].run(()=>{}))
-	// )
+export function focus(elem,logTxt) {
+    if (jbart.lastStudioActivity && new Date().getTime() - jbart.lastStudioActivity < 1000)
+    	return;
+    jb.logPerformance('focus',logTxt);
+    jb_native_delay(1).then(_=>
+    	elem.focus())
 }
 
 var factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
@@ -33,7 +28,7 @@ var factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
 class jbComponent {
 	constructor(private ctx) {
 		this.annotations = {};
-		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [],jbDestroyFuncs: [], jbObservableFuncs: [], extendCtxFuncs: [] };
+		this.methodHandler = {jbInitFuncs: [], jbBeforeInitFuncs: [], jbAfterViewInitFuncs: [],jbCheckFuncs: [],jbDestroyFuncs: [], extendCtxFuncs: [] };
 		this.cssFixes = [];
 
 		this.jb_profile = ctx.profile;
@@ -161,7 +156,7 @@ class jbComponent {
 		if (options.afterViewInit) this.methodHandler.jbAfterViewInitFuncs.push(options.afterViewInit);
 		if (options.doCheck) this.methodHandler.jbCheckFuncs.push(options.doCheck);
 		if (options.destroy) this.methodHandler.jbDestroyFuncs.push(options.destroy);
-		if (options.observable) this.methodHandler.jbObservableFuncs.push(options.observable);
+		if (options.jbEmitter) this.methodHandler.createjbEmitter = true;
 		if (options.ctxForPick) this.ctxForPick=options.ctxForPick;
 		if (options.extendCtx) 
 			this.methodHandler.extendCtxFuncs.push(options.extendCtx);
@@ -267,10 +262,8 @@ export function injectLifeCycleMethods(Cmp) {
 	Cmp.prototype.ngOnInit = function() {
 	  	this.ngZone.runOutsideAngular(() => {
 			try {
-				if (this.methodHandler.jbObservableFuncs.length) {
+				if (this.methodHandler.createjbEmitter)
 					this.jbEmitter = this.jbEmitter || new jb_rx.Subject();
-					this.methodHandler.jbObservableFuncs.forEach(observable=> observable(this.jbEmitter,this));
-				}
 	    		this.refreshCtx = _ => {
 					this.methodHandler.extendCtxFuncs.forEach(extendCtx => {
 		    			this.ctx = extendCtx(this.ctx,this);
@@ -400,7 +393,8 @@ export class jBartWidget {
 	ngAfterViewInit() {
 		if (this.isPreview)
 		    jb_waitFor(()=>jbart.studioAutoRefreshWidget).then(()=>{
-		    	jbart.studioAutoRefreshWidget(this)
+		    	jbart.lastStudioActivity = new Date().getTime();
+		    	jbart.studioAutoRefreshWidget(this);
 		    })
 	}
 

@@ -12,6 +12,9 @@ var previewRefreshCounter = 0;
 function studioAutoRefreshWidget(widget) {
   widget.ngZone.runOutsideAngular(() => {
     var counterOrPageChange = jbart.studioNgZone.onStable
+      .do(x=>{
+        if (jbart.previewjbart) 
+          jbart.previewjbart.lastStudioActivity = new Date().getTime() })
       .map(x=>{
         widget.compId = jbart.studioGlobals.project + '.' + (jbart.studioGlobals.page || 'main');
         return widget.compId + ';' + previewRefreshCounter
@@ -43,25 +46,13 @@ function renderWidget(ctx) {
           jbart.studioGlobals = w.jbart.studioGlobals = ctx.exp('%$globals%');
           w.jbart.studioWindow = window;
           jbart.studioNgZone = cmp.ngZone;
-//          w.jbart.studioAutoRefreshComp = studioAutoRefreshComp;
           w.jbart.studioAutoRefreshWidget = studioAutoRefreshWidget;
 
           jbart.previewWindow = w;
           jbart.previewjbart = w.jbart;
           jbart.preview_jbart_widgets = w.jbart_widgets;
           document.title = cmp.project + ' with jBart';
-          
-          // forward the studio zone to the preview widget so it will be updated
-          // jb_ui.getZone('studio.all').then(zone=> {
-          //   zone.onStable.subscribe(()=>{
-          //     w.jbart.studioGlobals = ctx.exp('{%$globals%}');
-          //     studioActivityEm.next();
-          //     //console.log('studio.all stable');
-          //     // refresh preview
-          //     jb.entries(w.jbart.zones).forEach(x=>x[1].run(()=>{}));
-          //     //w.setTimeout(()=>{},1); 
-          //   });
-          // })
+         
         })
       }
   }

@@ -175,7 +175,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                     { id: 'autoSelectFirst', type: 'boolean' }
                 ],
                 impl: function (context) { return ({
-                    observable: function () { },
+                    jbEmitter: true,
                     host: {
                         '(click)': 'clickSource.next($event)',
                     },
@@ -230,7 +230,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                     { id: 'applyMenuShortcuts', type: 'menu.option', dynamic: true },
                 ],
                 impl: function (context) { return ({
-                    observable: function () { },
+                    jbEmitter: true,
                     host: {
                         '(keydown)': 'keydownSrc.next($event)',
                         'tabIndex': '0',
@@ -244,16 +244,12 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                         var keyDownNoAlts = cmp.keydown.filter(function (e) {
                             return !e.ctrlKey && !e.altKey;
                         });
-                        tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function () {
-                            jb_logPerformance('focus', 'tree.keyboard-selection regain focus');
-                            cmp.elementRef.nativeElement.focus();
+                        tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (function (_) {
+                            jb_ui.focus(cmp.elementRef.nativeElement, 'tree.keyboard-selection regain focus');
                             return false;
                         });
                         if (context.params.autoFocus)
-                            setTimeout(function () {
-                                jb_logPerformance('focus', 'tree.keyboard-selection init autofocus');
-                                cmp.elementRef.nativeElement.focus();
-                            }, 1);
+                            jb_ui.focus(cmp.elementRef.nativeElement, 'tree.keyboard-selection init autofocus');
                         keyDownNoAlts
                             .filter(function (e) { return e.keyCode == 13; })
                             .subscribe(function (e) {
@@ -305,7 +301,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                     { id: 'action', type: 'action', dynamic: true, essential: true },
                 ],
                 impl: function (context, action) { return ({
-                    observable: function () { },
+                    jbEmitter: true,
                     host: {
                         '(contextmenu)': 'contextmenuSrc.next($event)'
                     },

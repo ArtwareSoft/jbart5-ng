@@ -102,9 +102,9 @@ function testControl(ctx,forTests) {
       id: 'test-control', 
       em: new jb_rx.Subject(),
       comp: ctx.runItself().jbExtend({
-        observable: (cmp_obs,cmp) =>
-          cmp_obs
-          .filter(e=>
+        jbEmitter: true,
+        init: cmp =>
+          cmp.jbEmitter.filter(e=>
             e == 'ready' || e == 'destroy')
           .take(1)
           .catch(e=> {

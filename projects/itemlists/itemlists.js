@@ -54,7 +54,7 @@ jb_component('itemlists.master-detail-readonly', {
         ]
       }
     ], 
-    features :{$: 'group.itemlist-writable-container', autoSelectFirst: 'true' }
+    features :{$: 'group.itemlist-container', autoSelectFirst: 'true' }
   }
 })
 
@@ -130,7 +130,7 @@ jb_component('itemlists.master-detail-writable', {
       }
     ], 
     features: [
-      {$: 'group.itemlist-writable-container', 
+      {$: 'group.itemlist-container', 
         defaultItem :{
           $asIs: { name: 'no name' }
         }
@@ -189,7 +189,7 @@ jb_component('itemlists.obj-as-items', {
         }
       }
     ], 
-    features :{$: 'group.itemlist-writable-container' }
+    features :{$: 'group.itemlist-container' }
   }
 })
 
@@ -238,5 +238,65 @@ jb_component('itemlists.l', {
         style :{$: 'label.span' }
       }
     ]
+  }
+})
+
+jb.component('itemlists.filter', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'filter', 
+    controls: [
+      {$: 'itemlist-container.search', 
+        title: 'Search', 
+        searchIn :{$: 'itemlist-container.search-in-all-properties' }, 
+        databind: '%$itemlistCntr/filter_data/search%', 
+        style :{$: 'editable-text.mdl-search' }
+      }, 
+      {$: 'itemlist', 
+        items :{$: 'pipeline', 
+          items: [
+            '%$people%', 
+            {$: 'itemlist-container.filter' }
+          ]
+        }, 
+        controls: [
+          {$: 'label', 
+            title :{$: 'pipeline', 
+              items: [
+                '%name%', 
+                {$: 'highlight', 
+                  base: '%%', 
+                  highlight: '%$itemlistCntr/filter_data/search%', 
+                  cssClass: 'highlight'
+                }
+              ]
+            }, 
+            style :{$: 'customStyle', 
+              template: '<div class="mdl-button mdl-js-button mdl-js-ripple-effect" [innerHtml]="title"></div>', 
+              features: [
+                {$: 'label.bind-title' }, 
+                {$: 'mdl-style.init-dynamic', query: '.mdl-js-ripple-effect' }
+              ]
+            }, 
+            features: [
+              {$: 'css.width', width: '150' }, 
+              {$: 'css', css: '{text-align: left}' }
+            ]
+          }
+        ], 
+        style :{$: 'itemlist.ul-li' }, 
+        watchItems: true, 
+        itemVariable: 'item', 
+        features: [
+          {$: 'itemlist.selection', 
+            autoSelectFirst: true, 
+            cssForSelected: '', 
+            cssForActive: ''
+          }, 
+          {$: 'itemlist.keyboard-selection' }
+        ]
+      }
+    ], 
+    features :{$: 'group.itemlist-container' }
   }
 })

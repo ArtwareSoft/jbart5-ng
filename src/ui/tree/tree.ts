@@ -139,7 +139,7 @@ jb.component('tree.selection', {
 	  { id: 'autoSelectFirst', type: 'boolean' }
   ],
   impl: context=> ({
-	    observable: () => {},
+	    jbEmitter: true,
       	host: {
         	'(click)': 'clickSource.next($event)',
       	},
@@ -201,7 +201,7 @@ jb.component('tree.keyboard-selection', {
 		{ id: 'applyMenuShortcuts', type: 'menu.option', dynamic: true },
 	],
 	impl: context => ({
-			observable: () => {},
+			jbEmitter: true,
 			host: {
         		'(keydown)': 'keydownSrc.next($event)',
 				'tabIndex': '0',
@@ -216,16 +216,13 @@ jb.component('tree.keyboard-selection', {
 				var keyDownNoAlts = cmp.keydown.filter(e=> 
 					!e.ctrlKey && !e.altKey);
 
-				tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (() => {
-			        jb_logPerformance('focus','tree.keyboard-selection regain focus');
-					cmp.elementRef.nativeElement.focus(); 
+				tree.regainFocus = cmp.getKeyboardFocus = cmp.getKeyboardFocus || (_ => {
+					jb_ui.focus(cmp.elementRef.nativeElement,'tree.keyboard-selection regain focus');
 					return false;
 				});
 
 				if (context.params.autoFocus)
-					setTimeout(() => {
-				        jb_logPerformance('focus','tree.keyboard-selection init autofocus');
-						cmp.elementRef.nativeElement.focus() }, 1);
+					jb_ui.focus(cmp.elementRef.nativeElement,'tree.keyboard-selection init autofocus');
 
 				keyDownNoAlts
 					.filter(e=> e.keyCode == 13)
@@ -281,7 +278,7 @@ jb.component('tree.onMouseRight', {
 	  { id: 'action', type: 'action', dynamic: true, essential: true },
   ],
   impl: (context,action) => ({
-	    observable: () => {},
+	    jbEmitter: true,
       	host: {
         	'(contextmenu)' : 'contextmenuSrc.next($event)'
       	},

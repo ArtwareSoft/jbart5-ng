@@ -120,14 +120,18 @@ jb.component('label.mdl-button', {
 jb.component('editable-text.mdl-search', {
   type: 'editable-text.style',
   impl :{$: 'customStyle', 
-      features :{$: 'field.databind' },
       template: `
   <div class="mdl-textfield mdl-js-textfield">
     <input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')" 
       class="mdl-textfield__input" type="text" id="search_${++jb.mdl_counter}">
     <label class="mdl-textfield__label" for="search_${jb.mdl_counter}">{{title}}</label>
     <i class="material-icons">search</i>
-  </div>`
+  </div>`,
+      css: '.mdl-textfield { display: flex }',
+      features :[
+          {$: 'field.databind' },
+          {$: 'mdl-style.init-dynamic', query: '.mdl-js-textfield'}
+      ],
   }
 })
 

@@ -236,7 +236,7 @@ jb.component('group.studio-suggestions', {
   impl: ctx => {
     var suggestionCtx = { path: ctx.params.path, options: [], show: false };
     return {
-      observable: () => {}, // register jbEmitter
+      jbEmitter: true, // register jbEmitter
       extendCtx: ctx2 =>
         ctx2.setVars({suggestionCtx: suggestionCtx }),
 

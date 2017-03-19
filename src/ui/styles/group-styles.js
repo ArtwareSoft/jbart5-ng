@@ -109,14 +109,14 @@ jb.component('group.init-accordion', {
         cmp.autoFocus();
       };
 
-      cmp.autoFocus = _ =>
-        jb.delay(100).then(()=> {
-          jb_logPerformance('focus','group.accordion');
-          if (ctx.params.autoFocus)
-            $(cmp.elementRef.nativeElement).find('input,textarea,select')
-              .filter(function(x) { return $(this).attr('type') != 'checkbox'})
-//              .first().focus() 
-        })
+//       cmp.autoFocus = _ =>
+//         jb.delay(100).then(()=> {
+//           jb_logPerformance('focus','group.accordion');
+//           if (ctx.params.autoFocus)
+//             $(cmp.elementRef.nativeElement).find('input,textarea,select')
+//               .filter(function(x) { return $(this).attr('type') != 'checkbox'})
+// //              .first().focus() 
+//         })
 
 
       if (ctx.params.keyboardSupport) {

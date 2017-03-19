@@ -20,7 +20,7 @@ jb.component('group.wait', {
             .catch(e=> 
               jb_rx.Observable.of([error(context.setVars({error:e}))]));
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
   }}
 })
 
@@ -55,7 +55,7 @@ jb.component('group.data', {
             res = res.setVars(jb.obj(itemVariable,val));
           return res;
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
   }}
 })
 
@@ -78,20 +78,19 @@ jb.component('group.watch', {
                 })
             )
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
   })
 })
 
 jb.component('group.auto-focus-on-first-input', {
   type: 'feature',
   impl: context => ({ 
-      afterViewInit: cmp =>
-        jb.delay(1).then(()=> {
-          jb_logPerformance('focus','auto-focus-on-first-input');
-          $(cmp.elementRef.nativeElement).find('input,textarea,select')
+      afterViewInit: cmp => {
+          var elem = $(cmp.elementRef.nativeElement).find('input,textarea,select')
             .filter(function(x) { return $(this).attr('type') != 'checkbox'})
-            .first().focus() 
-        })
+            .first();
+          jb_ui.focus(elem,'auto-focus-on-first-input'); 
+        }
   })
 })
 
@@ -161,7 +160,7 @@ jb.component('feature.onEnter', {
             .subscribe(()=>
               jb_ui.wrapWithLauchingElement(ctx.params.action, cmp.ctx, cmp.elementRef)())
       },
-      observable: () => {},
+      jbEmitter: true,
   })
 })
 
@@ -183,7 +182,7 @@ jb.component('feature.emitter',{
   impl: function(context,varName) { return  { 
     extendCtx: (ctx,cmp) => 
       ctx.setVars(jb.obj(varName,cmp.jbEmitter)),
-    observable: () => {},
+    jbEmitter: true,
   }}
 })
 

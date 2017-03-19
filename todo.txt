@@ -1,28 +1,6 @@
-jbeditor menus with keyboard
+toolbar
 
 suggestion popup cut inside the parent dialog
-
-unify the 3:
-itemlist
-	item
-	selection
-menu
-	menu-option - ctrl, action
-	separator
-
-picklist
-	options - code, text
-
-problem:
-menu option is ctrl and options
-
-solution1:
-menu option is an object with Comp
-
-ideas:
-1. picklist option can contain: code, text, icon, action, customized_comp
-2. menu options are picklist options
-
 
 
 itemlist - one control.

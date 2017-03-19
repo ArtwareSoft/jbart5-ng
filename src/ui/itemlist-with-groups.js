@@ -71,7 +71,7 @@ jb.component('itemlist.watch-items-with-heading', {
 
           cmp.jbGroupChildrenEm = watch ? itemsEm : itemsEm.take(1);
       },
-      observable: () => {} // to create jbEmitter
+      jbEmitter: true,
   }}
 })
 

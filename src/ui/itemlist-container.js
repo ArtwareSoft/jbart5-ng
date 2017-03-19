@@ -1,4 +1,4 @@
-jb.component('group.itemlist-writable-container', {
+jb.component('group.itemlist-container', {
   description: 'itemlist writable container to support addition, deletion and selection',
   type: 'feature', category: 'itemlist:20,group:0',
   params: [
@@ -17,6 +17,8 @@ jb.component('group.itemlist-writable-container', {
         			this.selected = item || JSON.parse(JSON.stringify(context.params.defaultItem || {}));
     				this.items && this.items.push(this.selected);
         		},
+            filter_data: {},
+            filters: [],
         		delete: function(item) {
         			if (this.items && this.items.indexOf(item) != -1) {
         				this.changeSelectionBeforeDelete();
@@ -86,6 +88,58 @@ jb.component('itemlist-container.selected', {
 		}
 	})
 })
+
+
+jb.component('itemlist-container.filter', {
+  type: 'aggregator',
+  requires: ctx => ctx.vars.itemlistCntr,
+  impl: ctx => {
+      if (ctx.vars.itemlistCntr) 
+        return ctx.vars.itemlistCntr.filters.reduce((items,filter) => 
+                  filter(items), ctx.data || [])
+      return [];
+   }
+})
+
+
+jb.component('itemlist-container.search', {
+  type: 'control',
+  requires: ctx => ctx.vars.itemlistCntr,
+  params: [
+    { id: 'title', as: 'string' , dynamic: true, defaultValue: 'Search' },
+    { id: 'searchIn', as: 'string' , dynamic: true, defaultValue: {$: 'itemlist-container.search-in-all-properties'} },
+    { id: 'databind', as: 'ref', defaultValue: '%$itemlistCntr/filter_data/search%'},
+    { id: 'style', type: 'editable-text.style', defaultValue: { $: 'editable-text.mdl-search' }, dynamic: true },
+    { id: 'features', type: 'feature[]', dynamic: true },
+  ],
+  impl: (ctx,title,searchIn,databind) => 
+    jb_ui.ctrl(ctx).jbExtend({
+      beforeInit: cmp => {
+        if (ctx.vars.itemlistCntr) {
+          ctx.vars.itemlistCntr.filters.push( items => {
+            var toSearch = jb.val(databind) || '';
+            return items.filter(item=>toSearch == '' || searchIn(ctx.setData(item)).toLowerCase().indexOf(toSearch.toLowerCase()) != -1)
+          });
+        // allow itemlist selection use up/down arrows
+        ctx.vars.itemlistCntr.keydown = jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
+            .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+            .filter(e=> e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) 
+
+        }
+      },
+      jbEmitter: true,
+    })
+});
+
+jb.component('itemlist-container.search-in-all-properties', {
+  type: 'data',
+  impl: ctx => {
+    if (typeof ctx.data == 'string') return ctx.data;
+    if (typeof ctx.data != 'object') return '';
+    return jb.entries(ctx.data).map(e=>e[1]).filter(v=>typeof v == 'string').join('#');
+   }
+})
+
 
 jb.component('itemlist.obj-as-items', {
   type: 'data',

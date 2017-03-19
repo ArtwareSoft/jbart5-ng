@@ -216,7 +216,7 @@ jb.component('menu.init-popup-menu', {
 			}
 
 		},
-      	observable: () => {},
+      	jbEmitter: true,
   	})
 })
 
@@ -244,7 +244,7 @@ jb.component('menu.init-menu-option', {
 		        	)
 		    }
 		},
-      	observable: () => {},
+      	jbEmitter: true,
   	})
 })
 
@@ -280,11 +280,7 @@ jb.component('menu.selection', {
      	if (!ctx.vars.topMenu.keydown) { 
 	        ctx.vars.topMenu.keydown = cmp.keydownSrc
 	          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
-        // auto focus
-            setTimeout(()=> {
-              jb_logPerformance('focus','menu.keyboard init autoFocus');
-              cmp.elementRef.nativeElement.focus();
-            },1 );
+            jb_ui.focus(cmp.elementRef.nativeElement,'menu.keyboard init autoFocus');
       	};
 
         var keydown = ctx.vars.topMenu.keydown.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );

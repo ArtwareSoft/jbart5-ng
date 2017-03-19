@@ -42,7 +42,10 @@ jb.component('studio.select-control', {
       {$: 'editable-text', 
         title: 'search', 
         databind: '%$SearchPattern%', 
-        style :{$: 'editable-text.md-input' }
+        style :{$: 'editable-text.md-input' }, 
+        features :{$: 'field.subscribe', 
+          action :{$: 'writeValue', to: '%$SelectedCategory%', value: 'all' }
+        }
       }, 
       {$: 'group', 
         title: 'categories and items', 
@@ -98,9 +101,9 @@ jb.component('studio.select-control', {
                       value: '%code%'
                     }, 
                     autoSelectFirst: 'true', 
-                    cssForSelected: 'background: #bbb'
-                  }, 
-                  {$: 'itemlist.keyboard-selection', autoFocus: true }
+                    cssForSelected: 'border-left: 2px #ccc solid; background: white', 
+                    cssForActive: 'background: white'
+                  }
                 ]
               }, 
               modelVar: 'picklistModel'
