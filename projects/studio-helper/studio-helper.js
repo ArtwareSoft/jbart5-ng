@@ -214,7 +214,7 @@ jb.component('studio-helper.data-resources', {
 
 jb.component('studio-helper.select-control', {
   type: 'control', 
-  impl :{$: 'studio.select-control' } 
+  impl :{$: 'studio.select-profile', type: 'control' } 
 })
 
 
@@ -223,7 +223,7 @@ jb.component('studio-helper.select-feature', {
   impl :{$: 'group', 
     title: 'select-feature', 
     style :{$: 'layout.horizontal', spacing: '53' }, 
-    controls: [{$: 'studio.select-feature' }]
+    controls: [{$: 'studio.select-profile', type: 'feature' }]
   }
 })
 

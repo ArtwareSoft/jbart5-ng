@@ -258,7 +258,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                 impl: function (ctx) {
                     var suggestionCtx = { path: ctx.params.path, options: [], show: false };
                     return {
-                        jbEmitter: true,
+                        observable: function () { },
                         extendCtx: function (ctx2) {
                             return ctx2.setVars({ suggestionCtx: suggestionCtx });
                         },

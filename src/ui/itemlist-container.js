@@ -123,7 +123,7 @@ jb.component('itemlist-container.search', {
         // allow itemlist selection use up/down arrows
         ctx.vars.itemlistCntr.keydown = jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
             .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
-            .filter(e=> e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) 
+            .filter(e=>  [13,27,37,38,39,40].indexOf(e.keyCode) != -1) 
 
         }
       },

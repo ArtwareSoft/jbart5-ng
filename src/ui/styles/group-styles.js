@@ -99,14 +99,14 @@ jb.component('group.init-accordion', {
       cmp.toggle = newCtrl => {
         cmp.ctrls.forEach(ctrl=>
           ctrl.show = (ctrl == newCtrl ? !ctrl.show : false));
-        cmp.autoFocus();
+        //cmp.autoFocus();
       }
 
       cmp.next = diff => {
         var new_index = (cmp.ctrls.findIndex(ctrl=>ctrl.show) + diff + cmp.ctrls.length) % cmp.ctrls.length;
         cmp.ctrls.forEach((ctrl,i)=>
           ctrl.show = (i == new_index))
-        cmp.autoFocus();
+        //cmp.autoFocus();
       };
 
 //       cmp.autoFocus = _ =>

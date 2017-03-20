@@ -335,7 +335,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     });
                     jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
                 };
-                TgpModel.prototype.insertComp = function (path, args) {
+                TgpModel.prototype.insertControl = function (path, args) {
                     var compName = args.comp;
                     var comp = compName && studio_utils_1.getComp(compName);
                     if (!compName || !comp)

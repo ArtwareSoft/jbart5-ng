@@ -485,19 +485,11 @@ jb.component('studio.property-array', {
       }, 
       {$: 'button', 
         title: 'new feature', 
-        action :{$: 'studio.open-new-feature-dialog', 
-          type: 'feature', 
-          title: 'new feature',
-          onSelect: {$: 'studio.add-array-item', 
-            path: '%$path%',
-            toAdd: {$object : {$: '%%'} }
-          }
-        }, 
+        action :{$: 'studio.open-new-profile-dialog', type: 'feature', path: '%$path%' }, 
         style :{$: 'button.href' }, 
         features :{$: 'css.margin', top: '20', left: '20' }
       }
     ], 
-    features: []
   }
 })
 

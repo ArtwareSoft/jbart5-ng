@@ -73,18 +73,27 @@ System.register(['jb-core', 'jb-ui/jb-rx', './studio-tgp-model', './studio-utils
                     this.probe[this.pathToTrace].visits = 0;
                     return this.simpleRun().then(function (res) {
                         return _this.handleGaps().then(function (res2) {
-                            return jb_core_1.jb.extend({ finalResult: _this.probe[_this.pathToTrace] }, res, res2);
+                            return jb_core_1.jb.extend({ finalResult: _this.probe[_this.pathToTrace],
+                                probe: _this,
+                                circuit: jb_core_1.jb.compName(_this.circuit),
+                            }, res, res2);
                         });
                     });
                 };
                 Probe.prototype.simpleRun = function () {
                     var _win = jbart.previewWindow || window;
-                    if (studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control')) {
+                    if (studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'control'))
+                        this.circuitType = 'control';
+                    else if (studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action'))
+                        this.circuitType = 'action';
+                    else if (studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'data'))
+                        this.circuitType = 'data';
+                    else
+                        this.circuitType = 'unknown';
+                    if (this.circuitType == 'control')
                         return testControl(this.context, this.forTests);
-                    }
-                    else if (!studio_tgp_model_1.model.isCompNameOfType(jb_core_1.jb.compName(this.circuit), 'action')) {
+                    else if (this.circuitType != 'action')
                         return Promise.resolve(_win.jb_run(this.context));
-                    }
                 };
                 Probe.prototype.handleGaps = function () {
                     if (this.probe[this.pathToTrace].length == 0) {

@@ -1,5 +1,5 @@
 jb.component('itemlist', {
-  type: 'control', category: 'group:80',
+  type: 'control', category: 'group:80,common:80',
   params: [
     { id: 'title', as: 'string' },
     { id: 'items', as: 'array' , dynamic: true, essential: true },
@@ -70,57 +70,43 @@ jb.component('itemlist.selection', {
   ],
   impl: ctx => ({
     init: cmp => {
-        cmp.clickSrc = new jb_rx.Subject();
-        cmp.click = cmp.clickSrc
-          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
-          .do(()=>{
-            if (cmp.selected && cmp.selected.heading)
-              cmp.selected = null;
-            })
-          .filter(()=>
-            cmp.selected);
-
-        var doubleClick = cmp.click.buffer(cmp.click.debounceTime(250))
-          .filter(buff => buff.length === 2)
+        cmp.selectionEmitter = new jb_rx.Subject();
+        cmp.clickEmitter = new jb_rx.Subject();
 
         var databindEm = cmp.jbEmitter.filter(x => x == 'check')
             .map(()=> 
               jb.val(ctx.params.databind))
-            .filter(x=>
-              x && x != cmp.selected);
-//            .distinctUntilChanged();
+            .filter(x=>x);
 
-        var selectionEm = cmp.jbEmitter.filter(x => x == 'check')
-            .map(()=> cmp.selected)
-            .filter(x=>x) 
-            .distinctUntilChanged();
-//            .skip(1);
+        cmp.selectionEmitter
+          .merge(databindEm)
+          .merge(cmp.clickEmitter)
+          .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') )
+          .distinctUntilChanged()
+          .subscribe( selected => {
+              if (jb.val(ctx.params.databind) != selected)
+                jb.writeValue(ctx.params.databind,selected);
+              cmp.selected = selected;
+              ctx.params.onSelection(ctx.setData(selected))
+          });
 
-        doubleClick.subscribe(()=>
-          ctx.params.onDoubleClick(ctx.setData(cmp.selected)));
+        // double click
+        var clickEm = cmp.clickEmitter.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+        clickEm.buffer(clickEm.debounceTime(250))
+          .filter(buff => buff.length === 2)
+          .subscribe(buff=>
+            ctx.params.onDoubleClick(ctx.setData(buff[1])));
 
-        selectionEm.subscribe( selected => {
-          if (jb.val(ctx.params.databind) != selected)
-            jb.writeValue(ctx.params.databind,selected);
-          ctx.params.onSelection(ctx.setData(cmp.selected))
-        });
-
-        databindEm.subscribe(x=>
-            cmp.selected = x);
     },
     afterViewInit: cmp => {
-        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb.val(ctx.params.databind)) {
-            cmp.selected = cmp.items[0];
-            jb.writeValue(ctx.params.databind,cmp.selected);
-        }
+        if (ctx.params.autoSelectFirst && cmp.items[0] && !jb.val(ctx.params.databind))
+            cmp.selectionEmitter.next(cmp.items[0])
     },
-    templateModifier: { // [class.active1]="active == ctrl.comp.ctx.data"  (mouseenter)="active = ctrl.comp.ctx.data" (mouseleave)="active = null"
+    templateModifier: { 
       jbItem: `[class.selected]="selected == ctrl.comp.ctx.data"
-        (click)="selected = ctrl.comp.ctx.data ; clickSrc.next($event)"`
+        (click)="clickEmitter.next(ctrl.comp.ctx.data)"` // selected = ctrl.comp.ctx.data ; 
     },
     css: '.jb-item.selected { ' + ctx.params.cssForSelected + ' }',
-//    .jb-item.active:not(.heading) {  ${ctx.params.cssForActive} }
-//    `,
     jbEmitter: true,
   })
 })
@@ -128,20 +114,24 @@ jb.component('itemlist.selection', {
 jb.component('itemlist.keyboard-selection', {
   type: 'feature',
   params: [
-    { id: 'onKeyboardSelection', type: 'action', dynamic: true },
+    { id: 'onEnter', type: 'action', dynamic: true },
     { id: 'autoFocus', type: 'boolean' }
   ],
   impl: ctx => ({
       init: function(cmp) {
         cmp.keydown = (ctx.vars.itemlistCntr && ctx.vars.itemlistCntr.keydown);
         if (!cmp.keydown) {
-          cmp.elementRef.nativeElement.setAttribute(tabIndex,'0');
+          cmp.elementRef.nativeElement.setAttribute('tabIndex','0');
           cmp.keydown = jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
               .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );          
 
           if (ctx.params.autoFocus)
             jb_ui.focus(cmp.elementRef.nativeElement,'itemlist.keyboard-selection init autoFocus')
         }
+
+        cmp.keydown.filter(e=> e.keyCode == 13)
+          .subscribe(x=>
+            ctx.params.onEnter(ctx.setData(cmp.selected)))
     
         cmp.keydown.filter(e=>
               e.keyCode == 38 || e.keyCode == 40)
@@ -151,7 +141,7 @@ jb.component('itemlist.keyboard-selection', {
               var items = cmp.items;
               return items[(items.indexOf(cmp.selected) + diff + items.length) % items.length] || cmp.selected;
         }).subscribe(x=>
-          cmp.selected = x
+          cmp.selectionEmitter && cmp.selectionEmitter.next(x)
         )
       },
     })
@@ -182,8 +172,7 @@ jb.component('itemlist.drag-and-drop', {
             dropElm.dragged = null;
         });
 
-
-        cmp.elementRef.nativeElement.setAttribute(tabIndex,'0');
+        cmp.elementRef.nativeElement.setAttribute('tabIndex','0');
         cmp.keydown = cmp.keydown || jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
             .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
 

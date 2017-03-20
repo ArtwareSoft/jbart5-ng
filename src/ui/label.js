@@ -1,5 +1,5 @@
 jb.component('label', {
-    type: 'control', category: 'control:100',
+    type: 'control', category: 'control:100,common:80',
     params: [
         { id: 'title', as: 'string', essential: true, defaultValue: 'my label', dynamic: true },
         { id: 'style', type: 'label.style', defaultValue: { $: 'label.span' }, dynamic: true },

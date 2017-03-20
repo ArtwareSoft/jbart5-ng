@@ -107,22 +107,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 _this.jbEmitter && _this.jbEmitter.complete();
             });
         };
-        // Cmp.prototype.jbWait = function () {
-        // 	this.readyCounter = (this.readyCounter || 0)+1;
-        // 	var parentCmp = this.parentCmp && this.parentCmp.parent();
-        // 	if (parentCmp && parentCmp.jbWait)
-        // 		this.parentWaiting = parentCmp.jbWait();
-        // 	return {
-        // 		ready: () => {
-        // 			this.readyCounter--;
-        // 			if (!this.readyCounter) {
-        // 				this.jbEmitter && this.jbEmitter.next('ready');
-        // 				if (this.parentWaiting)
-        // 					this.parentWaiting.ready();
-        // 			}
-        // 		}
-        // 	}
-        // }
     }
     exports_1("injectLifeCycleMethods", injectLifeCycleMethods);
     function wrapWithLauchingElement(f, context, elem) {
@@ -136,21 +120,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         };
     }
     exports_1("wrapWithLauchingElement", wrapWithLauchingElement);
-    // export function getZone(zoneId) {
-    // 	return new Promise((resolve,fail)=> {
-    // 		var counter = 30;
-    // 		var intervalID = setInterval(function() {
-    // 			if (jbart.zones[zoneId]) {
-    // 				window.clearInterval(intervalID);
-    // 				resolve(jbart.zones[zoneId]);
-    // 			}
-    // 			if (--counter <= 0) {
-    // 				window.clearInterval(intervalID);
-    // 				fail();
-    // 			}
-    // 		}, 100);	
-    // 	})
-    // }
     function garbageCollectCtxDictionary() {
         var now = new Date().getTime();
         jbart.ctxDictionaryLastCleanUp = jbart.ctxDictionaryLastCleanUp || now;
@@ -190,7 +159,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
             }],
         execute: function() {
             core_1.enableProdMode();
-            factory_hash = {}, cssFixes_hash = {}; // compiledFactories()
+            factory_hash = {}, cssFixes_hash = {};
             jbComponent = (function () {
                 function jbComponent(ctx) {
                     this.ctx = ctx;
@@ -225,8 +194,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         this.factory = ret.componentFactories.find(function (x) { return x.componentType === comp; });
                     }
                     catch (e) {
-                        // if (!inError)
-                        // 	this.doCompile(compiler,this.nullComp(),true)
                         compiler.clearCache();
                         jb_core_1.jb.logError('ng compilation error', this, e);
                     }
@@ -277,13 +244,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         host: jb_core_1.jb.extend({}, this.annotations.host || {}),
                     }));
                 };
-                // nullComp() {
-                //     var Cmp = function() {}
-                // 	Cmp = Reflect.decorate([
-                // 		Component({selector: 'dummy', template: '<div></div>'}),
-                // 	], Cmp);
-                // 	return Cmp;
-                // }
                 jbComponent.prototype.createComp = function () {
                     if (!this.annotations.selector)
                         this.annotations.selector = 'jb-comp';

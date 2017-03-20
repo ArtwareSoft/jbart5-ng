@@ -44,8 +44,8 @@ jb.component('studio.jb-editor', {
               path: '%$globals/jb_editor_selection%'
             }, 
             onRightClickOfExpanded :{$: 'studio.open-jb-editor-menu', path: '%%' }, 
-            autoFocus: true,
-            applyMenuShortcuts :{$: 'studio.jb-editor-menu', path: '%%' },
+            autoFocus: true, 
+            applyMenuShortcuts :{$: 'studio.jb-editor-menu', path: '%%' }
           }, 
           {$: 'tree.drag-and-drop' }, 
           {$: 'studio.control-tree.refresh-path-changes' }, 
@@ -65,19 +65,32 @@ jb.component('studio.jb-editor', {
                 title: 'watch selection content', 
                 controls :{$: 'group', 
                   title: 'wait for probe', 
-                  controls :{$: 'itemlist', 
-                    items: '%$probeResult/finalResult%', 
+                  controls :{$: 'group', 
                     controls: [
-                      {$: 'group', 
-                        title: 'in/out', 
+                      {$: 'label', 
+                        title: 'circuit %$probeResult/probe/circuitType%: %$probeResult/circuit%'
+                      }, 
+                      {$: 'label', 
+                        title: 'action circuits are not supported', 
+                        features :{$: 'feature.if', 
+                          showCondition: '%$probeResult/probe/circuitType% == "action"'
+                        }
+                      }, 
+                      {$: 'itemlist', 
+                        items: '%$probeResult/finalResult%', 
                         controls: [
-                          {$: 'studio.data-browse', 
-                            data: '%in/data%', 
-                            title: 'in'
-                          }, 
-                          {$: 'studio.data-browse', 
-                            data: '%out%', 
-                            title: 'out'
+                          {$: 'group', 
+                            title: 'in/out', 
+                            controls: [
+                              {$: 'studio.data-browse', 
+                                data: '%in/data%', 
+                                title: 'in'
+                              }, 
+                              {$: 'studio.data-browse', 
+                                data: '%out%', 
+                                title: 'out'
+                              }
+                            ]
                           }
                         ]
                       }
@@ -103,9 +116,7 @@ jb.component('studio.jb-editor', {
                 }
               }
             ], 
-            features :{$: 'feature.if', 
-              showCondition: '%$globals/jb_editor_selection%'
-            }
+            features :{$: 'feature.if', showCondition: '%$globals/jb_editor_selection%' }
           }
         ], 
         features :{$: 'group.watch', data: '%$globals/jb_editor_selection%' }

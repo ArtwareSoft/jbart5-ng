@@ -24,17 +24,29 @@ export class Probe {
 
     return this.simpleRun().then( res =>
           this.handleGaps().then( res2 =>
-            jb.extend({finalResult: this.probe[this.pathToTrace]},res,res2)
+            jb.extend({finalResult: this.probe[this.pathToTrace], 
+                probe: this, 
+                circuit: jb.compName(this.circuit),
+            },res,res2)
     ))
   }
 
   simpleRun() {
       var _win = jbart.previewWindow || window;
-      if (model.isCompNameOfType(jb.compName(this.circuit),'control')) { // running circuit in a group to get the 'ready' event
+      if (model.isCompNameOfType(jb.compName(this.circuit),'control'))
+        this.circuitType = 'control'
+      else if (model.isCompNameOfType(jb.compName(this.circuit),'action'))
+        this.circuitType = 'action'
+      else if (model.isCompNameOfType(jb.compName(this.circuit),'data'))
+        this.circuitType = 'data'
+      else
+        this.circuitType = 'unknown';
+
+      if (this.circuitType == 'control') // running circuit in a group to get the 'ready' event
         return testControl(this.context, this.forTests);
-      } else if (! model.isCompNameOfType(jb.compName(this.circuit),'action')) {
+      else if (this.circuitType != 'action')
         return Promise.resolve(_win.jb_run(this.context));
-      }
+      
   }
 
   handleGaps() {

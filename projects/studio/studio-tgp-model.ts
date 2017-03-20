@@ -357,7 +357,7 @@ export class TgpModel {
 		jb.writeValue(profileRefFromPath(path),result);
 	}
 
-	insertComp(path,args) {
+	insertControl(path,args) {
 		var compName = args.comp;
 		var comp = compName && getComp(compName);
 		if (!compName || !comp) return;

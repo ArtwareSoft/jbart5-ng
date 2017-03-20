@@ -16,8 +16,8 @@ System.register(['jb-core'], function(exports_1, context_1) {
                 impl: { $: 'studio.pick',
                     from: '%$from%',
                     onSelect: [
-                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%path%' },
                         { $: 'writeValue', to: '%$globals/last_pick_selection%', value: '%%' },
+                        { $: 'writeValue', to: '%$globals/profile_path%', value: '%path%' },
                         { $: 'studio.open-control-tree' },
                         { $: 'studio.open-properties' },
                     ],
@@ -77,7 +77,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                         },
                         { $: 'button',
                             title: 'insert control',
-                            action: { $: 'studio.open-new-control-dialog' },
+                            action: { $: 'studio.open-new-profile-dialog', type: 'control', insertControl: 'true' },
                             style: { $: 'button.mdl-icon', icon: 'add' }
                         },
                         { $: 'button',

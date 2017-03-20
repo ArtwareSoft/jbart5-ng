@@ -58,7 +58,7 @@ jb.component('studio.categories-of-type', {
   	function ptsOfCategory(category) {
       var pts_with_marks = pts.filter(pt=>
       		pt.split('.')[0] == category || 
-      		(comps[pt].category||'').split(',').map(x=>x.split(':')[0]).indexOf(category) == 0)
+      		(comps[pt].category||'').split(',').map(x=>x.split(':')[0]).indexOf(category) != -1)
       	.map(pt=>({
 	      	pt: pt,
 	      	mark: (comps[pt].category||'').split(',')
@@ -152,14 +152,15 @@ jb.component('studio.comp-name-ref', {
 	}
 })
 
-jb.component('studio.insert-comp',{
+jb.component('studio.insert-control',{
 	type: 'action',
 	params: [ 
 		{ id: 'path', as: 'string', defaultValue :{$: 'studio.currentProfilePath' }  },
 		{ id: 'comp', as: 'string' },
+		{ id: 'type', as: 'string' },
 	],
-	impl: (context,path,comp) => 
-		model.modify(model.insertComp, path, { comp: comp },context)
+	impl: (context,path,comp,type) => 
+		model.modify(model.insertControl, path, { comp: comp, type: type },context)
 })
 
 jb.component('studio.wrap', {

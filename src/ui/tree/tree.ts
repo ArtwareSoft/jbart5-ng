@@ -123,7 +123,7 @@ jb.component('tree', {
 
 jb.component('tree.ul-li', {
 	type: 'tree.style',
-	impl :{$:'customStyle',
+	impl :{$: 'customStyle',
 		template: '<jb_node [tree]="tree" [path]="tree.nodeModel.rootPath" class="jb-control-tree treenode" [class.selected]="tree.selected == tree.nodeModel.rootPath"></jb_node>',
 //		directives: ['TreeNode', 'TreeNodeLine'],
 		imports: [jbTreeModule]

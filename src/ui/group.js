@@ -1,7 +1,7 @@
 jb.type('group.style');
 
 jb.component('group', {
-  type: 'control', category: 'group:100',
+  type: 'control', category: 'group:100,common:90',
   params: [
     { id: 'title', as: 'string' , dynamic: true },
     { id: 'style', type: 'group.style', defaultValue: { $: 'group.section' }, essential: true , dynamic: true },

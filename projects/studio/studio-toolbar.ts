@@ -9,8 +9,8 @@ jb.component('studio.pickAndOpen', {
 	impl :{$: 'studio.pick',
 		from: '%$from%',
 	  	onSelect: [
-			{$: 'writeValue', to: '%$globals/profile_path%', value: '%path%' },
       {$: 'writeValue', to: '%$globals/last_pick_selection%', value: '%%' },
+      {$: 'writeValue', to: '%$globals/profile_path%', value: '%path%' },
 			{$: 'studio.open-control-tree'},
       {$: 'studio.open-properties'},
  		],
@@ -71,7 +71,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'insert control', 
-        action :{$: 'studio.open-new-control-dialog' }, 
+        action :{$: 'studio.open-new-profile-dialog', type: 'control', insertControl: 'true' }, 
         style :{$: 'button.mdl-icon', icon: 'add' }
       }, 
       {$: 'button', 

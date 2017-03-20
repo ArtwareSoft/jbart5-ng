@@ -35,7 +35,7 @@ jb.component('studio.tree-menu', {
       options: [
         {$: 'menu.action', 
           title: 'Insert', 
-          action :{$: 'studio.open-new-control-dialog' }
+          action :{$: 'studio.open-new-profile-dialog', type: 'control', insertControl: true }
         }, 
         {$: 'menu.action', 
           title: 'Wrap with group', 
@@ -122,7 +122,6 @@ jb.component('studio.tree-menu', {
         }
       ]
     }
-  }
 })
 
 jb.component('studio.control-tree', {
