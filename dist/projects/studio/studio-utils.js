@@ -82,9 +82,15 @@ System.register(['jb-core', 'jb-ui/jb-rx'], function(exports_1, context_1) {
                     { id: 'path', as: 'string' },
                 ],
                 impl: { $runActions: [
+                        { $: 'closeContainingPopup' },
                         { $: 'writeValue', to: '%$globals/profile_path%', value: '%$path%' },
-                        { $: 'studio.open-properties' },
-                        { $: 'studio.open-control-tree' }
+                        { $if: { $: 'studio.is-of-type', type: 'control', path: '%$path%' },
+                            then: { $runActions: [
+                                    { $: 'studio.open-properties' },
+                                    { $: 'studio.open-control-tree' }
+                                ] },
+                            else: { $: 'studio.open-jb-editor', path: '%$path%' }
+                        }
                     ] }
             });
             jb_core_1.jb.component('studio.project-source', {

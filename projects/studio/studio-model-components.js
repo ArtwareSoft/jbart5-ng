@@ -29,6 +29,14 @@ jb.component('studio.is-of-type', {
       model.isOfType(path,_type)
 })
 
+jb.component('studio.param-type', {
+  params: [ 
+  	{ id: 'path', as: 'string', essential: true },
+  ],
+  impl: (context,path) => 
+      model.paramType(path)
+})
+
 jb.component('studio.PTs-of-type', {
   params: [ 
   	{ id: 'type', as: 'string', essential: true },
@@ -141,15 +149,14 @@ jb.component('studio.more-params',{
 
 jb.component('studio.comp-name-ref', {
 	params: [ {id: 'path', as: 'string' } ],
-	impl: (context,path) => { return {
+	impl: (context,path) => ({
 			$jb_val: function(value) {
 				if (typeof value == 'undefined') 
 					return model.compName(path);
 				else
 					model.modify(model.setComp, path, { comp: value },context)
 			}
-		}	
-	}
+	})
 })
 
 jb.component('studio.insert-control',{
@@ -224,6 +231,16 @@ jb.component('studio.add-array-item',{
 		model.modify(model.addArrayItem, path, { toAdd: toAdd },context,true)
 })
 
+jb.component('studio.set-comp',{
+	type: 'action',
+	params: [ 
+		{id: 'path', as: 'string' },
+		{id: 'comp', as: 'single' }
+	],
+	impl: (context,path,comp) => 
+		model.modify(model.setComp, path, { comp: comp },context,true)
+})
+
 jb.component('studio.delete',{
 	type: 'action',
 	params: [ {id: 'path', as: 'string' } ],
@@ -245,31 +262,38 @@ jb.component('studio.make-local',{
 jb.component('studio.components-statistics',{
 	type: 'data',
 	impl: ctx => {
-	  var refs = {}, comps = utils.jbart_base().comps;
+	  var _jbart = utils.jbart_base();
+	  utils.modifyOperationsEm.subscribe(_=>_jbart.statistics = null);
+	  if (_jbart.statistics) return _jbart.statistics;
+
+	  var refs = {}, comps = _jbart.comps;
 
       Object.getOwnPropertyNames(comps).forEach(k=>
-      	refs[k] = { refs: calcRefs(comps[k].impl), by: [] }
-      );
+      	refs[k] = { 
+      		refs: calcRefs(comps[k].impl).filter((x,index,self)=>self.indexOf(x) === index) , 
+      		by: [] 
+      });
       Object.getOwnPropertyNames(comps).forEach(k=>
       	refs[k].refs.forEach(cross=>
       		refs[cross] && refs[cross].by.push(k))
       );
 
-      var cmps = Object.getOwnPropertyNames(comps)
-          .map(k=>comps[k])
-          .map(comp=>({
-          	id: k,
-          	refs: refs[k].refs,
-          	referredBy: refs[k].by,
-          	type: comps[k].type,
-          	implType: typeof comps[k].impl,
-          	text: jb_prettyPrintComp(comps[k]),
-          	size: jb_prettyPrintComp(comps[k]).length
-          }))
+      return _jbart.statistics = jb_entries(comps).map(e=>({
+          	id: e[0],
+          	refs: refs[e[0]].refs,
+          	referredBy: refs[e[0]].by,
+          	type: e[1].type,
+          	implType: typeof e[1].impl,
+          	refCount: refs[e[0]].by.length
+          	//text: jb_prettyPrintComp(comps[k]),
+          	//size: jb_prettyPrintComp(e[0],e[1]).length
+          }));
+
 
       function calcRefs(profile) {
+      	if (typeof profile != 'object') return [];
       	return Object.getOwnPropertyNames(profile).reduce((res,prop)=>
-      		res.concat(calcRefs,profile[prop]),[jb.compName(profile)])
+      		res.concat(calcRefs(profile[prop])),[jb.compName(profile)])
       }
 	}
 })

@@ -44,7 +44,7 @@ System.register(['jb-core', './studio-tgp-model', './studio-utils'], function(ex
                     options: [
                         { $: 'menu.action',
                             title: 'Insert',
-                            action: { $: 'studio.open-new-profile-dialog', type: 'control', insertControl: true }
+                            action: { $: 'studio.open-new-profile-dialog', type: 'control', mode: 'insert-control' },
                         },
                         { $: 'menu.action',
                             title: 'Wrap with group',

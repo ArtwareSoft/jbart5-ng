@@ -104,19 +104,18 @@ jb.component('picklist.coded-options',{
   }
 })
 
-jb.component('picklist.sorted-options',{
+jb.component('picklist.sorted-options', {
   type: 'picklist.options',
   params: [ 
     { id: 'options', type: 'picklist.options', dynamic: true, essential: true, composite: true },
-    { id: 'marks', as: 'string', description: 'e.g input:80,group:90. 0 mark means hidden' },
+    { id: 'marks', as: 'array', description: 'e.g input:80,group:90. 0 mark means hidden' },
   ],
   impl: (ctx,optionsFunc,marks) => {
     var options = optionsFunc() || [];
-    marks.split(',').forEach(mark=> { 
-        var parts = mark.split(':');
-        var option = options.filter(opt=>opt.code == parts[0])[0];
+    marks.forEach(mark=> { 
+        var option = options.filter(opt=>opt.code == mark.code)[0];
         if (option)
-          option.mark = Number(parts[1] || 50);
+          option.mark = Number(mark.mark || 50);
     });
     options = options.filter(op=>op.mark != 0);
     options.sort((o1,o2)=>(o2.mark || 50) - (o1.mark || 50));

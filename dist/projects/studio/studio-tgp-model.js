@@ -185,12 +185,6 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var val = studio_path_1.profileFromPath(path);
                     return val && jb_core_1.jb.compName(val);
                 };
-                TgpModel.prototype.isOfType = function (path, type) {
-                    var paramDef = this.paramDef(path);
-                    if (paramDef)
-                        return (paramDef.type || 'data').split(',').indexOf(type) != -1;
-                    return this.isCompNameOfType(this.compName(path), type);
-                };
                 TgpModel.prototype.isCompNameOfType = function (name, type) {
                     var _jbart = studio_utils_1.jbart_base().comps[name] ? studio_utils_1.jbart_base() : jbart;
                     if (name && _jbart.comps[name]) {
@@ -414,8 +408,19 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     var paramName = path.split('~').pop();
                     return params.filter(function (p) { return p.id == paramName; })[0] || {};
                 };
+                TgpModel.prototype.isOfType = function (path, type) {
+                    var paramDef = this.paramDef(path);
+                    if (paramDef)
+                        return (paramDef.type || 'data').split(',')
+                            .map(function (x) { return x.split('[')[0]; }).indexOf(type) != -1;
+                    return this.isCompNameOfType(this.compName(path), type);
+                };
+                // single first param type
                 TgpModel.prototype.paramType = function (path) {
-                    return (this.paramDef(path) || {}).type || 'data';
+                    var res = ((this.paramDef(path) || {}).type || 'data').split(',')[0].split('[')[0];
+                    if (res == '*')
+                        return paramType(studio_path_1.parentPath(path));
+                    return res;
                 };
                 TgpModel.prototype.PTsOfPath = function (path) {
                     return this.PTsOfType(this.paramType(path), studio_utils_1.findjBartToLook(path));

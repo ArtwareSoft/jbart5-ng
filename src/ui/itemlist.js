@@ -119,7 +119,7 @@ jb.component('itemlist.keyboard-selection', {
   ],
   impl: ctx => ({
       init: function(cmp) {
-        cmp.keydown = (ctx.vars.itemlistCntr && ctx.vars.itemlistCntr.keydown);
+        cmp.keydown = (ctx.vars.itemlistCntr && ctx.vars.itemlistCntr.keydown) || (ctx.vars.selectionKeySource && ctx.vars.selectionKeySource.keydown);
         if (!cmp.keydown) {
           cmp.elementRef.nativeElement.setAttribute('tabIndex','0');
           cmp.keydown = jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')

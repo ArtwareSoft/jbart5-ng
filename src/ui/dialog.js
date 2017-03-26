@@ -2,7 +2,7 @@ jb.component('openDialog', {
 	type: 'action',
 	params: [
 		{ id: 'id', as: 'string' },
-		{ id: 'style', type: 'dialog.style', dynamic: true, defaultValue: { $:'dialog.default' }	},
+		{ id: 'style', type: 'dialog.style', dynamic: true, defaultValue: { $:'dialog.default' } },
 		{ id: 'content', type: 'control', dynamic: true, defaultValue :{$: 'group'}, forceDefaultCreation: true },
 		{ id: 'menu', type: 'control', dynamic: true },
 		{ id: 'title', as: 'string', dynamic: true  },
@@ -71,7 +71,10 @@ jb.component('dialog.popup', {
         { $: 'dialog-feature.closeWhenClickingOutside' },
         { $: 'dialog-feature.cssClassOnLaunchingControl' },
         { $: 'dialog-feature.nearLauncherLocation' }
-      ]
+      ],
+      css: `
+      .jb-dialog { position: absolute, box-shadow: 2px 2px 3px #d5d5d5; padding: 3px 0; border: 1px solid rgb(213, 213, 213);}
+      `
   }
 })
 

@@ -62,11 +62,7 @@ jb.component('studio-helper.jb-editor', {
       {$: 'studio.jb-editor', path: '%$path%' }, 
       {$: 'editable-text', 
         databind :{$: 'studio.profile-as-text', path: '%$globals/jb_editor_selection%' }, 
-        style :{$: 'editable-text.codemirror', 
-          enableFullScreen: true, 
-          mode: 'javascript', 
-          debounceTime: 300
-        }
+        style :{$: 'editable-text.input' }
       }
     ], 
     features :{$: 'css', css: '{ height: 200px; padding: 50px }' }
@@ -236,5 +232,13 @@ jb.component('studio-helper.features', {
         path: 'studio-helper-dummy.simple-label~features'
       }
     ]
+  }
+})
+
+jb.component('studio-helper.search', {
+  type: 'control', 
+  impl :{$: 'group', 
+    title: 'search', 
+    controls :{$: 'studio.search-component' }
   }
 })

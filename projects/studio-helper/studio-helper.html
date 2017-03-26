@@ -18,10 +18,10 @@
 
 jbLoadModules(jb_modules.concat(jb_studio_modules)
   .concat([
-      '/projects/studio-helper/suggestion-tests.js',
-      '/projects/studio-helper/path-tests.js',
-      '/projects/studio-helper/studio-model-tests.js',
-      '/projects/studio-helper/studio-tree-tests.js']))
+      'projects/studio-helper/suggestion-tests.js',
+      'projects/studio-helper/path-tests.js',
+      'projects/studio-helper/studio-model-tests.js',
+      'projects/studio-helper/studio-tree-tests.js']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

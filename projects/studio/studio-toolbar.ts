@@ -71,7 +71,7 @@ jb.component('studio.toolbar', {
       }, 
       {$: 'button', 
         title: 'insert control', 
-        action :{$: 'studio.open-new-profile-dialog', type: 'control', insertControl: 'true' }, 
+        action :{$: 'studio.open-new-profile-dialog', type: 'control', mode: 'insert-control' }, 
         style :{$: 'button.mdl-icon', icon: 'add' }
       }, 
       {$: 'button', 

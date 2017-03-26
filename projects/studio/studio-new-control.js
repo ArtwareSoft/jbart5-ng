@@ -5,14 +5,15 @@ jbLoadModules(['studio/studio-tgp-model']).then(loadedModules => {
 jb.component('studio.open-new-profile-dialog', {
   type: 'action', 
   params: [
-    { id: 'type', as: 'string' }, 
     { id: 'path', as: 'string', defaultValue :{$: 'studio.currentProfilePath' } },
-    { id: 'insertControl', as: 'boolean' }, 
+    { id: 'type', as: 'string' }, 
+    { id: 'mode', option: 'insert,insert-control,update', defaultValue: 'insert' }, 
+    { id: 'onClose', type: 'action', dynamic: true}
   ], 
-  impl :{$: 'openDialog', 
+  impl :{$: 'openDialog',
     style :{$: 'dialog.studio-floating' }, 
-    content :{$: 'studio.select-profile', 
-      onSelect :{$if: '%$insertControl%', 
+    content :{$: 'studio.select-profile', path: '%$path%' , 
+      onSelect :{$if: '%$mode% == "insert-control"', 
           then : [
             {$: 'studio.insert-control', path: '%$path%', comp: '%%' },
             {$: 'studio.onNextModifiedPath', 
@@ -27,28 +28,34 @@ jb.component('studio.open-new-profile-dialog', {
               ]
             }, 
           ],
-          else :{$: 'studio.add-array-item', path: '%$path%', toAdd: { $object: { $: '%%'} } },
+          else :{$if: '%$mode% == "insert"', 
+            then: {$: 'studio.add-array-item', path: '%$path%', toAdd: { $object: { $: '%%'} } },
+            else: {$: 'studio.set-comp', path: '%$path%', comp: '%%' },
+          },
         }, 
       type: '%$type%'
     }, 
     title: 'new %$type%', 
-    modal: true, 
+//    modal: true, 
     features: [
       {$: 'css.height', height: '430', overflow: 'hidden' }, 
       {$: 'css.width', width: '450', overflow: 'hidden' }, 
       {$: 'dialog-feature.dragTitle', id: 'new %$type%' }, 
       {$: 'dialog-feature.nearLauncherLocation', offsetLeft: 0, offsetTop: 0 }, 
-      {$: 'group.auto-focus-on-first-input' }
+      {$: 'group.auto-focus-on-first-input' },
+      {$: 'dialog-feature.onClose', action:{ $call: 'onClose'}}
     ]
   }
 })
 
 jb.component('studio.categories-marks', {
-  params: [{ id: 'type', as: 'string' }], 
+  params: [
+    { id: 'type', as: 'string' },
+    { id: 'path', as: 'string' },
+  ], 
   impl :{$: 'pipeline', 
     items: [
-      {
-        $object: {
+        { $: 'object' ,
           control :{$: 'pipeline', 
             items: [
               {$: 'list', 
@@ -60,7 +67,11 @@ jb.component('studio.categories-marks', {
                   'studio-helper:0,suggestions-test:0,studio:0,test:0,basic:0,ui-tests:0,studio-helper-dummy:0,itemlist-container:0'
                 ]
               }, 
-              {$: 'join', separator: ',' }
+              {$: 'split', separator: ',' },
+              {$: 'object', 
+                code: {$: 'split', separator: ':', part: 'first'  },  
+                mark: {$: 'split', separator: ':', part: 'second'  },  
+              }
             ]
           }, 
           feature :{$: 'pipeline', 
@@ -74,23 +85,24 @@ jb.component('studio.categories-marks', {
                   'mdl-style:0'
                 ]
               }, 
-              {$: 'join', separator: ',' }
+              {$: 'split', separator: ',' },
+              {$: 'object', 
+                code: {$: 'split', separator: ':', part: 'first'  },  
+                mark: {$: 'split', separator: ':', part: 'second'  },  
+              }
             ]
           }, 
           data :{$: 'pipeline', 
             items: [
               {$: 'list', items: [] }, 
-              {$: 'join', separator: ',' }
             ]
           }, 
           action :{$: 'pipeline', 
             items: [
               {$: 'list', items: [] }, 
-              {$: 'join', separator: ',' }
             ]
           }
-        }
-      }, 
+        },
       '%{%$type%}%'
     ]
   }
@@ -100,8 +112,9 @@ jb.component('studio.categories-marks', {
 jb.component('studio.select-profile', {
   type: 'control', 
   params: [
-    { id: 'onSelect', type: 'action', dynamic: true },
-    { id: 'type', as: 'string' }
+    { id: 'onSelect', type: 'action', dynamic: true }, 
+    { id: 'type', as: 'string' },
+    { id: 'path', as: 'string' },
   ], 
   impl :{$: 'group', 
     title: 'itemlist-with-find', 
@@ -132,7 +145,7 @@ jb.component('studio.select-profile', {
                 code: '%name%', 
                 text: '%name%'
               }, 
-              marks :{$: 'studio.categories-marks', type: '%$type%'}
+              marks :{$: 'studio.categories-marks', type: '%$type%', path: '%$path%' }
             }, 
             style :{$: 'style-by-control', 
               control :{$: 'group', 
@@ -200,7 +213,8 @@ jb.component('studio.select-profile', {
               {$: 'itemlist.selection', 
                 onDoubleClick :{$: 'runActions', 
                   actions: [{$: 'closeContainingPopup' }, { $call: 'onSelect' }]
-                }
+                }, 
+                autoSelectFirst: true
               }, 
               {$: 'itemlist.keyboard-selection', 
                 onEnter :{$: 'runActions', 
@@ -220,7 +234,10 @@ jb.component('studio.select-profile', {
       }, 
       {$: 'var', 
         name: 'SelectedCategory', 
-        value :{$: 'editable-primitive', type: 'string', initialValue: '%$Categories[0]%' }
+        value :{$: 'editable-primitive', 
+          type: 'string', 
+          initialValue: '%$Categories[0]%'
+        }
       }, 
       {$: 'var', 
         name: 'SearchPattern', 
@@ -297,7 +314,7 @@ jb.component('studio.insert-control-menu', {
           }, 
           {$: 'menu.action', 
               title: 'More...', 
-              action :{$: 'studio.open-new-profile-dialog', type: 'control', insertControl: true }
+              action :{$: 'studio.open-new-profile-dialog', type: 'control', mode: 'insert-control' }
           }
           ]
         },

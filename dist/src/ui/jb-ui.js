@@ -213,7 +213,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                 };
                 jbComponent.prototype.registerMethods = function (cmp_ref) {
                     var cmp = cmp_ref._hostElement.component; // hostView._view._Cmp_0_4;
-                    //		cmp.parentCmp = parent;
                     var ctx = this.ctx;
                     cmp.ctx = ctx;
                     cmp.methodHandler = this.methodHandler;
@@ -309,8 +308,6 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                         if (_this.cssFixes.indexOf(x) == -1)
                             _this.cssFixes.push('>*' + x);
                     });
-                    // .forEach(x=>
-                    // 	jb.path(options,['atts','style'],x.match(/^{([^]*)}$/m)[1]));
                     (options.styles || [])
                         .filter(function (x) { return x.match(/^:/m); }) // for example :hover
                         .forEach(function (x) {

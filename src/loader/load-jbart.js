@@ -131,7 +131,7 @@ jb_modules =
 
 jb_studio_modules = ['tgp-model','model-components.js','path','utils','main.js','preview','menu.js','toolbar','tests','popups.js'
 ,'tree','properties.js','properties-menu.js','pick.js','save','probe','edit-source','new-control.js','testers'
-,'undo','styles.js','style-editor.js','data-browse','open-project','jb-editor.js','jb-editor-styles.js','suggestions','context-viewer']
+,'undo','styles.js','style-editor.js','data-browse','open-project','jb-editor.js','jb-editor-styles.js','suggestions','context-viewer.js','search.js']
   .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 
 jb_system_config = {
@@ -147,6 +147,7 @@ jb_system_config = {
       '/src/testing/*.js': { format: 'global', scriptLoad: true }, 
       'projects_js/studio/*.js': { format: 'global', scriptLoad: true }, 
       'projects_js/ui-tests/*.js': { format: 'global', scriptLoad: true }, 
+      'projects_js/studio-helper/*.js': { format: 'global', scriptLoad: true }, 
       'projects_js/*/*.js': { format: 'global', scriptLoad: true }, 
       'testing/*.js': { format: 'global', scriptLoad: true }, 
       // 'src/**': { scriptLoad: true }, 

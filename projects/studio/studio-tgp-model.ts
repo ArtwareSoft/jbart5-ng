@@ -194,12 +194,6 @@ export class TgpModel {
 		return val && jb.compName(val);
 	}
 
-	isOfType(path,type) {
-		var paramDef = this.paramDef(path);
-		if (paramDef)
-			return (paramDef.type || 'data').split(',').indexOf(type) != -1;
-		return this.isCompNameOfType(this.compName(path),type);
-	}
 	isCompNameOfType(name,type) {
 		var _jbart = jbart_base().comps[name] ? jbart_base() : jbart;
 		if (name && _jbart.comps[name]) {
@@ -441,8 +435,19 @@ export class TgpModel {
 		return params.filter(p=>p.id==paramName)[0] || {};
 	}
 
+	isOfType(path,type) {
+		var paramDef = this.paramDef(path);
+		if (paramDef)
+			return (paramDef.type || 'data').split(',')
+				.map(x=>x.split('[')[0]).indexOf(type) != -1;
+		return this.isCompNameOfType(this.compName(path),type);
+	}
+	// single first param type
 	paramType(path) {
-		return (this.paramDef(path) || {}).type || 'data';
+		var res = ((this.paramDef(path) || {}).type || 'data').split(',')[0].split('[')[0];
+		if (res == '*')
+			return paramType(parentPath(path));
+		return res;
 	}
 	PTsOfPath(path) {
 		return this.PTsOfType(this.paramType(path),findjBartToLook(path))

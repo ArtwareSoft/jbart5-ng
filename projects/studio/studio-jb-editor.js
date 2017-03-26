@@ -152,15 +152,24 @@ jb.component('studio.open-jb-edit-property', {
   params: [
     { id: 'path', as: 'string' }
   ], 
-  impl :{$: 'openDialog', 
-    style :{$: 'dialog.studio-jb-editor-popup' }, 
-    content :{$: 'studio.jb-floating-input', path: '%$path%' }, 
-    features: [
-      {$: 'dialog-feature.autoFocusOnFirstInput' }, 
-      {$: 'dialog-feature.onClose', 
-        action :{$: 'toggleBooleanValue', of: '%$globals/jb_preview_result_counter%' }
+  impl :{
+      $if :{$: 'studio.is-of-type', type: 'data', path: '%$path%' },
+      then :{$: 'openDialog', 
+        style :{$: 'dialog.studio-jb-editor-popup' }, 
+        content :{$: 'studio.jb-floating-input', path: '%$path%' }, 
+        features: [
+          {$: 'dialog-feature.autoFocusOnFirstInput' }, 
+          {$: 'dialog-feature.onClose', 
+            action :{$: 'toggleBooleanValue', of: '%$globals/jb_preview_result_counter%' }
+          }
+        ],
+      },
+      else :{$: 'studio.open-new-profile-dialog', 
+        path: '%$path%', 
+        mode: 'update',
+        type :{$: 'studio.param-type', path: '%$path%'},
+        onClose :{$: 'tree.regain-focus'}
       }
-    ]
   }
 })
 

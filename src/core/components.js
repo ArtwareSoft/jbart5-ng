@@ -250,8 +250,8 @@ jb_component('toggleBooleanValue',{
 	params: [
 		{ id: 'of', as: 'ref' },
 	],
-	impl: (ctx,of) =>
-		jb_writeValue(of,jb_val(of) ? false : true)
+	impl: (ctx,_of) =>
+		jb_writeValue(_of,jb_val(_of) ? false : true)
 });
 
 jb_component('addToArray', {
@@ -288,14 +288,25 @@ jb_component('remove', {
 
 
 jb_component('slice', {
+	type: 'aggregator',
 	params: [
 		{ id: 'start', as: 'number', defaultValue: 0, description: '0-based index', essential: true },
 		{ id: 'end', as: 'number', essential: true, description: '0-based index of where to end the selection (not including itself)' }
 	],
-	type: 'aggregator',
 	impl: function(context,begin,end) {
 		if (!context.data || !context.data.slice) return null;
 		return end ? context.data.slice(begin,end) : context.data.slice(begin);
+	}
+});
+
+jb_component('numeric-sort', { // with side effects for performance reasons
+	type: 'aggregator',
+	params: [
+		{ id: 'propertyName' }
+	],
+	impl: (ctx,prop) => {
+		if (!ctx.data || ! Array.isArray(ctx.data)) return null;
+		return ctx.data.sort((x,y)=>y[prop] - x[prop]); 
 	}
 });
 
@@ -442,7 +453,7 @@ jb_component('capitalize', {
 });
 
 
-jb_component('join',{
+jb_component('join', {
 	params: [
 		{ id: 'separator', as: 'string', defaultValue:',', essential: true },
 		{ id: 'prefix', as: 'string' },

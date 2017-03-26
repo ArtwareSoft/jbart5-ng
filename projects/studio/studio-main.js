@@ -34,13 +34,15 @@ jb.component('studio.all', {
                 }
               }, 
               {$: 'group', 
+                title: 'menu and toolbar', 
                 style :{$: 'layout.flex', align: 'space-between' }, 
                 controls: [
                   {$: 'menu.control', 
                     menu :{$: 'studio.main-menu' }, 
                     style :{$: 'menu-style.pulldown' }
                   }, 
-                  {$: 'studio.toolbar' }
+                  {$: 'studio.toolbar' }, 
+                  {$: 'studio.search-component' }
                 ], 
                 features :{$: 'css.width', width: '1040' }
               }

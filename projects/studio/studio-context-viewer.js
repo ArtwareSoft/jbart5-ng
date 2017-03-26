@@ -1,6 +1,3 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-
 jb.component('studio.open-context-viewer', {
 	type: 'action',
 	impl :{$: 'openDialog',

@@ -636,7 +636,14 @@ jb.component('ui-test.picklist-sort', {
     calculate: {$pipeline: [ 
         { $: 'picklist.sorted-options' , 
           options: {$: 'picklist.optionsByComma', options: 'a,b,c,d' },
-          marks: 'c:100,d:50,b:0,a:20'
+          marks: {$pipeline : [ 
+            'c:100,d:50,b:0,a:20',
+            {$: 'split', separator: ',' },
+            {$: 'object', 
+              code: {$: 'split', separator: ':', part: 'first'  },  
+              mark: {$: 'split', separator: ':', part: 'second'  },  
+            }
+          ] }
         }, 
         '%text%', 
         {$: 'join'} 
