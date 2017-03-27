@@ -1,6 +1,6 @@
 jb.type('image.style');
 
-jb.component('image',{
+jb.component('image', {
 	type: 'control', category: 'control:50',
 	params: [
 		{ id: 'url', as: 'string', dynamic:true },

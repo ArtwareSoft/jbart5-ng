@@ -231,6 +231,22 @@ jb.component('studio.add-array-item',{
 		model.modify(model.addArrayItem, path, { toAdd: toAdd },context,true)
 })
 
+jb.component('studio.wrap-with-array',{
+	type: 'action',
+	params: [ 
+		{id: 'path', as: 'string' },
+	],
+	impl: (context,path,toAdd) => 
+		model.modify(model.wrapWithArray, path, {},context,true)
+})
+
+jb.component('studio.can-wrap-with-array', {
+  params: [ {id: 'path', as: 'string' } ],
+  impl: (context,path) => 
+      (model.paramDef(path).type || '').indexOf('[') != -1 && !Array.isArray(model.val(path))
+})
+
+
 jb.component('studio.set-comp',{
 	type: 'action',
 	params: [ 
@@ -259,7 +275,7 @@ jb.component('studio.make-local',{
 	impl: (context,path) => model.modify(model.makeLocal,path,{ctx: context},context,true)
 })
 
-jb.component('studio.components-statistics',{
+jb.component('studio.components-cross-ref',{
 	type: 'data',
 	impl: ctx => {
 	  var _jbart = utils.jbart_base();
@@ -282,7 +298,7 @@ jb.component('studio.components-statistics',{
           	id: e[0],
           	refs: refs[e[0]].refs,
           	referredBy: refs[e[0]].by,
-          	type: e[1].type,
+          	type: e[1].type || 'data',
           	implType: typeof e[1].impl,
           	refCount: refs[e[0]].by.length
           	//text: jb_prettyPrintComp(comps[k]),
@@ -344,6 +360,24 @@ jb.component('studio.profile-value-as-text', {
           model.modify(model.writeValue, path, { value: value },context);
       }
     })
+})
+
+jb.component('studio.icon-of-type',{
+	type: 'data',
+	params: [ {id: 'type', as: 'string' } ],
+	impl: (ctx,type) => {
+		if (type.match(/.style$/))
+			type = 'style';
+		return ({
+			action: 'play_arrow',
+			data: 'data_usage',
+			aggregator: 'data_usage',
+			control: 'airplay',
+			style: 'format_paint',
+			feature: 'brush'
+		}[type] || 'extension')
+	}
+
 })
 
 

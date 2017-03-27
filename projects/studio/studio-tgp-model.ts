@@ -294,7 +294,7 @@ export class TgpModel {
 	}
 	wrap(path,args) {
 		var comp = getComp(args.compName);
-		var firstParam = jb_compParams(comp)[0];
+		var firstParam = jb_compParams(comp).filter(p=>p.composite)[0];
 		if (firstParam) {
 			var result = jb.extend({ $: args.compName }, jb.obj(firstParam.id, [profileFromPath(path)]));
 			jb.writeValue(profileRefFromPath(path),result);
@@ -384,6 +384,14 @@ export class TgpModel {
 		} else {
 			jb.writeValue(profileRefFromPath(path),[val].concat(toAdd));
 			return { newPath: path + '~1' }
+		}
+	}
+
+	wrapWithArray(path) {
+		var val = profileFromPath(path);
+		if (val && !Array.isArray(val)) {
+			jb.writeValue(profileRefFromPath(path),[val]);
+			return { newPath: path + '~0' }
 		}
 	}
 

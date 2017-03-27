@@ -276,7 +276,7 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                 };
                 TgpModel.prototype.wrap = function (path, args) {
                     var comp = studio_utils_1.getComp(args.compName);
-                    var firstParam = jb_compParams(comp)[0];
+                    var firstParam = jb_compParams(comp).filter(function (p) { return p.composite; })[0];
                     if (firstParam) {
                         var result = jb_core_1.jb.extend({ $: args.compName }, jb_core_1.jb.obj(firstParam.id, [studio_path_1.profileFromPath(path)]));
                         jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), result);
@@ -363,6 +363,13 @@ System.register(['jb-core', './studio-path', './studio-utils'], function(exports
                     else {
                         jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), [val].concat(toAdd));
                         return { newPath: path + '~1' };
+                    }
+                };
+                TgpModel.prototype.wrapWithArray = function (path) {
+                    var val = studio_path_1.profileFromPath(path);
+                    if (val && !Array.isArray(val)) {
+                        jb_core_1.jb.writeValue(studio_path_1.profileRefFromPath(path), [val]);
+                        return { newPath: path + '~0' };
                     }
                 };
                 TgpModel.prototype.makeLocal = function (path) {

@@ -98,6 +98,7 @@ jb_modules =
 'ui/itemlist-with-groups.js',
 'ui/ui-common.js',
 'ui/image.js',
+'ui/icon.js',
 'ui/menu.js',
 'ui/itemlog.js',
 'ui/tabs.js',

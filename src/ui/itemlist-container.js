@@ -118,6 +118,10 @@ jb.component('itemlist-container.search', {
         if (ctx.vars.itemlistCntr) {
           ctx.vars.itemlistCntr.filters.push( items => {
             var toSearch = jb.val(databind) || '';
+            if (typeof searchIn.profile == 'function') { // improved performance
+              return items.filter(item=>toSearch == '' || searchIn.profile(item).toLowerCase().indexOf(toSearch.toLowerCase()) != -1)
+            }
+
             return items.filter(item=>toSearch == '' || searchIn(ctx.setData(item)).toLowerCase().indexOf(toSearch.toLowerCase()) != -1)
           });
         // allow itemlist selection use up/down arrows

@@ -119,7 +119,7 @@ jb_component('list', {
 jb_component('firstSucceeding', {
 	type: "data",
 	params: [
-		{ id: 'items', type: "data[]", as: 'array' }
+		{ id: 'items', type: "data[]", as: 'array', composite: true }
 	],
 	impl: function(context,items) {
 		for(var i=0;i<items.length;i++)
@@ -803,7 +803,7 @@ jb_component('runActionOnItems', {
 	type: 'action',
 	params: [ 
 		{ id: 'items', type:'data[]', as:'array', essential: true},
-		{ id: 'action', type:'action', dynamic: true, essential: true }
+		{ id: 'action', type:'action', dynamic: true, essential: true, composite: true }
 	],
 	impl: function(context,items) {
 		return items.reduce((deferred,item)=>

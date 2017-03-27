@@ -192,6 +192,7 @@ jb.component('itemlist.drag-and-drop', {
 })
 
 jb.component('itemlist.ul-li', {
+  type: 'itemlist.style',
   impl :{$:'itemlist.use-group-style', groupStyle :{$: 'group.ul-li' }}
 })
 

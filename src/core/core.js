@@ -29,7 +29,7 @@ function jb_run(context,parentParam,settings) {
       case 'runActions': return jbart.comps.runActions.impl(jb_ctx(context,{profile: { actions : profile },path:''}));
       case 'if': {
           var cond = jb_run(run.ifContext, run.IfParentParam);
-          if (cond.then) 
+          if (cond && cond.then) 
             return cond.then(res=>
               res ? jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam))
           return cond ? jb_run(run.thenContext, run.thenParentParam) : jb_run(run.elseContext, run.elseParentParam);

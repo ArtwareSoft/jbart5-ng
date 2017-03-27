@@ -8,7 +8,8 @@ jb.component('studio.search-component', {
     controls: [
       {$: 'itemlist-container.search', 
         title: 'Search', 
-        searchIn :{$: 'itemlist-container.search-in-all-properties' }, 
+        searchIn: item => 
+          item.id,
         databind: '%$itemlistCntr/filter_data/search%', 
         style :{$: 'editable-text.mdl-input', width: '155' }, 
         features: [
@@ -20,23 +21,29 @@ jb.component('studio.search-component', {
               title: 'items', 
               items :{
                 $pipeline: [
-                  {$: 'studio.components-statistics' }, 
+                  {$: 'studio.components-cross-ref' }, 
                   {$: 'itemlist-container.filter' }, 
                   {$: 'numeric-sort', propertyName: 'refCount' }, 
                   {$: 'slice', start: '0', end: '50' }
                 ]
               }, 
-              controls: [
-                {$: 'label', 
-                  title :{$: 'highlight', 
-                    base: '%id% (%refCount%)', 
-                    highlight: '%$itemlistCntr/filter_data/search%', 
-                    cssClass: 'highlight'
+              controls :{$: 'group', 
+                style :{$: 'layout.horizontal', spacing: 3 }, 
+                controls: [
+                  {$: 'material-icon', 
+                    icon :{$: 'studio.icon-of-type', type: '%type%' }
                   }, 
-                  style :{$: 'customStyle', template: '<span>%$title%</span>' }, 
-                  features :{$: 'css.padding', left: '3' }
-                }
-              ], 
+                  {$: 'label', 
+                    title :{$: 'highlight', 
+                      base: '%id% (%refCount%)', 
+                      highlight: '%$itemlistCntr/filter_data/search%', 
+                      cssClass: 'highlight'
+                    }, 
+                    style :{$: 'customStyle', template: '<span>%$title%</span>' }, 
+                    features :{$: 'css.padding', left: '3' }
+                  }
+                ]
+              }, 
               watchItems: true, 
               itemVariable: 'item', 
               features: [

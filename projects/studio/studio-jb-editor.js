@@ -221,6 +221,11 @@ jb.component('studio.jb-editor-menu', {
       },
       {$: 'menu.studio-wrap-with', 
         path: '%$path%', 
+        type: 'control', 
+        components :{$: 'list', items: ['group'] }
+      }, 
+      {$: 'menu.studio-wrap-with', 
+        path: '%$path%', 
         type: 'data', 
         components :{$: 'list', items: ['pipeline', 'list', 'firstSucceeding'] }
       }, 
@@ -234,6 +239,7 @@ jb.component('studio.jb-editor-menu', {
         type: 'action', 
         components :{$: 'list', items: ['runActions', 'runActionOnItems'] }
       }, 
+      {$:'menu.studio-wrap-with-array', path: '%$path%'},
       {$: 'menu.action', 
         title: 'Add property', 
         action :{$: 'openDialog', 
@@ -264,6 +270,11 @@ jb.component('studio.jb-editor-menu', {
       {$:'menu.end-with-separator',
         options: {$: 'studio.goto-references', path: '%$path%' }
       },
+      {$: 'menu.action', 
+        title: 'Javascript', 
+        icon: 'code',
+        action: {$: 'studio.editSource', path: '%$path%'}
+      }, 
       {$: 'menu.action', 
         title: 'Delete', 
         icon: 'delete', 
@@ -324,6 +335,23 @@ jb.component('menu.studio-wrap-with', {
     },
   }
 })
+
+jb.component('menu.studio-wrap-with-array', {
+  type: 'menu.option', 
+  params: [
+    { id: 'path', as: 'string'},
+  ], 
+  impl :{ $if: {$: 'studio.can-wrap-with-array', path: '%$path%' },
+        then :{$: 'menu.action', 
+          title: 'Wrap with array',
+          action : [
+            {$: 'studio.wrap-with-array', path: '%$path%' },
+            {$:'studio.expand-and-select-first-child-in-jb-editor' }
+          ]
+    },
+  }
+})
+
 
 jb.component('studio.goto-references', {
   type: 'menu.option', 
