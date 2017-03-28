@@ -22,6 +22,7 @@ jb.component('material-demo.form', {
         databind :{$: 'pipeline', items: ['%$person/company%'] }
       }, 
       {$: 'group', 
+        title: 'Name group', 
         controls: [
           {$: 'group', 
             title: 'Name', 
@@ -32,22 +33,7 @@ jb.component('material-demo.form', {
                 databind: '%$person/lastName%'
               }, 
               {$: 'editable-text', 
-                title: 'First Name aa', 
-                databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
-                style :{$: 'editable-text.mdl-input' }
-              }
-            ]
-          }, 
-          {$: 'group', 
-            title: 'Name', 
-            style :{$: 'layout.horizontal', spacing: '25' }, 
-            controls: [
-              {$: 'editable-text', 
-                title: 'Long Last Name That Will Be Truncated', 
-                databind: '%$person/lastName%'
-              }, 
-              {$: 'editable-text', 
-                title: 'First Name aa', 
+                title: 'First Name', 
                 databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
                 style :{$: 'editable-text.mdl-input' }
               }
@@ -57,7 +43,7 @@ jb.component('material-demo.form', {
       }, 
       {$: 'group', 
         title: 'address', 
-        style :{$: 'layout.vertical' }, 
+        style :{$: 'layout.horizontal', spacing: 3 }, 
         controls: [
           {$: 'editable-text', title: 'Address', databind: '%$person/address%' }, 
           {$: 'editable-text', 
@@ -81,10 +67,6 @@ jb.component('material-demo.form', {
             databind: '%$person/postalCode%'
           }
         ]
-      }, 
-      {$: 'label', 
-        title: '%$person/company%', 
-        style :{$: 'label.span' }
       }
     ], 
     features: [
@@ -100,7 +82,7 @@ jb.component('material-demo.form', {
         vertical: ''
       }, 
       {$: 'css.padding', top: '10', left: '10' }, 
-      {$: 'css.width', width: '700' }, 
+      {$: 'css.width', width: '790' }, 
       {$: 'css.margin', top: '10', left: '10' }
     ]
   }

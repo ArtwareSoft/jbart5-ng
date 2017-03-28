@@ -1,5 +1,3 @@
-jb.mdl_counter = jb.mdl_counter || 0;
-
 jb.component('mdl-style.init-dynamic', {
   type: 'feature',
   params: [
@@ -7,10 +5,12 @@ jb.component('mdl-style.init-dynamic', {
   ],
   impl: (ctx,query) => 
     ({
-      init: cmp => 
-        ctx.vars.ngZone.runOutsideAngular(() => {
+      afterViewInit: cmp => 
+        ctx.vars.ngZone.runOutsideAngular(_ => {
+        jb.delay(1).then(_ =>
       	 cmp.elementRef.nativeElement.querySelectorAll(query).forEach(el=>
-      	 	componentHandler.upgradeElement(el)) }),
+      	 	componentHandler.upgradeElement(el)))
+      }),
       destroy: cmp => 
       	 cmp.elementRef.nativeElement.querySelectorAll(query).forEach(el=>
       	 	componentHandler.downgradeElements(el))
@@ -124,8 +124,8 @@ jb.component('editable-text.mdl-search', {
       template: `
   <div class="mdl-textfield mdl-js-textfield">
     <input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')" 
-      class="mdl-textfield__input" type="text" id="search_${++jb.mdl_counter}">
-    <label class="mdl-textfield__label" for="search_${jb.mdl_counter}">{{title}}</label>
+      class="mdl-textfield__input" type="text" id="search_{{fieldId}}">
+    <label class="mdl-textfield__label" for="search_{{fieldId}}">{{title}}</label>
   </div>`,
       features :[
           {$: 'field.databind' },
@@ -140,10 +140,10 @@ jb.component('editable-text.mdl-input', {
     { id: 'width', as: 'number' },
   ],
   impl :{$: 'customStyle', 
-   template: `<div class="mdl-textfield mdl-js-textfield">
-    <input [ngModel]="jbModel()" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')" 
-      class="mdl-textfield__input" type="text" id="search_${++jb.mdl_counter}">
-    <label class="mdl-textfield__label" for="input_${jb.mdl_counter}">{{title}}</label>
+   template: `<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input [ngModel]="jbModel()" type="text" (change)="jbModel($event.target.value)" (keyup)="jbModel($event.target.value,'keyup')" 
+      class="mdl-textfield__input" type="text" id="input_{{fieldId}}">
+    <label class="mdl-textfield__label" for="input_{{fieldId}}">{{title}}</label>
   </div>`,
       css: '{ {?width: %$width%px?} }',
       features :[

@@ -1,3 +1,5 @@
+jbart.field_id_counter = jbart.field_id_counter || 0;
+
 jb.component('field.databind', {
   type: 'feature',
   impl: ctx => {
@@ -6,6 +8,7 @@ jb.component('field.databind', {
     return {
       init: function(cmp) {
             cmp.title = ctx.vars.$model.title();
+            cmp.fieldId = jbart.field_id_counter++;
             cmp.jbModel = (val,source) => {
               if (val == undefined) 
                 return jb.val(ctx.vars.$model.databind);
