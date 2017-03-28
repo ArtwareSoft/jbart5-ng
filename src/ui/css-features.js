@@ -40,6 +40,16 @@ jb.component('css.height', {
     ({css: `${ctx.params.selector} { ${minMax ? minMax +'-':''}height: ${height}px ${overflow ? '; overflow-y:' + overflow : ''} }`})
 })
 
+jb.component('css.opacity', {
+  type: 'feature',
+  params: [
+    { id: 'opacity', essential: true, as: 'number', min:0, max:1, step: 0.1 },
+    { id: 'selector', as: 'string' },
+  ],
+  impl: (ctx,opacity) =>
+    ({css: `${ctx.params.selector} { opacity: ${opacity} }`})
+})
+
 jb.component('css.padding', {
   type: 'feature,dialog-feature',
   params: [

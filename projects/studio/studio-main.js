@@ -42,7 +42,9 @@ jb.component('studio.all', {
                     style :{$: 'menu-style.pulldown' }
                   }, 
                   {$: 'studio.toolbar' }, 
-                  {$: 'studio.search-component' }
+                  {$: 'studio.search-component', 
+                    features :{$: 'css.margin', top: '-10' }
+                  }
                 ], 
                 features :{$: 'css.width', width: '1040' }
               }

@@ -239,6 +239,57 @@ jb.component('studio-helper.search', {
   type: 'control', 
   impl :{$: 'group', 
     title: 'search', 
-    controls :{$: 'studio.search-component' }
+    controls: [
+      {$: 'image', 
+        url: 'http://image.prntscr.com/image/3b57301a16474f579d18556bb91d08f0.png', 
+        units: 'px', 
+        style :{$: 'image.default' }
+      }, 
+      {$: 'group', 
+        title: 'search', 
+        style :{$: 'layout.horizontal', spacing: '3' }, 
+        controls: [
+          {$: 'button', 
+            title: 'menu icon', 
+            style :{$: 'button.mdl-icon', icon: 'search' }, 
+            features: [
+              {$: 'css.width', width: '60' }, 
+              {$: 'css.height', height: '46' }, 
+              {$: 'css.opacity', opacity: '0.2' }
+            ]
+          }, 
+          {$: 'itemlist-container.search', 
+            title: 'Search', 
+            searchIn :{$: 'itemlist-container.search-in-all-properties' }, 
+            databind: '%$itemlistCntr/filter_data/search%', 
+            style :{$: 'editable-text.mdl-input', width: '270' }, 
+            features :{$: 'css.margin', top: '-10' }
+          }, 
+          {$: 'button', 
+            title: 'menu icon', 
+            style :{$: 'button.mdl-icon', icon: 'clear' }, 
+            features: [
+              {$: 'css.width', width: '60' }, 
+              {$: 'css.height', height: '46' }, 
+              {$: 'css.opacity', opacity: '0.2' }
+            ]
+          }
+        ], 
+        features: [
+          {$: 'css.box-shadow', 
+            blurRadius: '7', 
+            spreadRadius: '2', 
+            shadowColor: '#cdcdcd', 
+            horizontal: '1', 
+            vertical: '1'
+          }, 
+          {$: 'css.width', width: '390' }, 
+          {$: 'css.height', height: '46' }
+        ]
+      }, 
+      {$: 'studio.search-list' }, 
+      {$: 'studio.search-component' }
+    ], 
+    features :{$: 'group.itemlist-container' }
   }
 })
