@@ -11,7 +11,7 @@ System.register(['jb-core', '@angular/material'], function(exports_1, context_1)
                 material_1 = material_1_1;
             }],
         execute: function() {
-            jb_core_1.jb.component('dialog.md-dialog-ok-cancel', {
+            jb_core_1.jb.component('dialog.dialog-ok-cancel', {
                 type: 'dialog.style',
                 params: [
                     { id: 'okLabel', as: 'string', defaultValue: 'OK' },

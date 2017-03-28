@@ -253,7 +253,7 @@ jb.component('studio.open-new-page', {
   impl :{$: 'openDialog', 
     modal: true, 
     title: 'New Page', 
-    style :{$: 'dialog.md-dialog-ok-cancel', 
+    style :{$: 'dialog.dialog-ok-cancel', 
       features :{$: 'dialog-feature.autoFocusOnFirstInput' }
     }, 
     content :{$: 'group', 
@@ -264,7 +264,7 @@ jb.component('studio.open-new-page', {
             action :{$: 'closeContainingPopup' }
           }, 
           title: 'page name', 
-          style :{$: 'editable-text.md-input' }
+          style :{$: 'editable-text.mdl-input' }
         }
       ], 
       features :{$: 'css.padding', top: '14', left: '11' }, 

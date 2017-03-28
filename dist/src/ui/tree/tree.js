@@ -151,7 +151,9 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                                 },
                                 expanded: jb_core_1.jb.obj(tree.nodeModel.rootPath, true),
                                 el: cmp.elementRef.nativeElement,
-                                elemToPath: function (el) { return $(el).closest('.treenode').attr('path'); },
+                                elemToPath: function (el) {
+                                    return $(el).closest('.treenode').attr('path');
+                                },
                                 selectionEmitter: new jb_rx.Subject(),
                             });
                         },
@@ -205,7 +207,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                             }, '');
                             if (context.params.databind)
                                 jb_core_1.jb.writeValue(context.params.databind, selected);
-                            context.params.onSelection(cmp.ctx.setData(selected));
+                            jb_ui.applyAfter(context.params.onSelection(cmp.ctx.setData(selected)), context);
                         });
                         // first auto selection selection
                         var first_selected = jb_core_1.jb.val(context.params.databind);
@@ -273,15 +275,17 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', 'jb-ui/jb-ui-utils', '@angul
                             var isArray = tree.nodeModel.isArray(tree.selected);
                             if (!isArray || (tree.expanded[tree.selected] && event.keyCode == 39))
                                 runActionInTreeContext(context.params.onRightClickOfExpanded);
-                            if (isArray && tree.selected)
+                            if (isArray && tree.selected) {
                                 tree.expanded[tree.selected] = (event.keyCode == 39);
+                                jb_ui.apply(context);
+                            }
                         });
                         function runActionInTreeContext(action) {
                             jb_ui.wrapWithLauchingElement(action, context.setData(tree.selected), tree.el.querySelector('.treenode.selected'))();
                         }
                         // menu shortcuts
                         cmp.keydown.filter(function (e) { return e.ctrlKey || e.altKey || e.keyCode == 46; }) // also Delete
-                            .filter(function (e) { return e.keyCode != 17 && e.keyCode != 18; }) // ctrl ot alt alone
+                            .filter(function (e) { return e.keyCode != 17 && e.keyCode != 18; }) // ctrl or alt alone
                             .subscribe(function (e) {
                             var menu = context.params.applyMenuShortcuts(context.setData(tree.selected));
                             menu && menu.applyShortcut && menu.applyShortcut(e);

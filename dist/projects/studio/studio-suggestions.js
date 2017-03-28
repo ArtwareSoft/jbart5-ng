@@ -89,7 +89,7 @@ System.register(['jb-core', 'jb-ui', 'jb-ui/jb-rx', './studio-tgp-model', './stu
                         { $: 'editable-text',
                             databind: { $: 'studio.profile-value-as-text', path: '%$path%' },
                             updateOnBlur: true,
-                            style: { $: 'editable-text.md-input', width: '400' },
+                            style: { $: 'editable-text.mdl-input', width: '400' },
                             features: [
                                 { $: 'studio.undo-support', path: '%$path%' },
                                 { $: 'css.padding', left: '4', right: '4' },

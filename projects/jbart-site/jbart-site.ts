@@ -174,7 +174,7 @@ jb.component('jbart-site.bb', {
         ]
       }, 
       {$: 'editable-text', 
-        style :{$: 'editable-text.md-input' }
+        style :{$: 'editable-text.mdl-input' }
       }
     ], 
     style :{$: 'group.md-card' }

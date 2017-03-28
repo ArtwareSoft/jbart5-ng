@@ -87,7 +87,7 @@ jb.component('itemlist.selection', {
               if (jb.val(ctx.params.databind) != selected)
                 jb.writeValue(ctx.params.databind,selected);
               cmp.selected = selected;
-              ctx.params.onSelection(ctx.setData(selected))
+              jb_ui.applyAfter(ctx.params.onSelection(cmp.ctx.setData(selected)),ctx);
           });
 
         // double click
@@ -95,7 +95,7 @@ jb.component('itemlist.selection', {
         clickEm.buffer(clickEm.debounceTime(250))
           .filter(buff => buff.length === 2)
           .subscribe(buff=>
-            ctx.params.onDoubleClick(ctx.setData(buff[1])));
+            jb_ui.applyAfter(ctx.params.onDoubleClick(ctx.setData(buff[1]))),ctx);
 
     },
     afterViewInit: cmp => {

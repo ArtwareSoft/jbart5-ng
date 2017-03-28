@@ -1,13 +1,8 @@
-import {jb} from 'jb-core';
-import * as jb_ui from 'jb-ui';
-import {model} from './studio-tgp-model';
-import { Http, Response } from '@angular/http';
-
 jb.component('studio.open-project', {
   type: 'action', 
   impl :{$: 'openDialog', 
     title: 'Open project', 
-    style :{$: 'dialog.md-dialog-ok-cancel', okLabel: 'OK', cancelLabel: 'Cancel' }, 
+    style :{$: 'dialog.dialog-ok-cancel', okLabel: 'OK', cancelLabel: 'Cancel' }, 
     content :{$: 'studio.choose-project' }
   }
 })
@@ -21,7 +16,7 @@ jb.component('studio.choose-project', {
       {$: 'editable-text', 
         title: 'search', 
         databind: '%$globals/project_pattern%', 
-        style :{$: 'editable-text.md-input', width: '260' }
+        style :{$: 'editable-text.mdl-input', width: '260' }
       }, 
       {$: 'itemlist', 
         items :{
@@ -43,7 +38,7 @@ jb.component('studio.choose-project', {
               ]
             }
           }, 
-          style :{$: 'button.md-flat-no-background' }, 
+          style :{$: 'button.mdl-flat-ripple' }, 
           features :{$: 'css', css: '!button { text-align: left; width: 250px }' }
         }, 
         style :{$: 'itemlist.ul-li' }, 
@@ -61,8 +56,3 @@ jb.component('studio.choose-project', {
   }
 })
 
-          // style :{$: 'customStyle', 
-          //   template: '<span><button md-button (click)="clicked()">{{title}}</button></span>', 
-          //   directives: 'MdButton', 
-          //   css: 'button { width: 260px; text-align: left }'
-          // }, 

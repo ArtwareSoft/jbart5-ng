@@ -141,25 +141,6 @@ jb.component('studio-helper.edit-style', {
 })
 
 
-jb.component('studio-helper.expandable', {
-  type: 'control', 
-  impl :{$: 'group', 
-    title: 'expandable', 
-    style :{$: 'group.expandable' }, 
-    controls: [
-      {$: 'label', 
-        title: 'label', 
-        style :{$: 'label.span' }, 
-        features :{$: 'css', css: undefined }
-      }, 
-      {$: 'button', 
-        title: 'Hello', 
-        style :{$: 'button.md-flat' }
-      }
-    ]
-  }
-})
-
 jb.component('studio-helper-dummy.label', {
   type: 'control', 
   impl :{$: 'label', 
@@ -184,10 +165,10 @@ jb.component('studio-helper.group-with-label', {
   impl :{$: 'group', 
     controls: [
       {$: 'label', 
-        title: [ '%$people-array/people%', 
+        title: {$pipeline: [ '%$people-array/people%', 
                 {$filter: '%age% == 42'},
                 '%name%'
-        ]
+        ]}
       }, 
     ]
   }
@@ -199,10 +180,10 @@ jb.component('studio-helper.data-resources', {
     controls: [
       {$: 'studio.data-resources' }, 
       {$: 'button', 
-        style :{$: 'button.md-flat' }
+        style :{$: 'button.mdl-flat-ripple' }
       }, 
       {$: 'button', 
-        style :{$: 'button.md-flat' }
+        style :{$: 'button.mdl-flat-ripple' }
       }
     ]
   }

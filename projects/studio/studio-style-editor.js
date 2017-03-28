@@ -123,7 +123,7 @@ jb.component('studio.open-make-global-style', {
   impl :{$: 'openDialog', 
     modal: true, 
     title: 'Style Name', 
-    style :{$: 'dialog.md-dialog-ok-cancel', 
+    style :{$: 'dialog.dialog-ok-cancel', 
       features :{$: 'dialog-feature.autoFocusOnFirstInput' }
     }, 
     content :{$: 'editable-text', 

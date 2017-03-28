@@ -10,7 +10,7 @@ jb.component('studio.data-resources', {
         controls: [
           {$: 'button', 
             title: '%%', 
-            style :{$: 'button.md-flat' }
+            style :{$: 'button.mdl-flat-ripple' }
           }
         ], 
         style :{$: 'itemlist.ul-li' }, 

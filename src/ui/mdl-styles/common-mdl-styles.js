@@ -51,6 +51,7 @@ jb.component('button.mdl-flat-ripple', {
   impl :{$: 'customStyle', 
       template: '<button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="clicked()">{{title}}</button>',
       features:{$: 'mdl-style.init-dynamic', query: '.mdl-js-button'},
+      css: 'button { text-transform: none }'
   }
 })
 

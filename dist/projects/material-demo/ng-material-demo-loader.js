@@ -128,9 +128,10 @@ System.register(['jb-core', '@angular/core', '@angular/material'], function(expo
                 };
                 __decorate([
                     core_1.ViewChild(material_1.MdRipple), 
-                    __metadata('design:type', material_1.MdRipple)
+                    __metadata('design:type', (typeof (_a = typeof material_1.MdRipple !== 'undefined' && material_1.MdRipple) === 'function' && _a) || Object)
                 ], RippleDemo.prototype, "manualRipple", void 0);
                 return RippleDemo;
+                var _a;
             }());
             exports_1("RippleDemo", RippleDemo);
             GesturesDemo = (function () {
@@ -272,9 +273,10 @@ System.register(['jb-core', '@angular/core', '@angular/material'], function(expo
                 };
                 LiveAnnouncerDemo = __decorate([
                     core_1.Injectable({}), 
-                    __metadata('design:paramtypes', [material_1.MdLiveAnnouncer])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof material_1.MdLiveAnnouncer !== 'undefined' && material_1.MdLiveAnnouncer) === 'function' && _a) || Object])
                 ], LiveAnnouncerDemo);
                 return LiveAnnouncerDemo;
+                var _a;
             }());
             exports_1("LiveAnnouncerDemo", LiveAnnouncerDemo);
             ProgressBarDemo = (function () {

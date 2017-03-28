@@ -100,12 +100,12 @@ jb_component('itemlists.master-detail-writable', {
               {$: 'editable-text', 
                 title: 'name', 
                 databind: '%name%', 
-                style :{$: 'editable-text.md-input' }
+                style :{$: 'editable-text.mdl-input' }
               }, 
               {$: 'editable-text', 
                 title: 'age', 
                 databind: '%age%', 
-                style :{$: 'editable-text.md-input' }
+                style :{$: 'editable-text.mdl-input' }
               }
             ], 
             features: [{$: 'group.itemlist-selected' }]

@@ -74,7 +74,7 @@ jb.component('md-test.editable-text-in-md-property-sheet', {
 //  impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
   //   control :{$: 'button', title: 'Open Dialog', $click: true,
   //       action :{$: 'openDialog', 
-  //         style :{$: 'dialog.md-dialog-ok-cancel'},
+  //         style :{$: 'dialog.dialog-ok-cancel'},
   //         title: 'Hello' , 
   //         content :{$: 'label', title: 'Hello Dialog' },      
   //       } 
@@ -89,7 +89,7 @@ jb.component('md-test.editable-text-in-md-property-sheet', {
   //   control :{$: 'button', title: 'Open Dialog', $click: true,
   //       action :{$: 'openDialog', 
   //         modal: true,
-  //         style :{$: 'dialog.md-dialog-ok-cancel' },
+  //         style :{$: 'dialog.dialog-ok-cancel' },
   //         title: 'Hello' , 
   //         content :{$: 'label', title: 'Hello Dialog' },      
   //       } 

@@ -1,7 +1,7 @@
 import {jb} from 'jb-core';
 import {MdButtonModule} from '@angular/material';
 
-jb.component('dialog.md-dialog-ok-cancel', {
+jb.component('dialog.dialog-ok-cancel', {
 	type: 'dialog.style',
 	params: [
 		{ id: 'okLabel', as: 'string', defaultValue: 'OK' },

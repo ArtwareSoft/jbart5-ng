@@ -2,7 +2,6 @@ import {jb} from 'jb-core';
 import { enableProdMode, Compiler, Renderer, NgModule, Component, Directive, View, ViewContainerRef, ViewChild, ViewChildElementRef, ElementRef, TemplateRef, Injector, Input, NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
 import * as jb_rx from 'jb-ui/jb-rx';
@@ -14,6 +13,11 @@ export function apply(ctx) {
 	return jb.delay(1).then(() =>
 			ctx.vars.ngZone && ctx.vars.ngZone.run(()=>{}))
 }
+
+export function applyAfter(promise,ctx) {
+	return Promise.resolve(promise).then(_=> apply(ctx))
+}
+
 
 export function focus(elem,logTxt) {
     if (jbart.lastStudioActivity && new Date().getTime() - jbart.lastStudioActivity < 1000)
@@ -77,11 +81,11 @@ class jbComponent {
 		return DynamicModule;
 	}
 	registerMethods(cmp_ref) { // should be called by the instantiator
-		var cmp = cmp_ref._hostElement.component; // hostView._view._Cmp_0_4;
+		var cmp = cmp_ref._component; // _hostElement.component; // hostView._view._Cmp_0_4;
 		var ctx = this.ctx;
 		cmp.ctx = ctx;
 		cmp.methodHandler = this.methodHandler;
-	  	var elem = cmp_ref._hostElement.nativeElement;
+	  	var elem = cmp.elementRef.nativeElement;
 	  	while (ctx.profile.__innerImplementation)
 	  		ctx = ctx.componentContext._parent;
 	  	var attachedCtx = this.ctxForPick || ctx;
@@ -215,7 +219,7 @@ class jbComponent {
 		}
 
 		if (options.wrapWithngIf) 
-			annotations.template = `<template [ngIf]="jbIf()">${annotations.template}</template>`;
+			annotations.template = `<ng-template [ngIf]="jbIf()">${annotations.template}</ng-template>`;
 
 		(options.featuresOptions || []).forEach(f => 
 			this.jbExtend(f, context))

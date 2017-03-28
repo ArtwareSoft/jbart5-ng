@@ -3,6 +3,7 @@ import * as jb_ui from 'jb-ui';
 import {model,TgpModel} from './studio-tgp-model';
 import {pathChangesEm} from './studio-utils';
 
+
 jb.component('studio.open-control-tree', {
   type: 'action', 
   impl :{$: 'openDialog', 

@@ -182,7 +182,7 @@ padding: 10px 10px 10px 27px; color: #6D6E71; min-height: 12px; border-bottom: 1
 
 .pulldown-menu-separator { margin: 6px 0; border-bottom: 1px solid #EBEBEB;}
 
-.jb-popup { background: #fff; position: absolute; /*top: 50px; left: 52px;*/
+.pulldown-mainmenu-popup { background: #fff; position: absolute; /*top: 50px; left: 52px;*/
 min-width: 280px;
 min-height: 30px;
 box-shadow: 2px 2px 3px #d5d5d5;

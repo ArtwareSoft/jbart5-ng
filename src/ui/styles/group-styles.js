@@ -24,14 +24,14 @@ jb.component('group.expandable', {
       template: `<section class="jb-group">
        <div class="header">
         <div class="title">{{title}}</div>
-        <button md-icon-button md-button (click)="toggle()" title="{{expand_title()}}">
+        <button class="mdl-button mdl-button--icon" (click)="toggle()" title="{{expand_title()}}">
         <i *ngIf="show" class="material-icons">keyboard_arrow_down</i>
         <i *ngIf="!show" class="material-icons">keyboard_arrow_right</i>
         </button>
       </div>
-      <template [ngIf]="show">
+      <ng-template [ngIf]="show">
         <div *ngFor="let ctrl of ctrls"><div *jbComp="ctrl"></div></div>
-      </template>
+      </ng-template>
 </section>`, 
       css: `.header { display: flex; flex-direction: row; }
         button:hover { background: none }
@@ -63,14 +63,14 @@ jb.component('group.accordion', {
       <div *ngFor="let ctrl of ctrls" class="accordion-section">
         <div class="header">
           <div class="title">{{ctrl.title}}</div>
-          <button md-icon-button md-button (click)="toggle(ctrl)" title="{{expand_title(ctrl)}}">
+          <button class="mdl-button mdl-button--icon" (click)="toggle(ctrl)" title="{{expand_title(ctrl)}}">
                 <i *ngIf="ctrl.show" class="material-icons">keyboard_arrow_down</i>
                 <i *ngIf="!ctrl.show" class="material-icons">keyboard_arrow_right</i>
           </button>
         </div>
-      <template [ngIf]="ctrl.show">
+      <ng-template [ngIf]="ctrl.show">
         <div *jbComp="ctrl.comp"></div>
-      </template>
+      </ng-template>
       </div>
   </section>`, 
       css: `.header { display: flex; flex-direction: row; }

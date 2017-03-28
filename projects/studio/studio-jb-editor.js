@@ -244,7 +244,7 @@ jb.component('studio.jb-editor-menu', {
         title: 'Add property', 
         action :{$: 'openDialog', 
           id: 'add property', 
-          style :{$: 'dialog.md-dialog-ok-cancel', 
+          style :{$: 'dialog.dialog-ok-cancel', 
             okLabel: 'OK', 
             cancelLabel: 'Cancel'
           }, 
@@ -253,7 +253,7 @@ jb.component('studio.jb-editor-menu', {
               {$: 'editable-text', 
                 title: 'name', 
                 databind: '%$dialogData/name%', 
-                style :{$: 'editable-text.md-input' }
+                style :{$: 'editable-text.mdl-input' }
               }
             ], 
             features :{$: 'css.padding', top: '9', left: '19' }

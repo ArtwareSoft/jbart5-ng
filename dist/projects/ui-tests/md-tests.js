@@ -79,7 +79,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
 //  impl :{$: 'ng2-ui-test', waitForPromise: {$delay: 5},  
 //   control :{$: 'button', title: 'Open Dialog', $click: true,
 //       action :{$: 'openDialog', 
-//         style :{$: 'dialog.md-dialog-ok-cancel'},
+//         style :{$: 'dialog.dialog-ok-cancel'},
 //         title: 'Hello' , 
 //         content :{$: 'label', title: 'Hello Dialog' },      
 //       } 
@@ -93,7 +93,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
 //   control :{$: 'button', title: 'Open Dialog', $click: true,
 //       action :{$: 'openDialog', 
 //         modal: true,
-//         style :{$: 'dialog.md-dialog-ok-cancel' },
+//         style :{$: 'dialog.dialog-ok-cancel' },
 //         title: 'Hello' , 
 //         content :{$: 'label', title: 'Hello Dialog' },      
 //       } 

@@ -233,15 +233,14 @@ jb.component('menu.init-menu-option', {
 				jbart.jb_dialogs.dialogs.filter(d=>d.isPopup)
 		  			.forEach(d=>d.close());
 		  		jb.delay(50).then(_=>
-	        		ctx.vars.menuModel.action())
+	        		jb_ui.applyAfter(ctx.vars.menuModel.action(),ctx))
 	        }, ctx, cmp.elementRef);
 
 			if (ctx.vars.topMenu && ctx.vars.topMenu.keydown) {
 				var keydown = ctx.vars.topMenu.keydown.takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
 			    keydown.filter(e=>e.keyCode == 13 && ctx.vars.topMenu.selected == ctx.vars.menuModel) // Enter
 		    	    .subscribe(_=>
-		    	    	cmp.action()
-		        	)
+		    	    	cmp.action())
 		    }
 		},
       	jbEmitter: true,
@@ -308,8 +307,10 @@ jb.component('menu.selection', {
 		  			cmp.ctx.vars.topMenu.popups = [];
 		  			cmp.ctx.run({$:'tree.regain-focus'});
 	    	})
-	    cmp.select = item =>
+	    cmp.select = item => {
 	    	cmp.selected = ctx.vars.topMenu.selected = item;
+	    	jb_ui.apply(ctx);
+	    }
       },
       afterViewInit: cmp => {
         if (ctx.params.autoSelectFirst && cmp.items[0])

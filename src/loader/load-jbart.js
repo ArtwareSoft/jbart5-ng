@@ -39,7 +39,7 @@ var css_files_to_load = [
     'bower_components/codemirror/lib/codemirror.css',
     'bower_components/codemirror/theme/solarized.css',
     'bower_components/dragula.js/dist/dragula.css',
-    'node_modules/@angular/material/core/theming/prebuilt/indigo-pink.css',
+//    'node_modules/@angular/material/core/theming/prebuilt/indigo-pink.css',
     'node_modules/material-design-lite/material.min.css',
     'node_modules/material-design-lite/dist/material.indigo-pink.min.css',
     'css/font.css', // material fonts
@@ -117,13 +117,13 @@ jb_modules =
 //'ui/styles/itemlist-styles.js',
 'ui/mdl-styles/common-mdl-styles.js',
 
-'ui-ts/md-styles/button-md',
-'ui-ts/md-styles/dialog-md',
-'ui-ts/md-styles/input-md',
-'ui-ts/md-styles/editable-boolean-md',
-'ui-ts/md-styles/tabs-md',
-'ui-ts/md-styles/card-md',
-'ui-ts/md-styles/sidenav-md',
+// 'ui-ts/md-styles/button-md',
+// 'ui-ts/md-styles/dialog-md',
+// 'ui-ts/md-styles/input-md',
+// 'ui-ts/md-styles/editable-boolean-md',
+// 'ui-ts/md-styles/tabs-md',
+// 'ui-ts/md-styles/card-md',
+// 'ui-ts/md-styles/sidenav-md',
 
 'testing/data-testers',
 'testing/ui-testers',
@@ -132,7 +132,7 @@ jb_modules =
 
 jb_studio_modules = ['tgp-model','model-components.js','path','utils','main.js','preview','menu.js','toolbar','tests','popups.js'
 ,'tree','properties.js','properties-menu.js','pick.js','save','probe','edit-source','new-control.js','testers'
-,'undo','styles.js','style-editor.js','data-browse','open-project','jb-editor.js','jb-editor-styles.js','suggestions','context-viewer.js','search.js']
+,'undo','styles.js','style-editor.js','data-browse','open-project.js','jb-editor.js','jb-editor-styles.js','suggestions','context-viewer.js','search.js']
   .map(x=> x.match(/\.js$/) ? 'projects/studio/studio-' + x : 'studio/studio-' + x  )
 
 jb_system_config = {

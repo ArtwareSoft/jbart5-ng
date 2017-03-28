@@ -34,7 +34,7 @@ jb.component('material-demo.form', {
               {$: 'editable-text', 
                 title: 'First Name aa', 
                 databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
-                style :{$: 'editable-text.md-input' }
+                style :{$: 'editable-text.mdl-input' }
               }
             ]
           }, 
@@ -49,7 +49,7 @@ jb.component('material-demo.form', {
               {$: 'editable-text', 
                 title: 'First Name aa', 
                 databind :{$: 'pipeline', items: ['%$person/firstName%'] }, 
-                style :{$: 'editable-text.md-input' }
+                style :{$: 'editable-text.mdl-input' }
               }
             ]
           }
@@ -73,7 +73,7 @@ jb.component('material-demo.form', {
           {$: 'editable-text', 
             title: 'City', 
             databind: '%$person/city%', 
-            style :{$: 'editable-text.md-input', width: '122' }
+            style :{$: 'editable-text.mdl-input', width: '122' }
           }, 
           {$: 'editable-text', title: 'State', databind: '%$person/state%' }, 
           {$: 'editable-text', 
@@ -145,7 +145,7 @@ jb.component('material-demo.main', {
           }, 
           {$: 'editable-text', 
             databind: '%$globals/ngPath%', 
-            style :{$: 'editable-text.md-input', width: '800' }, 
+            style :{$: 'editable-text.mdl-input', width: '800' }, 
             features: [
               {$: 'css.margin', top: '', left: '20' }, 
               {$: 'css.padding', left: '7', selector: '!.md-input-element' }, 
@@ -172,7 +172,7 @@ jb.component('material-demo.main', {
                     }
                   ]
                 }, 
-                style :{$: 'button.md-flat-no-background' }, 
+                style :{$: 'button.mdl-flat-ripple' }, 
                 features :{$: 'css', css: 'button { text-align: left; width: 200px}' }
               }
             ], 

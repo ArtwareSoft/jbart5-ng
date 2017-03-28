@@ -73,7 +73,7 @@ jb.component('dialog.popup', {
         { $: 'dialog-feature.nearLauncherLocation' }
       ],
       css: `
-      .jb-dialog { position: absolute, box-shadow: 2px 2px 3px #d5d5d5; padding: 3px 0; border: 1px solid rgb(213, 213, 213);}
+      .jb-dialog { position: absolute; background: white; box-shadow: 2px 2px 3px #d5d5d5; padding: 3px 0; border: 1px solid rgb(213, 213, 213) }
       `
   }
 })
@@ -343,6 +343,28 @@ jb.component('dialog-feature.dragTitle', {
 	       }
 	}
 });
+
+jb.component('dialog.dialog-ok-cancel', {
+	type: 'dialog.style',
+	params: [
+		{ id: 'okLabel', as: 'string', defaultValue: 'OK' },
+		{ id: 'cancelLabel', as: 'string', defaultValue: 'Cancel' },
+	],
+	impl :{$: 'customStyle',
+		template: `
+				<div class="jb-dialog jb-default-dialog">
+				      <div class="dialog-title">{{title}}</div>
+				      <button class="dialog-close" (click)="dialogClose()">&#215;</button>
+				      <div *jbComp="contentComp"></div>
+					  <div class="dialog-buttons">
+							<button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="dialogClose({OK:false})">%$cancelLabel%</button>
+							<button class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="dialogClose({OK:true})">%$okLabel%</button>
+					  </div>
+				</div>		
+		`,
+	  css: `.dialog-buttons { display: flex; justify-content: flex-end; margin: 5px }`,
+	}
+})
 
 
 jbart.jb_dialogs = {

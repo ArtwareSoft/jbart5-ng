@@ -41,7 +41,7 @@ jb.component('studio.open-source-dialog', {
 	impl :{$: 'openDialog',
 			modal: true,
 			title: 'Source',
-        	style :{$: 'dialog.md-dialog-ok-cancel' },
+        	style :{$: 'dialog.dialog-ok-cancel' },
 			content :{$: 'text', 
 				text :{$: 'studio.comp-source'},
 				style:{$: 'text.codemirror'}

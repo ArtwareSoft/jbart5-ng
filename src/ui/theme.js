@@ -16,7 +16,7 @@ jb.component('group.theme', {
 jb.component('theme.material-design', {
   type: 'theme',
   impl: () => ({
-  	'$theme.editable-text': 'editable-text.md-input'
+  	'$theme.editable-text': 'editable-text.mdl-input'
   })
 })
 

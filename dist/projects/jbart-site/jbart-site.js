@@ -152,7 +152,7 @@ System.register(['jb-core'], function(exports_1, context_1) {
                             ]
                         },
                         { $: 'editable-text',
-                            style: { $: 'editable-text.md-input' }
+                            style: { $: 'editable-text.mdl-input' }
                         }
                     ],
                     style: { $: 'group.md-card' }

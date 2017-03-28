@@ -12,8 +12,10 @@ jb.component('field.databind', {
               else { // write
                 if (cmp.inputEvents && source == 'keyup')
                   cmp.inputEvents.next(val);
-                else if (!ctx.vars.$model.updateOnBlur || source != 'keyup')
+                else if (!ctx.vars.$model.updateOnBlur || source != 'keyup') {
                   jb.writeValue(ctx.vars.$model.databind,val);
+                  jb_ui.apply(ctx);
+                }
               }
           }
       }

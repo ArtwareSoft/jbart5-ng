@@ -1,35 +1,20 @@
+jbEditor navigation history + back
+context viewer from pick
 toolbar
+generalize as component with select file
+add file to project
 
 suggestion popup cut inside the parent dialog
 
-
 itemlist - one control.
-
-4. Control Search - add X for editbox - as in chrome debuger
-6. Control Search - highlight search pattern on reasults
-6. New Project
-7. When dragging one of studio dialogs - do not activate angular check
-8. inteliscript - use up/down keys on context menu
-9. inteliscript - when selecting a new property - close context menu and focus on property
-10. inteliscript - select $if, then then and else
-In teliscript - right click on mouse should open context menu
-10. Actions - simple actions should be handled without inteliscript
-13. Enable saving sample data
-
-studio:
-- fast find - use down arrow keboard to go the first item
-
-
-build the jbart.io site like https://material.angular.io/
 
 animation in expand/collapse
 
 studio
 ======
 delete page
-component references
+
 jb editor
-	go up
 	fix boolean
     vars (for object)
 	$object

@@ -46,7 +46,7 @@ jb.component('tabs.simple', {
   	impl :{$: 'customStyle',
       template: `<div class="jb-tab">
           <div class="tab-titles">
-            <button *ngFor="let title of titles; let i = index" md-button (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
+            <button *ngFor="let title of titles; let i = index" class="mdl-button mdl-js-button mdl-js-ripple-effect" (click)="selectedTab = i" [ngClass]="{'selected': i==selectedTab}">{{title}}</button>
           </div>
           <div *jbComp="selectedTabContent()"></div>
         </div>`,

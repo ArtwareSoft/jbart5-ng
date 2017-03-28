@@ -113,7 +113,8 @@ jb.component('tree', {
 					},
 					expanded: jb.obj(tree.nodeModel.rootPath, true),
 					el: cmp.elementRef.nativeElement,
-					elemToPath: el => $(el).closest('.treenode').attr('path'),
+					elemToPath: el => 
+						$(el).closest('.treenode').attr('path'),
 					selectionEmitter: new jb_rx.Subject(),
 				})
 			},
@@ -173,7 +174,8 @@ jb.component('tree.selection', {
 			  },'')
 			  if (context.params.databind)
 				  jb.writeValue(context.params.databind, selected);
-			  context.params.onSelection(cmp.ctx.setData(selected));
+
+			  jb_ui.applyAfter(context.params.onSelection(cmp.ctx.setData(selected)),context)
 		  });
 		  // first auto selection selection
 		  var first_selected = jb.val(context.params.databind);
@@ -246,8 +248,10 @@ jb.component('tree.keyboard-selection', {
 						var isArray = tree.nodeModel.isArray(tree.selected);
 						if (!isArray || (tree.expanded[tree.selected] && event.keyCode == 39))
 							runActionInTreeContext(context.params.onRightClickOfExpanded);	
-						if (isArray && tree.selected) 
+						if (isArray && tree.selected) {
 							tree.expanded[tree.selected] = (event.keyCode == 39);
+							jb_ui.apply(context);
+						}
 					});
 
 				function runActionInTreeContext(action) {
@@ -256,7 +260,7 @@ jb.component('tree.keyboard-selection', {
 				}
 				// menu shortcuts
 				cmp.keydown.filter(e=> e.ctrlKey || e.altKey || e.keyCode == 46) // also Delete
-					.filter(e=> e.keyCode != 17 && e.keyCode != 18) // ctrl ot alt alone
+					.filter(e=> e.keyCode != 17 && e.keyCode != 18) // ctrl or alt alone
 					.subscribe(e => {
 						var menu = context.params.applyMenuShortcuts(context.setData(tree.selected));
 						menu && menu.applyShortcut && menu.applyShortcut(e);

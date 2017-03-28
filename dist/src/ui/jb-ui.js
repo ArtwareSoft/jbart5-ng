@@ -19,6 +19,10 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
         });
     }
     exports_1("apply", apply);
+    function applyAfter(promise, ctx) {
+        return Promise.resolve(promise).then(function (_) { return apply(ctx); });
+    }
+    exports_1("applyAfter", applyAfter);
     function focus(elem, logTxt) {
         if (jbart.lastStudioActivity && new Date().getTime() - jbart.lastStudioActivity < 1000)
             return;
@@ -212,11 +216,11 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                     return DynamicModule;
                 };
                 jbComponent.prototype.registerMethods = function (cmp_ref) {
-                    var cmp = cmp_ref._hostElement.component; // hostView._view._Cmp_0_4;
+                    var cmp = cmp_ref._component; // _hostElement.component; // hostView._view._Cmp_0_4;
                     var ctx = this.ctx;
                     cmp.ctx = ctx;
                     cmp.methodHandler = this.methodHandler;
-                    var elem = cmp_ref._hostElement.nativeElement;
+                    var elem = cmp.elementRef.nativeElement;
                     while (ctx.profile.__innerImplementation)
                         ctx = ctx.componentContext._parent;
                     var attachedCtx = this.ctxForPick || ctx;
@@ -351,7 +355,7 @@ System.register(['jb-core', '@angular/core', '@angular/platform-browser', '@angu
                             });
                     }
                     if (options.wrapWithngIf)
-                        annotations.template = "<template [ngIf]=\"jbIf()\">" + annotations.template + "</template>";
+                        annotations.template = "<ng-template [ngIf]=\"jbIf()\">" + annotations.template + "</ng-template>";
                     (options.featuresOptions || []).forEach(function (f) {
                         return _this.jbExtend(f, context);
                     });
