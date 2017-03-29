@@ -4,7 +4,6 @@
   <head>
     <title>Material2 Demo with jBart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
-  <script type="text/javascript" src="/node_modules/hammerjs/hammer.js"></script>
   <script type="text/javascript" src="/src/loader/load-jbart.js"></script>
 
     <link rel="stylesheet" href="/projects/studio/css/studio.css">
@@ -18,11 +17,7 @@
 <script>
 
 jbLoadModules(jb_modules.concat(jb_studio_modules).concat([
-  'projects/material-demo/ng-material-demo-loader',
-  '/projects/material-demo/material-demo.js',
-  '/projects/material-demo/all-readmes.js',
-  '/projects/material-demo/all-demos.js',
-  '/projects/material-demo/material-demo-pick.js']))
+  '/projects/material-demo/material-demo.js']))
   .then(loadedModules=>
     jbBootstrap(loadedModules)
   );

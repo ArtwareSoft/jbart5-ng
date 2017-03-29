@@ -149,6 +149,7 @@ jb_system_config = {
       'projects_js/studio/*.js': { format: 'global', scriptLoad: true }, 
       'projects_js/ui-tests/*.js': { format: 'global', scriptLoad: true }, 
       'projects_js/studio-helper/*.js': { format: 'global', scriptLoad: true }, 
+      'projects_js/material-demo/*.js': { format: 'global', scriptLoad: true }, 
       'projects_js/*/*.js': { format: 'global', scriptLoad: true }, 
       'testing/*.js': { format: 'global', scriptLoad: true }, 
       // 'src/**': { scriptLoad: true }, 

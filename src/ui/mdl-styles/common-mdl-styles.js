@@ -154,3 +154,16 @@ jb.component('editable-text.mdl-input', {
 })
 
 
+jb.component('editable-boolean.mdl-slide-toggle', {
+  type: 'editable-boolean.style',
+  impl :{$: 'customStyle', 
+      template: `<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch_{{fieldId}}">
+  <input type="checkbox" id="switch_{{fieldId}}" class="mdl-switch__input" [ngModel]="jbModel()" (change)="jbModel($event.target.checked)">
+  <span class="mdl-switch__label">{{text()}}</span>
+</label>`,
+      features :[
+          {$: 'field.databind' },
+          {$: 'mdl-style.init-dynamic', query: '.mdl-js-switch'}
+      ],
+  }
+})
