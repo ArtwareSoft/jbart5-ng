@@ -29,7 +29,8 @@ jb.component('material-demo.main', {
             controls: [
               {$: 'editable-text', 
                 title: 'Long Last Name That Will Be Truncated', 
-                databind: '%$person/lastName%'
+                databind: '%$person/lastName%', 
+                updateOnBlur: false
               }, 
               {$: 'editable-text', 
                 title: 'First Name', 

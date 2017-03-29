@@ -131,7 +131,7 @@ jb.component('itemlist.keyboard-selection', {
 
         cmp.keydown.filter(e=> e.keyCode == 13)
           .subscribe(x=>
-            ctx.params.onEnter(ctx.setData(cmp.selected)))
+            jb_ui.applyAfter(ctx.params.onEnter(ctx.setData(cmp.selected))),ctx)
     
         cmp.keydown.filter(e=>
               e.keyCode == 38 || e.keyCode == 40)

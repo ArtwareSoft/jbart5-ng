@@ -1,5 +1,4 @@
 jb.type('editable-boolean.style');
-jb.type('editable-boolean.yes-no-settings');
 
 jb.component('editable-boolean',{
   type: 'control', category: 'input:20',
@@ -24,4 +23,21 @@ jb.component('editable-boolean',{
   		}
   	});
   }
+})
+
+jb.component('editable-boolean.keyboard-support', {
+  type: 'feature',
+  impl: ctx => ({
+      init: function(cmp) {
+        if (!cmp.keydown) {
+          cmp.elementRef.nativeElement.setAttribute('tabIndex','0');
+          cmp.keydown = jb_rx.Observable.fromEvent(cmp.elementRef.nativeElement, 'keydown')
+              .takeUntil( cmp.jbEmitter.filter(x=>x =='destroy') );
+        }          
+        cmp.keydown.filter(e=> 
+            e.keyCode == 37 || e.keyCode == 39)
+          .subscribe(x=>
+            jb_ui.applyAfter(cmp.toggle(),ctx))
+      },
+    })
 })

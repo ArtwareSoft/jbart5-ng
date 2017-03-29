@@ -239,11 +239,12 @@ jb.component('studio.property-boolean', {
   params: [{ id: 'path', as: 'string' }], 
   impl :{$: 'editable-boolean', 
     databind :{$: 'studio.ref', path: '%$path%' }, 
-    style :{$: 'editable-boolean.flipswitch' }, 
+    style :{$: 'editable-boolean.mdl-slide-toggle' }, 
     title :{$: 'studio.prop-name', path: '%$path%' }, 
     features: [
       {$: 'studio.undo-support', path: '%$path%' }, 
-      {$: 'studio.property-toolbar-feature', path: '%$path%' }
+      {$: 'studio.property-toolbar-feature', path: '%$path%' }, 
+      {$: 'css.width', width: '150' }
     ]
   }
 })

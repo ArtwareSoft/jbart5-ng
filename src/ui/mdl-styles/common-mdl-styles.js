@@ -163,6 +163,7 @@ jb.component('editable-boolean.mdl-slide-toggle', {
 </label>`,
       features :[
           {$: 'field.databind' },
+          {$: 'editable-boolean.keyboard-support' },
           {$: 'mdl-style.init-dynamic', query: '.mdl-js-switch'}
       ],
   }
